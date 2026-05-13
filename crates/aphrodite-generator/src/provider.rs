@@ -50,7 +50,9 @@ impl ProviderId {
 
     pub fn default_model(self) -> &'static str {
         match self {
-            Self::Zai => "glm-4.7",
+            // GLM-5.1 is the current flagship of the z.ai Coding Plan
+            // (paired with GLM-5-Turbo). GLM-4.7 is the prior generation.
+            Self::Zai => "glm-5.1",
             Self::Anthropic => "claude-sonnet-4-6",
             Self::Openrouter => "anthropic/claude-sonnet-4.6",
             Self::Openai => "gpt-4o",
@@ -63,10 +65,10 @@ impl ProviderId {
     pub fn curated_models(self) -> &'static [(&'static str, &'static str)] {
         match self {
             Self::Zai => &[
-                ("glm-4.7 — fast, default, 200K context", "glm-4.7"),
-                ("glm-5.1 — newest, best quality, slower", "glm-5.1"),
-                ("glm-5-turbo — balanced", "glm-5-turbo"),
-                ("glm-4.5-air — cheapest, 100K context", "glm-4.5-air"),
+                ("glm-5.1     — flagship · default · agentic/long-horizon", "glm-5.1"),
+                ("glm-5-turbo — balanced · paired with 5.1 in Coding Plan", "glm-5-turbo"),
+                ("glm-4.7     — prior gen · still strong on SWE-bench", "glm-4.7"),
+                ("glm-4.5-air — cheapest · used for Haiku-tier defaults",  "glm-4.5-air"),
             ],
             Self::Anthropic => &[
                 ("claude-sonnet-4-6 — default", "claude-sonnet-4-6"),
