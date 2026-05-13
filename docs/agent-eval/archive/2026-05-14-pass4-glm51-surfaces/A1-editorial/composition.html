@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Folio — A Literary Magazine</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --colors-primary-50: #faf9f7;
+    --colors-primary-100: #f0ede6;
+    --colors-primary-200: #ddd9cf;
+    --colors-primary-300: #c4bfb3;
+    --colors-primary-400: #a99f8e;
+    --colors-primary-500: #7d7363;
+    --colors-primary-600: #635b4e;
+    --colors-primary-700: #4e483f;
+    --colors-primary-800: #3a3630;
+    --colors-primary-900: #2a2621;
+    --colors-accent-50: #f2fbf5;
+    --colors-accent-100: #daf2e2;
+    --colors-accent-200: #b8e3c6;
+    --colors-accent-300: #8ccb9f;
+    --colors-accent-400: #66b17e;
+    --colors-accent-500: #4d9465;
+    --colors-accent-600: #3b7a50;
+    --colors-accent-700: #2f6341;
+    --colors-accent-800: #285137;
+    --colors-accent-900: #234530;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-50: #f8f7f5;
+    --colors-neutral-100: #eae8e4;
+    --colors-neutral-200: #d5d1cb;
+    --colors-neutral-300: #b5afa6;
+    --colors-neutral-400: #8f877c;
+    --colors-neutral-500: #6d655a;
+    --colors-neutral-600: #565048;
+    --colors-neutral-700: #3f3b35;
+    --colors-neutral-800: #2a2621;
+    --colors-neutral-900: #181614;
+    --colors-neutral-1000: #000000;
+    --colors-background-primary: #faf9f7;
+    --colors-text-primary: #2a2621;
+    --colors-text-muted: #6d655a;
+    --typography-display-family: Fraunces, Georgia, 'Times New Roman', serif;
+    --typography-body-family: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    --rounded-sm: 2px;
+    --rounded-md: 4px;
+    --rounded-lg: 6px;
+  }
+
+  /* Variant overrides */
+  body[data-variant="dark"] {
+    --colors-background-primary: #1c1a17;
+    --colors-text-primary: #e6e2db;
+    --colors-text-muted: #a09889;
+    --colors-neutral-200: #3a352e;
+    --colors-neutral-100: #2e2a24;
+  }
+  body[data-variant="brand-a"] {
+    --colors-background-primary: #f5f0e8;
+    --colors-text-primary: #352d22;
+    --colors-text-muted: #7a6e5e;
+  }
+  body[data-variant="brand-b"] {
+    --colors-background-primary: #f0f4f1;
+    --colors-text-primary: #1e2a1f;
+    --colors-text-muted: #4a5e4d;
+  }
+
+  html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+  body {
+    font-family: var(--typography-body-family), Georgia, serif;
+    background-color: var(--colors-background-primary);
+    color: var(--colors-text-primary);
+    line-height: 1.7;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  /* Switcher */
+  .switcher {
+    position: fixed;
+    top: var(--spacing-4);
+    right: var(--spacing-4);
+    z-index: 100;
+    display: flex;
+    gap: var(--spacing-1);
+    background: var(--colors-neutral-100);
+    padding: 3px;
+    border-radius: var(--rounded-md);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .switcher button {
+    font-family: var(--typography-body-family);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    padding: 6px 14px;
+    border: none;
+    border-radius: var(--rounded-sm);
+    background: transparent;
+    color: var(--colors-text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .switcher button:hover {
+    color: var(--colors-text-primary);
+  }
+  .switcher button.active {
+    background: var(--colors-neutral-0);
+    color: var(--colors-accent-700);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  }
+
+  /* Masthead */
+  .masthead {
+    text-align: center;
+    padding: var(--spacing-24) var(--spacing-4) var(--spacing-12);
+  }
+  .masthead-name {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 56px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--colors-text-primary);
+  }
+  .masthead-issue {
+    font-family: var(--typography-body-family);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--colors-accent-600);
+    margin-top: var(--spacing-2);
+  }
+
+  /* Nav */
+  .site-nav {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-8);
+    padding: var(--spacing-4) 0 var(--spacing-16);
+    border-bottom: 1px solid var(--colors-neutral-200);
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .site-nav a {
+    font-family: var(--typography-body-family);
+    font-size: 14px;
+    color: var(--colors-neutral-500);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    position: relative;
+  }
+  .site-nav a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 0;
+    height: 1px;
+    background: var(--colors-accent-600);
+    transition: width 0.25s ease;
+  }
+  .site-nav a:hover {
+    color: var(--colors-accent-600);
+  }
+  .site-nav a:hover::after {
+    width: 100%;
+  }
+
+  /* Article */
+  .article {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: var(--spacing-20) var(--spacing-4);
+  }
+
+  .article-kicker {
+    font-family: var(--typography-body-family);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--colors-accent-600);
+    margin-bottom: var(--spacing-4);
+  }
+
+  .article-headline {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 52px;
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-6);
+  }
+
+  .article-byline {
+    font-family: var(--typography-body-family);
+    font-size: 15px;
+    color: var(--colors-neutral-500);
+    margin-bottom: var(--spacing-12);
+    padding-bottom: var(--spacing-8);
+    border-bottom: 1px solid var(--colors-neutral-200);
+  }
+  .article-byline strong {
+    color: var(--colors-text-primary);
+    font-weight: 600;
+  }
+  .article-byline .byline-date {
+    margin-left: var(--spacing-2);
+    color: var(--colors-neutral-400);
+  }
+
+  /* Lede with drop cap */
+  .article-lede {
+    font-family: var(--typography-display-family);
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.55;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-12);
+  }
+  .article-lede::first-letter {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    float: left;
+    font-size: 96px;
+    line-height: 0.75;
+    margin-right: var(--spacing-2);
+    margin-top: 8px;
+    color: var(--colors-accent-600);
+  }
+
+  /* Body paragraphs */
+  .article-body p {
+    font-family: var(--typography-body-family);
+    font-size: 18px;
+    line-height: 1.72;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-8);
+    max-width: 100%;
+  }
+
+  /* Pull quote */
+  .pull-quote {
+    border-left: 3px solid var(--colors-accent-500);
+    padding: var(--spacing-6) 0 var(--spacing-6) var(--spacing-8);
+    margin: var(--spacing-16) 0;
+    font-family: var(--typography-display-family);
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 1.45;
+    color: var(--colors-text-primary);
+    font-style: italic;
+  }
+  .pull-quote-attribution {
+    display: block;
+    margin-top: var(--spacing-3);
+    font-family: var(--typography-body-family);
+    font-size: 13px;
+    font-style: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--colors-neutral-400);
+  }
+
+  /* Inline SVG illustration separator */
+  .article-ornament {
+    text-align: center;
+    margin: var(--spacing-16) 0;
+    color: var(--colors-neutral-300);
+  }
+  .article-ornament svg {
+    width: 40px;
+    height: 20px;
+  }
+
+  /* Section divider */
+  .article-divider {
+    border: none;
+    height: 1px;
+    background: var(--colors-neutral-200);
+    margin: var(--spacing-12) 0;
+  }
+
+  /* Article list */
+  .recent-pieces {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-4) var(--spacing-24);
+  }
+  .recent-heading {
+    font-family: var(--typography-body-family);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--colors-neutral-400);
+    margin-bottom: var(--spacing-12);
+    padding-bottom: var(--spacing-3);
+    border-bottom: 1px solid var(--colors-neutral-200);
+  }
+
+  .piece-item {
+    padding: var(--spacing-8) 0;
+    border-bottom: 1px solid var(--colors-neutral-200);
+    transition: padding-left 0.2s ease;
+  }
+  .piece-item:hover {
+    padding-left: var(--spacing-3);
+  }
+  .piece-category {
+    font-family: var(--typography-body-family);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--colors-accent-600);
+    margin-bottom: var(--spacing-2);
+  }
+  .piece-title {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.25;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-2);
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  .piece-title:hover {
+    color: var(--colors-accent-700);
+  }
+  .piece-author {
+    font-family: var(--typography-body-family);
+    font-size: 14px;
+    color: var(--colors-neutral-500);
+    margin-bottom: var(--spacing-2);
+  }
+  .piece-excerpt {
+    font-family: var(--typography-body-family);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--colors-neutral-600);
+    max-width: 560px;
+  }
+
+  /* Footer */
+  .site-footer {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: var(--spacing-12) var(--spacing-4) var(--spacing-16);
+    border-top: 1px solid var(--colors-neutral-200);
+  }
+  .footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-8);
+    flex-wrap: wrap;
+    gap: var(--spacing-6);
+  }
+  .footer-masthead {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--colors-text-primary);
+  }
+  .footer-links {
+    display: flex;
+    gap: var(--spacing-6);
+    flex-wrap: wrap;
+  }
+  .footer-links a {
+    font-family: var(--typography-body-family);
+    font-size: 14px;
+    color: var(--colors-neutral-400);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .footer-links a:hover {
+    color: var(--colors-accent-600);
+  }
+
+  /* Newsletter */
+  .newsletter-section {
+    margin-bottom: var(--spacing-8);
+  }
+  .newsletter-label {
+    font-family: var(--typography-body-family);
+    font-size: 14px;
+    color: var(--colors-text-muted);
+    margin-bottom: var(--spacing-3);
+  }
+  .newsletter-form {
+    display: flex;
+    gap: var(--spacing-2);
+    max-width: 400px;
+  }
+  .newsletter-input {
+    flex: 1;
+    font-family: var(--typography-body-family);
+    font-size: 14px;
+    padding: 10px 14px;
+    border: 1px solid var(--colors-neutral-300);
+    border-radius: var(--rounded-sm);
+    background: var(--colors-neutral-0);
+    color: var(--colors-text-primary);
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .newsletter-input::placeholder {
+    color: var(--colors-neutral-400);
+  }
+  .newsletter-input:focus {
+    border-color: var(--colors-accent-500);
+  }
+  .newsletter-submit {
+    font-family: var(--typography-body-family);
+    font-size: 14px;
+    padding: 10px 20px;
+    border: 1px solid var(--colors-neutral-300);
+    border-radius: var(--rounded-sm);
+    background: transparent;
+    color: var(--colors-accent-600);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .newsletter-submit:hover {
+    border-color: var(--colors-accent-500);
+    color: var(--colors-accent-700);
+  }
+
+  .footer-meta {
+    font-family: var(--typography-body-family);
+    font-size: 12px;
+    color: var(--colors-neutral-400);
+    line-height: 1.6;
+  }
+
+  /* Article footer */
+  .article-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--spacing-16);
+    padding-top: var(--spacing-8);
+    border-top: 1px solid var(--colors-neutral-200);
+    flex-wrap: wrap;
+    gap: var(--spacing-3);
+  }
+  .article-footer-category {
+    font-family: var(--typography-body-family);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--colors-accent-600);
+    border: 1px solid var(--colors-accent-200);
+    padding: 4px 12px;
+    border-radius: var(--rounded-sm);
+  }
+  .article-footer-date {
+    font-family: var(--typography-body-family);
+    font-size: 13px;
+    color: var(--colors-neutral-400);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .masthead-name { font-size: 40px; }
+    .article-headline { font-size: 36px; }
+    .article-lede { font-size: 19px; }
+    .article-lede::first-letter { font-size: 72px; }
+    .article-body p { font-size: 17px; }
+    .pull-quote { font-size: 20px; padding-left: var(--spacing-6); }
+    .site-nav { gap: var(--spacing-4); padding-bottom: var(--spacing-8); }
+    .masthead { padding-top: var(--spacing-16); }
+    .article { padding: var(--spacing-12) var(--spacing-4); }
+    .piece-title { font-size: 20px; }
+    .footer-top { flex-direction: column; }
+  }
+
+  @media (max-width: 480px) {
+    .masthead-name { font-size: 32px; }
+    .article-headline { font-size: 30px; }
+    .article-lede { font-size: 18px; }
+    .site-nav { flex-wrap: wrap; gap: var(--spacing-3); }
+    .switcher { top: var(--spacing-2); right: var(--spacing-2); }
+    .switcher button { padding: 4px 10px; font-size: 11px; }
+  }
+
+  /* Subtle animation on load */
+  .article-headline, .article-lede, .article-byline {
+    animation: fadeUp 0.6s ease both;
+  }
+  .article-byline { animation-delay: 0.1s; }
+  .article-lede { animation-delay: 0.2s; }
+  .article-body p:nth-child(1) { animation: fadeUp 0.6s ease 0.3s both; }
+  .article-body p:nth-child(2) { animation: fadeUp 0.6s ease 0.4s both; }
+  .article-body p:nth-child(3) { animation: fadeUp 0.6s ease 0.5s both; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<style data-aphrodite-variants>
+[data-variant="brand-a"] {
+  --colors-accent-100: #daf2e2;
+  --colors-accent-200: #b8e3c6;
+  --colors-accent-300: #8ccb9f;
+  --colors-accent-400: #66b17e;
+  --colors-accent-50: #f2fbf5;
+  --colors-accent-500: #4d9465;
+  --colors-accent-600: #3b7a50;
+  --colors-accent-700: #2f6341;
+  --colors-accent-800: #285137;
+  --colors-accent-900: #234530;
+  --colors-background-primary: #f5f0e8;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #eae8e4;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d5d1cb;
+  --colors-neutral-300: #b5afa6;
+  --colors-neutral-400: #8f877c;
+  --colors-neutral-50: #f8f7f5;
+  --colors-neutral-500: #6d655a;
+  --colors-neutral-600: #565048;
+  --colors-neutral-700: #3f3b35;
+  --colors-neutral-800: #2a2621;
+  --colors-neutral-900: #181614;
+  --colors-primary-100: #f0ede6;
+  --colors-primary-200: #ddd9cf;
+  --colors-primary-300: #c4bfb3;
+  --colors-primary-400: #a99f8e;
+  --colors-primary-50: #faf9f7;
+  --colors-primary-500: #7d7363;
+  --colors-primary-600: #635b4e;
+  --colors-primary-700: #4e483f;
+  --colors-primary-800: #3a3630;
+  --colors-primary-900: #2a2621;
+  --colors-text-primary: #352d22;
+  --rounded-lg: 6px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Source Serif 4;
+  --typography-body-weight: 400;
+  --typography-display-family: Fraunces;
+  --typography-display-weight: 700;
+  --bg: #f5f0e8;
+  --fg: #352d22;
+  --muted: #7d7363;
+}
+[data-variant="brand-b"] {
+  --colors-accent-100: #daf2e2;
+  --colors-accent-200: #b8e3c6;
+  --colors-accent-300: #8ccb9f;
+  --colors-accent-400: #66b17e;
+  --colors-accent-50: #f2fbf5;
+  --colors-accent-500: #4d9465;
+  --colors-accent-600: #3b7a50;
+  --colors-accent-700: #2f6341;
+  --colors-accent-800: #285137;
+  --colors-accent-900: #234530;
+  --colors-background-primary: #f0f4f1;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #eae8e4;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d5d1cb;
+  --colors-neutral-300: #b5afa6;
+  --colors-neutral-400: #8f877c;
+  --colors-neutral-50: #f8f7f5;
+  --colors-neutral-500: #6d655a;
+  --colors-neutral-600: #565048;
+  --colors-neutral-700: #3f3b35;
+  --colors-neutral-800: #2a2621;
+  --colors-neutral-900: #181614;
+  --colors-primary-100: #f0ede6;
+  --colors-primary-200: #ddd9cf;
+  --colors-primary-300: #c4bfb3;
+  --colors-primary-400: #a99f8e;
+  --colors-primary-50: #faf9f7;
+  --colors-primary-500: #7d7363;
+  --colors-primary-600: #635b4e;
+  --colors-primary-700: #4e483f;
+  --colors-primary-800: #3a3630;
+  --colors-primary-900: #2a2621;
+  --colors-text-primary: #1e2a1f;
+  --rounded-lg: 6px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Source Serif 4;
+  --typography-body-weight: 400;
+  --typography-display-family: Fraunces;
+  --typography-display-weight: 700;
+  --bg: #f0f4f1;
+  --fg: #1e2a1f;
+  --muted: #7d7363;
+}
+[data-variant="dark"] {
+  --colors-accent-100: #daf2e2;
+  --colors-accent-200: #b8e3c6;
+  --colors-accent-300: #8ccb9f;
+  --colors-accent-400: #66b17e;
+  --colors-accent-50: #f2fbf5;
+  --colors-accent-500: #4d9465;
+  --colors-accent-600: #3b7a50;
+  --colors-accent-700: #2f6341;
+  --colors-accent-800: #285137;
+  --colors-accent-900: #234530;
+  --colors-background-primary: #1c1a17;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #eae8e4;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d5d1cb;
+  --colors-neutral-300: #b5afa6;
+  --colors-neutral-400: #8f877c;
+  --colors-neutral-50: #f8f7f5;
+  --colors-neutral-500: #6d655a;
+  --colors-neutral-600: #565048;
+  --colors-neutral-700: #3f3b35;
+  --colors-neutral-800: #2a2621;
+  --colors-neutral-900: #181614;
+  --colors-primary-100: #f0ede6;
+  --colors-primary-200: #ddd9cf;
+  --colors-primary-300: #c4bfb3;
+  --colors-primary-400: #a99f8e;
+  --colors-primary-50: #faf9f7;
+  --colors-primary-500: #7d7363;
+  --colors-primary-600: #635b4e;
+  --colors-primary-700: #4e483f;
+  --colors-primary-800: #3a3630;
+  --colors-primary-900: #2a2621;
+  --colors-text-primary: #e6e2db;
+  --rounded-lg: 6px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Source Serif 4;
+  --typography-body-weight: 400;
+  --typography-display-family: Fraunces;
+  --typography-display-weight: 700;
+  --bg: #1c1a17;
+  --fg: #e6e2db;
+  --muted: #7d7363;
+}
+[data-variant="light"] {
+  --colors-accent-100: #daf2e2;
+  --colors-accent-200: #b8e3c6;
+  --colors-accent-300: #8ccb9f;
+  --colors-accent-400: #66b17e;
+  --colors-accent-50: #f2fbf5;
+  --colors-accent-500: #4d9465;
+  --colors-accent-600: #3b7a50;
+  --colors-accent-700: #2f6341;
+  --colors-accent-800: #285137;
+  --colors-accent-900: #234530;
+  --colors-background-primary: #faf9f7;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #eae8e4;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d5d1cb;
+  --colors-neutral-300: #b5afa6;
+  --colors-neutral-400: #8f877c;
+  --colors-neutral-50: #f8f7f5;
+  --colors-neutral-500: #6d655a;
+  --colors-neutral-600: #565048;
+  --colors-neutral-700: #3f3b35;
+  --colors-neutral-800: #2a2621;
+  --colors-neutral-900: #181614;
+  --colors-primary-100: #f0ede6;
+  --colors-primary-200: #ddd9cf;
+  --colors-primary-300: #c4bfb3;
+  --colors-primary-400: #a99f8e;
+  --colors-primary-50: #faf9f7;
+  --colors-primary-500: #7d7363;
+  --colors-primary-600: #635b4e;
+  --colors-primary-700: #4e483f;
+  --colors-primary-800: #3a3630;
+  --colors-primary-900: #2a2621;
+  --colors-text-primary: #2a2621;
+  --rounded-lg: 6px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Source Serif 4;
+  --typography-body-weight: 400;
+  --typography-display-family: Fraunces;
+  --typography-display-weight: 700;
+  --bg: #faf9f7;
+  --fg: #2a2621;
+  --muted: #7d7363;
+}
+body{background:var(--bg);color:var(--fg);}
+</style>
+</head>
+<body>
+
+<nav class="switcher">
+  <button data-v="light" class="active">light</button>
+  <button data-v="dark">dark</button>
+  <button data-v="brand-a">vellum</button>
+  <button data-v="brand-b">verdure</button>
+</nav>
+
+<header class="masthead">
+  <div class="masthead-name">Folio</div>
+  <div class="masthead-issue">Issue XIV &middot; Winter 2025</div>
+</header>
+
+<nav class="site-nav">
+  <a href="#fiction">Fiction</a>
+  <a href="#poetry">Poetry</a>
+  <a href="#essays">Essays</a>
+  <a href="#interviews">Interviews</a>
+  <a href="#about">About</a>
+</nav>
+
+<main>
+  <article class="article">
+    <div class="article-kicker">Long-form Essay</div>
+    <h1 class="article-headline">The Cartography of Silence: On the Unwritten Histories of the Disappeared</h1>
+    <div class="article-byline">
+      By <strong>Miriam Elara Voss</strong>
+      <span class="byline-date">&middot; Published 14 January 2025</span>
+    </div>
+
+    <div class="article-lede">
+      There are maps that chart the known world — its coastlines, its mountain passes, the slow curl of rivers through inhabited valleys. And then there are the maps we carry inside us, drawn from absence, tracing the contours of everything that has been erased. I grew up in the second kind of cartography, in a house where certain names were never spoken aloud but lived in the pauses between sentences, in the way my grandmother's hands trembled when she folded laundry, in the specific quality of silence that descended each November like an early frost.
+    </div>
+
+    <div class="article-body">
+      <p>
+        My grandmother kept a drawer in her bedroom dresser that was always locked. As a child I imagined it held jewels, or perhaps letters from a lost lover — the romantic projections of someone who had not yet learned that the most precious things are often the heaviest to carry. The key hung on a thin chain around her neck, hidden beneath the collar of whatever blouse she was wearing, so close to her throat that it seemed almost to be a part of her body, a small metallic bone.
+      </p>
+      <p>
+        It was not until after her funeral, when my mother and I stood in that bedroom with its faded floral wallpaper and the light coming in at that amber slant of late autumn, that the drawer was opened. Inside there were no jewels. There was a single photograph, creased and re-creased from decades of handling, and beneath it a notebook filled with names. Three hundred and twelve names, written in my grandmother's careful schoolgirl script — each one a person who had vanished from our region during the purges of 1953.
+      </p>
+      <p>
+        She had been collecting them for forty years. Not collecting in the manner of an archivist or a historian, but in the manner of someone performing a sacred and terrible duty. Each name had been gathered slowly, sometimes from overheard conversations at the market, sometimes from the confessions of the dying, sometimes from the bureaucratic records she accessed through a cousin who worked in the municipal office and understood, without ever being told, why she needed them.
+      </p>
+
+      <div class="pull-quote">
+        To remember someone who has been deliberately forgotten is an act of defiance that looks, to the outside world, indistinguishable from grief.
+        <span class="pull-quote-attribution">— From the author's notebook, March 2024</span>
+      </div>
+
+      <p>
+        I have spent the last six years trying to understand what my grandmother knew intuitively: that disappearance is not a single event but a continuous process. The act of vanishing does not end with the body's removal. It continues through the systematic destruction of records, the rewriting of histories, the slow dispersal of the disappeared person's belongings into the homes of strangers. It ends, if it ever ends, only when the last person who remembers the vanished name also vanishes — this time into the absolute erasure of death.
+      </p>
+
+      <div class="article-ornament" aria-hidden="true">
+        <svg viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 10 Q10 2, 20 10 Q30 18, 40 10" stroke="currentColor" stroke-width="1" fill="none"/>
+          <circle cx="20" cy="10" r="2" fill="currentColor" opacity="0.5"/>
+        </svg>
+      </div>
+
+      <p>
+        The notebook became my map. Not a map of places but of absences, each name a blank space on a terrain that had been deliberately smoothed over. I began visiting the addresses listed — or rather, the addresses that had been listed, since many of the buildings themselves had been demolished and replaced. In the town of Kelty, where my grandmother was born, I found a public park where a row of houses had once stood. A bronze plaque commemorated the park's opening in 1961, crediting the collective efforts of the citizenry. There was no mention of the families who had lived in the houses that preceded it.
+      </p>
+      <p>
+        Memory, I have come to believe, has a geography. It has its mountains — the large, visible events that dominate the landscape of recollection. It has its valleys — the quieter, shadowed periods where detail pools and settles. And it has its deserts — vast erased territories where something once stood but where now only the faintest depressions in the earth suggest any former habitation. My grandmother's notebook was a surveyor's log of the desert.
+      </p>
+      <p>
+        There is a particular kind of loneliness in this work. You find yourself sitting in archives that smell of dust and binding glue, turning pages that no one has turned in decades, looking for a name that the official record insists does not exist. The archivists watch you with a mixture of pity and suspicion. They have seen people like me before — the grandchildren of the disappeared, arriving with our fragmentary evidence and our impossible hope that the bureaucracy of erasure was not, after all, perfectly thorough. And sometimes it was not. Sometimes, in the margin of a tax record or the footnote of a local council minutes, a name survives. These are the oases in the desert — small, precious, insufficient.
+      </p>
+      <p>
+        I have added forty-three new names to my grandmother's list. Forty-three people who were not in her notebook but who I have found through my own research, my own conversations with the aging witnesses who remain, my own hours in those dusty archives. Each name carries with it the weight of a life — not a biography, because biographies require records and these lives were designed to leave no trace — but a constellation of hints. A trade learned from a father. A song sung to children at bedtime. A particular way of walking that the neighbors remembered, decades later, though they could not always remember the name that went with it.
+      </p>
+
+      <footer class="article-footer">
+        <span class="article-footer-category">Essay</span>
+        <span class="article-footer-date">Published Winter 2025 &middot; 18 min read</span>
+      </footer>
+    </div>
+  </article>
+
+  <section class="recent-pieces" id="fiction">
+    <h2 class="recent-heading">From This Issue</h2>
+
+    <div class="piece-item">
+      <div class="piece-category">Fiction</div>
+      <h3 class="piece-title">The Weight of Small Bones</h3>
+      <div class="piece-author">by Tomás Aldana Ríos</div>
+      <p class="piece-excerpt">
+        A fisherman on the Gulf coast discovers that the ocean has begun returning things that were never lost — or rather, things that everyone had agreed to forget.
+      </p>
+    </div>
+
+    <div class="piece-item">
+      <div class="piece-category">Poetry</div>
+      <h3 class="piece-title">Three Elegies for November Light</h3>
+      <div class="piece-author">by Sarah Yoon</div>
+      <p class="piece-excerpt">
+        A triptych of poems exploring the luminous emptiness of late autumn, the architecture of grief, and the patience of stones.
+      </p>
+    </div>
+
+    <div class="piece-item">
+      <div class="piece-category">Essay</div>
+      <h3 class="piece-title">The Cartography of Silence</h3>
+      <div class="piece-author">by Miriam Elara Voss</div>
+      <p class="piece-excerpt">
+        On the unwritten histories of the disappeared, and the grandmother who spent forty years mapping a desert of names.
+      </p>
+    </div>
+
+    <div class="piece-item">
+      <div class="piece-category">Interview</div>
+      <h3 class="piece-title">A Conversation with Yōko Ogawa</h3>
+      <div class="piece-author">by Daniel Levin Becker</div>
+      <p class="piece-excerpt">
+        The acclaimed Japanese novelist discusses the architecture of memory, the ethics of forgetting, and why she writes in the space between the two.
+      </p>
+    </div>
+
+    <div class="piece-item">
+      <div class="piece-category">Fiction</div>
+      <h3 class="piece-title">Degrees of Freedom</h3>
+      <div class="piece-author">by Chidozie Onyeka</div>
+      <p class="piece-excerpt">
+        In a Lagos boarding school, a mathematics teacher and a student discover an equation that describes — with unsettling precision — the moment before a decision is made.
+      </p>
+    </div>
+
+    <div class="piece-item">
+      <div class="piece-category">Poetry</div>
+      <h3 class="piece-title">Glass Architecture</h3>
+      <div class="piece-author">by Liam Farrell</div>
+      <p class="piece-excerpt">
+        Seven poems on transparency, fragility, and the radical act of letting yourself be seen in a world built from walls.
+      </p>
+    </div>
+
+    <div class="piece-item">
+      <div class="piece-category">Essay</div>
+      <h3 class="piece-title">The Loneliness of Lighthouses</h3>
+      <div class="piece-author">by Ingrid Solheim</div>
+      <p class="piece-excerpt">
+        A meditation on isolation, purpose, and what it means to keep sending a signal that you will never know has been received.
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-masthead">Folio</div>
+    <div class="footer-links">
+      <a href="#submit">Submit</a>
+      <a href="#masthead-credits">Masthead</a>
+      <a href="#guidelines">Guidelines</a>
+      <a href="#contact">Contact</a>
+      <a href="#archive">Archive</a>
+    </div>
+  </div>
+
+  <div class="newsletter-section">
+    <div class="newsletter-label">Receive new writing in your inbox each season.</div>
+    <div class="newsletter-form">
+      <input type="email" class="newsletter-input" placeholder="Your email address" aria-label="Email address">
+      <button class="newsletter-submit">Subscribe</button>
+    </div>
+  </div>
+
+  <div class="footer-meta">
+    <p>&copy; 2025 Folio Literary Magazine. All rights reserved.</p>
+    <p>Designed for long-form reading. Best experienced on paper.</p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.switcher button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const variant = btn.dataset.v;
+      if (variant === 'light') {
+        delete document.body.dataset.variant;
+      } else {
+        document.body.dataset.variant = variant;
+      }
+      document.querySelectorAll('.switcher button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

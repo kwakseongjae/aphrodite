@@ -177,32 +177,78 @@ pub fn parse(src: &str) -> Result<DesignDocument, DesignError> {
     })
 }
 
-fn split_frontmatter(src: &str) -> Option<(&str, &str)> {
-    // Tolerate (a) leading whitespace, (b) LLM prose before the opening `---`,
-    // (c) LLM omitting markers entirely when the response is YAML-only.
-    let trimmed = src.trim_start();
-    let stripped = if let Some(s) = trimmed.strip_prefix("---\n").or_else(|| trimmed.strip_prefix("---\r\n")) {
-        s
-    } else if let Some(idx) = trimmed.find("\n---\n") {
-        &trimmed[idx + 5..]
-    } else {
-        // No `---` markers at all. If the head looks like YAML (a top-level
-        // key on the first non-empty line), accept the whole thing as
-        // frontmatter and find the first `# ` markdown heading as the body
-        // boundary.
-        let first_line = trimmed.lines().next().unwrap_or("");
-        let looks_like_yaml = first_line.contains(':')
-            && !first_line.starts_with('#')
-            && !first_line.starts_with('<');
-        if !looks_like_yaml {
-            return None;
+/// Find the byte indices of every line that is exactly `---` (possibly with
+/// trailing whitespace) in `s`. A line is identified by being preceded by
+/// either start-of-string or `\n` and followed by `\n` or end-of-string.
+fn find_marker_lines(s: &str) -> Vec<(usize, usize)> {
+    let mut out = Vec::new();
+    let bytes = s.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() {
+        let line_start = i;
+        // Find end of line.
+        let mut j = i;
+        while j < bytes.len() && bytes[j] != b'\n' {
+            j += 1;
         }
-        // Body starts at the first `\n# ` (markdown H1); if none, the whole
-        // thing is frontmatter and body is empty.
-        let body_start = trimmed.find("\n# ").unwrap_or(trimmed.len());
-        return Some((&trimmed[..body_start], &trimmed[body_start..]));
-    };
-    // find the closing `---` on its own line
+        let line = &s[line_start..j];
+        let trimmed = line.trim();
+        if trimmed == "---" {
+            // Report (start_of_line, end_of_line_including_newline).
+            let next = if j < bytes.len() { j + 1 } else { j };
+            out.push((line_start, next));
+        }
+        i = if j < bytes.len() { j + 1 } else { j };
+    }
+    out
+}
+
+fn split_frontmatter(src: &str) -> Option<(&str, &str)> {
+    // Find every `^---\s*$` line. Three cases:
+    //   - 2+ markers: frontmatter = between marker[0].end and marker[1].start,
+    //     body = after marker[1].end
+    //   - 1 marker only and it's at the very top: frontmatter = after marker,
+    //     body = empty (rare)
+    //   - 1 marker not at top: frontmatter = between marker.end and next `# `
+    //     heading; treats the prose preceding it as an instructional preamble
+    //   - 0 markers: if first non-empty line looks YAML, treat whole thing
+    //     as frontmatter up to first `\n# ` heading; else give up
+    let markers = find_marker_lines(src);
+    if markers.len() >= 2 {
+        let (_, fm_start) = markers[0];
+        let (fm_end, body_start) = markers[1];
+        return Some((&src[fm_start..fm_end], &src[body_start..]));
+    }
+    if markers.len() == 1 {
+        let (line_start, fm_start) = markers[0];
+        if src[..line_start].trim().is_empty() {
+            // Marker at top, no closing. Take everything after.
+            let after = &src[fm_start..];
+            let body_start = after.find("\n# ").unwrap_or(after.len());
+            return Some((&after[..body_start], &after[body_start..]));
+        }
+        // Marker after some prose. Frontmatter is the YAML after it.
+        let after = &src[fm_start..];
+        let body_start = after.find("\n# ").unwrap_or(after.len());
+        return Some((&after[..body_start], &after[body_start..]));
+    }
+    // No markers at all. Try markerless-YAML fallback.
+    let trimmed = src.trim_start();
+    let first_line = trimmed.lines().next().unwrap_or("");
+    let looks_like_yaml = first_line.contains(':')
+        && !first_line.starts_with('#')
+        && !first_line.starts_with('<');
+    if !looks_like_yaml {
+        return None;
+    }
+    let body_start = trimmed.find("\n# ").unwrap_or(trimmed.len());
+    Some((&trimmed[..body_start], &trimmed[body_start..]))
+}
+
+fn split_frontmatter_legacy(src: &str) -> Option<(&str, &str)> {
+    // Kept for reference; not used.
+    let trimmed = src.trim_start();
+    let stripped = trimmed.strip_prefix("---\n")?;
     let idx = stripped.find("\n---")?;
     let fm = &stripped[..idx];
     let after = &stripped[idx + 4..];

@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>和の佇まい — 静寂のランディング</title>
+<style>
+  :root {
+    --colors-primary-50: #eef3f8;
+    --colors-primary-100: #d0dfec;
+    --colors-primary-200: #a8c4dc;
+    --colors-primary-300: #7aa5c8;
+    --colors-primary-400: #568db5;
+    --colors-primary-500: #3d7196;
+    --colors-primary-600: #315c7c;
+    --colors-primary-700: #274963;
+    --colors-primary-800: #1b3549;
+    --colors-primary-900: #112435;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-50: #f8f8f6;
+    --colors-neutral-100: #ededea;
+    --colors-neutral-200: #d6d6d0;
+    --colors-neutral-300: #b0afa7;
+    --colors-neutral-400: #8a8980;
+    --colors-neutral-500: #6b6a62;
+    --colors-neutral-600: #52514b;
+    --colors-neutral-700: #3c3b37;
+    --colors-neutral-800: #2a2a27;
+    --colors-neutral-900: #1a1a18;
+    --colors-neutral-1000: #000000;
+    --colors-background-primary: #ffffff;
+    --colors-text-primary: #1a1a18;
+    --colors-text-muted: #6b6a62;
+    --typography-display-family: 'Shippori Mincho', 'Noto Serif JP', 'Hiragino Mincho ProN', serif;
+    --typography-body-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-24: 96px;
+    --spacing-32: 128px;
+    --rounded-sm: 2px;
+    --rounded-md: 4px;
+    --rounded-lg: 8px;
+  }
+
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+  }
+
+  body {
+    font-family: var(--typography-body-family);
+    font-weight: 400;
+    line-height: 1.85;
+    color: var(--colors-text-primary);
+    background-color: var(--colors-background-primary);
+    transition: background-color 0.4s ease, color 0.4s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ── Variant Switcher ── */
+  .switcher {
+    position: fixed;
+    top: var(--spacing-4);
+    right: var(--spacing-4);
+    z-index: 1000;
+    display: flex;
+    gap: var(--spacing-1);
+    background: var(--colors-neutral-0);
+    border: 1px solid var(--colors-neutral-200);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .switcher button {
+    font-family: var(--typography-body-family);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    padding: var(--spacing-1) var(--spacing-3);
+    border: none;
+    border-radius: var(--rounded-md);
+    background: transparent;
+    color: var(--colors-text-muted);
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .switcher button:hover {
+    background: var(--colors-primary-50);
+    color: var(--colors-primary-700);
+  }
+  .switcher button.active {
+    background: var(--colors-primary-500);
+    color: var(--colors-neutral-0);
+  }
+
+  /* ── Light variant (default) ── */
+  body[data-variant="light"],
+  body:not([data-variant]),
+  body[data-variant=""] {
+    --colors-background-primary: #ffffff;
+    --colors-text-primary: #1a1a18;
+    --colors-text-muted: #6b6a62;
+    --section-alt-bg: #f8f8f6;
+    --rule-color: var(--colors-primary-200);
+    --card-bg: var(--colors-neutral-0);
+    --card-border: var(--colors-neutral-200);
+    --card-shadow: 0 2px 8px rgba(17,36,53,0.06);
+    --card-shadow-hover: 0 4px 16px rgba(17,36,53,0.10);
+  }
+
+  /* ── Dark variant ── */
+  body[data-variant="dark"] {
+    --colors-background-primary: #0e1218;
+    --colors-text-primary: #f0efe8;
+    --colors-text-muted: #8a8980;
+    --section-alt-bg: #141922;
+    --rule-color: var(--colors-primary-700);
+    --card-bg: #1a2030;
+    --card-border: #2a3345;
+    --card-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    --card-shadow-hover: 0 4px 16px rgba(0,0,0,0.45);
+  }
+  body[data-variant="dark"] .switcher {
+    background: #1a2030;
+    border-color: #2a3345;
+  }
+  body[data-variant="dark"] .switcher button {
+    color: #8a8980;
+  }
+  body[data-variant="dark"] .switcher button.active {
+    background: var(--colors-primary-500);
+    color: #f0efe8;
+  }
+
+  /* ── Brand A (Sumi) ── */
+  body[data-variant="brand-a"] {
+    --colors-background-primary: #f5f2eb;
+    --colors-text-primary: #2a2520;
+    --colors-text-muted: #7a7570;
+    --section-alt-bg: #ede9e0;
+    --rule-color: #c0b8a8;
+    --card-bg: #faf8f4;
+    --card-border: #d8d2c6;
+    --card-shadow: 0 2px 8px rgba(42,37,32,0.08);
+    --card-shadow-hover: 0 4px 16px rgba(42,37,32,0.14);
+  }
+
+  /* ── Brand B (Moonlit) ── */
+  body[data-variant="brand-b"] {
+    --colors-background-primary: #f0f2f5;
+    --colors-text-primary: #1c1f26;
+    --colors-text-muted: #6b7080;
+    --section-alt-bg: #e4e8ee;
+    --rule-color: #b0b8c8;
+    --card-bg: #f6f8fa;
+    --card-border: #c8ced8;
+    --card-shadow: 0 2px 8px rgba(28,31,38,0.06);
+    --card-shadow-hover: 0 4px 16px rgba(28,31,38,0.10);
+  }
+
+  /* ── Utility ── */
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-6);
+  }
+  .container--wide {
+    max-width: 1080px;
+  }
+
+  .section-rule {
+    display: block;
+    width: 80px;
+    height: 1px;
+    background: var(--rule-color);
+    margin: 0 auto;
+    border: none;
+  }
+
+  /* ── Navigation ── */
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: var(--spacing-4) var(--spacing-6);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--colors-background-primary);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s ease, background-color 0.4s ease;
+  }
+  .nav.scrolled {
+    border-bottom-color: var(--card-border);
+  }
+  .nav__logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    text-decoration: none;
+    color: var(--colors-text-primary);
+  }
+  .nav__logo-mark {
+    width: 28px;
+    height: 28px;
+  }
+  .nav__logo-text {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.02em;
+  }
+  .nav__links {
+    display: flex;
+    gap: var(--spacing-8);
+    list-style: none;
+  }
+  .nav__links a {
+    font-family: var(--typography-body-family);
+    font-size: 13px;
+    color: var(--colors-text-muted);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: color 0.25s;
+  }
+  .nav__links a:hover {
+    color: var(--colors-primary-500);
+  }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--spacing-32) var(--spacing-6);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero__bg-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 480px;
+    height: 480px;
+    border-radius: 50%;
+    border: 1px solid var(--rule-color);
+    opacity: 0.25;
+    pointer-events: none;
+  }
+  .hero__bg-circle--inner {
+    width: 320px;
+    height: 320px;
+    opacity: 0.15;
+  }
+  .hero__content {
+    position: relative;
+    z-index: 1;
+  }
+  .hero__eyebrow {
+    font-family: var(--typography-body-family);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--colors-primary-500);
+    margin-bottom: var(--spacing-8);
+  }
+  .hero__headline {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: clamp(40px, 7vw, 72px);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-8);
+  }
+  .hero__lede {
+    font-family: var(--typography-body-family);
+    font-size: 16px;
+    line-height: 1.85;
+    color: var(--colors-text-muted);
+    max-width: 480px;
+    margin: 0 auto var(--spacing-12);
+  }
+  .hero__ctas {
+    display: flex;
+    gap: var(--spacing-4);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-family: var(--typography-body-family);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    padding: var(--spacing-4) var(--spacing-8);
+    border-radius: var(--rounded-lg);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-decoration: none;
+  }
+  .btn--primary {
+    background: var(--colors-primary-500);
+    color: var(--colors-neutral-0);
+    border-color: var(--colors-primary-500);
+  }
+  .btn--primary:hover {
+    background: var(--colors-primary-600);
+    border-color: var(--colors-primary-600);
+  }
+  .btn--secondary {
+    background: transparent;
+    color: var(--colors-text-primary);
+    border-color: var(--card-border);
+  }
+  .btn--secondary:hover {
+    border-color: var(--colors-primary-400);
+    color: var(--colors-primary-600);
+  }
+
+  /* ── Decorative Wave SVG ── */
+  .wave-divider {
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+  }
+  .wave-divider svg {
+    width: 100%;
+    height: 48px;
+    display: block;
+  }
+
+  /* ── Features Section ── */
+  .features {
+    padding: var(--spacing-24) 0;
+    background: var(--section-alt-bg);
+    transition: background-color 0.4s ease;
+  }
+  .features__header {
+    text-align: center;
+    margin-bottom: var(--spacing-16);
+  }
+  .features__label {
+    font-family: var(--typography-body-family);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--colors-primary-500);
+    margin-bottom: var(--spacing-4);
+  }
+  .features__title {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 42px);
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-6);
+  }
+  .features__subtitle {
+    font-size: 15px;
+    color: var(--colors-text-muted);
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  .features__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-8);
+  }
+  @media (max-width: 768px) {
+    .features__grid {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-6);
+    }
+  }
+  .feature-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--rounded-md);
+    padding: var(--spacing-12) var(--spacing-8);
+    text-align: center;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+  }
+  .feature-card:hover {
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-2px);
+  }
+  .feature-card__icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto var(--spacing-6);
+    color: var(--colors-primary-500);
+  }
+  .feature-card__title {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--spacing-3);
+    color: var(--colors-text-primary);
+  }
+  .feature-card__desc {
+    font-size: 14px;
+    line-height: 1.85;
+    color: var(--colors-text-muted);
+  }
+
+  /* ── Philosophy Section ── */
+  .philosophy {
+    padding: var(--spacing-32) 0;
+  }
+  .philosophy__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-16);
+    align-items: center;
+  }
+  @media (max-width: 768px) {
+    .philosophy__inner {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-12);
+    }
+  }
+  .philosophy__visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .philosophy__visual svg {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+  }
+  .philosophy__text-label {
+    font-family: var(--typography-body-family);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--colors-primary-500);
+    margin-bottom: var(--spacing-4);
+  }
+  .philosophy__text-title {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: clamp(26px, 3.5vw, 38px);
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    margin-bottom: var(--spacing-6);
+    color: var(--colors-text-primary);
+  }
+  .philosophy__text-body {
+    font-size: 15px;
+    line-height: 1.85;
+    color: var(--colors-text-muted);
+    margin-bottom: var(--spacing-4);
+  }
+
+  /* ── Testimonials ── */
+  .testimonials {
+    padding: var(--spacing-24) 0;
+    background: var(--section-alt-bg);
+    transition: background-color 0.4s ease;
+  }
+  .testimonials__header {
+    text-align: center;
+    margin-bottom: var(--spacing-16);
+  }
+  .testimonials__label {
+    font-family: var(--typography-body-family);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--colors-primary-500);
+    margin-bottom: var(--spacing-4);
+  }
+  .testimonials__title {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: clamp(26px, 3.5vw, 38px);
+    letter-spacing: -0.02em;
+    color: var(--colors-text-primary);
+  }
+  .testimonials__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-8);
+  }
+  @media (max-width: 768px) {
+    .testimonials__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .testimonial-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--rounded-md);
+    padding: var(--spacing-8);
+    box-shadow: var(--card-shadow);
+    transition: box-shadow 0.3s ease;
+  }
+  .testimonial-card:hover {
+    box-shadow: var(--card-shadow-hover);
+  }
+  .testimonial-card__stars {
+    display: flex;
+    gap: 2px;
+    margin-bottom: var(--spacing-4);
+    color: var(--colors-primary-400);
+  }
+  .testimonial-card__quote {
+    font-size: 14px;
+    line-height: 1.85;
+    color: var(--colors-text-muted);
+    margin-bottom: var(--spacing-6);
+    font-style: normal;
+  }
+  .testimonial-card__author {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+  }
+  .testimonial-card__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--colors-primary-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--colors-primary-700);
+    flex-shrink: 0;
+  }
+  .testimonial-card__name {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--colors-text-primary);
+  }
+  .testimonial-card__role {
+    font-size: 12px;
+    color: var(--colors-text-muted);
+  }
+
+  /* ── CTA Band ── */
+  .cta-band {
+    padding: var(--spacing-32) 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-band__bg-ensō {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 500px;
+    pointer-events: none;
+    opacity: 0.08;
+  }
+  .cta-band__label {
+    font-family: var(--typography-body-family);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--colors-primary-500);
+    margin-bottom: var(--spacing-4);
+    position: relative;
+  }
+  .cta-band__title {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: clamp(30px, 5vw, 52px);
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin-bottom: var(--spacing-6);
+    position: relative;
+    color: var(--colors-text-primary);
+  }
+  .cta-band__desc {
+    font-size: 15px;
+    color: var(--colors-text-muted);
+    max-width: 440px;
+    margin: 0 auto var(--spacing-12);
+    position: relative;
+    line-height: 1.85;
+  }
+  .cta-band__actions {
+    position: relative;
+    display: flex;
+    gap: var(--spacing-4);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    padding: var(--spacing-16) 0;
+    border-top: 1px solid var(--card-border);
+  }
+  .footer__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-4);
+  }
+  .footer__copy {
+    font-size: 12px;
+    color: var(--colors-text-muted);
+  }
+  .footer__links {
+    display: flex;
+    gap: var(--spacing-6);
+    list-style: none;
+  }
+  .footer__links a {
+    font-size: 12px;
+    color: var(--colors-text-muted);
+    text-decoration: none;
+    transition: color 0.25s;
+  }
+  .footer__links a:hover {
+    color: var(--colors-primary-500);
+  }
+
+  /* ── Responsive nav ── */
+  @media (max-width: 640px) {
+    .nav__links {
+      display: none;
+    }
+    .hero__headline {
+      font-size: clamp(32px, 8vw, 48px);
+    }
+  }
+</style>
+
+<style data-aphrodite-variants>
+[data-variant="brand-a"] {
+  --colors-background-primary: #f5f2eb;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #ededea;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d6d6d0;
+  --colors-neutral-300: #b0afa7;
+  --colors-neutral-400: #8a8980;
+  --colors-neutral-50: #f8f8f6;
+  --colors-neutral-500: #6b6a62;
+  --colors-neutral-600: #52514b;
+  --colors-neutral-700: #3c3b37;
+  --colors-neutral-800: #2a2a27;
+  --colors-neutral-900: #1a1a18;
+  --colors-primary-100: #d0dfec;
+  --colors-primary-200: #a8c4dc;
+  --colors-primary-300: #7aa5c8;
+  --colors-primary-400: #568db5;
+  --colors-primary-50: #eef3f8;
+  --colors-primary-500: #3d7196;
+  --colors-primary-600: #315c7c;
+  --colors-primary-700: #274963;
+  --colors-primary-800: #1b3549;
+  --colors-primary-900: #112435;
+  --colors-text-primary: #2a2520;
+  --rounded-lg: 8px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  --typography-body-weight: 400;
+  --typography-display-family: 'Shippori Mincho', 'Noto Serif JP', 'Hiragino Mincho ProN', serif;
+  --typography-display-weight: 700;
+  --bg: #f5f2eb;
+  --fg: #2a2520;
+  --muted: #3d7196;
+}
+[data-variant="brand-b"] {
+  --colors-background-primary: #f0f2f5;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #ededea;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d6d6d0;
+  --colors-neutral-300: #b0afa7;
+  --colors-neutral-400: #8a8980;
+  --colors-neutral-50: #f8f8f6;
+  --colors-neutral-500: #6b6a62;
+  --colors-neutral-600: #52514b;
+  --colors-neutral-700: #3c3b37;
+  --colors-neutral-800: #2a2a27;
+  --colors-neutral-900: #1a1a18;
+  --colors-primary-100: #d0dfec;
+  --colors-primary-200: #a8c4dc;
+  --colors-primary-300: #7aa5c8;
+  --colors-primary-400: #568db5;
+  --colors-primary-50: #eef3f8;
+  --colors-primary-500: #3d7196;
+  --colors-primary-600: #315c7c;
+  --colors-primary-700: #274963;
+  --colors-primary-800: #1b3549;
+  --colors-primary-900: #112435;
+  --colors-text-primary: #1c1f26;
+  --rounded-lg: 8px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  --typography-body-weight: 400;
+  --typography-display-family: 'Shippori Mincho', 'Noto Serif JP', 'Hiragino Mincho ProN', serif;
+  --typography-display-weight: 700;
+  --bg: #f0f2f5;
+  --fg: #1c1f26;
+  --muted: #3d7196;
+}
+[data-variant="dark"] {
+  --colors-background-primary: #0e1218;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #ededea;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d6d6d0;
+  --colors-neutral-300: #b0afa7;
+  --colors-neutral-400: #8a8980;
+  --colors-neutral-50: #f8f8f6;
+  --colors-neutral-500: #6b6a62;
+  --colors-neutral-600: #52514b;
+  --colors-neutral-700: #3c3b37;
+  --colors-neutral-800: #2a2a27;
+  --colors-neutral-900: #1a1a18;
+  --colors-primary-100: #d0dfec;
+  --colors-primary-200: #a8c4dc;
+  --colors-primary-300: #7aa5c8;
+  --colors-primary-400: #568db5;
+  --colors-primary-50: #eef3f8;
+  --colors-primary-500: #3d7196;
+  --colors-primary-600: #315c7c;
+  --colors-primary-700: #274963;
+  --colors-primary-800: #1b3549;
+  --colors-primary-900: #112435;
+  --colors-text-primary: #f0efe8;
+  --rounded-lg: 8px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  --typography-body-weight: 400;
+  --typography-display-family: 'Shippori Mincho', 'Noto Serif JP', 'Hiragino Mincho ProN', serif;
+  --typography-display-weight: 700;
+  --bg: #0e1218;
+  --fg: #f0efe8;
+  --muted: #3d7196;
+}
+[data-variant="light"] {
+  --colors-background-primary: #ffffff;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #ededea;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d6d6d0;
+  --colors-neutral-300: #b0afa7;
+  --colors-neutral-400: #8a8980;
+  --colors-neutral-50: #f8f8f6;
+  --colors-neutral-500: #6b6a62;
+  --colors-neutral-600: #52514b;
+  --colors-neutral-700: #3c3b37;
+  --colors-neutral-800: #2a2a27;
+  --colors-neutral-900: #1a1a18;
+  --colors-primary-100: #d0dfec;
+  --colors-primary-200: #a8c4dc;
+  --colors-primary-300: #7aa5c8;
+  --colors-primary-400: #568db5;
+  --colors-primary-50: #eef3f8;
+  --colors-primary-500: #3d7196;
+  --colors-primary-600: #315c7c;
+  --colors-primary-700: #274963;
+  --colors-primary-800: #1b3549;
+  --colors-primary-900: #112435;
+  --colors-text-primary: #1a1a18;
+  --rounded-lg: 8px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  --typography-body-weight: 400;
+  --typography-display-family: 'Shippori Mincho', 'Noto Serif JP', 'Hiragino Mincho ProN', serif;
+  --typography-display-weight: 700;
+  --bg: #ffffff;
+  --fg: #1a1a18;
+  --muted: #3d7196;
+}
+body{background:var(--bg);color:var(--fg);}
+</style>
+</head>
+<body data-variant="light">
+
+<!-- Variant Switcher -->
+<nav class="switcher">
+  <button data-set-variant="light" class="active">Light</button>
+  <button data-set-variant="dark">Dark</button>
+  <button data-set-variant="brand-a">Sumi</button>
+  <button data-set-variant="brand-b">Moon</button>
+</nav>
+
+<!-- Navigation -->
+<nav class="nav" id="mainNav">
+  <a href="#" class="nav__logo">
+    <svg class="nav__logo-mark" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="1" y="1" width="26" height="26" rx="2" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M14 6 L14 22 M8 12 L14 6 L20 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="nav__logo-text">和の佇まい</span>
+  </a>
+  <ul class="nav__links">
+    <li><a href="#features">特徴</a></li>
+    <li><a href="#philosophy">理念</a></li>
+    <li><a href="#testimonials">声</a></li>
+    <li><a href="#contact">お問い合わせ</a></li>
+  </ul>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero__bg-circle"></div>
+  <div class="hero__bg-circle hero__bg-circle--inner"></div>
+  <div class="hero__content">
+    <p class="hero__eyebrow">静けさの中に、本来の美しさがある</p>
+    <h1 class="hero__headline">余白が語る、<br>日本のデザイン</h1>
+    <p class="hero__lede">
+      無駄を削ぎ落とし、本質だけを残す。白と藍の調和が織りなす、
+      現代の和の美学をあなたのプロジェクトに。
+    </p>
+    <div class="hero__ctas">
+      <a href="#contact" class="btn btn--primary">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        始めましょう
+      </a>
+      <a href="#features" class="btn btn--secondary">詳しく見る</a>
+    </div>
+  </div>
+</section>
+
+<!-- Wave Divider -->
+<div class="wave-divider">
+  <svg viewBox="0 0 1440 48" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 24 C240 48 480 0 720 24 C960 48 1200 0 1440 24 V48 H0 Z" fill="var(--section-alt-bg)"/>
+  </svg>
+</div>
+
+<!-- Features Section -->
+<section class="features" id="features">
+  <div class="container container--wide">
+    <div class="features__header">
+      <p class="features__label">三つの約束</p>
+      <h2 class="features__title">洗練を、すべての画面に</h2>
+      <p class="features__subtitle">
+        日本の美意識をデジタルの世界へ。細部まで磨き上げられた設計で、静かな感動を届けます。
+      </p>
+    </div>
+    <div class="features__grid">
+      <!-- Feature 1: 間 — Ma -->
+      <div class="feature-card">
+        <div class="feature-card__icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="4" width="40" height="40" rx="4" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="16" y="16" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+          </svg>
+        </div>
+        <h3 class="feature-card__title">間（ま）の設計</h3>
+        <p class="feature-card__desc">
+          余白は空白ではない。情報と情報の間に呼吸を与え、
+          視線を自然に誘導する精心のレイアウト。
+        </p>
+      </div>
+
+      <!-- Feature 2: 色 — Iro -->
+      <div class="feature-card">
+        <div class="feature-card__icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="18" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="24" cy="24" r="6" fill="currentColor" opacity="0.3"/>
+            <path d="M24 6 V42 M6 24 H42" stroke="currentColor" stroke-width="0.75" opacity="0.4"/>
+          </svg>
+        </div>
+        <h3 class="feature-card__title">藍（あい）の調和</h3>
+        <p class="feature-card__desc">
+          深く静かな藍色は、白との対比で際立ちます。
+          落ち着きと信頼感を与える独自のカラーパレット。
+        </p>
+      </div>
+
+      <!-- Feature 3: 字 — Ji -->
+      <div class="feature-card">
+        <div class="feature-card__icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 12 h32 M8 20 h24 M8 28 h32 M8 36 h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <rect x="36" y="32" width="8" height="8" rx="1" fill="currentColor" opacity="0.3"/>
+          </svg>
+        </div>
+        <h3 class="feature-card__title">明朝とゴシック</h3>
+        <p class="feature-card__desc">
+          見出しの温もりある明朝体、本文の読みやすいゴシック体。
+          二つの書体が織りなす美しいコントラスト。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Philosophy Section -->
+<section class="philosophy" id="philosophy">
+  <div class="container container--wide">
+    <div class="philosophy__inner">
+      <div class="philosophy__visual">
+        <svg viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Ensō circle -->
+          <path d="M160 40 C240 40 280 100 280 160 C280 230 230 280 160 280 C90 280 40 220 40 160 C40 100 80 40 160 40 Z"
+                stroke="var(--colors-primary-300)" stroke-width="2" fill="none" opacity="0.6"/>
+          <!-- Inner offset ring -->
+          <circle cx="160" cy="160" r="80" stroke="var(--colors-primary-200)" stroke-width="1" fill="none" opacity="0.4"/>
+          <!-- Center dot -->
+          <circle cx="160" cy="160" r="4" fill="var(--colors-primary-500)" opacity="0.8"/>
+          <!-- Subtle crosshair lines -->
+          <line x1="160" y1="60" x2="160" y2="100" stroke="var(--colors-primary-300)" stroke-width="0.75" opacity="0.3"/>
+          <line x1="160" y1="220" x2="160" y2="260" stroke="var(--colors-primary-300)" stroke-width="0.75" opacity="0.3"/>
+          <line x1="60" y1="160" x2="100" y2="160" stroke="var(--colors-primary-300)" stroke-width="0.75" opacity="0.3"/>
+          <line x1="220" y1="160" x2="260" y2="160" stroke="var(--colors-primary-300)" stroke-width="0.75" opacity="0.3"/>
+          <!-- Decorative kanji-style marks -->
+          <rect x="145" y="110" width="30" height="2" rx="1" fill="var(--colors-primary-400)" opacity="0.4"/>
+          <rect x="145" y="118" width="20" height="2" rx="1" fill="var(--colors-primary-400)" opacity="0.3"/>
+          <rect x="145" y="200" width="25" height="2" rx="1" fill="var(--colors-primary-400)" opacity="0.3"/>
+        </svg>
+      </div>
+      <div class="philosophy__text">
+        <p class="philosophy__text-label">デザイン理念</p>
+        <h2 class="philosophy__text-title">渋い——<br>静寂に宿る美</h2>
+        <p class="philosophy__text-body">
+          「渋み」とは、派手さを排除した奥深い美しさ。一見地味でありながら、
+          見るほどに味わいが増す。そんなデザインを目指しています。
+        </p>
+        <p class="philosophy__text-body">
+          線は細く、色は控えめに。しかし每一个の要素が、
+          そこにあるべき理由を持っている。削ることで伝わるものがある——
+          それが和のデザインの真髄です。
+        </p>
+        <hr class="section-rule" style="margin: var(--spacing-8) 0;">
+        <p class="philosophy__text-body" style="font-style: italic; font-size: 14px;">
+          「足るを知る者は富む」—— 老子
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials" id="testimonials">
+  <div class="container container--wide">
+    <div class="testimonials__header">
+      <p class="testimonials__label">お客様の声</p>
+      <h2 class="testimonials__title">静かな感動を、多くの方へ</h2>
+    </div>
+    <div class="testimonials__grid">
+      <!-- Testimonial 1 -->
+      <div class="testimonial-card">
+        <div class="testimonial-card__stars">
+          <svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 1l2.2 4.5 5 .7-3.6 3.5.9 5L8 12.4 3.5 14.7l.9-5L.8 6.2l5-.7L8 1z" fill="currentColor"/></svg>
+          <svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 1l2.2 4.5 5 .7-3.6 3.5.9 5L8 12.4 3.5 14.7l.9-5L.8 6.2l5-.7L8 1z" fill="currentColor"/></svg>
+          <svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 1l2.2 4.5 5 .7-3.6 3.5.9 5L8 12.4 3.5 14.7l.9-5L.8 6.2l5-.7L8 1z" fill="currentColor"/></svg>
+          <svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 1l2.2 4.5 5 .7-3.6 3.5.9 5L8 12.4 3.5 14.7l.9-5L.8 6.2l5-.7L8 1z" fill="currentColor"/></svg>
+          <svg width="16" height="16" viewBox="0 0 16 16"><path d="M8 1l2.2

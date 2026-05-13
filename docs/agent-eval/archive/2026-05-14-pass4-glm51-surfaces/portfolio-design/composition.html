@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en" data-variant="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elena Voss — Product Designer</title>
+<style>
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--typography-body-family);
+    font-weight: 400;
+    background: var(--colors-background-primary);
+    color: var(--colors-text-primary);
+    line-height: 1.6;
+    transition: background 0.4s ease, color 0.4s ease;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  ul { list-style: none; }
+
+  /* ── CSS Custom Properties ── */
+  :root {
+    --colors-primary-50: #e6e9ef;
+    --colors-primary-100: #c4cad6;
+    --colors-primary-200: #9aa3b5;
+    --colors-primary-300: #707c94;
+    --colors-primary-400: #505f7b;
+    --colors-primary-500: #354767;
+    --colors-primary-600: #2d3d59;
+    --colors-primary-700: #24324a;
+    --colors-primary-800: #1b2538;
+    --colors-primary-900: #111828;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-50: #f7f8f9;
+    --colors-neutral-100: #edf0f4;
+    --colors-neutral-200: #d8dde5;
+    --colors-neutral-300: #b4bcc9;
+    --colors-neutral-400: #8a94a6;
+    --colors-neutral-500: #6b7585;
+    --colors-neutral-600: #555d6b;
+    --colors-neutral-700: #444a55;
+    --colors-neutral-800: #2d323a;
+    --colors-neutral-900: #1a1d23;
+    --colors-neutral-1000: #000000;
+    --colors-text-primary: #1a1d23;
+    --colors-text-muted: #6b7585;
+    --colors-background-primary: #f7f8f9;
+    --typography-display-family: 'Syne', 'Inter', sans-serif;
+    --typography-body-family: 'Inter', 'Syne', sans-serif;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    --rounded-sm: 2px;
+    --rounded-md: 4px;
+    --rounded-lg: 8px;
+    --rounded-xl: 12px;
+  }
+
+  /* ── Variant overrides ── */
+  [data-variant="dark"] {
+    --colors-background-primary: #111318;
+    --colors-text-primary: #edf0f4;
+    --colors-text-muted: #8a94a6;
+  }
+  [data-variant="brand-a"] {
+    --colors-background-primary: #f2ede6;
+    --colors-text-primary: #201a10;
+    --colors-text-muted: #6b6050;
+  }
+  [data-variant="brand-b"] {
+    --colors-background-primary: #e8ecf0;
+    --colors-text-primary: #0f1520;
+    --colors-text-muted: #556070;
+  }
+
+  /* ── Switcher nav ── */
+  .switcher {
+    position: fixed;
+    top: var(--spacing-6);
+    right: var(--spacing-6);
+    display: flex;
+    gap: var(--spacing-1);
+    z-index: 100;
+    background: var(--colors-neutral-0);
+    border: 1px solid var(--colors-neutral-200);
+    border-radius: var(--rounded-lg);
+    padding: 3px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  [data-variant="dark"] .switcher {
+    background: var(--colors-neutral-800);
+    border-color: var(--colors-neutral-700);
+  }
+  [data-variant="brand-a"] .switcher {
+    background: #fff8f0;
+    border-color: #d8d0c4;
+  }
+  [data-variant="brand-b"] .switcher {
+    background: #f0f4f8;
+    border-color: #c4ccd6;
+  }
+  .switcher button {
+    font-family: var(--typography-body-family);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: 6px 14px;
+    border: none;
+    border-radius: var(--rounded-md);
+    cursor: pointer;
+    background: transparent;
+    color: var(--colors-neutral-500);
+    transition: all 0.2s ease;
+  }
+  .switcher button:hover {
+    color: var(--colors-text-primary);
+  }
+  .switcher button.active {
+    background: var(--colors-neutral-900);
+    color: var(--colors-neutral-0);
+  }
+  [data-variant="dark"] .switcher button.active {
+    background: var(--colors-neutral-50);
+    color: var(--colors-neutral-900);
+  }
+  [data-variant="brand-a"] .switcher button.active {
+    background: #201a10;
+    color: #f2ede6;
+  }
+  [data-variant="brand-b"] .switcher button.active {
+    background: #0f1520;
+    color: #e8ecf0;
+  }
+
+  /* ── Top navigation ── */
+  .topnav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-6) var(--spacing-20);
+    background: transparent;
+    transition: background 0.35s ease, backdrop-filter 0.35s ease;
+  }
+  .topnav.scrolled {
+    background: color-mix(in srgb, var(--colors-background-primary) 92%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .topnav__logo {
+    font-family: var(--typography-display-family);
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+    color: var(--colors-text-primary);
+  }
+  .topnav__links {
+    display: flex;
+    gap: var(--spacing-8);
+  }
+  .topnav__links a {
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--colors-text-muted);
+    transition: color 0.2s;
+    position: relative;
+  }
+  .topnav__links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--colors-primary-500);
+    transition: width 0.3s ease;
+  }
+  .topnav__links a:hover,
+  .topnav__links a.active {
+    color: var(--colors-text-primary);
+  }
+  .topnav__links a:hover::after,
+  .topnav__links a.active::after {
+    width: 100%;
+  }
+
+  /* ── Scroll progress bar ── */
+  .scroll-progress {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--colors-neutral-200);
+    z-index: 60;
+  }
+  .scroll-progress__fill {
+    width: 100%;
+    background: var(--colors-primary-500);
+    height: 0%;
+    transition: height 0.1s linear;
+  }
+  [data-variant="dark"] .scroll-progress {
+    background: var(--colors-neutral-800);
+  }
+  [data-variant="dark"] .scroll-progress__fill {
+    background: var(--colors-primary-400);
+  }
+
+  /* ── Hero Section ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: var(--spacing-24) var(--spacing-20);
+    position: relative;
+  }
+  .hero__eyebrow {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--colors-text-muted);
+    margin-bottom: var(--spacing-8);
+    font-weight: 500;
+  }
+  .hero__name {
+    font-family: var(--typography-display-family);
+    font-weight: 800;
+    font-size: clamp(56px, 10vw, 96px);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-6);
+  }
+  .hero__subtitle {
+    font-size: 18px;
+    color: var(--colors-text-muted);
+    max-width: 520px;
+    line-height: 1.6;
+  }
+  .hero__scroll-hint {
+    position: absolute;
+    bottom: var(--spacing-10);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-2);
+    color: var(--colors-neutral-400);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .hero__scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--colors-neutral-400), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  /* ── Section shared ── */
+  .section {
+    padding: var(--spacing-24) var(--spacing-20);
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .section__header {
+    margin-bottom: var(--spacing-16);
+  }
+  .section__label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--colors-text-muted);
+    margin-bottom: var(--spacing-3);
+    font-weight: 500;
+  }
+  .section__title {
+    font-family: var(--typography-display-family);
+    font-weight: 800;
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--colors-text-primary);
+  }
+
+  /* ── Work Grid ── */
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-6);
+  }
+  @media (max-width: 1024px) {
+    .work-grid { grid-template-columns: repeat(2, 1fr); }
+    .section, .hero { padding-left: var(--spacing-8); padding-right: var(--spacing-8); }
+    .topnav { padding-left: var(--spacing-8); padding-right: var(--spacing-8); }
+  }
+  @media (max-width: 640px) {
+    .work-grid { grid-template-columns: 1fr; }
+    .section, .hero { padding-left: var(--spacing-5); padding-right: var(--spacing-5); }
+    .topnav { padding-left: var(--spacing-5); padding-right: var(--spacing-5); }
+    .topnav__links { gap: var(--spacing-4); }
+  }
+
+  /* ── Card ── */
+  .card {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--rounded-md);
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid var(--colors-neutral-200);
+    transition: border-color 0.4s ease, opacity 0.4s ease;
+  }
+  [data-variant="dark"] .card {
+    border-color: var(--colors-neutral-700);
+    background: var(--colors-neutral-800);
+  }
+  [data-variant="brand-a"] .card {
+    border-color: #d8d0c4;
+  }
+  [data-variant="brand-b"] .card {
+    border-color: #c4ccd6;
+  }
+
+  /* Dim non-hovered siblings */
+  .work-grid:hover .card {
+    opacity: 0.55;
+  }
+  .work-grid:hover .card:hover {
+    opacity: 1;
+  }
+
+  .card:hover {
+    border-color: transparent;
+  }
+
+  .card__thumb {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .card__thumb svg {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .card:hover .card__thumb svg {
+    transform: scale(1.08);
+  }
+
+  .card__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: var(--spacing-6);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .card:hover .card__overlay {
+    opacity: 1;
+  }
+  .card__overlay-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(17,24,40,0.92) 0%, rgba(17,24,40,0.5) 50%, transparent 100%);
+    border-radius: var(--rounded-md);
+  }
+  .card__content {
+    position: relative;
+    z-index: 2;
+  }
+  .card__category {
+    display: inline-block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.1);
+    padding: 3px 10px;
+    border-radius: var(--rounded-sm);
+    margin-bottom: var(--spacing-3);
+    font-weight: 500;
+  }
+  .card__title {
+    font-family: var(--typography-display-family);
+    font-weight: 800;
+    font-size: 22px;
+    color: #fff;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: var(--spacing-2);
+  }
+  .card__desc {
+    font-size: 14px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.5;
+  }
+
+  /* At rest: show title beneath card */
+  .card__meta {
+    padding: var(--spacing-4) 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .card__meta-title {
+    font-family: var(--typography-display-family);
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    color: var(--colors-text-primary);
+  }
+  .card__meta-year {
+    font-size: 12px;
+    color: var(--colors-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── About Section ── */
+  .about {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-16);
+    align-items: center;
+    padding: var(--spacing-24) var(--spacing-20);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  @media (max-width: 768px) {
+    .about { grid-template-columns: 1fr; gap: var(--spacing-10); padding-left: var(--spacing-5); padding-right: var(--spacing-5); }
+  }
+  .about__visual {
+    aspect-ratio: 3 / 4;
+    border-radius: var(--rounded-md);
+    background: var(--colors-neutral-200);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  [data-variant="dark"] .about__visual {
+    background: var(--colors-neutral-800);
+  }
+  .about__text {
+    max-width: 480px;
+  }
+  .about__text .section__label {
+    margin-bottom: var(--spacing-4);
+  }
+  .about__heading {
+    font-family: var(--typography-display-family);
+    font-weight: 800;
+    font-size: clamp(36px, 4vw, 52px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-6);
+  }
+  .about__bio {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--colors-text-muted);
+    margin-bottom: var(--spacing-8);
+  }
+  .about__details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+  .about__detail {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    font-size: 14px;
+    color: var(--colors-text-muted);
+  }
+  .about__detail svg {
+    flex-shrink: 0;
+    color: var(--colors-primary-400);
+  }
+  .about__detail strong {
+    color: var(--colors-text-primary);
+    font-weight: 600;
+  }
+
+  /* ── Contact Footer ── */
+  .contact {
+    border-top: 1px solid var(--colors-neutral-200);
+    padding: var(--spacing-16) var(--spacing-20);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  [data-variant="dark"] .contact {
+    border-color: var(--colors-neutral-700);
+  }
+  [data-variant="brand-a"] .contact {
+    border-color: #d8d0c4;
+  }
+  [data-variant="brand-b"] .contact {
+    border-color: #c4ccd6;
+  }
+  @media (max-width: 640px) {
+    .contact {
+      flex-direction: column;
+      gap: var(--spacing-6);
+      align-items: flex-start;
+      padding-left: var(--spacing-5);
+      padding-right: var(--spacing-5);
+    }
+  }
+  .contact__left {
+    font-size: 14px;
+    color: var(--colors-text-muted);
+  }
+  .contact__left a {
+    color: var(--colors-text-primary);
+    font-weight: 600;
+    border-bottom: 1px solid var(--colors-neutral-300);
+    transition: border-color 0.2s;
+  }
+  .contact__left a:hover {
+    border-color: var(--colors-text-primary);
+  }
+  .contact__socials {
+    display: flex;
+    gap: var(--spacing-4);
+  }
+  .contact__socials a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--rounded-md);
+    border: 1px solid var(--colors-neutral-200);
+    color: var(--colors-text-muted);
+    transition: all 0.2s ease;
+  }
+  [data-variant="dark"] .contact__socials a {
+    border-color: var(--colors-neutral-700);
+  }
+  .contact__socials a:hover {
+    background: var(--colors-text-primary);
+    color: var(--colors-background-primary);
+    border-color: transparent;
+  }
+
+  /* ── Decorative elements ── */
+  .divider {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-20);
+  }
+  .divider__line {
+    height: 1px;
+    background: var(--colors-neutral-200);
+  }
+  [data-variant="dark"] .divider__line {
+    background: var(--colors-neutral-700);
+  }
+  [data-variant="brand-a"] .divider__line {
+    background: #d8d0c4;
+  }
+  [data-variant="brand-b"] .divider__line {
+    background: #c4ccd6;
+  }
+</style>
+
+<style data-aphrodite-variants>
+[data-variant="brand-a"] {
+  --colors-background-primary: #f2ede6;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #edf0f4;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d8dde5;
+  --colors-neutral-300: #b4bcc9;
+  --colors-neutral-400: #8a94a6;
+  --colors-neutral-50: #f7f8f9;
+  --colors-neutral-500: #6b7585;
+  --colors-neutral-600: #555d6b;
+  --colors-neutral-700: #444a55;
+  --colors-neutral-800: #2d323a;
+  --colors-neutral-900: #1a1d23;
+  --colors-primary-100: #c4cad6;
+  --colors-primary-200: #9aa3b5;
+  --colors-primary-300: #707c94;
+  --colors-primary-400: #505f7b;
+  --colors-primary-50: #e6e9ef;
+  --colors-primary-500: #354767;
+  --colors-primary-600: #2d3d59;
+  --colors-primary-700: #24324a;
+  --colors-primary-800: #1b2538;
+  --colors-primary-900: #111828;
+  --colors-text-primary: #201a10;
+  --rounded-lg: 8px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --rounded-xl: 12px;
+  --spacing-1: 4px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: 'Inter', 'Syne', sans-serif;
+  --typography-body-weight: 400;
+  --typography-display-family: 'Syne', 'Inter', sans-serif;
+  --typography-display-weight: 800;
+  --bg: #f2ede6;
+  --fg: #201a10;
+  --muted: #354767;
+}
+[data-variant="brand-b"] {
+  --colors-background-primary: #e8ecf0;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #edf0f4;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d8dde5;
+  --colors-neutral-300: #b4bcc9;
+  --colors-neutral-400: #8a94a6;
+  --colors-neutral-50: #f7f8f9;
+  --colors-neutral-500: #6b7585;
+  --colors-neutral-600: #555d6b;
+  --colors-neutral-700: #444a55;
+  --colors-neutral-800: #2d323a;
+  --colors-neutral-900: #1a1d23;
+  --colors-primary-100: #c4cad6;
+  --colors-primary-200: #9aa3b5;
+  --colors-primary-300: #707c94;
+  --colors-primary-400: #505f7b;
+  --colors-primary-50: #e6e9ef;
+  --colors-primary-500: #354767;
+  --colors-primary-600: #2d3d59;
+  --colors-primary-700: #24324a;
+  --colors-primary-800: #1b2538;
+  --colors-primary-900: #111828;
+  --colors-text-primary: #0f1520;
+  --rounded-lg: 8px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --rounded-xl: 12px;
+  --spacing-1: 4px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: 'Inter', 'Syne', sans-serif;
+  --typography-body-weight: 400;
+  --typography-display-family: 'Syne', 'Inter', sans-serif;
+  --typography-display-weight: 800;
+  --bg: #e8ecf0;
+  --fg: #0f1520;
+  --muted: #354767;
+}
+[data-variant="dark"] {
+  --colors-background-primary: #111318;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #edf0f4;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d8dde5;
+  --colors-neutral-300: #b4bcc9;
+  --colors-neutral-400: #8a94a6;
+  --colors-neutral-50: #f7f8f9;
+  --colors-neutral-500: #6b7585;
+  --colors-neutral-600: #555d6b;
+  --colors-neutral-700: #444a55;
+  --colors-neutral-800: #2d323a;
+  --colors-neutral-900: #1a1d23;
+  --colors-primary-100: #c4cad6;
+  --colors-primary-200: #9aa3b5;
+  --colors-primary-300: #707c94;
+  --colors-primary-400: #505f7b;
+  --colors-primary-50: #e6e9ef;
+  --colors-primary-500: #354767;
+  --colors-primary-600: #2d3d59;
+  --colors-primary-700: #24324a;
+  --colors-primary-800: #1b2538;
+  --colors-primary-900: #111828;
+  --colors-text-primary: #edf0f4;
+  --rounded-lg: 8px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --rounded-xl: 12px;
+  --spacing-1: 4px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: 'Inter', 'Syne', sans-serif;
+  --typography-body-weight: 400;
+  --typography-display-family: 'Syne', 'Inter', sans-serif;
+  --typography-display-weight: 800;
+  --bg: #111318;
+  --fg: #edf0f4;
+  --muted: #354767;
+}
+[data-variant="light"] {
+  --colors-background-primary: #f7f8f9;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #edf0f4;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d8dde5;
+  --colors-neutral-300: #b4bcc9;
+  --colors-neutral-400: #8a94a6;
+  --colors-neutral-50: #f7f8f9;
+  --colors-neutral-500: #6b7585;
+  --colors-neutral-600: #555d6b;
+  --colors-neutral-700: #444a55;
+  --colors-neutral-800: #2d323a;
+  --colors-neutral-900: #1a1d23;
+  --colors-primary-100: #c4cad6;
+  --colors-primary-200: #9aa3b5;
+  --colors-primary-300: #707c94;
+  --colors-primary-400: #505f7b;
+  --colors-primary-50: #e6e9ef;
+  --colors-primary-500: #354767;
+  --colors-primary-600: #2d3d59;
+  --colors-primary-700: #24324a;
+  --colors-primary-800: #1b2538;
+  --colors-primary-900: #111828;
+  --colors-text-primary: #1a1d23;
+  --rounded-lg: 8px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --rounded-xl: 12px;
+  --spacing-1: 4px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: 'Inter', 'Syne', sans-serif;
+  --typography-body-weight: 400;
+  --typography-display-family: 'Syne', 'Inter', sans-serif;
+  --typography-display-weight: 800;
+  --bg: #f7f8f9;
+  --fg: #1a1d23;
+  --muted: #354767;
+}
+body{background:var(--bg);color:var(--fg);}
+</style>
+</head>
+<body>
+
+<!-- Variant Switcher -->
+<nav class="switcher">
+  <button data-v="light" class="active">Light</button>
+  <button data-v="dark">Dark</button>
+  <button data-v="brand-a">Paper</button>
+  <button data-v="brand-b">Steel</button>
+</nav>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress">
+  <div class="scroll-progress__fill" id="scrollFill"></div>
+</div>
+
+<!-- Top Navigation -->
+<header class="topnav" id="topnav">
+  <div class="topnav__logo">EV.</div>
+  <nav class="topnav__links">
+    <a href="#work" class="active">Work</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <p class="hero__eyebrow">Senior Product Designer</p>
+  <h1 class="hero__name">Elena Voss</h1>
+  <p class="hero__subtitle">Designing systems, products, and experiences at the intersection of strategy and craft. Currently shaping tools for creative teams.</p>
+  <div class="hero__scroll-hint">
+    <span>Scroll</span>
+    <div class="hero__scroll-line"></div>
+  </div>
+</section>
+
+<!-- Work Grid -->
+<section class="section" id="work">
+  <div class="section__header">
+    <p class="section__label">Selected Work</p>
+    <h2 class="section__title">Case Studies</h2>
+  </div>
+
+  <div class="work-grid">
+
+    <!-- Card 1: Apex Design System -->
+    <a href="#" class="card">
+      <div class="card__thumb">
+        <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="500" fill="#e8ecf2"/>
+          <rect x="40" y="40" width="320" height="200" rx="8" fill="#c8d0dc"/>
+          <circle cx="100" cy="120" r="40" fill="#a0acc0"/>
+          <rect x="160" y="80" width="160" height="12" rx="3" fill="#a0acc0"/>
+          <rect x="160" y="104" width="120" height="10" rx="3" fill="#b8c2d2"/>
+          <rect x="160" y="128" width="140" height="10" rx="3" fill="#b8c2d2"/>
+          <rect x="40" y="280" width="150" height="180" rx="6" fill="#c8d0dc"/>
+          <rect x="210" y="280" width="150" height="85" rx="6" fill="#c8d0dc"/>
+          <rect x="210" y="380" width="150" height="80" rx="6" fill="#c8d0dc"/>
+          <rect x="60" y="300" width="110" height="8" rx="2" fill="#a0acc0"/>
+          <rect x="60" y="320" width="80" height="6" rx="2" fill="#b8c2d2"/>
+          <circle cx="80" cy="370" r="20" fill="#a0acc0"/>
+          <rect x="110" y="362" width="60" height="6" rx="2" fill="#b8c2d2"/>
+          <rect x="110" y="376" width="40" height="5" rx="2" fill="#c8d0dc"/>
+        </svg>
+      </div>
+      <div class="card__overlay">
+        <div class="card__overlay-bg"></div>
+        <div class="card__content">
+          <span class="card__category">Design System</span>
+          <h3 class="card__title">Apex Design System</h3>
+          <p class="card__desc">Unified component library and token architecture for a 200-person product org</p>
+        </div>
+      </div>
+    </a>
+    <div class="card__meta">
+      <span class="card__meta-title">Apex Design System</span>
+      <span class="card__meta-year">2024</span>
+    </div>
+
+    <!-- Card 2: Meridian Health -->
+    <a href="#" class="card">
+      <div class="card__thumb">
+        <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="500" fill="#e2e8e4"/>
+          <rect x="30" y="30" width="340" height="60" rx="8" fill="#c0ccc4"/>
+          <circle cx="70" cy="60" r="16" fill="#8aa890"/>
+          <rect x="100" y="52" width="100" height="10" rx="3" fill="#8aa890"/>
+          <rect x="280" y="50" width="60" height="16" rx="4" fill="#8aa890"/>
+          <rect x="30" y="120" width="200" height="180" rx="8" fill="#c0ccc4"/>
+          <polyline points="50,260 90,200 130,240 170,160 210,220" fill="none" stroke="#8aa890" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="250" y="120" width="120" height="80" rx="8" fill="#c0ccc4"/>
+          <text x="270" y="155" font-size="28" font-weight="700" fill="#8aa890">98%</text>
+          <text x="270" y="175" font-size="10" fill="#8aa890">Satisfaction</text>
+          <rect x="250" y="220" width="120" height="80" rx="8" fill="#c0ccc4"/>
+          <rect x="30" y="320" width="340" height="150" rx="8" fill="#c0ccc4"/>
+          <rect x="50" y="340" width="300" height="14" rx="3" fill="#8aa890" opacity="0.5"/>
+          <rect x="50" y="366" width="260" height="10" rx="3" fill="#a0b8a8" opacity="0.4"/>
+          <rect x="50" y="386" width="280" height="10" rx="3" fill="#a0b8a8" opacity="0.4"/>
+          <rect x="50" y="406" width="200" height="10" rx="3" fill="#a0b8a8" opacity="0.4"/>
+          <rect x="50" y="436" width="80" height="18" rx="4" fill="#8aa890"/>
+        </svg>
+      </div>
+      <div class="card__overlay">
+        <div class="card__overlay-bg"></div>
+        <div class="card__content">
+          <span class="card__category">Healthcare</span>
+          <h3 class="card__title">Meridian Health</h3>
+          <p class="card__desc">Patient portal redesign reducing support calls by 42%</p>
+        </div>
+      </div>
+    </a>
+    <div class="card__meta">
+      <span class="card__meta-title">Meridian Health</span>
+      <span class="card__meta-year">2024</span>
+    </div>
+
+    <!-- Card 3: Calm Finance -->
+    <a href="#" class="card">
+      <div class="card__thumb">
+        <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="500" fill="#e6e4ec"/>
+          <rect x="30" y="30" width="340" height="440" rx="10" fill="#ccc8d8"/>
+          <rect x="50" y="60" width="140" height="14" rx="3" fill="#9890a8"/>
+          <rect x="50" y="90" width="300" height="100" rx="8" fill="#b8b2c4"/>
+          <rect x="70" y="110" width="60" height="50" rx="4" fill="#9890a8"/>
+          <rect x="150" y="115" width="80" height="8" rx="2" fill="#9890a8"/>
+          <rect x="150" y="133" width="60" height="6" rx="2" fill="#a8a2b4"/>
+          <rect x="150" y="148" width="50" height="14" rx="3" fill="#9890a8"/>
+          <rect x="280" y="110" width="50" height="50" rx="4" fill="#a8a2b4"/>
+          <rect x="50" y="220" width="300" height="16" rx="3" fill="#9890a8"/>
+          <rect x="50" y="260" width="145" height="90" rx="8" fill="#b8b2c4"/>
+          <rect x="205" y="260" width="145" height="90" rx="8" fill="#b8b2c4"/>
+          <text x="70" y="300" font-size="24" font-weight="700" fill="#9890a8">$2.4M</text>
+          <text x="70" y="320" font-size="10" fill="#a8a2b4">Revenue tracked</text>
+          <rect x="50" y="380" width="300" height="70" rx="8" fill="#b8b2c4"/>
+          <rect x="70" y="400" width="100" height="8" rx="2" fill="#9890a8"/>
+          <rect x="70" y="418" width="70" height="6" rx="2" fill="#a8a2b4"/>
+          <rect x="280" y="400" width="50" height="30" rx="4" fill="#9890a8"/>
+        </svg>
+      </div>
+      <div class="card__overlay">
+        <div class="card__overlay-bg"></div>
+        <div class="card__content">
+          <span class="card__category">Fintech</span>
+          <h3 class="card__title">Calm Finance</h3>
+          <p class="card__desc">Money management app helping 500K+ users track spending without anxiety</p>
+        </div>
+      </div>
+    </a>
+    <div class="card__meta">
+      <span class="card__meta-title">Calm Finance</span>
+      <span class="card__meta-year">2023</span>
+    </div>
+
+    <!-- Card 4: Orbit SaaS -->
+    <a href="#" class="card">
+      <div class="card__thumb">
+        <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+          <rect width="400" height="500" fill="#e0e4ec"/>
+          <rect x="20" y="20" width="360" height="460" rx="8" fill="#bcc4d4"/>
+          <rect x="20" y="20" width="80" height="460" rx="8" fill="#a0acc0"/>
+          <rect x="30" y="50" width="60" height="12" rx="3" fill="#8090a8"/>
+          <rect x="30" y="90" width="60" height="6" rx="2" fill="#8090a8" opacity="0.5"/>
+          <rect x="30" y="110" width="60" height="6" rx="2" fill="#8090a8" opacity="0.5"/>
+          <rect x="30" y="130" width="60" height="6" rx="2" fill="#8090a8" opacity="0.5"/>
+          <rect x="30" y="150" width="60" height="6" rx="2" fill="#8090a8" opacity="0.5"/>
+          <rect x="120" y="40" width="240" height="50" rx="6" fill="#a0acc0"/>
+          <rect x="140" y="56" width="80" height="14" rx="3" fill="#8090a8"/>
+          <rect x="300" y="56" width="40" height="14" rx="3" fill="#8090a8"/>
+          <rect x="120" y="110" width="115" height="120" rx="6" fill="#a0acc0"/>
+          <rect x="245" y="110" width="115" height="120" rx="6" fill="#a0acc0"/>
+          <rect x="120" y="250" width="240" height="100" rx="6" fill="#a0acc0"/>
+          <rect x="140" y="270" width="100" height="8" rx="2" fill="#8090a8"/>
+          <rect x="140" y="290" width="200" height="6" rx="2" fill="#90a0b4"/>
+          <rect x="140" y="306" width="180" height="6" rx="2" fill="#90a0b4"/>
+          <rect x="140" y="322" width="160" height="6" rx="2" fill="#90a0b4"/>
+          <rect x="120" y="370" width="240" height="90" rx="6" fill="#a0acc0"/>
+          <rect x="140" y="390" width="60" height="40" rx="4" fill="#8090a8"/>
+          <rect x="220" y="395" width="80" height="8" rx="2" fill="#8090a8"/>
+          <rect x="220" y="413" width="60" height="6" rx="2" fill="#90a0b4"/>
+        </svg>
+      </div>
+      <div class="card__overlay">
+        <div class="card__overlay-bg"></div>
+        <div class="card__content">
+          <span class="card__category">SaaS Platform</span>
+          <h3 class="card__title">Orbit</h3>
+          <p class="card__desc">End-to-end dashboard redesign improving task completion by 67%</p>
+        </div>

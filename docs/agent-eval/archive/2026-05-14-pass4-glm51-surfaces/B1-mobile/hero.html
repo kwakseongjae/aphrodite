@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>fitflow-hero — Aphrodite</title>
+<style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant="brand-a"] {
+    --colors-background-primary: #fef7ed;
+    --colors-error-500: #c4362b;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f2f0ec;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #e4e1da;
+    --colors-neutral-300: #c9c3b8;
+    --colors-neutral-400: #a69d8e;
+    --colors-neutral-50: #faf9f7;
+    --colors-neutral-500: #8a8070;
+    --colors-neutral-600: #6e6558;
+    --colors-neutral-700: #534c42;
+    --colors-neutral-800: #3a352e;
+    --colors-neutral-900: #1e1b17;
+    --colors-primary-100: #fde9c6;
+    --colors-primary-200: #f9cf84;
+    --colors-primary-300: #f5b04a;
+    --colors-primary-400: #f09324;
+    --colors-primary-50: #fef7ed;
+    --colors-primary-500: #e2780e;
+    --colors-primary-600: #b8570b;
+    --colors-primary-700: #8b3e0d;
+    --colors-primary-800: #6b3112;
+    --colors-primary-900: #4a2210;
+    --colors-secondary-50: #f0fdf6;
+    --colors-secondary-500: #34d37a;
+    --colors-secondary-900: #0a3d1e;
+    --colors-success-500: #2d9e5a;
+    --colors-text-primary: #3a2210;
+    --colors-warning-500: #d4850a;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-pill: 9999px;
+    --rounded-sm: 4px;
+    --rounded-xl: 24px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: DM Sans;
+    --typography-body-weight: 400;
+    --typography-display-family: Space Grotesk;
+    --typography-display-weight: 700;
+    --bg: #fef7ed;
+    --fg: #3a2210;
+    --accent: #e2780e;
+    --muted: #f5b04a;
+  }
+  
+  [data-variant="brand-b"] {
+    --colors-background-primary: #f2f4ee;
+    --colors-error-500: #c4362b;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f2f0ec;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #e4e1da;
+    --colors-neutral-300: #c9c3b8;
+    --colors-neutral-400: #a69d8e;
+    --colors-neutral-50: #faf9f7;
+    --colors-neutral-500: #8a8070;
+    --colors-neutral-600: #6e6558;
+    --colors-neutral-700: #534c42;
+    --colors-neutral-800: #3a352e;
+    --colors-neutral-900: #1e1b17;
+    --colors-primary-100: #fde9c6;
+    --colors-primary-200: #f9cf84;
+    --colors-primary-300: #f5b04a;
+    --colors-primary-400: #f09324;
+    --colors-primary-50: #fef7ed;
+    --colors-primary-500: #e2780e;
+    --colors-primary-600: #b8570b;
+    --colors-primary-700: #8b3e0d;
+    --colors-primary-800: #6b3112;
+    --colors-primary-900: #4a2210;
+    --colors-secondary-50: #f0fdf6;
+    --colors-secondary-500: #34d37a;
+    --colors-secondary-900: #0a3d1e;
+    --colors-success-500: #2d9e5a;
+    --colors-text-primary: #1a2316;
+    --colors-warning-500: #d4850a;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-pill: 9999px;
+    --rounded-sm: 4px;
+    --rounded-xl: 24px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: DM Sans;
+    --typography-body-weight: 400;
+    --typography-display-family: Space Grotesk;
+    --typography-display-weight: 700;
+    --bg: #f2f4ee;
+    --fg: #1a2316;
+    --accent: #e2780e;
+    --muted: #f5b04a;
+  }
+  
+  [data-variant="dark"] {
+    --colors-background-primary: #1e1b17;
+    --colors-error-500: #c4362b;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f2f0ec;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #e4e1da;
+    --colors-neutral-300: #c9c3b8;
+    --colors-neutral-400: #a69d8e;
+    --colors-neutral-50: #faf9f7;
+    --colors-neutral-500: #8a8070;
+    --colors-neutral-600: #6e6558;
+    --colors-neutral-700: #534c42;
+    --colors-neutral-800: #3a352e;
+    --colors-neutral-900: #1e1b17;
+    --colors-primary-100: #fde9c6;
+    --colors-primary-200: #f9cf84;
+    --colors-primary-300: #f5b04a;
+    --colors-primary-400: #f09324;
+    --colors-primary-50: #fef7ed;
+    --colors-primary-500: #e2780e;
+    --colors-primary-600: #b8570b;
+    --colors-primary-700: #8b3e0d;
+    --colors-primary-800: #6b3112;
+    --colors-primary-900: #4a2210;
+    --colors-secondary-50: #f0fdf6;
+    --colors-secondary-500: #34d37a;
+    --colors-secondary-900: #0a3d1e;
+    --colors-success-500: #2d9e5a;
+    --colors-text-primary: #f2f0ec;
+    --colors-warning-500: #d4850a;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-pill: 9999px;
+    --rounded-sm: 4px;
+    --rounded-xl: 24px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: DM Sans;
+    --typography-body-weight: 400;
+    --typography-display-family: Space Grotesk;
+    --typography-display-weight: 700;
+    --bg: #1e1b17;
+    --fg: #f2f0ec;
+    --accent: #e2780e;
+    --muted: #f5b04a;
+  }
+  
+  [data-variant="light"] {
+    --colors-background-primary: #faf9f7;
+    --colors-error-500: #c4362b;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f2f0ec;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #e4e1da;
+    --colors-neutral-300: #c9c3b8;
+    --colors-neutral-400: #a69d8e;
+    --colors-neutral-50: #faf9f7;
+    --colors-neutral-500: #8a8070;
+    --colors-neutral-600: #6e6558;
+    --colors-neutral-700: #534c42;
+    --colors-neutral-800: #3a352e;
+    --colors-neutral-900: #1e1b17;
+    --colors-primary-100: #fde9c6;
+    --colors-primary-200: #f9cf84;
+    --colors-primary-300: #f5b04a;
+    --colors-primary-400: #f09324;
+    --colors-primary-50: #fef7ed;
+    --colors-primary-500: #e2780e;
+    --colors-primary-600: #b8570b;
+    --colors-primary-700: #8b3e0d;
+    --colors-primary-800: #6b3112;
+    --colors-primary-900: #4a2210;
+    --colors-secondary-50: #f0fdf6;
+    --colors-secondary-500: #34d37a;
+    --colors-secondary-900: #0a3d1e;
+    --colors-success-500: #2d9e5a;
+    --colors-text-primary: #1e1b17;
+    --colors-warning-500: #d4850a;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-pill: 9999px;
+    --rounded-sm: 4px;
+    --rounded-xl: 24px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: DM Sans;
+    --typography-body-weight: 400;
+    --typography-display-family: Space Grotesk;
+    --typography-display-weight: 700;
+    --bg: #faf9f7;
+    --fg: #1e1b17;
+    --accent: #e2780e;
+    --muted: #f5b04a;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style>
+</head>
+<body data-variant="light">
+  <nav class="switcher" aria-label="Variant switcher">
+    <button data-set="brand-a" aria-pressed="false">brand-a</button>
+    <button data-set="brand-b" aria-pressed="false">brand-b</button>
+    <button data-set="dark" aria-pressed="false">dark</button>
+    <button data-set="light" aria-pressed="true">light</button>
+    </nav>
+  <main class="wrap">
+    <p class="eyebrow">fitflow-hero</p>
+    <h1>Meet fitflow-hero.</h1>
+    <p class="lede">Thumb-zone mobile fitness hero with warm saffron palette and oversized touch targets Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class="cta" href="#" aria-label="Primary call to action">Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

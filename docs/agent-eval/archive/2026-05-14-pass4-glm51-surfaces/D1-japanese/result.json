@@ -1,0 +1,30 @@
+{
+  "invocation_id": "7d485b1a-63d8-4f02-bb34-d154e953dc4d",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "composition_path": "/private/tmp/pass4-D1-japanese/composition.html",
+    "design_path": "/private/tmp/pass4-D1-japanese/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass4-D1-japanese/DESIGN.md",
+      "/private/tmp/pass4-D1-japanese/hero.html",
+      "/private/tmp/pass4-D1-japanese/composition.html"
+    ],
+    "hero_path": "/private/tmp/pass4-D1-japanese/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "surface_type": "landing",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "invocation_id": "a5cbd435-36c4-4034-9025-917204f75298",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "composition_path": "/private/tmp/pass4-A1-editorial/composition.html",
+    "design_path": "/private/tmp/pass4-A1-editorial/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass4-A1-editorial/DESIGN.md",
+      "/private/tmp/pass4-A1-editorial/hero.html",
+      "/private/tmp/pass4-A1-editorial/composition.html"
+    ],
+    "hero_path": "/private/tmp/pass4-A1-editorial/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "surface_type": "editorial",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>synth-ledger — Aphrodite</title>
+<style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant="brand-a"] {
+    --colors-accent-100: #ffd6f0;
+    --colors-accent-200: #ffadd6;
+    --colors-accent-300: #ff85bf;
+    --colors-accent-400: #ff5ca7;
+    --colors-accent-50: #fff0fb;
+    --colors-accent-500: #ff3390;
+    --colors-accent-600: #e6005c;
+    --colors-accent-700: #b30047;
+    --colors-accent-800: #800033;
+    --colors-accent-900: #4d001f;
+    --colors-background-primary: #0a100c;
+    --colors-background-secondary: #121a14;
+    --colors-border-default: #1e2e22;
+    --colors-neon-cyan-200: #80ffee;
+    --colors-neon-cyan-400: #00ffd5;
+    --colors-neon-cyan-50: #e6ffff;
+    --colors-neon-cyan-500: #00e6bf;
+    --colors-neon-cyan-700: #00997d;
+    --colors-neon-magenta-200: #ff80e8;
+    --colors-neon-magenta-400: #ff00c8;
+    --colors-neon-magenta-50: #ffe6ff;
+    --colors-neon-magenta-500: #e600b4;
+    --colors-neon-magenta-700: #99007a;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #c4c4cc;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #9d9daa;
+    --colors-neutral-300: #767688;
+    --colors-neutral-400: #56566a;
+    --colors-neutral-50: #e8e8ec;
+    --colors-neutral-500: #38384a;
+    --colors-neutral-600: #2a2a3a;
+    --colors-neutral-700: #1e1e2c;
+    --colors-neutral-800: #141422;
+    --colors-neutral-900: #0c0c16;
+    --colors-primary-100: #b3ffe3;
+    --colors-primary-200: #66ffc9;
+    --colors-primary-300: #1affb0;
+    --colors-primary-400: #00e696;
+    --colors-primary-50: #e6fff6;
+    --colors-primary-500: #00d4aa;
+    --colors-primary-600: #00b08c;
+    --colors-primary-700: #008d6f;
+    --colors-primary-800: #006a52;
+    --colors-primary-900: #004736;
+    --colors-surface-glass: #ffffff0a;
+    --colors-surface-overlay: #12122088;
+    --colors-surface-raised: #1a1a2e;
+    --colors-text-primary: #d4ffe3;
+    --colors-text-secondary: #7aaa8c;
+    --rounded-lg: 8px;
+    --rounded-md: 6px;
+    --rounded-none: 0px;
+    --rounded-sm: 4px;
+    --rounded-xs: 2px;
+    --spacing-0: 0px;
+    --spacing-1: 4px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: IBM Plex Mono;
+    --typography-body-weight: 400;
+    --typography-data-family: JetBrains Mono;
+    --typography-data-weight: 400;
+    --typography-display-family: IBM Plex Mono;
+    --typography-display-weight: 600;
+    --typography-mono-family: JetBrains Mono;
+    --typography-mono-weight: 500;
+    --bg: #0a100c;
+    --fg: #d4ffe3;
+    --accent: #00d4aa;
+    --muted: #1affb0;
+  }
+  
+  [data-variant="brand-b"] {
+    --colors-accent-100: #ffd6f0;
+    --colors-accent-200: #ffadd6;
+    --colors-accent-300: #ff85bf;
+    --colors-accent-400: #ff5ca7;
+    --colors-accent-50: #fff0fb;
+    --colors-accent-500: #ff3390;
+    --colors-accent-600: #e6005c;
+    --colors-accent-700: #b30047;
+    --colors-accent-800: #800033;
+    --colors-accent-900: #4d001f;
+    --colors-background-primary: #100a0e;
+    --colors-background-secondary: #1a1218;
+    --colors-border-default: #2e1e28;
+    --colors-neon-cyan-200: #80ffee;
+    --colors-neon-cyan-400: #00ffd5;
+    --colors-neon-cyan-50: #e6ffff;
+    --colors-neon-cyan-500: #00e6bf;
+    --colors-neon-cyan-700: #00997d;
+    --colors-neon-magenta-200: #ff80e8;
+    --colors-neon-magenta-400: #ff00c8;
+    --colors-neon-magenta-50: #ffe6ff;
+    --colors-neon-magenta-500: #e600b4;
+    --colors-neon-magenta-700: #99007a;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #c4c4cc;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #9d9daa;
+    --colors-neutral-300: #767688;
+    --colors-neutral-400: #56566a;
+    --colors-neutral-50: #e8e8ec;
+    --colors-neutral-500: #38384a;
+    --colors-neutral-600: #2a2a3a;
+    --colors-neutral-700: #1e1e2c;
+    --colors-neutral-800: #141422;
+    --colors-neutral-900: #0c0c16;
+    --colors-primary-100: #b3ffe3;
+    --colors-primary-200: #66ffc9;
+    --colors-primary-300: #1affb0;
+    --colors-primary-400: #00e696;
+    --colors-primary-50: #e6fff6;
+    --colors-primary-500: #00d4aa;
+    --colors-primary-600: #00b08c;
+    --colors-primary-700: #008d6f;
+    --colors-primary-800: #006a52;
+    --colors-primary-900: #004736;
+    --colors-surface-glass: #ffffff0a;
+    --colors-surface-overlay: #12122088;
+    --colors-surface-raised: #1a1a2e;
+    --colors-text-primary: #ffd6f0;
+    --colors-text-secondary: #aa7a99;
+    --rounded-lg: 8px;
+    --rounded-md: 6px;
+    --rounded-none: 0px;
+    --rounded-sm: 4px;
+    --rounded-xs: 2px;
+    --spacing-0: 0px;
+    --spacing-1: 4px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: IBM Plex Mono;
+    --typography-body-weight: 400;
+    --typography-data-family: JetBrains Mono;
+    --typography-data-weight: 400;
+    --typography-display-family: IBM Plex Mono;
+    --typography-display-weight: 600;
+    --typography-mono-family: JetBrains Mono;
+    --typography-mono-weight: 500;
+    --bg: #100a0e;
+    --fg: #ffd6f0;
+    --accent: #00d4aa;
+    --muted: #1affb0;
+  }
+  
+  [data-variant="dark"] {
+    --colors-accent-100: #ffd6f0;
+    --colors-accent-200: #ffadd6;
+    --colors-accent-300: #ff85bf;
+    --colors-accent-400: #ff5ca7;
+    --colors-accent-50: #fff0fb;
+    --colors-accent-500: #ff3390;
+    --colors-accent-600: #e6005c;
+    --colors-accent-700: #b30047;
+    --colors-accent-800: #800033;
+    --colors-accent-900: #4d001f;
+    --colors-background-primary: #0c0c16;
+    --colors-background-secondary: #141422;
+    --colors-border-default: #2a2a3a;
+    --colors-neon-cyan-200: #80ffee;
+    --colors-neon-cyan-400: #00ffd5;
+    --colors-neon-cyan-50: #e6ffff;
+    --colors-neon-cyan-500: #00e6bf;
+    --colors-neon-cyan-700: #00997d;
+    --colors-neon-magenta-200: #ff80e8;
+    --colors-neon-magenta-400: #ff00c8;
+    --colors-neon-magenta-50: #ffe6ff;
+    --colors-neon-magenta-500: #e600b4;
+    --colors-neon-magenta-700: #99007a;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #c4c4cc;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #9d9daa;
+    --colors-neutral-300: #767688;
+    --colors-neutral-400: #56566a;
+    --colors-neutral-50: #e8e8ec;
+    --colors-neutral-500: #38384a;
+    --colors-neutral-600: #2a2a3a;
+    --colors-neutral-700: #1e1e2c;
+    --colors-neutral-800: #141422;
+    --colors-neutral-900: #0c0c16;
+    --colors-primary-100: #b3ffe3;
+    --colors-primary-200: #66ffc9;
+    --colors-primary-300: #1affb0;
+    --colors-primary-400: #00e696;
+    --colors-primary-50: #e6fff6;
+    --colors-primary-500: #00d4aa;
+    --colors-primary-600: #00b08c;
+    --colors-primary-700: #008d6f;
+    --colors-primary-800: #006a52;
+    --colors-primary-900: #004736;
+    --colors-surface-glass: #ffffff0a;
+    --colors-surface-overlay: #12122088;
+    --colors-surface-raised: #1a1a2e;
+    --colors-text-primary: #e8e8ec;
+    --colors-text-secondary: #9d9daa;
+    --rounded-lg: 8px;
+    --rounded-md: 6px;
+    --rounded-none: 0px;
+    --rounded-sm: 4px;
+    --rounded-xs: 2px;
+    --spacing-0: 0px;
+    --spacing-1: 4px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: IBM Plex Mono;
+    --typography-body-weight: 400;
+    --typography-data-family: JetBrains Mono;
+    --typography-data-weight: 400;
+    --typography-display-family: IBM Plex Mono;
+    --typography-display-weight: 600;
+    --typography-mono-family: JetBrains Mono;
+    --typography-mono-weight: 500;
+    --bg: #0c0c16;
+    --fg: #e8e8ec;
+    --accent: #00d4aa;
+    --muted: #1affb0;
+  }
+  
+  [data-variant="light"] {
+    --colors-accent-100: #ffd6f0;
+    --colors-accent-200: #ffadd6;
+    --colors-accent-300: #ff85bf;
+    --colors-accent-400: #ff5ca7;
+    --colors-accent-50: #fff0fb;
+    --colors-accent-500: #ff3390;
+    --colors-accent-600: #e6005c;
+    --colors-accent-700: #b30047;
+    --colors-accent-800: #800033;
+    --colors-accent-900: #4d001f;
+    --colors-background-primary: #f2f2f5;
+    --colors-background-secondary: #ffffff;
+    --colors-border-default: #c4c4cc;
+    --colors-neon-cyan-200: #80ffee;
+    --colors-neon-cyan-400: #00ffd5;
+    --colors-neon-cyan-50: #e6ffff;
+    --colors-neon-cyan-500: #00e6bf;
+    --colors-neon-cyan-700: #00997d;
+    --colors-neon-magenta-200: #ff80e8;
+    --colors-neon-magenta-400: #ff00c8;
+    --colors-neon-magenta-50: #ffe6ff;
+    --colors-neon-magenta-500: #e600b4;
+    --colors-neon-magenta-700: #99007a;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #c4c4cc;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #9d9daa;
+    --colors-neutral-300: #767688;
+    --colors-neutral-400: #56566a;
+    --colors-neutral-50: #e8e8ec;
+    --colors-neutral-500: #38384a;
+    --colors-neutral-600: #2a2a3a;
+    --colors-neutral-700: #1e1e2c;
+    --colors-neutral-800: #141422;
+    --colors-neutral-900: #0c0c16;
+    --colors-primary-100: #b3ffe3;
+    --colors-primary-200: #66ffc9;
+    --colors-primary-300: #1affb0;
+    --colors-primary-400: #00e696;
+    --colors-primary-50: #e6fff6;
+    --colors-primary-500: #00d4aa;
+    --colors-primary-600: #00b08c;
+    --colors-primary-700: #008d6f;
+    --colors-primary-800: #006a52;
+    --colors-primary-900: #004736;
+    --colors-surface-glass: #ffffff0a;
+    --colors-surface-overlay: #12122088;
+    --colors-surface-raised: #1a1a2e;
+    --colors-text-primary: #1a1a2e;
+    --colors-text-secondary: #56566a;
+    --rounded-lg: 8px;
+    --rounded-md: 6px;
+    --rounded-none: 0px;
+    --rounded-sm: 4px;
+    --rounded-xs: 2px;
+    --spacing-0: 0px;
+    --spacing-1: 4px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: IBM Plex Mono;
+    --typography-body-weight: 400;
+    --typography-data-family: JetBrains Mono;
+    --typography-data-weight: 400;
+    --typography-display-family: IBM Plex Mono;
+    --typography-display-weight: 600;
+    --typography-mono-family: JetBrains Mono;
+    --typography-mono-weight: 500;
+    --bg: #f2f2f5;
+    --fg: #1a1a2e;
+    --accent: #00d4aa;
+    --muted: #1affb0;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style>
+</head>
+<body data-variant="light">
+  <nav class="switcher" aria-label="Variant switcher">
+    <button data-set="brand-a" aria-pressed="false">brand-a</button>
+    <button data-set="brand-b" aria-pressed="false">brand-b</button>
+    <button data-set="dark" aria-pressed="false">dark</button>
+    <button data-set="light" aria-pressed="true">light</button>
+    </nav>
+  <main class="wrap">
+    <p class="eyebrow">synth-ledger</p>
+    <h1>High-density cyberpunk trading dashboard with neon accents on deep dark surfaces.</h1>
+    <p class="lede">High-density cyberpunk trading dashboard with neon accents on deep dark surfaces Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class="cta" href="#" aria-label="Primary call to action">Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

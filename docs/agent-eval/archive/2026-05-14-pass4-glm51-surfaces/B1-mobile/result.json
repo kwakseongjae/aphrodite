@@ -1,0 +1,30 @@
+{
+  "invocation_id": "70b565b6-5398-40b6-aa71-4c1a66654c4c",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "composition_path": "/private/tmp/pass4-retry-B1-mobile/composition.html",
+    "design_path": "/private/tmp/pass4-retry-B1-mobile/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass4-retry-B1-mobile/DESIGN.md",
+      "/private/tmp/pass4-retry-B1-mobile/hero.html",
+      "/private/tmp/pass4-retry-B1-mobile/composition.html"
+    ],
+    "hero_path": "/private/tmp/pass4-retry-B1-mobile/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "surface_type": "mobile_app",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}

@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en" data-variant="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitFlow — Fitness Tracker</title>
+<style>
+  :root {
+    --colors-primary-50: #fef7ed;
+    --colors-primary-100: #fde9c6;
+    --colors-primary-200: #f9cf84;
+    --colors-primary-300: #f5b04a;
+    --colors-primary-400: #f09324;
+    --colors-primary-500: #e2780e;
+    --colors-primary-600: #b8570b;
+    --colors-primary-700: #8b3e0d;
+    --colors-primary-800: #6b3112;
+    --colors-primary-900: #4a2210;
+    --colors-secondary-50: #f0fdf6;
+    --colors-secondary-500: #34d37a;
+    --colors-secondary-900: #0a3d1e;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-50: #faf9f7;
+    --colors-neutral-100: #f2f0ec;
+    --colors-neutral-200: #e4e1da;
+    --colors-neutral-300: #c9c3b8;
+    --colors-neutral-400: #a69d8e;
+    --colors-neutral-500: #8a8070;
+    --colors-neutral-600: #6e6558;
+    --colors-neutral-700: #534c42;
+    --colors-neutral-800: #3a352e;
+    --colors-neutral-900: #1e1b17;
+    --colors-neutral-1000: #000000;
+    --colors-success-500: #2d9e5a;
+    --colors-warning-500: #d4850a;
+    --colors-error-500: #c4362b;
+    --colors-background-primary: #faf9f7;
+    --colors-text-primary: #1e1b17;
+    --colors-text-muted: #8a8070;
+    --typography-display-family: 'Space Grotesk', sans-serif;
+    --typography-body-family: 'DM Sans', sans-serif;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --rounded-sm: 4px;
+    --rounded-md: 8px;
+    --rounded-lg: 16px;
+    --rounded-xl: 24px;
+    --rounded-pill: 9999px;
+  }
+
+  [data-variant="dark"] {
+    --colors-background-primary: #1e1b17;
+    --colors-text-primary: #f2f0ec;
+    --colors-text-muted: #a69d8e;
+  }
+  [data-variant="brand-a"] {
+    --colors-background-primary: #fef7ed;
+    --colors-text-primary: #3a2210;
+    --colors-text-muted: #8a8070;
+  }
+  [data-variant="brand-b"] {
+    --colors-background-primary: #f2f4ee;
+    --colors-text-primary: #1a2316;
+    --colors-text-muted: #6e6558;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--typography-body-family);
+    background: var(--colors-neutral-200);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: var(--spacing-6);
+    color: var(--colors-text-primary);
+  }
+
+  /* Variant switcher */
+  .switcher {
+    position: fixed;
+    top: var(--spacing-4);
+    right: var(--spacing-4);
+    display: flex;
+    gap: var(--spacing-1);
+    z-index: 1000;
+    background: var(--colors-neutral-900);
+    border-radius: var(--rounded-pill);
+    padding: 3px;
+  }
+  .switcher button {
+    font-family: var(--typography-body-family);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border: none;
+    border-radius: var(--rounded-pill);
+    background: transparent;
+    color: var(--colors-neutral-400);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .switcher button.active,
+  .switcher button:hover {
+    background: var(--colors-primary-500);
+    color: var(--colors-neutral-0);
+  }
+
+  /* Phone frame */
+  .phone-frame {
+    width: 390px;
+    height: 844px;
+    background: var(--colors-background-primary);
+    border-radius: 44px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 2px var(--colors-neutral-300),
+      0 25px 80px rgba(30, 27, 23, 0.25),
+      0 8px 32px rgba(30, 27, 23, 0.15);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status bar */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px var(--spacing-6) 8px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+  }
+  .status-bar .time {
+    font-family: var(--typography-display-family);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--colors-text-primary);
+  }
+  .status-bar .icons {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .notch {
+    width: 120px;
+    height: 28px;
+    background: var(--colors-neutral-900);
+    border-radius: 0 0 18px 18px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Screen content */
+  .screen-content {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0 var(--spacing-6);
+    scrollbar-width: none;
+  }
+  .screen-content::-webkit-scrollbar { display: none; }
+
+  /* ---- TOP ZONE: read-only ---- */
+  .hero-top {
+    padding-top: var(--spacing-4);
+    padding-bottom: var(--spacing-8);
+  }
+  .hero-greeting {
+    font-size: 14px;
+    color: var(--colors-text-muted);
+    font-weight: 400;
+    margin-bottom: var(--spacing-2);
+  }
+  .hero-headline {
+    font-family: var(--typography-display-family);
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-2);
+  }
+  .hero-headline span {
+    color: var(--colors-primary-500);
+  }
+  .hero-subtitle {
+    font-size: 15px;
+    color: var(--colors-text-muted);
+    line-height: 1.5;
+  }
+
+  /* ---- MIDDLE ZONE: stats ---- */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-3);
+    margin-bottom: var(--spacing-6);
+  }
+  .stat-card {
+    background: var(--colors-neutral-100);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-4);
+    min-height: 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid var(--colors-primary-200);
+    transition: transform 0.15s;
+  }
+  .stat-card:active {
+    transform: scale(0.97);
+  }
+  .stat-card .stat-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--rounded-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-2);
+  }
+  .stat-card .stat-value {
+    font-family: var(--typography-display-family);
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--colors-text-primary);
+  }
+  .stat-card .stat-label {
+    font-size: 12px;
+    color: var(--colors-text-muted);
+    margin-top: var(--spacing-1);
+  }
+  .stat-card .stat-unit {
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  .stat-card.wide {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-4);
+  }
+  .stat-card.wide .stat-left {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Progress ring */
+  .progress-ring-container {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+  }
+  .progress-ring-container .ring-value {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--typography-display-family);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--colors-text-primary);
+  }
+
+  /* Activity list */
+  .activity-section {
+    margin-bottom: var(--spacing-6);
+  }
+  .section-title {
+    font-family: var(--typography-display-family);
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: var(--spacing-3);
+    color: var(--colors-text-primary);
+  }
+  .activity-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3);
+    border-radius: var(--rounded-lg);
+    background: var(--colors-neutral-100);
+    margin-bottom: var(--spacing-2);
+    min-height: 56px;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+  }
+  .activity-item:active {
+    transform: scale(0.98);
+    border-color: var(--colors-primary-200);
+  }
+  .activity-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--rounded-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .activity-info {
+    flex: 1;
+  }
+  .activity-name {
+    font-family: var(--typography-display-family);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--colors-text-primary);
+  }
+  .activity-meta {
+    font-size: 12px;
+    color: var(--colors-text-muted);
+    margin-top: 2px;
+  }
+  .activity-stat {
+    text-align: right;
+  }
+  .activity-stat-value {
+    font-family: var(--typography-display-family);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--colors-primary-500);
+  }
+  .activity-stat-label {
+    font-size: 11px;
+    color: var(--colors-text-muted);
+  }
+
+  /* Weekly chart card */
+  .chart-card {
+    background: var(--colors-neutral-100);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-4);
+    margin-bottom: var(--spacing-6);
+    border: 1px solid var(--colors-primary-200);
+  }
+  .chart-card .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-3);
+  }
+  .chart-card .chart-title {
+    font-family: var(--typography-display-family);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--colors-text-primary);
+  }
+  .chart-card .chart-badge {
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--colors-secondary-500);
+    color: var(--colors-neutral-0);
+    padding: 3px 10px;
+    border-radius: var(--rounded-pill);
+  }
+
+  /* Bottom action zone */
+  .bottom-action-zone {
+    flex-shrink: 0;
+    padding: var(--spacing-4) var(--spacing-6) var(--spacing-3);
+    background: linear-gradient(to top, var(--colors-background-primary) 70%, transparent);
+  }
+  .cta-primary {
+    width: 100%;
+    height: 56px;
+    border: none;
+    border-radius: var(--rounded-pill);
+    background: var(--colors-primary-500);
+    color: var(--colors-neutral-0);
+    font-family: var(--typography-display-family);
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    box-shadow: 0 4px 20px rgba(226, 120, 14, 0.35);
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-primary:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 12px rgba(226, 120, 14, 0.25);
+  }
+  .cta-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--rounded-pill);
+    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.15);
+    pointer-events: none;
+  }
+  .cta-secondary {
+    width: 100%;
+    height: 48px;
+    border: 2px solid var(--colors-primary-200);
+    border-radius: var(--rounded-pill);
+    background: transparent;
+    color: var(--colors-primary-600);
+    font-family: var(--typography-display-family);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: var(--spacing-2);
+    transition: all 0.15s;
+  }
+  .cta-secondary:active {
+    background: var(--colors-primary-50);
+    transform: scale(0.97);
+  }
+
+  /* Tab bar */
+  .tab-bar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: var(--spacing-2) var(--spacing-4) var(--spacing-8);
+    background: var(--colors-background-primary);
+    flex-shrink: 0;
+    border-top: 1px solid var(--colors-neutral-200);
+  }
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 48px;
+    min-height: 48px;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    background: none;
+    transition: all 0.15s;
+    border-radius: var(--rounded-lg);
+  }
+  .tab-item:active {
+    background: var(--colors-primary-50);
+  }
+  .tab-item .tab-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--colors-neutral-400);
+    transition: color 0.15s;
+  }
+  .tab-item.active .tab-icon {
+    color: var(--colors-primary-500);
+  }
+  .tab-item .tab-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--colors-neutral-400);
+    transition: color 0.15s;
+  }
+  .tab-item.active .tab-label {
+    color: var(--colors-primary-500);
+  }
+  .tab-item .tab-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--colors-primary-500);
+    margin-top: 1px;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .tab-item.active .tab-dot {
+    opacity: 1;
+  }
+
+  /* Motivational banner */
+  .motivation-banner {
+    background: linear-gradient(135deg, var(--colors-primary-50), var(--colors-primary-100));
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-4);
+    margin-bottom: var(--spacing-6);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    border: 1px solid var(--colors-primary-200);
+  }
+  .motivation-banner .banner-emoji {
+    width: 44px;
+    height: 44px;
+    background: var(--colors-primary-200);
+    border-radius: var(--rounded-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .motivation-banner .banner-text {
+    flex: 1;
+  }
+  .motivation-banner .banner-title {
+    font-family: var(--typography-display-family);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--colors-primary-800);
+  }
+  .motivation-banner .banner-desc {
+    font-size: 12px;
+    color: var(--colors-primary-700);
+    margin-top: 2px;
+  }
+
+  /* Dark mode adjustments */
+  [data-variant="dark"] .stat-card {
+    background: var(--colors-neutral-800);
+    border-color: var(--colors-neutral-700);
+  }
+  [data-variant="dark"] .activity-item {
+    background: var(--colors-neutral-800);
+  }
+  [data-variant="dark"] .chart-card {
+    background: var(--colors-neutral-800);
+    border-color: var(--colors-neutral-700);
+  }
+  [data-variant="dark"] .motivation-banner {
+    background: linear-gradient(135deg, var(--colors-neutral-800), var(--colors-primary-900));
+    border-color: var(--colors-neutral-700);
+  }
+  [data-variant="dark"] .tab-bar {
+    border-top-color: var(--colors-neutral-800);
+  }
+  [data-variant="dark"] .cta-secondary {
+    border-color: var(--colors-primary-700);
+    color: var(--colors-primary-300);
+  }
+  [data-variant="dark"] .cta-secondary:active {
+    background: var(--colors-neutral-800);
+  }
+  [data-variant="dark"] .tab-item:active {
+    background: var(--colors-neutral-800);
+  }
+  [data-variant="dark"] .notch {
+    background: var(--colors-neutral-1000);
+  }
+  [data-variant="dark"] .phone-frame {
+    box-shadow:
+      0 0 0 2px var(--colors-neutral-700),
+      0 25px 80px rgba(0, 0, 0, 0.5),
+      0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+  body[data-variant="dark"] {
+    background: #111;
+  }
+  body[data-variant="brand-a"] {
+    background: var(--colors-primary-50);
+  }
+  body[data-variant="brand-b"] {
+    background: #e8ebe3;
+  }
+</style>
+
+<style data-aphrodite-variants>
+[data-variant="brand-a"] {
+  --colors-background-primary: #fef7ed;
+  --colors-error-500: #c4362b;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f2f0ec;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #e4e1da;
+  --colors-neutral-300: #c9c3b8;
+  --colors-neutral-400: #a69d8e;
+  --colors-neutral-50: #faf9f7;
+  --colors-neutral-500: #8a8070;
+  --colors-neutral-600: #6e6558;
+  --colors-neutral-700: #534c42;
+  --colors-neutral-800: #3a352e;
+  --colors-neutral-900: #1e1b17;
+  --colors-primary-100: #fde9c6;
+  --colors-primary-200: #f9cf84;
+  --colors-primary-300: #f5b04a;
+  --colors-primary-400: #f09324;
+  --colors-primary-50: #fef7ed;
+  --colors-primary-500: #e2780e;
+  --colors-primary-600: #b8570b;
+  --colors-primary-700: #8b3e0d;
+  --colors-primary-800: #6b3112;
+  --colors-primary-900: #4a2210;
+  --colors-secondary-50: #f0fdf6;
+  --colors-secondary-500: #34d37a;
+  --colors-secondary-900: #0a3d1e;
+  --colors-success-500: #2d9e5a;
+  --colors-text-primary: #3a2210;
+  --colors-warning-500: #d4850a;
+  --rounded-lg: 16px;
+  --rounded-md: 8px;
+  --rounded-pill: 9999px;
+  --rounded-sm: 4px;
+  --rounded-xl: 24px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: DM Sans;
+  --typography-body-weight: 400;
+  --typography-display-family: Space Grotesk;
+  --typography-display-weight: 700;
+  --bg: #fef7ed;
+  --fg: #3a2210;
+  --muted: #e2780e;
+}
+[data-variant="brand-b"] {
+  --colors-background-primary: #f2f4ee;
+  --colors-error-500: #c4362b;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f2f0ec;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #e4e1da;
+  --colors-neutral-300: #c9c3b8;
+  --colors-neutral-400: #a69d8e;
+  --colors-neutral-50: #faf9f7;
+  --colors-neutral-500: #8a8070;
+  --colors-neutral-600: #6e6558;
+  --colors-neutral-700: #534c42;
+  --colors-neutral-800: #3a352e;
+  --colors-neutral-900: #1e1b17;
+  --colors-primary-100: #fde9c6;
+  --colors-primary-200: #f9cf84;
+  --colors-primary-300: #f5b04a;
+  --colors-primary-400: #f09324;
+  --colors-primary-50: #fef7ed;
+  --colors-primary-500: #e2780e;
+  --colors-primary-600: #b8570b;
+  --colors-primary-700: #8b3e0d;
+  --colors-primary-800: #6b3112;
+  --colors-primary-900: #4a2210;
+  --colors-secondary-50: #f0fdf6;
+  --colors-secondary-500: #34d37a;
+  --colors-secondary-900: #0a3d1e;
+  --colors-success-500: #2d9e5a;
+  --colors-text-primary: #1a2316;
+  --colors-warning-500: #d4850a;
+  --rounded-lg: 16px;
+  --rounded-md: 8px;
+  --rounded-pill: 9999px;
+  --rounded-sm: 4px;
+  --rounded-xl: 24px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: DM Sans;
+  --typography-body-weight: 400;
+  --typography-display-family: Space Grotesk;
+  --typography-display-weight: 700;
+  --bg: #f2f4ee;
+  --fg: #1a2316;
+  --muted: #e2780e;
+}
+[data-variant="dark"] {
+  --colors-background-primary: #1e1b17;
+  --colors-error-500: #c4362b;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f2f0ec;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #e4e1da;
+  --colors-neutral-300: #c9c3b8;
+  --colors-neutral-400: #a69d8e;
+  --colors-neutral-50: #faf9f7;
+  --colors-neutral-500: #8a8070;
+  --colors-neutral-600: #6e6558;
+  --colors-neutral-700: #534c42;
+  --colors-neutral-800: #3a352e;
+  --colors-neutral-900: #1e1b17;
+  --colors-primary-100: #fde9c6;
+  --colors-primary-200: #f9cf84;
+  --colors-primary-300: #f5b04a;
+  --colors-primary-400: #f09324;
+  --colors-primary-50: #fef7ed;
+  --colors-primary-500: #e2780e;
+  --colors-primary-600: #b8570b;
+  --colors-primary-700: #8b3e0d;
+  --colors-primary-800: #6b3112;
+  --colors-primary-900: #4a2210;
+  --colors-secondary-50: #f0fdf6;
+  --colors-secondary-500: #34d37a;
+  --colors-secondary-900: #0a3d1e;
+  --colors-success-500: #2d9e5a;
+  --colors-text-primary: #f2f0ec;
+  --colors-warning-500: #d4850a;
+  --rounded-lg: 16px;
+  --rounded-md: 8px;
+  --rounded-pill: 9999px;
+  --rounded-sm: 4px;
+  --rounded-xl: 24px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: DM Sans;
+  --typography-body-weight: 400;
+  --typography-display-family: Space Grotesk;
+  --typography-display-weight: 700;
+  --bg: #1e1b17;
+  --fg: #f2f0ec;
+  --muted: #e2780e;
+}
+[data-variant="light"] {
+  --colors-background-primary: #faf9f7;
+  --colors-error-500: #c4362b;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f2f0ec;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #e4e1da;
+  --colors-neutral-300: #c9c3b8;
+  --colors-neutral-400: #a69d8e;
+  --colors-neutral-50: #faf9f7;
+  --colors-neutral-500: #8a8070;
+  --colors-neutral-600: #6e6558;
+  --colors-neutral-700: #534c42;
+  --colors-neutral-800: #3a352e;
+  --colors-neutral-900: #1e1b17;
+  --colors-primary-100: #fde9c6;
+  --colors-primary-200: #f9cf84;
+  --colors-primary-300: #f5b04a;
+  --colors-primary-400: #f09324;
+  --colors-primary-50: #fef7ed;
+  --colors-primary-500: #e2780e;
+  --colors-primary-600: #b8570b;
+  --colors-primary-700: #8b3e0d;
+  --colors-primary-800: #6b3112;
+  --colors-primary-900: #4a2210;
+  --colors-secondary-50: #f0fdf6;
+  --colors-secondary-500: #34d37a;
+  --colors-secondary-900: #0a3d1e;
+  --colors-success-500: #2d9e5a;
+  --colors-text-primary: #1e1b17;
+  --colors-warning-500: #d4850a;
+  --rounded-lg: 16px;
+  --rounded-md: 8px;
+  --rounded-pill: 9999px;
+  --rounded-sm: 4px;
+  --rounded-xl: 24px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: DM Sans;
+  --typography-body-weight: 400;
+  --typography-display-family: Space Grotesk;
+  --typography-display-weight: 700;
+  --bg: #faf9f7;
+  --fg: #1e1b17;
+  --muted: #e2780e;
+}
+body{background:var(--bg);color:var(--fg);}
+</style>
+</head>
+<body data-variant="light">
+
+<nav class="switcher">
+  <button class="active" data-v="light">light</button>
+  <button data-v="dark">dark</button>
+  <button data-v="brand-a">warm</button>
+  <button data-v="brand-b">sage</button>
+</nav>
+
+<div class="phone-frame">
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="notch"></div>
+    <div class="icons">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+        <rect x="0" y="4" width="3" height="8" rx="1" fill="currentColor" style="color:var(--colors-text-primary)"/>
+        <rect x="4.5" y="3" width="3" height="9" rx="1" fill="currentColor" style="color:var(--colors-text-primary)"/>
+        <rect x="9" y="1" width="3" height="11" rx="1" fill="currentColor" style="color:var(--colors-text-primary)"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="1" fill="currentColor" style="color:var(--colors-text-muted)" opacity="0.3"/>
+      </svg>
+      <svg width="15" height="12" viewBox="0 0 15 12" fill="none">
+        <path d="M7.5 3.6C9.3 3.6 10.9 4.3 12.1 5.4L13.5 4C11.9 2.5 9.8 1.6 7.5 1.6C5.2 1.6 3.1 2.5 1.5 4L2.9 5.4C4.1 4.3 5.7 3.6 7.5 3.6Z" fill="currentColor" style="color:var(--colors-text-primary)"/>
+        <path d="M7.5 6.8C8.6 6.8 9.6 7.2 10.4 7.9L11.8 6.5C10.6 5.4 9.1 4.8 7.5 4.8C5.9 4.8 4.4 5.4 3.2 6.5L4.6 7.9C5.4 7.2 6.4 6.8 7.5 6.8Z" fill="currentColor" style="color:var(--colors-text-primary)"/>
+        <circle cx="7.5" cy="10.5" r="1.5" fill="currentColor" style="color:var(--colors-text-primary)"/>
+      </svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+        <rect x="0.5" y="0.5" width="21" height="11" rx="2" stroke="currentColor" stroke-width="1" style="color:var(--colors-text-primary)"/>
+        <rect x="2" y="2" width="16" height="8" rx="1" fill="currentColor" style="color:var(--colors-primary-500)"/>
+        <path d="M22.5 4V8C23.3 7.7 24 6.8 24 6C24 5.2 23.3 4.3 22.5 4Z" fill="currentColor" style="color:var(--colors-text-primary)"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Scrollable Screen Content -->
+  <div class="screen-content">
+    <!-- TOP ZONE -->
+    <div class="hero-top">
+      <p class="hero-greeting">Good morning, Alex</p>
+      <h1 class="hero-headline">You're <span>on fire</span> today.</h1>
+      <p class="hero-subtitle">68% of your daily goal completed. Keep pushing — you've got this.</p>
+    </div>
+
+    <!-- Motivational Banner -->
+    <div class="motivation-banner">
+      <div class="banner-emoji">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L14.09 8.26L20.18 8.64L15.54 12.74L16.91 19.36L12 15.77L7.09 19.36L8.46 12.74L3.82 8.64L9.91 8.26L12 2Z" fill="#f09324"/>
+        </svg>
+      </div>
+      <div class="banner-text">
+        <div class="banner-title">5-day streak!</div>
+        <div class="banner-desc">One more day to unlock the Warrior badge</div>
+      </div>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M7.5 5L12.5 10L7.5 15" stroke="#8b3e0d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <!-- MIDDLE ZONE: Stat Grid -->
+    <div class="stat-grid">
+      <!-- Steps -->
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--colors-primary-100)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M9.5 3C9.5 4.38 8.38 5.5 7 5.5C5.62 5.5 4.5 4.38 4.5 3C4.5 1.62 5.62 0.5 7 0.5C8.38 0.5 9.5 1.62 9.5 3Z" fill="#e2780e"/>
+            <path d="M18.5 3C18.5 4.38 17.38 5.5 16 5.5C14.62 5.5 13.5 4.38 13.5 3C13.5 1.62 14.62 0.5 16 0.5C17.38 0.5 18.5 1.62 18.5 3Z" fill="#e2780e"/>
+            <path d="M7 7C7 7 5 12 5 15C5 18 7 19 7 19L9 23H11L9.5 18C9.5 18 12 16 12 13C12 10 10 7 7 7Z" fill="#e2780e"/>
+            <path d="M16 7C16 7 18 12 18 15C18 18 16 19 16 19L14 23H12L13.5 18C13.5 18 11 16 11 13C11 10 13 7 16 7Z" fill="#f09324"/>
+          </svg>
+        </div>
+        <div class="stat-value">7,482 <span class="stat-unit">steps</span></div>
+        <div class="stat-label">Daily goal: 10,000</div>
+      </div>
+
+      <!-- Calories -->
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--colors-primary-100)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M12 22C16.4183 22 20 18.6 20 14.2C20 9.8 16 6 12 2C8 6 4 9.8 4 14.2C4 18.6 7.5817 22 12 22Z" fill="#f09324"/>
+            <path d="M12 22C14.2091 22 16 20.2 16 17.8C16 15.4 14 13.5 12 11C10 13.5 8 15.4 8 17.8C8 20.2 9.79086 22 12 22Z" fill="#e2780e"/>
+          </svg>
+        </div>
+        <div class="stat-value">482 <span class="stat-unit">kcal</span></div>
+        <div class="stat-label">Goal: 700 kcal</div>
+      </div>
+
+      <!-- Active minutes -->
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--colors-primary-100)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="9" stroke="#e2780e" stroke-width="2"/>
+            <path d="M12 6V12L16 14" stroke="#f09324" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="stat-value">47 <span class="stat-unit">min</span></div>
+        <div class="stat-label">Active time today</div>
+      </div>
+
+      <!-- Heart Rate with progress ring -->
+      <div class="stat-card">
+        <div style="display:flex; align-items:center; gap:var(--spacing-2)">
+          <div class="stat-icon" style="background:var(--colors-primary-100)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" fill="#e2780e"/>
+            </svg>
+          </div>
+          <div>
+            <div class="stat-value">82 <span class="stat-unit">bpm</span></div>
+            <div class="stat-label">Heart rate</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weekly activity chart - wide card -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">This Week</span>
+          <span class="chart-badge">+12%</span>
+        </div>
+        <svg width="100%" height="80" viewBox="0 0 330 80" preserveAspectRatio="none">
+          <!-- Grid lines -->
+          <line x1="0" y1="20" x2="330" y2="20" stroke="var(--colors-neutral-300)" stroke-width="0.5" stroke-dasharray="4"/>
+          <line x1="0" y1="40" x2="330" y2="40" stroke="var(--colors-neutral-300)" stroke-width="0.5" stroke-dasharray="4"/>
+          <line x1="0" y1="60" x2="330" y2="60" stroke="var(--colors-neutral-300)" stroke-width="0.5" stroke-dasharray="4"/>
+          <!-- Bars -->
+          <rect x="10" y="35" width="30" height="40" rx="4" fill="var(--colors-primary-200)"/>
+          <rect x="55" y="25" width="30" height="50" rx="4" fill="var(--colors-primary-200)"/>
+          <rect x="100" y="30" width="30" height="45" rx="4" fill="var(--colors-primary-200)"/>
+          <rect x="145" y="15" width="30" height="60" rx="4" fill="var(--colors-primary-300)"/>
+          <rect x="190" y="20" width="30" height="55" rx="4" fill="var(--colors-primary-300)"/>
+          <rect x="235" y="10" width="30" height="65" rx="4" fill="var(--colors-primary-500)"/>
+          <rect x="280" y="38" width="30" height="37" rx="4" fill="var(--colors-primary-100)" stroke="var(--colors-primary-300)" stroke-width="1" stroke-dasharray="4"/>
+          <!-- Day labels -->
+          <text x="25" y="78" font-size="10" text-anchor="middle" fill="var(--colors-text-muted)" font-family="DM Sans, sans-serif">M</text>
+          <text x="70" y="78" font-size="10" text-anchor="middle" fill="var(--colors-text-muted)" font-family="DM Sans, sans-serif">T</text>
+          <text x="115" y="78" font-size="10" text-anchor="middle" fill="var(--colors-text-muted)" font-family="DM Sans, sans-serif">W</text>
+          <text x="160" y="78" font-size="10" text-anchor="middle" fill="var(--colors-text-muted)" font-family="DM Sans, sans-serif">T</text>
+          <text x="205" y="78" font-size="10" text-anchor="middle" fill="var(--colors-text-muted)" font-family="DM Sans, sans-serif">F</text>
+          <text x="250" y="78" font-size="10" text-anchor="middle" fill="var(--colors-primary-500)" font-weight="700" font-family="DM Sans, sans-serif">S</text>
+          <text x="295" y="78" font-size="10" text-anchor="middle" fill="var(--colors-text-muted)" font-family="DM Sans, sans-serif">S</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Today's Activity -->
+    <div class="activity-section">
+      <h2 class="section-title">Today's Activities</h2>
+
+      <div class="activity-item">
+        <div class="activity-icon" style="background:var(--colors-primary-100)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M13.5 5.5C14.6 5.5 15.5 4.6 15.5 3.5S14.6 1.5 13.5 1.5 11.5 2.4 11.5 3.5 12.4 5.5 13.5 5.5ZM9.8 8.9L7 23H9.1L10.9 15L13 17V23H15V15.5L12.9 13.5L13.5 10.5C14.8 12 16.8 13 19 13V11C17.1 11 15.5 10 14.7 8.6L13.7 7C13.3 6.4 12.6 6 11.9 6C11.6 6 11.4 6.1 11.1 6.1L6 8.3V13H8V9.6L9.8 8.9Z" fill="#e2780e"/>
+          </svg>
+        </div>
+        <div class="activity-info">
+          <div class="activity-name">Morning Run</div>
+          <div class="activity-meta">6:30 AM · 32 min · Outdoor</div>
+        </div>
+        <div class="activity-stat">
+          <div class="activity-stat-value">312</div>
+          <div class="activity-stat-label">kcal burned</div>
+        </div>
+      </div>
+
+      <div class="activity-item">
+        <div class="activity-icon" style="background:var(--colors-primary-100)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M20.57 14.86L22 13.

@@ -1,0 +1,71 @@
+{
+  "invocation_id": "6cb970f5-5b64-438c-97d3-66b984f29d0b",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "composition_path": "/private/tmp/pass4-A5-cyberpunk/composition.html",
+    "design_path": "/private/tmp/pass4-A5-cyberpunk/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass4-A5-cyberpunk/DESIGN.md",
+      "/private/tmp/pass4-A5-cyberpunk/hero.html",
+      "/private/tmp/pass4-A5-cyberpunk/composition.html"
+    ],
+    "hero_path": "/private/tmp/pass4-A5-cyberpunk/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "surface_type": "dashboard",
+    "validation": {
+      "ok": false,
+      "violations": [
+        {
+          "kind": "invalid_color_hex",
+          "message": "token `colors.surface.glass` = `#ffffff0a` is not a valid `#RRGGBB` hex",
+          "variant": "brand-a"
+        },
+        {
+          "kind": "invalid_color_hex",
+          "message": "token `colors.surface.overlay` = `#12122088` is not a valid `#RRGGBB` hex",
+          "variant": "brand-a"
+        },
+        {
+          "kind": "invalid_color_hex",
+          "message": "token `colors.surface.glass` = `#ffffff0a` is not a valid `#RRGGBB` hex",
+          "variant": "brand-b"
+        },
+        {
+          "kind": "invalid_color_hex",
+          "message": "token `colors.surface.overlay` = `#12122088` is not a valid `#RRGGBB` hex",
+          "variant": "brand-b"
+        },
+        {
+          "kind": "invalid_color_hex",
+          "message": "token `colors.surface.glass` = `#ffffff0a` is not a valid `#RRGGBB` hex",
+          "variant": "dark"
+        },
+        {
+          "kind": "invalid_color_hex",
+          "message": "token `colors.surface.overlay` = `#12122088` is not a valid `#RRGGBB` hex",
+          "variant": "dark"
+        },
+        {
+          "kind": "invalid_color_hex",
+          "message": "token `colors.surface.glass` = `#ffffff0a` is not a valid `#RRGGBB` hex",
+          "variant": "light"
+        },
+        {
+          "kind": "invalid_color_hex",
+          "message": "token `colors.surface.overlay` = `#12122088` is not a valid `#RRGGBB` hex",
+          "variant": "light"
+        }
+      ]
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}

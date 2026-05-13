@@ -1,0 +1,30 @@
+{
+  "invocation_id": "c56c20dc-a0c4-4348-986e-7f33124eb463",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "composition_path": "/private/tmp/pass4-portfolio-design/composition.html",
+    "design_path": "/private/tmp/pass4-portfolio-design/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass4-portfolio-design/DESIGN.md",
+      "/private/tmp/pass4-portfolio-design/hero.html",
+      "/private/tmp/pass4-portfolio-design/composition.html"
+    ],
+    "hero_path": "/private/tmp/pass4-portfolio-design/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "surface_type": "portfolio",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}

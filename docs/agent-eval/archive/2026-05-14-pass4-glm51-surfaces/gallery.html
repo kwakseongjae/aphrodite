@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>2026-05-14-pass4-glm51-surfaces</title><style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #0e0e10; color: #e8e8ea; padding: 24px;
+}
+header { margin-bottom: 32px; }
+h1 { margin: 0 0 8px; letter-spacing: -0.01em; }
+.sub { color: #8a8a93; margin: 0 0 6px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 24px; }
+.card { background: #18181b; border: 1px solid #27272a; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; }
+.card h2 { font-size: 15px; margin: 0; padding: 14px 18px; background: #1f1f23; border-bottom: 1px solid #27272a; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.card h2 .slug { color: #a78bfa; font-weight: 600; }
+.badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 500; letter-spacing: 0.02em; }
+.badge.ok { background: #14532d; color: #86efac; }
+.badge.fail { background: #7f1d1d; color: #fca5a5; }
+.badge.parse { background: #422006; color: #fcd34d; }
+.surface-tag { background: #1e1b4b; color: #a5b4fc; font-size: 10px; padding: 2px 7px; border-radius: 999px; margin-left: 6px; }
+.intent { padding: 14px 18px; font-size: 13px; line-height: 1.55; color: #d4d4d8; border-bottom: 1px solid #27272a; white-space: pre-wrap; word-break: break-word; }
+.intent::before { content: "INTENT"; display: block; font-size: 10px; letter-spacing: 0.16em; color: #71717a; margin-bottom: 6px; }
+.meta { padding: 12px 18px; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 12px; border-bottom: 1px solid #27272a; }
+.meta dt { color: #71717a; } .meta dd { margin: 0; color: #e4e4e7; font-family: ui-monospace, "SF Mono", monospace; font-size: 12px; }
+.swatches { display: flex; gap: 2px; flex-wrap: wrap; padding: 12px 18px; border-bottom: 1px solid #27272a; }
+.swatch { width: 36px; height: 36px; border-radius: 6px; position: relative; cursor: pointer; }
+.swatch::after { content: attr(data-hex); position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%); font-size: 10px; font-family: ui-monospace, monospace; white-space: nowrap; color: #71717a; opacity: 0; transition: opacity 120ms; pointer-events: none; }
+.swatch:hover::after { opacity: 1; }
+.preview { background: #fff; height: 420px; position: relative; overflow: hidden; }
+.preview iframe { border: 0; width: 250%; height: 250%; transform: scale(0.4); transform-origin: top left; pointer-events: none; }
+.preview-missing { display: flex; align-items: center; justify-content: center; height: 100%; color: #71717a; font-size: 13px; }
+.links { padding: 10px 18px; display: flex; gap: 12px; font-size: 12px; background: #18181b; align-items: center; }
+.links a { color: #a78bfa; text-decoration: none; } .links a:hover { text-decoration: underline; }
+.pill { color: #71717a; margin-left: auto; }
+</style></head><body>
+<header><h1>2026-05-14-pass4-glm51-surfaces</h1><p class="sub">6 runs · each card embeds the actual composition.html (or hero.html fallback) scaled · click <em>open ↗</em> for full size</p></header><main class="grid">
+<article class="card">
+  <h2><span class="slug">A1-editorial<span class="surface-tag">editorial</span></span><span class="badge ok">valid</span></h2>
+  <div class="intent">a literary magazine landing page: generous serif at scale, restrained warm color, long-form reading optimized, single accent only</div>
+  <dl class="meta">
+    <dt>provider</dt><dd>zai</dd>
+    <dt>model</dt><dd>glm-5.1</dd>
+    <dt>time</dt><dd>223s</dd>
+    <dt>display</dt><dd>Fraunces</dd>
+    <dt>body</dt><dd>Source Serif 4</dd>
+    <dt>warnings</dt><dd>0</dd>
+  </dl>
+  <div class="swatches"><div class="swatch" style="background:#faf9f7" data-hex="#faf9f7"></div><div class="swatch" style="background:#f0ede6" data-hex="#f0ede6"></div><div class="swatch" style="background:#ddd9cf" data-hex="#ddd9cf"></div><div class="swatch" style="background:#c4bfb3" data-hex="#c4bfb3"></div><div class="swatch" style="background:#a99f8e" data-hex="#a99f8e"></div><div class="swatch" style="background:#7d7363" data-hex="#7d7363"></div><div class="swatch" style="background:#635b4e" data-hex="#635b4e"></div><div class="swatch" style="background:#4e483f" data-hex="#4e483f"></div><div class="swatch" style="background:#3a3630" data-hex="#3a3630"></div><div class="swatch" style="background:#2a2621" data-hex="#2a2621"></div></div>
+  <div class="preview"><iframe src="A1-editorial/composition.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+  <div class="links"><a href="A1-editorial/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="A1-editorial/composition.html" target="_blank">open editorial.html ↗</a> &nbsp;·&nbsp; <a href="A1-editorial/intent.txt">intent.txt</a> &nbsp;·&nbsp; <a href="A1-editorial/result.json">result.json</a><span class="pill">A1-editorial</span></div>
+</article>
+<article class="card">
+  <h2><span class="slug">A5-cyberpunk<span class="surface-tag">dashboard</span></span><span class="badge fail">WCAG-AA fail</span></h2>
+  <div class="intent">neon cyberpunk trading dashboard, dark background, magenta and cyan accents, terminal-monospace typography, dense data layout</div>
+  <dl class="meta">
+    <dt>provider</dt><dd>zai</dd>
+    <dt>model</dt><dd>glm-5.1</dd>
+    <dt>time</dt><dd>200s</dd>
+    <dt>display</dt><dd>IBM Plex Mono</dd>
+    <dt>body</dt><dd>IBM Plex Mono</dd>
+    <dt>warnings</dt><dd>0</dd>
+  </dl>
+  <div class="swatches"><div class="swatch" style="background:#e6fff6" data-hex="#e6fff6"></div><div class="swatch" style="background:#b3ffe3" data-hex="#b3ffe3"></div><div class="swatch" style="background:#66ffc9" data-hex="#66ffc9"></div><div class="swatch" style="background:#1affb0" data-hex="#1affb0"></div><div class="swatch" style="background:#00e696" data-hex="#00e696"></div><div class="swatch" style="background:#00d4aa" data-hex="#00d4aa"></div><div class="swatch" style="background:#00b08c" data-hex="#00b08c"></div><div class="swatch" style="background:#008d6f" data-hex="#008d6f"></div><div class="swatch" style="background:#006a52" data-hex="#006a52"></div><div class="swatch" style="background:#004736" data-hex="#004736"></div></div>
+  <div class="preview"><iframe src="A5-cyberpunk/composition.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+  <div class="links"><a href="A5-cyberpunk/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="A5-cyberpunk/composition.html" target="_blank">open dashboard.html ↗</a> &nbsp;·&nbsp; <a href="A5-cyberpunk/intent.txt">intent.txt</a> &nbsp;·&nbsp; <a href="A5-cyberpunk/result.json">result.json</a><span class="pill">A5-cyberpunk</span></div>
+</article>
+<article class="card">
+  <h2><span class="slug">B1-mobile<span class="surface-tag">mobile_app</span></span><span class="badge ok">valid</span></h2>
+  <div class="intent">a thumb-zone-optimized mobile fitness tracker hero, primary CTA at the bottom thumb arc, large touch targets, motivational warm palette</div>
+  <dl class="meta">
+    <dt>provider</dt><dd>zai</dd>
+    <dt>model</dt><dd>glm-5.1</dd>
+    <dt>time</dt><dd>220s</dd>
+    <dt>display</dt><dd>Space Grotesk</dd>
+    <dt>body</dt><dd>DM Sans</dd>
+    <dt>warnings</dt><dd>0</dd>
+  </dl>
+  <div class="swatches"><div class="swatch" style="background:#fef7ed" data-hex="#fef7ed"></div><div class="swatch" style="background:#fde9c6" data-hex="#fde9c6"></div><div class="swatch" style="background:#f9cf84" data-hex="#f9cf84"></div><div class="swatch" style="background:#f5b04a" data-hex="#f5b04a"></div><div class="swatch" style="background:#f09324" data-hex="#f09324"></div><div class="swatch" style="background:#e2780e" data-hex="#e2780e"></div><div class="swatch" style="background:#b8570b" data-hex="#b8570b"></div><div class="swatch" style="background:#8b3e0d" data-hex="#8b3e0d"></div><div class="swatch" style="background:#6b3112" data-hex="#6b3112"></div><div class="swatch" style="background:#4a2210" data-hex="#4a2210"></div></div>
+  <div class="preview"><iframe src="B1-mobile/composition.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+  <div class="links"><a href="B1-mobile/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="B1-mobile/composition.html" target="_blank">open mobile_app.html ↗</a> &nbsp;·&nbsp; <a href="B1-mobile/intent.txt">intent.txt</a> &nbsp;·&nbsp; <a href="B1-mobile/result.json">result.json</a><span class="pill">B1-mobile</span></div>
+</article>
+<article class="card">
+  <h2><span class="slug">B3-pricing<span class="surface-tag">pricing</span></span><span class="badge ok">valid</span></h2>
+  <div class="intent">a fintech pricing page with three tiers (Free, Pro, Enterprise), feature comparison table, conversion-focused, trust-coded palette</div>
+  <dl class="meta">
+    <dt>provider</dt><dd>zai</dd>
+    <dt>model</dt><dd>glm-5.1</dd>
+    <dt>time</dt><dd>240s</dd>
+    <dt>display</dt><dd>DM Serif Display', 'Georgia', serif</dd>
+    <dt>body</dt><dd>DM Sans', 'Segoe UI', sans-serif</dd>
+    <dt>warnings</dt><dd>0</dd>
+  </dl>
+  <div class="swatches"><div class="swatch" style="background:#f3f0fa" data-hex="#f3f0fa"></div><div class="swatch" style="background:#e4ddF3" data-hex="#e4ddF3"></div><div class="swatch" style="background:#c9bce7" data-hex="#c9bce7"></div><div class="swatch" style="background:#a88fd6" data-hex="#a88fd6"></div><div class="swatch" style="background:#8a64c2" data-hex="#8a64c2"></div><div class="swatch" style="background:#6b46a1" data-hex="#6b46a1"></div><div class="swatch" style="background:#5a3890" data-hex="#5a3890"></div><div class="swatch" style="background:#4a2b7a" data-hex="#4a2b7a"></div><div class="swatch" style="background:#3b2263" data-hex="#3b2263"></div><div class="swatch" style="background:#2e1a4e" data-hex="#2e1a4e"></div></div>
+  <div class="preview"><iframe src="B3-pricing/composition.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+  <div class="links"><a href="B3-pricing/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="B3-pricing/composition.html" target="_blank">open pricing.html ↗</a> &nbsp;·&nbsp; <a href="B3-pricing/intent.txt">intent.txt</a> &nbsp;·&nbsp; <a href="B3-pricing/result.json">result.json</a><span class="pill">B3-pricing</span></div>
+</article>
+<article class="card">
+  <h2><span class="slug">D1-japanese<span class="surface-tag">landing</span></span><span class="badge ok">valid</span></h2>
+  <div class="intent">シンプルな和風ランディングページ、白と藍を基調に、見出しは明朝体、本文はゴシック体、余白を多く</div>
+  <dl class="meta">
+    <dt>provider</dt><dd>zai</dd>
+    <dt>model</dt><dd>glm-5.1</dd>
+    <dt>time</dt><dd>211s</dd>
+    <dt>display</dt><dd>Shippori Mincho', 'Noto Serif JP', 'Hiragino Mincho ProN', serif</dd>
+    <dt>body</dt><dd>Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif</dd>
+    <dt>warnings</dt><dd>0</dd>
+  </dl>
+  <div class="swatches"><div class="swatch" style="background:#eef3f8" data-hex="#eef3f8"></div><div class="swatch" style="background:#d0dfec" data-hex="#d0dfec"></div><div class="swatch" style="background:#a8c4dc" data-hex="#a8c4dc"></div><div class="swatch" style="background:#7aa5c8" data-hex="#7aa5c8"></div><div class="swatch" style="background:#568db5" data-hex="#568db5"></div><div class="swatch" style="background:#3d7196" data-hex="#3d7196"></div><div class="swatch" style="background:#315c7c" data-hex="#315c7c"></div><div class="swatch" style="background:#274963" data-hex="#274963"></div><div class="swatch" style="background:#1b3549" data-hex="#1b3549"></div><div class="swatch" style="background:#112435" data-hex="#112435"></div></div>
+  <div class="preview"><iframe src="D1-japanese/composition.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+  <div class="links"><a href="D1-japanese/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="D1-japanese/composition.html" target="_blank">open landing.html ↗</a> &nbsp;·&nbsp; <a href="D1-japanese/intent.txt">intent.txt</a> &nbsp;·&nbsp; <a href="D1-japanese/result.json">result.json</a><span class="pill">D1-japanese</span></div>
+</article>
+<article class="card">
+  <h2><span class="slug">portfolio-design<span class="surface-tag">portfolio</span></span><span class="badge ok">valid</span></h2>
+  <div class="intent">a senior product designer's portfolio site, work grid with 6 case studies, minimal monochrome, large hover treatments</div>
+  <dl class="meta">
+    <dt>provider</dt><dd>zai</dd>
+    <dt>model</dt><dd>glm-5.1</dd>
+    <dt>time</dt><dd>217s</dd>
+    <dt>display</dt><dd>Syne', 'Inter', sans-serif</dd>
+    <dt>body</dt><dd>Inter', 'Syne', sans-serif</dd>
+    <dt>warnings</dt><dd>0</dd>
+  </dl>
+  <div class="swatches"><div class="swatch" style="background:#e6e9ef" data-hex="#e6e9ef"></div><div class="swatch" style="background:#c4cad6" data-hex="#c4cad6"></div><div class="swatch" style="background:#9aa3b5" data-hex="#9aa3b5"></div><div class="swatch" style="background:#707c94" data-hex="#707c94"></div><div class="swatch" style="background:#505f7b" data-hex="#505f7b"></div><div class="swatch" style="background:#354767" data-hex="#354767"></div><div class="swatch" style="background:#2d3d59" data-hex="#2d3d59"></div><div class="swatch" style="background:#24324a" data-hex="#24324a"></div><div class="swatch" style="background:#1b2538" data-hex="#1b2538"></div><div class="swatch" style="background:#111828" data-hex="#111828"></div></div>
+  <div class="preview"><iframe src="portfolio-design/composition.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+  <div class="links"><a href="portfolio-design/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="portfolio-design/composition.html" target="_blank">open portfolio.html ↗</a> &nbsp;·&nbsp; <a href="portfolio-design/intent.txt">intent.txt</a> &nbsp;·&nbsp; <a href="portfolio-design/result.json">result.json</a><span class="pill">portfolio-design</span></div>
+</article>
+
+</main></body></html>

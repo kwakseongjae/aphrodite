@@ -1,0 +1,30 @@
+{
+  "invocation_id": "74a2f407-3491-436f-bc43-0359ce0b1f94",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "composition_path": "/private/tmp/pass4-retry-B3-pricing/composition.html",
+    "design_path": "/private/tmp/pass4-retry-B3-pricing/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass4-retry-B3-pricing/DESIGN.md",
+      "/private/tmp/pass4-retry-B3-pricing/hero.html",
+      "/private/tmp/pass4-retry-B3-pricing/composition.html"
+    ],
+    "hero_path": "/private/tmp/pass4-retry-B3-pricing/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "surface_type": "pricing",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}
