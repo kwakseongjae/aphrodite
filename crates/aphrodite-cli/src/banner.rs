@@ -1,17 +1,26 @@
 //! Banner — Aphrodite's first impression.
 //!
-//! The figure on the left is the Venus de Milo (Aphrodite of Melos) ASCII art
-//! by H. P. Barmario (Morfina), 2014-05-23 — sourced from ascii.co.uk under
-//! community attribution. The "mrf" signature within the art is preserved as
-//! per ASCII Art Archive convention.
+//! Renders Botticelli's *The Birth of Venus* (1485, public domain) as a
+//! truecolor half-block image (▀ with 24-bit FG/BG per cell), pre-rendered at
+//! build time via `chafa --symbols half --colors=full` into
+//! `banner_venus.ansi`. The image is the canonical Aphrodite myth — the
+//! goddess of beauty *arriving*. Stars, a wordmark, tagline, and waves layer
+//! around her in the same banner.
 //!
-//! Aphrodite layers stars, sea waves, a pedestal, and the wordmark/tagline
-//! around the figure.
+//! Fallback: when truecolor isn't supported (e.g. `NO_COLOR`, dumb term,
+//! piped to a file), we use the H. P. Barmario ("mrf") Venus de Milo ASCII
+//! art instead. The mrf signature is preserved per ASCII Art Archive
+//! convention.
 
 use console::style;
 
-/// 24-line statue figure (Venus de Milo by H. P. Barmario "mrf").
-const FIGURE: &[&str] = &[
+/// Pre-rendered Botticelli — 32 rows × ~28 cols, truecolor half-blocks.
+/// Generated once at build time so runtime has zero deps and ~instant cold start.
+const VENUS_TRUECOLOR: &str = include_str!("banner_venus.ansi");
+
+/// Fallback figure — H. P. Barmario (Morfina), 2014-05-23, via ascii.co.uk.
+/// `mrf` signature kept inline per ASCII Art Archive convention.
+const VENUS_ASCII: &[&str] = &[
     r"       %%%        ",
     r"      =====       ",
     r"     &%&%%%&      ",
@@ -38,33 +47,26 @@ const FIGURE: &[&str] = &[
     "  --\"--(_.Ooo'-- ",
 ];
 
-/// Right-side text panel, line for line. Empty rows align with the figure's
-/// blank decorative rows.
-const RIGHT_PANEL: &[(&str, Style)] = &[
-    ("",                                                            Style::None),
-    ("",                                                            Style::None),
-    ("",                                                            Style::None),
-    ("                ✦",                                           Style::Star),
-    ("            .       .",                                       Style::Star),
-    ("        *               *",                                   Style::Star),
-    ("",                                                            Style::None),
-    ("A   P   H   R   O   D   I   T   E",                           Style::Wordmark),
-    ("─────────────────────────────────",                           Style::Rule),
-    ("",                                                            Style::None),
-    ("the UI generation harness",                                   Style::Tagline),
-    ("undeniably beautiful, every time",                            Style::Tagline),
-    ("",                                                            Style::None),
-    ("called by humans and AI agents alike,",                       Style::Dim),
-    ("under a single DESIGN.md contract.",                          Style::Dim),
-    ("",                                                            Style::None),
-    ("open-source · Apache-2.0",                                    Style::Dim),
-    ("",                                                            Style::None),
-    ("art: Venus de Milo · H.P. Barmario (mrf)",                    Style::Attribution),
-    ("",                                                            Style::None),
-    ("",                                                            Style::None),
-    ("",                                                            Style::None),
-    ("",                                                            Style::None),
-    ("",                                                            Style::None),
+const RIGHT_PANEL: &[(&str, Accent)] = &[
+    ("        ✦", Accent::Star),
+    ("    .         .", Accent::Star),
+    ("        *", Accent::Star),
+    ("", Accent::None),
+    ("A   P   H   R   O   D   I   T   E", Accent::Wordmark),
+    ("─────────────────────────────────", Accent::Rule),
+    ("", Accent::None),
+    ("the UI generation harness", Accent::Tagline),
+    ("undeniably beautiful, every time", Accent::Tagline),
+    ("", Accent::None),
+    ("called by humans and AI agents alike,", Accent::Dim),
+    ("under a single DESIGN.md contract.", Accent::Dim),
+    ("", Accent::None),
+    ("open-source · Apache-2.0", Accent::Dim),
+    ("", Accent::None),
+    ("art:  Sandro Botticelli", Accent::Attribution),
+    ("      The Birth of Venus, 1485", Accent::Attribution),
+    ("      (public domain)", Accent::Attribution),
+    ("", Accent::None),
 ];
 
 const WAVES: &[&str] = &[
@@ -73,7 +75,7 @@ const WAVES: &[&str] = &[
 ];
 
 #[derive(Copy, Clone)]
-enum Style {
+enum Accent {
     None,
     Star,
     Wordmark,
@@ -83,26 +85,88 @@ enum Style {
     Attribution,
 }
 
-fn paint(text: &str, kind: Style) -> String {
+fn paint(text: &str, kind: Accent) -> String {
     match kind {
-        Style::None => text.to_string(),
-        Style::Star => style(text).cyan().dim().to_string(),
-        Style::Wordmark => style(text).bold().magenta().to_string(),
-        Style::Rule => style(text).magenta().dim().to_string(),
-        Style::Tagline => style(text).italic().to_string(),
-        Style::Dim => style(text).dim().to_string(),
-        Style::Attribution => style(text).dim().italic().to_string(),
+        Accent::None => text.to_string(),
+        Accent::Star => style(text).cyan().dim().to_string(),
+        Accent::Wordmark => style(text).bold().magenta().to_string(),
+        Accent::Rule => style(text).magenta().dim().to_string(),
+        Accent::Tagline => style(text).italic().to_string(),
+        Accent::Dim => style(text).dim().to_string(),
+        Accent::Attribution => style(text).dim().italic().to_string(),
+    }
+}
+
+/// True if the current terminal can render 24-bit color half-blocks.
+fn supports_truecolor() -> bool {
+    // Honor user opt-out first.
+    if std::env::var_os("NO_COLOR").is_some() {
+        return false;
+    }
+    if let Ok(t) = std::env::var("COLORTERM") {
+        let t = t.to_ascii_lowercase();
+        if t == "truecolor" || t == "24bit" {
+            return true;
+        }
+    }
+    // Most modern terminals on macOS/Linux advertise truecolor through TERM_PROGRAM.
+    if let Ok(p) = std::env::var("TERM_PROGRAM") {
+        matches!(
+            p.as_str(),
+            "iTerm.app" | "Apple_Terminal" | "WarpTerminal" | "ghostty" | "vscode" | "Hyper"
+        )
+    } else {
+        // Fall back to TERM hints.
+        std::env::var("TERM")
+            .map(|t| t.contains("256color") || t.contains("truecolor") || t.contains("kitty"))
+            .unwrap_or(false)
     }
 }
 
 pub fn print(version: &str) {
+    if supports_truecolor() {
+        print_truecolor(version);
+    } else {
+        print_ascii(version);
+    }
+}
+
+fn print_truecolor(version: &str) {
     eprintln!();
-    let rows = FIGURE.len().max(RIGHT_PANEL.len());
+
+    // Strip chafa's leading cursor-hide and trailing cursor-show so we don't
+    // interfere with terminal state.
+    let cleaned = VENUS_TRUECOLOR
+        .trim_start_matches("\x1b[?25l")
+        .trim_end_matches('\n')
+        .trim_end_matches("\x1b[?25h");
+
+    let figure_lines: Vec<&str> = cleaned.lines().collect();
+    let rows = figure_lines.len().max(RIGHT_PANEL.len());
+
     for i in 0..rows {
-        let fig = FIGURE.get(i).copied().unwrap_or("                  ");
-        let (right_text, right_style) = RIGHT_PANEL.get(i).copied().unwrap_or(("", Style::None));
-        let right_text = if i == 9 {
-            // Append version on the rule line for compactness.
+        let fig = figure_lines.get(i).copied().unwrap_or("");
+        let (right_text, accent) = RIGHT_PANEL.get(i).copied().unwrap_or(("", Accent::None));
+        let right_text = if i == 5 {
+            format!("{right_text}     v{version}")
+        } else {
+            right_text.to_string()
+        };
+        eprintln!("    {}    {}", fig, paint(&right_text, accent));
+    }
+    for w in WAVES {
+        eprintln!("    {}", style(w).blue().dim());
+    }
+    eprintln!();
+}
+
+fn print_ascii(version: &str) {
+    eprintln!();
+    let rows = VENUS_ASCII.len().max(RIGHT_PANEL.len());
+    for i in 0..rows {
+        let fig = VENUS_ASCII.get(i).copied().unwrap_or("                  ");
+        let (right_text, accent) = RIGHT_PANEL.get(i).copied().unwrap_or(("", Accent::None));
+        let right_text = if i == 5 {
             format!("{right_text}     v{version}")
         } else {
             right_text.to_string()
@@ -110,7 +174,7 @@ pub fn print(version: &str) {
         eprintln!(
             "    {}    {}",
             style(fig).magenta().dim(),
-            paint(&right_text, right_style)
+            paint(&right_text, accent)
         );
     }
     for w in WAVES {
@@ -119,8 +183,6 @@ pub fn print(version: &str) {
     eprintln!();
 }
 
-/// Compact one-liner — used by `aphrodite version` -- actually we also use the
-/// full banner there; this is a slot reserved for future inline contexts.
 #[allow(dead_code)]
 pub fn print_compact() {
     eprintln!(
