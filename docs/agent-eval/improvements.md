@@ -26,7 +26,7 @@ When a finding here resolves, update the row and link the commit. When a new age
 | 6 | 🟡 P2 | Success payloads have no `warnings` field | 2026-05-13 | Provider downgrade, out-of-scope, deprecation — no slot. | Added `warnings: [{kind, message, hint}]` to design/redesign payloads (CLI + MCP). | ✅ shipped |
 | 7 | 🟡 P2 | Pretty CLI doesn't explain *why* a provider was chosen | 2026-05-13 | Just "Provider: offline" with no reason. | Provider-downgrade warning above carries the reason. The `Provider:` line itself still doesn't annotate. | ✅ partial |
 | 8 | 🟢 P3 | No fuzz tests for non-ASCII typography roundtrip | 2026-05-13 | Hangul worked by accident in run 8. | Unit + property tests for UTF-8 in intent, frontmatter, body. | ⏳ |
-| 9 | 🟢 P3 | No `aphrodite capabilities` CLI / MCP introspection | 2026-05-13 | Agents guess scope from docs. | Add `capabilities` MCP tool + `aphrodite capabilities` CLI returning structured scope. | ⏳ — `warnings` covers most pain |
+| 9 | 🟢 P3 | No `aphrodite capabilities` CLI / MCP introspection | 2026-05-13 | Agents guess scope from docs. | `aphrodite capabilities` CLI shipped — returns structured `in_scope`/`out_of_scope_v01`. MCP-side `capabilities` tool still pending (CLI is enough to unblock humans). | ✅ partial — CLI ships, MCP tool pending |
 | 10 | 🟠 P1 | macOS Keychain "Always Allow" first-prompt may silently fail | 2026-05-13 | `store` returns OK while subsequent `fetch` fails. | Store→immediate-fetch verification in `init`/`auth set`; new `auth verify`. Once-per-binary onboarding hint in docs still pending. | ✅ shipped (CLI), doc note pending |
 
 ## Done (history)
@@ -43,6 +43,7 @@ When a finding here resolves, update the row and link the commit. When a new age
 | #6 | 2026-05-13 | `warnings: [{kind,message,hint}]` in design/redesign payloads (CLI+MCP) | (this commit) |
 | #10 | 2026-05-13 | `auth verify <provider>` + immediate readback in `auth set` / `init` | (this commit) |
 | #5 | 2026-05-13 | Taste loop read-at-generate-time; satisfies seed acceptance #8 | (this commit) |
+| #9 | 2026-05-13 | `aphrodite doctor` + `aphrodite capabilities` for one-shot self-diagnosis | (this commit) |
 
 ## Re-runs scheduled for next eval pass
 

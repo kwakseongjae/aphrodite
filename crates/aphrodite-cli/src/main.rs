@@ -61,6 +61,12 @@ enum Command {
         #[command(subcommand)]
         sub: AuthSub,
     },
+
+    /// Run all health checks (config + keychain + env + reachability).
+    Doctor,
+
+    /// Print the v0.1 capability matrix — what Aphrodite can and cannot do.
+    Capabilities,
 }
 
 #[derive(Subcommand)]
@@ -104,6 +110,8 @@ async fn main() -> anyhow::Result<()> {
             AuthSub::Remove { provider } => auth_remove(&provider),
             AuthSub::Verify { provider } => auth_verify(&provider),
         },
+        Command::Doctor => doctor(),
+        Command::Capabilities => capabilities(),
     };
 
     if cli.json {
@@ -222,6 +230,174 @@ fn auth_verify(provider: &str) -> serde_json::Value {
 fn auth_remove(provider: &str) -> serde_json::Value {
     let removed = aphrodite_keyring::delete(provider).is_ok();
     json!({ "kind": "auth_remove", "provider": provider, "removed": removed })
+}
+
+fn doctor() -> serde_json::Value {
+    use console::style;
+    let cfg = aphrodite_core::config::load();
+    let mut issues: Vec<serde_json::Value> = Vec::new();
+    let mut checks: Vec<serde_json::Value> = Vec::new();
+
+    // Check 1: config existence + parseability.
+    let cfg_path = aphrodite_core::config::config_path();
+    let cfg_present = cfg_path.exists();
+    eprintln!(
+        "  {} config file ({})",
+        if cfg_present { style("✓").green() } else { style("○").dim() },
+        style(cfg_path.display()).dim()
+    );
+    checks.push(json!({ "name": "config_file_present", "ok": cfg_present }));
+
+    // Check 2: default provider declared.
+    let default = cfg.default_provider.clone();
+    let has_default = default.is_some();
+    eprintln!(
+        "  {} default provider: {}",
+        if has_default { style("✓").green() } else { style("○").dim() },
+        default.as_deref().unwrap_or("(none — will use offline)")
+    );
+
+    // Check 3: keychain readback for the default provider.
+    let mut keychain_ok = false;
+    if let Some(p) = default.as_deref() {
+        match aphrodite_keyring::fetch(p) {
+            Ok(k) => {
+                keychain_ok = !k.trim().is_empty();
+                if keychain_ok {
+                    eprintln!(
+                        "  {} keychain entry for `{}` readable ({} chars)",
+                        style("✓").green(),
+                        p,
+                        k.chars().count()
+                    );
+                } else {
+                    eprintln!(
+                        "  {} keychain entry for `{}` exists but is empty",
+                        style("✖").red(),
+                        p
+                    );
+                    issues.push(json!({
+                        "code": "keychain_empty",
+                        "fix": format!("aphrodite auth set {p}")
+                    }));
+                }
+            }
+            Err(e) => {
+                eprintln!(
+                    "  {} keychain entry for `{}` not readable: {}",
+                    style("✖").red(),
+                    p,
+                    e
+                );
+                issues.push(json!({
+                    "code": "keychain_unreadable",
+                    "fix": format!("aphrodite auth set {p} — or on macOS check Keychain Access for 'Always Allow' on the aphrodite binary"),
+                    "raw": e.to_string(),
+                }));
+            }
+        }
+    }
+    checks.push(json!({ "name": "default_keychain_readable", "ok": keychain_ok }));
+
+    // Check 4: env-var fallback for the default provider.
+    let mut env_ok = false;
+    if let Some(p) = default.as_deref() {
+        let env_keys: &[&str] = match p {
+            "zai" => &["APHRODITE_ZAI_API_KEY", "ZAI_API_KEY", "GLM_API_KEY"],
+            "anthropic" => &["APHRODITE_ANTHROPIC_API_KEY", "ANTHROPIC_API_KEY"],
+            "openrouter" => &["APHRODITE_OPENROUTER_API_KEY", "OPENROUTER_API_KEY"],
+            _ => &[],
+        };
+        for name in env_keys {
+            if std::env::var(name).map(|v| !v.trim().is_empty()).unwrap_or(false) {
+                eprintln!("  {} env fallback present: {}", style("✓").green(), name);
+                env_ok = true;
+                break;
+            }
+        }
+        if !env_ok {
+            eprintln!(
+                "  {} no env fallback for `{}` (tried: {})",
+                style("○").dim(),
+                p,
+                env_keys.join(", ")
+            );
+        }
+    }
+    checks.push(json!({ "name": "env_fallback_present", "ok": env_ok }));
+
+    // Verdict.
+    let credential_ok = keychain_ok || env_ok;
+    let verdict = if credential_ok {
+        eprintln!("  {} ready for real provider calls", style("●").green());
+        "healthy"
+    } else if has_default {
+        eprintln!(
+            "  {} config intends `{}` but no credential is reachable — calls will fall back to offline",
+            style("⚠").yellow(),
+            default.as_deref().unwrap_or("?")
+        );
+        "degraded_offline_only"
+    } else {
+        eprintln!(
+            "  {} no provider configured — running offline by design",
+            style("○").dim()
+        );
+        "offline_by_design"
+    };
+
+    json!({
+        "kind": "doctor",
+        "verdict": verdict,
+        "checks": checks,
+        "issues": issues,
+        "default_provider": default,
+    })
+}
+
+fn capabilities() -> serde_json::Value {
+    use console::style;
+    let cap = json!({
+        "kind": "capabilities",
+        "version": env!("CARGO_PKG_VERSION"),
+        "in_scope": {
+            "design.modes": ["light", "dark", "brand"],
+            "design.outputs": ["DESIGN.md (Google Labs alpha)", "hero.html (self-contained, no external network)"],
+            "providers.api_key": ["zai", "anthropic", "openrouter"],
+            "providers.offline_fallback": true,
+            "validation": ["schema (Google Labs alpha)", "WCAG-AA contrast across all variants"],
+            "taste_loop": "implicit (Regenerate signals bias next call)",
+            "write_modes": ["commit (default)", "artifact_only"],
+        },
+        "out_of_scope_v01": [
+            "image generation / asset fetching",
+            "motion / video (HyperFrames adapter lands in v0.2)",
+            "3D scenes / three.js / Blender (v0.3)",
+            "Figma / Sketch round-trip (v0.2)",
+            "explicit aesthetic jury (implicit signals only in v0.1)",
+            "OAuth flows for any provider (v0.2; API-key only at v0.1)",
+        ],
+    });
+
+    println!("{}", style("Aphrodite — v0.1 capabilities").bold().magenta());
+    println!();
+    println!("  {}", style("In scope:").bold());
+    println!("    • design / redesign / validate / auth_status MCP tools");
+    println!("    • 4 variants per DESIGN.md (light, dark, brand-a, brand-b)");
+    println!("    • WCAG-AA contrast gate, schema gate");
+    println!("    • Providers: z.ai GLM (API key), Anthropic (API key), OpenRouter (API key)");
+    println!("    • Offline deterministic fallback (no network, no cost)");
+    println!("    • Implicit taste loop — `redesign` shifts subsequent palettes");
+    println!("    • Direct-commit by default; `--no-write` for artifact-only mode");
+    println!();
+    println!("  {}", style("Out of v0.1 scope (will surface as warnings if asked):").dim());
+    println!("    • image generation, asset fetching");
+    println!("    • motion / video (HyperFrames adapter, v0.2)");
+    println!("    • 3D / three.js / Blender (v0.3)");
+    println!("    • Figma round-trip (v0.2)");
+    println!("    • OAuth (v0.2)");
+    println!();
+    cap
 }
 
 fn render_pretty(payload: &serde_json::Value) {
