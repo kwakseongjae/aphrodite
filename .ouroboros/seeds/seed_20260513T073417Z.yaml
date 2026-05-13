@@ -1,0 +1,154 @@
+goal: |
+  Aphrodite v0.1 — a Rust-core CLI + MCP harness where any caller (agent-first;
+  human is a thin wrapper) invokes `aphrodite design "<intent>"` to land a fully
+  multi-mode (light + dark + multi-brand) Google-Labs DESIGN.md AND a hero HTML
+  page directly into the caller's repo, while recording implicit aesthetic
+  feedback (regeneration requests, edit diffs) into a global-default +
+  per-project-override taste store that biases subsequent invocations.
+
+constraints:
+  - "Standalone harness; NOT a Claude Code plugin or skill."
+  - "Two surfaces only: `aphrodite` CLI and `aphrodite-mcp` MCP server."
+  - "Core in Rust; CLI + MCP bindings expose Rust core to TS and Python sidecars."
+  - "Agent-first contract: on UX conflicts, the MCP/JSON shape wins; human CLI is a thin pretty layer over JSON."
+  - "Authentic agency: full write authority into the caller's repo by default (commit/PR), gated only by an opt-in deny-list policy."
+  - "DESIGN.md must validate against the Google Labs alpha spec (`primary` color palette required; ordered sections; `{path.to.token}` refs)."
+  - "v0.1 multi-mode is mandatory: light + dark + at least 2-brand simultaneous emit, all WCAG-AA contrast-validated."
+  - "OAuth-first plan (OpenAI / Moonshot-Kimi / Gemini) is roadmap, but v0.1 ships API-key-only auth using OS keychain storage."
+  - "Stitch integration is explicitly out of scope at every milestone (Stitch has no programmatic API; killed as a dependency)."
+  - "Open source from day 1; Apache-2.0 leaning."
+  - "Ouroboros is the upstream spec engine; Aphrodite consumes seed.yaml and does not re-implement interviewing."
+  - "Per-project `.aphrodite/` directory: `DESIGN.md`, `decisions/`, `policy.yaml` are git-tracked; `auth/`, `cache/`, `events.db`, `taste.jsonl` are git-ignored."
+
+acceptance_criteria:
+  - "Running `aphrodite design \"<intent>\"` in a target repo produces a `DESIGN.md` that passes the Google Labs validator (schema + WCAG-AA contrast)."
+  - "The same invocation emits an `index.html` (or `hero.html`) hero page using only the generated `DESIGN.md` tokens, with no external network calls at render time."
+  - "The generated DESIGN.md includes simultaneously usable light, dark, and >=2 brand variants; each variant validates independently."
+  - "The hero page renders identically across the latest stable Chrome/Firefox/Safari at 1440×900 and 375×812 (mobile) without horizontal scroll."
+  - "By default, Aphrodite commits the generated files directly to the caller's working tree (git-add + git-commit); `--no-write` produces artifacts in `./.aphrodite/out/` without committing."
+  - "An equivalent MCP invocation (`aphrodite-mcp` tool `design`) returns a JSON payload with the same artifacts and a session id; CLI output is the JSON payload prettified."
+  - "Aesthetic regenerations (`aphrodite redesign` or MCP `regenerate`) are written to a taste-feedback log at `~/.aphrodite/taste/<user>.jsonl` AND `<repo>/.aphrodite/taste.jsonl`; project overrides take precedence on conflict."
+  - "Taste deltas measurably bias the next generation: an A/B test with the same intent before vs. after 5 implicit feedbacks shows a token-level diff of >=20% on at least one of (palette, type-scale, spacing-scale)."
+  - "First-run `aphrodite setup` configures at least Anthropic (API key) auth; keys land in OS keychain (Keychain on macOS / libsecret on Linux / Credential Manager on Windows), never in plaintext files."
+  - "A 60-second screencast demo exists in `docs/demos/` showing the full flow: empty repo → `aphrodite design \"<intent>\"` → DESIGN.md committed → hero HTML opens in browser → `redesign` with implicit feedback → second result differs."
+  - "Public GitHub repo with Apache-2.0 license, README, CONTRIBUTING, and the seed.yaml + ADRs committed at v0.1.0 tag."
+
+ontology_schema:
+  name: AphroditeHarness
+  description: |
+    The domain model for an invocation-driven, agent-first UI harness whose
+    canonical artifact is a multi-mode DESIGN.md and whose memory is an
+    aesthetic-feedback store layered global ⊕ project.
+  fields:
+    - name: invocation
+      type: object
+      description: "A single call into Aphrodite. Has caller_kind (agent|human), surface (cli|mcp), intent (string), target_repo (path), write_mode (commit|artifact-only)."
+    - name: design_document
+      type: object
+      description: "The Google-Labs DESIGN.md artifact. Frontmatter (name, version, description, colors, typography, rounded, spacing, components) + ordered sections."
+    - name: variant
+      type: object
+      description: "A single mode of DESIGN.md (light, dark, brand-A, brand-B, …). Each variant carries its own resolved tokens but shares the schema."
+    - name: hero_page
+      type: object
+      description: "The HTML artifact emitted alongside DESIGN.md. References tokens via CSS variables; no external network calls at render time."
+    - name: taste_event
+      type: object
+      description: "An implicit aesthetic feedback record: (timestamp, invocation_id, signal_kind={regenerate|edit_diff|accept}, delta, source={global|project})."
+    - name: taste_store
+      type: object
+      description: "The accumulating memory. Resolved as project_override ⊕ user_global ⊕ ship_defaults at read time."
+    - name: policy
+      type: object
+      description: "Deny-list policy at <repo>/.aphrodite/policy.yaml: fs/shell/net rules that gate the otherwise full-trust default."
+    - name: provider_credential
+      type: object
+      description: "API-key (v0.1) or OAuth-token (v0.2+) entry stored in the OS keychain, keyed by provider id."
+
+evaluation_principles:
+  - name: design_md_validity
+    description: "Generated DESIGN.md must pass the Google-Labs alpha-spec validator with zero schema errors and zero WCAG-AA contrast violations across all variants."
+    weight: 0.20
+  - name: multi_mode_completeness
+    description: "Light, dark, and >=2 brand variants must all be present and independently validate; no variant may be a stub."
+    weight: 0.15
+  - name: hero_rendered_quality
+    description: "Hero HTML renders correctly on Chrome/Firefox/Safari, desktop + mobile breakpoints, no horizontal scroll, no missing token references."
+    weight: 0.15
+  - name: agent_contract_purity
+    description: "MCP tool returns a complete JSON payload sufficient to reproduce all on-disk artifacts; CLI human output is a prettified projection of the same JSON."
+    weight: 0.15
+  - name: write_authority_safety
+    description: "Default direct-commit behavior must respect deny-list policy and never escape the caller's project root or touch keychain/network outside auth-scoped APIs."
+    weight: 0.10
+  - name: taste_loop_effect
+    description: "Repeated invocations with implicit feedback produce measurably different outputs (>=20% token delta after 5 feedback events) without explicit user ratings."
+    weight: 0.10
+  - name: setup_friction
+    description: "First-run `aphrodite setup` to a working `design` command takes < 90 seconds for a user who already has an Anthropic API key, and never writes a secret to a plaintext file."
+    weight: 0.05
+  - name: distribution_openness
+    description: "Repo is public, Apache-2.0-licensed, has a CONTRIBUTING, and any third-party design assets bundled have a tracked license entry."
+    weight: 0.05
+  - name: docs_demo_existence
+    description: "A 60-second screencast in docs/demos/ shows the end-to-end flow as specified in acceptance_criteria."
+    weight: 0.05
+
+exit_conditions:
+  - name: v01_release
+    description: "v0.1.0 is tagged on GitHub when all acceptance_criteria pass evaluator checks."
+    criteria: "All acceptance_criteria PASS && evaluation weighted score >= 0.85"
+  - name: design_md_block
+    description: "Hard stop if any generated DESIGN.md fails Google-Labs schema or WCAG-AA contrast — never publish an invalid design contract."
+    criteria: "design_md_validity == 0 → stop and surface the validator output"
+  - name: scope_freeze_breach
+    description: "Halt and request user re-approval if Stitch integration, 3D/HyperFrames, or Figma round-trip is proposed for v0.1 — those are explicitly post-v0.1."
+    criteria: "out_of_scope_item proposed in v0.1 plan → request explicit approval before proceeding"
+
+project_type: greenfield
+
+context_references:
+  - path: docs/vision.md
+    role: primary
+    summary: "Five anchors and five-loop lifecycle of Aphrodite; the why-this-exists statement."
+  - path: docs/architecture.md
+    role: primary
+    summary: "Tentative pre-seed architecture: two surfaces, 10 subsystems, language tradeoffs. To be re-grounded against this seed."
+  - path: docs/research/competitor-harnesses.md
+    role: reference
+    summary: "Field notes on Ouroboros, OpenHarness/Ohmo, opencode, omo, Hermes; DESIGN.md and HyperFrames context."
+  - path: docs/adr/0001-use-ouroboros-as-upstream-spec.md
+    role: reference
+    summary: "ADR locking Ouroboros as the upstream spec engine; seed.yaml is the only contract between them."
+  - path: docs/adr/0002-design-md-as-design-contract.md
+    role: reference
+    summary: "ADR adopting Google Labs DESIGN.md as the canonical design contract across Stitch/Figma/code/3D."
+  - path: docs/adr/0003-oauth-first-auth.md
+    role: reference
+    summary: "ADR on OAuth-first multi-provider auth with OS keychain storage; API-key fallback for Anthropic."
+  - path: docs/pre-interview-questions.md
+    role: reference
+    summary: "Pre-Ouroboros question catalog (A–I); answered during this interview and superseded by this seed."
+
+existing_patterns: []
+existing_dependencies: []
+
+metadata:
+  seed_id: aphrodite_v0.1_20260513T073417Z
+  version: "0.1.0-seed"
+  interview_session_id: interview_20260513_064822
+  interview_path: B_fallback_local
+  interview_notes: |
+    MCP-driven interview path (Path A) failed in this Claude Code session because the
+    ouroboros MCP handler hardcodes max_turns=1 on the nested Claude Agent SDK call
+    (authoring_handlers.py:745, pm_handler.py:370). Switched to Path B per the
+    plugin skill instructions (socratic-interviewer agent role + AskUserQuestion).
+    Four interview rounds covered: primary caller (→agent-first), v0.1 slice (→α
+    DESIGN.md+hero), write authority (→full), aesthetic gate (→adaptive implicit
+    v0.1, explicit v0.2), Stitch (→killed), language (→Rust core), multi-mode
+    (→full light/dark/multi-brand v0.1), scope cut (→none, 4-month timeline
+    accepted), taste memory (→global+project override). Restate accepted on first
+    try.
+  created_at: "2026-05-13T07:34:17Z"
+  created_by: kwakseongjae
+  ambiguity_score_estimate: 0.15
