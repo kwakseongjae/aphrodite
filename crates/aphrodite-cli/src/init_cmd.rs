@@ -80,6 +80,7 @@ pub async fn run() -> anyhow::Result<serde_json::Value> {
     let raw_key: String = Input::with_theme(&theme)
         .with_prompt(format!("{} API key", provider.human_name()))
         .allow_empty(true)
+        .report(false)               // ← do NOT echo the captured value back
         .interact_text()?;
     let key = clean_secret(&raw_key);
 

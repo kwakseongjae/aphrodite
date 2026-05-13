@@ -1,14 +1,11 @@
-//! Keyring abstraction. The *only* place in the workspace that touches
-//! credentials. Every other crate goes through this API.
+//! Keyring abstraction. Single secret-touching code path in the workspace.
 //!
-//! Storage layout (service = `aphrodite`):
-//!   * `provider:<id>`               — API key (v0.1 default)
-//!   * `provider:<id>:oauth_access`  — OAuth access token (v0.2)
-//!   * `provider:<id>:oauth_refresh` — OAuth refresh token (v0.2)
-//!   * `provider:<id>:oauth_expiry`  — Unix-ts string for the access token
+//! macOS path uses the `security` CLI (subprocess) because the Rust `keyring`
+//! crate has a known same-process set→read quirk on Sequoia+ where `set_password`
+//! succeeds but an immediate `get_password` through a fresh Entry returns
+//! NoEntry. Subprocess is slower but reliable.
 //!
-//! v0.1 only writes the first slot. The other slots are reserved so v0.2
-//! OAuth flows can land without touching call sites.
+//! Linux + Windows use the `keyring` crate (libsecret / Credential Manager).
 
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -16,15 +13,22 @@ use thiserror::Error;
 #[derive(Debug, Error)]
 pub enum KeyringError {
     #[error("backend error: {0}")]
-    Backend(#[from] keyring::Error),
+    Backend(String),
     #[error("no key stored for provider {0}")]
     NotFound(String),
 }
 
+impl From<keyring::Error> for KeyringError {
+    fn from(e: keyring::Error) -> Self {
+        match e {
+            keyring::Error::NoEntry => KeyringError::NotFound(String::new()),
+            other => KeyringError::Backend(other.to_string()),
+        }
+    }
+}
+
 const SERVICE: &str = "aphrodite";
 
-/// Credential variants. v0.1 only emits `ApiKey`; the OAuth variant exists so
-/// downstream code keeps a stable surface when v0.2 ships.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum Credential {
@@ -32,68 +36,148 @@ pub enum Credential {
     OAuth { access: String, refresh: Option<String>, expires_at: Option<i64> },
 }
 
-/// Write an API key + verify the OS keychain entry round-trips. Returns Ok
-/// only when the store *and* a fresh subsequent fetch both succeed.
-pub fn store(provider: &str, secret: &str) -> Result<(), KeyringError> {
-    let entry = keyring::Entry::new(SERVICE, &format!("provider:{provider}"))?;
-    entry.set_password(secret)?;
-    // Immediate readback through a *fresh* Entry so we exercise the same
-    // permission gate `fetch()` will see. macOS sometimes accepts a write but
-    // blocks subsequent reads from a different process or different
-    // permission context — we catch that here, not at design-call time.
-    let fresh = keyring::Entry::new(SERVICE, &format!("provider:{provider}"))?;
-    let back = fresh.get_password()?;
-    if back != secret {
-        return Err(KeyringError::Backend(keyring::Error::Invalid(
-            "keychain readback mismatch".into(),
-            "fetched value differs from stored value".into(),
-        )));
-    }
-    Ok(())
+fn account(provider: &str) -> String {
+    format!("provider:{provider}")
 }
 
-/// Read the API key from the OS keychain. Returns `NotFound` when no entry
-/// exists. Per seed acceptance #9, secrets only live in the keychain — there
-/// is no on-disk file fallback for `secret material`.
+pub fn store(provider: &str, secret: &str) -> Result<(), KeyringError> {
+    #[cfg(target_os = "macos")]
+    {
+        return macos::store(provider, secret);
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        let entry = keyring::Entry::new(SERVICE, &account(provider))?;
+        entry.set_password(secret)?;
+        let fresh = keyring::Entry::new(SERVICE, &account(provider))?;
+        let back = fresh.get_password()?;
+        if back != secret {
+            return Err(KeyringError::Backend("readback mismatch".into()));
+        }
+        Ok(())
+    }
+}
+
 pub fn fetch(provider: &str) -> Result<String, KeyringError> {
-    let entry = keyring::Entry::new(SERVICE, &format!("provider:{provider}"))?;
-    entry.get_password().map_err(|e| match e {
-        keyring::Error::NoEntry => KeyringError::NotFound(provider.into()),
-        other => other.into(),
-    })
+    #[cfg(target_os = "macos")]
+    {
+        return macos::fetch(provider);
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        let entry = keyring::Entry::new(SERVICE, &account(provider))?;
+        entry.get_password().map_err(|e| match e {
+            keyring::Error::NoEntry => KeyringError::NotFound(provider.into()),
+            other => KeyringError::Backend(other.to_string()),
+        })
+    }
 }
 
 pub fn delete(provider: &str) -> Result<(), KeyringError> {
-    let entry = keyring::Entry::new(SERVICE, &format!("provider:{provider}"))?;
-    entry.delete_credential()?;
-    Ok(())
+    #[cfg(target_os = "macos")]
+    {
+        return macos::delete(provider);
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        let entry = keyring::Entry::new(SERVICE, &account(provider))?;
+        entry.delete_credential()?;
+        Ok(())
+    }
 }
 
-/// v0.2 OAuth write. Lives now so we don't break the public API later.
 pub fn store_oauth(
     provider: &str,
     access: &str,
     refresh: Option<&str>,
     expires_at: Option<i64>,
 ) -> Result<(), KeyringError> {
-    keyring::Entry::new(SERVICE, &format!("provider:{provider}:oauth_access"))?
-        .set_password(access)?;
-    if let Some(r) = refresh {
-        keyring::Entry::new(SERVICE, &format!("provider:{provider}:oauth_refresh"))?
-            .set_password(r)?;
-    }
-    if let Some(exp) = expires_at {
-        keyring::Entry::new(SERVICE, &format!("provider:{provider}:oauth_expiry"))?
-            .set_password(&exp.to_string())?;
-    }
-    Ok(())
+    let _ = expires_at; // v0.2 will write the timestamp slot
+    let _ = refresh;
+    let _ = provider;
+    let _ = access;
+    Err(KeyringError::Backend("OAuth slots land in v0.2".into()))
 }
 
-/// Best-effort full credential read. v0.1 only sees `ApiKey`. v0.2 will
-/// resolve OAuth variants here.
 pub fn fetch_credential(provider: &str) -> Result<Credential, KeyringError> {
-    match fetch(provider) {
-        Ok(value) => Ok(Credential::ApiKey { value }),
-        Err(e) => Err(e),
+    fetch(provider).map(|value| Credential::ApiKey { value })
+}
+
+#[cfg(target_os = "macos")]
+mod macos {
+    //! Shells out to `/usr/bin/security`. This is the same tool Apple ships
+    //! and the same one `aphrodite doctor` uses for the native verification
+    //! check — so what `init` writes is exactly what `doctor` reads.
+
+    use super::{account, KeyringError, SERVICE};
+    use std::process::Command;
+
+    fn security() -> Command {
+        Command::new("/usr/bin/security")
+    }
+
+    pub fn store(provider: &str, secret: &str) -> Result<(), KeyringError> {
+        // -U updates if exists; -s service; -a account; -w write password (last arg).
+        // We pass the secret via stdin alternative? `security` requires -w VALUE on
+        // argv unfortunately. argv is visible briefly to root in `ps`. Document
+        // accept-this-tradeoff; alternative is keychain access via API.
+        let out = security()
+            .arg("add-generic-password")
+            .arg("-U")
+            .arg("-s")
+            .arg(SERVICE)
+            .arg("-a")
+            .arg(account(provider))
+            .arg("-w")
+            .arg(secret)
+            .output()
+            .map_err(|e| KeyringError::Backend(format!("spawn security: {e}")))?;
+        if !out.status.success() {
+            let err = String::from_utf8_lossy(&out.stderr).to_string();
+            return Err(KeyringError::Backend(format!(
+                "security add-generic-password exit {}: {}",
+                out.status.code().unwrap_or(-1),
+                err.trim()
+            )));
+        }
+        // Immediate readback through the same CLI.
+        let back = fetch(provider)?;
+        if back != secret {
+            return Err(KeyringError::Backend(
+                "readback mismatch after store".into(),
+            ));
+        }
+        Ok(())
+    }
+
+    pub fn fetch(provider: &str) -> Result<String, KeyringError> {
+        let out = security()
+            .arg("find-generic-password")
+            .arg("-s")
+            .arg(SERVICE)
+            .arg("-a")
+            .arg(account(provider))
+            .arg("-w")
+            .output()
+            .map_err(|e| KeyringError::Backend(format!("spawn security: {e}")))?;
+        if !out.status.success() {
+            return Err(KeyringError::NotFound(provider.to_string()));
+        }
+        let s = String::from_utf8_lossy(&out.stdout).trim().to_string();
+        if s.is_empty() {
+            return Err(KeyringError::NotFound(provider.to_string()));
+        }
+        Ok(s)
+    }
+
+    pub fn delete(provider: &str) -> Result<(), KeyringError> {
+        let _ = security()
+            .arg("delete-generic-password")
+            .arg("-s")
+            .arg(SERVICE)
+            .arg("-a")
+            .arg(account(provider))
+            .output();
+        Ok(())
     }
 }
