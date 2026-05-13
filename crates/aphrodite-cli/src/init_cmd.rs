@@ -72,8 +72,9 @@ pub async fn run() -> anyhow::Result<serde_json::Value> {
     eprintln!("{}", style("◆ Step 4/4 — API key").bold().cyan());
 
     let methods = [
-        "Paste from system clipboard (pbpaste / wl-paste / xclip) — most reliable",
-        "Type or paste into a hidden prompt",
+        "Paste here (visible — paste works in every terminal)",
+        "Paste from system clipboard (pbpaste / wl-paste / xclip)",
+        "Type or paste into a HIDDEN prompt (some terminals mangle paste)",
         "Read from a file path (file deleted after read)",
         "Skip — I'll set the env var myself later",
     ];
@@ -84,9 +85,10 @@ pub async fn run() -> anyhow::Result<serde_json::Value> {
         .interact()?;
 
     let raw_key: String = match method_idx {
-        0 => read_from_clipboard()?,
-        1 => rpassword::prompt_password(format!("  {} API key (hidden): ", provider.human_name()))?,
-        2 => {
+        0 => read_visible_line(&format!("  {} API key (visible): ", provider.human_name()))?,
+        1 => read_from_clipboard()?,
+        2 => rpassword::prompt_password(format!("  {} API key (hidden): ", provider.human_name()))?,
+        3 => {
             use dialoguer::Input;
             let path: String = Input::with_theme(&theme)
                 .with_prompt("File path containing the key")
@@ -203,6 +205,20 @@ async fn finish_offline() -> anyhow::Result<serde_json::Value> {
         "provider": "offline",
         "key_stored": false,
     }))
+}
+
+/// Visible prompt that reads one line from stdin. Paste works in every
+/// terminal because we don't touch termios — the shell handles the paste
+/// as if the bytes were typed, and we just read them. Key is visible on
+/// screen during entry (user accepted this when picking this option).
+fn read_visible_line(prompt: &str) -> std::io::Result<String> {
+    use std::io::{BufRead, Write};
+    eprint!("{prompt}");
+    std::io::stderr().flush().ok();
+    let stdin = std::io::stdin();
+    let mut line = String::new();
+    stdin.lock().read_line(&mut line)?;
+    Ok(line)
 }
 
 /// Read from the system clipboard using whichever native tool is on PATH.
