@@ -26,6 +26,10 @@ Both surfaces are live:
 
 `aphrodite design` produces four variants in one DESIGN.md: **light, dark, brand-a, brand-b**. Open `docs/demos/variants.html` for a side-by-side render.
 
+## Hand it to your agent
+
+Aphrodite is designed to be invoked *by* coding agents (Claude Code, Codex CLI, OpenCode, Hermes, Cursor). Each host's `.mcp.json` snippet is in [`docs/hosts.md`](docs/hosts.md). Short version: register `aphrodite-mcp` as a stdio server, share the keychain credential across hosts, and the host model gets four tools (`design` / `redesign` / `validate` / `auth_status`). Errors come back as structured `isError:true` envelopes with `hint` fields so the agent can recover without escalating to the human.
+
 ## Install (from source, for now)
 
 ```bash

@@ -131,23 +131,92 @@ async fn tools_call(params: &Value) -> Result<Value, (i32, String)> {
     let name = params.get("name").and_then(|v| v.as_str()).unwrap_or("");
     let args = params.get("arguments").cloned().unwrap_or(Value::Object(Default::default()));
 
-    let result_json: Value = match name {
-        "design" => do_design(args, false).await.map_err(rt)?,
-        "redesign" => do_design(args, true).await.map_err(rt)?,
-        "validate" => do_validate(args).map_err(rt)?,
-        "auth_status" => do_auth_status(),
+    // Run the tool. Any anyhow error becomes a structured `isError:true` envelope so
+    // callers (Claude Code / Codex / Hermes) get actionable info instead of a
+    // raw JSON-RPC -32000.
+    let run = match name {
+        "design" => do_design(args, false).await,
+        "redesign" => do_design(args, true).await,
+        "validate" => do_validate(args),
+        "auth_status" => Ok(do_auth_status()),
         other => return Err((-32602, format!("unknown tool: {other}"))),
     };
 
-    Ok(json!({
-        "content": [{ "type": "text", "text": serde_json::to_string(&result_json).unwrap() }],
-        "structuredContent": result_json,
-        "isError": false,
-    }))
+    match run {
+        Ok(value) => Ok(json!({
+            "content": [{ "type": "text", "text": serde_json::to_string(&value).unwrap() }],
+            "structuredContent": value,
+            "isError": false,
+        })),
+        Err(err) => Ok(envelope_error(name, err)),
+    }
 }
 
-fn rt(e: anyhow::Error) -> (i32, String) {
-    (-32000, e.to_string())
+fn envelope_error(tool: &str, err: anyhow::Error) -> Value {
+    let msg = err.to_string();
+    // Heuristics: classify by message so the agent can branch without parsing.
+    let (status, recoverable, kind) = classify_error(&msg);
+    let body = json!({
+        "ok": false,
+        "tool": tool,
+        "error": {
+            "kind": kind,
+            "message": msg,
+            "http_status": status,
+            "recoverable": recoverable,
+            "hint": hint_for(kind, status),
+        },
+    });
+    json!({
+        "content": [{ "type": "text", "text": serde_json::to_string(&body).unwrap() }],
+        "structuredContent": body,
+        "isError": true,
+    })
+}
+
+fn classify_error(msg: &str) -> (Option<u16>, bool, &'static str) {
+    // Provider HTTP status — surfaced from `ProviderError::Api { status, .. }`.
+    if let Some(s) = extract_status(msg) {
+        let recoverable = matches!(s, 408 | 425 | 429 | 500..=599);
+        let kind = match s {
+            401 | 403 => "auth_failed",
+            404 => "model_or_endpoint_not_found",
+            408 | 425 | 429 => "rate_limited",
+            500..=599 => "provider_outage",
+            _ => "provider_error",
+        };
+        return (Some(s), recoverable, kind);
+    }
+    if msg.contains("not a directory") || msg.contains("does not exist") {
+        return (None, false, "target_repo_invalid");
+    }
+    if msg.contains("frontmatter") || msg.contains("DESIGN.md") {
+        return (None, false, "design_md_invalid");
+    }
+    if msg.contains("missing `intent`") {
+        return (None, false, "invalid_input");
+    }
+    (None, false, "internal")
+}
+
+fn extract_status(msg: &str) -> Option<u16> {
+    // Match the shape from ProviderError::Api: "provider api: status 401: ..."
+    let idx = msg.find("status ")?;
+    let rest = &msg[idx + 7..];
+    let end = rest.find(|c: char| !c.is_ascii_digit())?;
+    rest[..end].parse().ok()
+}
+
+fn hint_for(kind: &str, status: Option<u16>) -> &'static str {
+    match (kind, status) {
+        ("auth_failed", _) => "Run `aphrodite auth set <provider>` or set APHRODITE_<PROVIDER>_API_KEY. Drop to offline by unsetting all provider keys.",
+        ("rate_limited", _) => "Backoff and retry. Consider switching providers via the priority order.",
+        ("provider_outage", _) => "Provider is down. Retry, or invoke with no key set to fall back to offline.",
+        ("target_repo_invalid", _) => "Pass an absolute path to an existing directory. For write_mode=commit it must contain a .git dir.",
+        ("design_md_invalid", _) => "The DESIGN.md must open with `---` YAML frontmatter and follow the Google Labs alpha schema.",
+        ("invalid_input", _) => "Re-read the tool's inputSchema and supply the required fields.",
+        _ => "See `error.message`. If this looks like an Aphrodite bug, please report at https://github.com/aphrodite-ui/aphrodite/issues.",
+    }
 }
 
 async fn do_design(args: Value, is_redesign: bool) -> anyhow::Result<Value> {
@@ -165,6 +234,20 @@ async fn do_design(args: Value, is_redesign: bool) -> anyhow::Result<Value> {
         Some("artifact_only") => WriteMode::ArtifactOnly,
         _ => WriteMode::Commit,
     };
+
+    // P2: validate target_repo before doing any work.
+    if !repo.exists() {
+        anyhow::bail!("target_repo does not exist: {}", repo.display());
+    }
+    if !repo.is_dir() {
+        anyhow::bail!("target_repo is not a directory: {}", repo.display());
+    }
+    if matches!(write_mode, WriteMode::Commit) && !repo.join(".git").exists() {
+        anyhow::bail!(
+            "target_repo does not exist as a git repo (no .git): {}. Pass write_mode=artifact_only to skip git, or run `git init` first.",
+            repo.display()
+        );
+    }
 
     let invocation = Invocation {
         id: uuid::Uuid::new_v4().to_string(),
