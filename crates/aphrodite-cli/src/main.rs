@@ -43,6 +43,11 @@ enum Command {
         /// Target repo (defaults to current working directory).
         #[arg(long)]
         repo: Option<PathBuf>,
+
+        /// Refuse to fall back to offline if a real provider was intended.
+        /// Useful for CI and agent calls where silent downgrade is unacceptable.
+        #[arg(long)]
+        require_llm: bool,
     },
 
     /// Regenerate with implicit "didn't like that one" signal recorded.
@@ -54,6 +59,9 @@ enum Command {
 
         #[arg(long)]
         repo: Option<PathBuf>,
+
+        #[arg(long)]
+        require_llm: bool,
     },
 
     /// Show configured providers (without revealing key material).
@@ -98,11 +106,11 @@ async fn main() -> anyhow::Result<()> {
         Command::Init => init_cmd::run().await?,
         Command::Version => version_summary(cli.json)?,
         Command::Setup => setup_cmd::run().await?,
-        Command::Design { intent, no_write, repo } => {
-            design_cmd::run(intent, no_write, repo, false).await?
+        Command::Design { intent, no_write, repo, require_llm } => {
+            design_cmd::run(intent, no_write, repo, false, require_llm).await?
         }
-        Command::Redesign { intent, no_write, repo } => {
-            design_cmd::run(intent, no_write, repo, true).await?
+        Command::Redesign { intent, no_write, repo, require_llm } => {
+            design_cmd::run(intent, no_write, repo, true, require_llm).await?
         }
         Command::Auth { sub } => match sub {
             AuthSub::Status => auth_status(),

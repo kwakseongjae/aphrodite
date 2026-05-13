@@ -13,6 +13,7 @@ pub async fn run(
     no_write: bool,
     repo: Option<PathBuf>,
     is_redesign: bool,
+    require_llm: bool,
 ) -> anyhow::Result<serde_json::Value> {
     let target_repo = match repo {
         Some(p) => p,
@@ -29,6 +30,14 @@ pub async fn run(
         target_repo: target_repo.clone(),
         write_mode,
     };
+
+    // `--require-llm` short-circuits *before* generation if we'd be falling
+    // back to offline. Agents that must have a real provider call set this.
+    if require_llm && aphrodite_generator::resolve_default_provider().is_none() {
+        anyhow::bail!(
+            "--require-llm: no provider credential is reachable. Run `aphrodite doctor` for details."
+        );
+    }
 
     // Generator resolves provider internally (z.ai → Anthropic → OpenRouter → offline).
     let output = aphrodite_generator::generate(&invocation).await?;
