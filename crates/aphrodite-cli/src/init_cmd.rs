@@ -14,7 +14,7 @@ use crate::banner;
 use aphrodite_core::config::{self, Config, ProviderConfig};
 use aphrodite_generator::provider::ProviderId;
 use console::style;
-use dialoguer::{theme::ColorfulTheme, FuzzySelect, Password};
+use dialoguer::{theme::ColorfulTheme, FuzzySelect};
 use serde_json::json;
 
 const PROVIDERS_TOP: &[(&str, ProviderId)] = &[
@@ -73,15 +73,13 @@ pub async fn run() -> anyhow::Result<serde_json::Value> {
         "  {} {}",
         style("Tip:").dim(),
         style(format!(
-            "If you'd rather use an env var, hit Enter twice and set APHRODITE_{}_API_KEY in your shell.",
+            "Paste your key (input hidden, paste-safe). Press Enter on an empty line to skip and set APHRODITE_{}_API_KEY later.",
             provider.label().to_uppercase()
         ))
         .dim()
     );
-    let key: String = Password::with_theme(&theme)
-        .with_prompt(format!("{} API key (input hidden)", provider.human_name()))
-        .allow_empty_password(true)
-        .interact()?;
+    let prompt = format!("  {} API key ", provider.human_name());
+    let key: String = rpassword::prompt_password(prompt)?.trim().to_string();
 
     if !key.trim().is_empty() {
         aphrodite_keyring::store(provider.label(), key.trim())?;

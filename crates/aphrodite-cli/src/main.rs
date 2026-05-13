@@ -166,14 +166,9 @@ fn auth_set(provider: &str, from_env: Option<&str>) -> anyhow::Result<serde_json
     }
     let key = match from_env {
         Some(name) => std::env::var(name).map_err(|_| anyhow::anyhow!("env var {name} unset"))?,
-        None => {
-            use std::io::{BufRead, Write};
-            eprint!("API key for {provider} (paste, then Enter): ");
-            std::io::stderr().flush().ok();
-            let mut s = String::new();
-            std::io::stdin().lock().read_line(&mut s)?;
-            s.trim().to_string()
-        }
+        None => rpassword::prompt_password(format!("API key for {provider} (paste, hidden): "))?
+            .trim()
+            .to_string(),
     };
     if key.is_empty() {
         anyhow::bail!("empty key — nothing stored");

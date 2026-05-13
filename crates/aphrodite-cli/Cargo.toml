@@ -25,5 +25,6 @@ tracing-subscriber.workspace = true
 indicatif.workspace = true
 console.workspace = true
 uuid = { version = "1", features = ["v4"] }
-dialoguer = { version = "0.11", default-features = false, features = ["fuzzy-select", "password"] }
+dialoguer = { version = "0.11", default-features = false, features = ["fuzzy-select"] }
+rpassword = "7"
 toml = "0.8"
