@@ -14,7 +14,7 @@ use crate::banner;
 use aphrodite_core::config::{self, ProviderConfig};
 use aphrodite_generator::provider::ProviderId;
 use console::style;
-use dialoguer::{theme::ColorfulTheme, FuzzySelect};
+use dialoguer::{theme::ColorfulTheme, FuzzySelect, Input};
 use serde_json::json;
 
 const PROVIDERS_TOP: &[(&str, ProviderId)] = &[
@@ -66,45 +66,21 @@ pub async fn run() -> anyhow::Result<serde_json::Value> {
         .interact()?;
     let model_id = models[model_idx].1;
 
-    // Step 4 — API key (with multiple input paths because hidden prompts
-    // are unreliable in some terminals).
+    // Step 4 — API key. Single input field, type or paste at the same spot.
+    // dialoguer::Input uses readline-style editing (paste, backspace, arrow
+    // keys all work). The captured value passes through `clean_secret()` to
+    // strip any bracketed-paste markers the terminal may have wrapped around
+    // the paste.
     eprintln!();
     eprintln!("{}", style("◆ Step 4/4 — API key").bold().cyan());
-
-    let methods = [
-        "Paste here (visible — paste works in every terminal)",
-        "Paste from system clipboard (pbpaste / wl-paste / xclip)",
-        "Type or paste into a HIDDEN prompt (some terminals mangle paste)",
-        "Read from a file path (file deleted after read)",
-        "Skip — I'll set the env var myself later",
-    ];
-    let method_idx = FuzzySelect::with_theme(&theme)
-        .with_prompt("How would you like to provide the key?")
-        .default(0)
-        .items(&methods)
-        .interact()?;
-
-    let raw_key: String = match method_idx {
-        0 => read_visible_line(&format!("  {} API key (visible): ", provider.human_name()))?,
-        1 => read_from_clipboard()?,
-        2 => rpassword::prompt_password(format!("  {} API key (hidden): ", provider.human_name()))?,
-        3 => {
-            use dialoguer::Input;
-            let path: String = Input::with_theme(&theme)
-                .with_prompt("File path containing the key")
-                .interact_text()?;
-            let p = std::path::PathBuf::from(path.trim());
-            let body = std::fs::read_to_string(&p)?;
-            // Best-effort delete to mirror `auth set --from-file` behaviour.
-            if let Err(e) = std::fs::remove_file(&p) {
-                eprintln!("  {} could not delete source file: {}", style("⚠").yellow(), e);
-            } else {
-                eprintln!("  {} source file deleted: {}", style("✓").green(), p.display());
-            }
-            body
-        }
-        _ => String::new(),
-    };
+    eprintln!(
+        "  {}",
+        style("Type or paste your key, then Enter. Empty to skip.").dim()
+    );
+    let raw_key: String = Input::with_theme(&theme)
+        .with_prompt(format!("{} API key", provider.human_name()))
+        .allow_empty(true)
+        .interact_text()?;
     let key = clean_secret(&raw_key);
 
     // Diagnostic: show length so the user can verify the input was actually
