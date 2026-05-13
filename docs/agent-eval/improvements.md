@@ -44,6 +44,7 @@ When a finding here resolves, update the row and link the commit. When a new age
 | #10 | 2026-05-13 | `auth verify <provider>` + immediate readback in `auth set` / `init` | (this commit) |
 | #5 | 2026-05-13 | Taste loop read-at-generate-time; satisfies seed acceptance #8 | (this commit) |
 | #9 | 2026-05-13 | `aphrodite doctor` + `aphrodite capabilities` for one-shot self-diagnosis | (this commit) |
+| #11 | 2026-05-13 | `auth set --from-stdin` / `--from-file` + bracketed-paste sanitization (rpassword bypass for terminals where hidden input is unreliable) | (this commit) |
 
 ## Re-runs scheduled for next eval pass
 

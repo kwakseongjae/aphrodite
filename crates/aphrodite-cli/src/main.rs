@@ -87,6 +87,17 @@ enum AuthSub {
         /// Read key from this env var instead of prompting.
         #[arg(long)]
         from_env: Option<String>,
+        /// Read key from stdin (e.g. `pbpaste | aphrodite auth set zai --from-stdin`).
+        /// Bypasses the hidden prompt entirely — most reliable across terminals.
+        #[arg(long)]
+        from_stdin: bool,
+        /// Read key from a file path. File is read whole, then deleted unless
+        /// `--keep-file` is also set.
+        #[arg(long, value_name = "PATH")]
+        from_file: Option<PathBuf>,
+        /// With `--from-file`: don't delete the source file after reading.
+        #[arg(long)]
+        keep_file: bool,
     },
     /// Remove a provider's stored credential.
     Remove { provider: String },
@@ -114,7 +125,9 @@ async fn main() -> anyhow::Result<()> {
         }
         Command::Auth { sub } => match sub {
             AuthSub::Status => auth_status(),
-            AuthSub::Set { provider, from_env } => auth_set(&provider, from_env.as_deref())?,
+            AuthSub::Set { provider, from_env, from_stdin, from_file, keep_file } => {
+                auth_set(&provider, from_env.as_deref(), from_stdin, from_file.as_deref(), keep_file)?
+            }
             AuthSub::Remove { provider } => auth_remove(&provider),
             AuthSub::Verify { provider } => auth_verify(&provider),
         },
@@ -179,19 +192,47 @@ fn auth_status() -> serde_json::Value {
     json!({ "kind": "auth_status", "providers": configured })
 }
 
-fn auth_set(provider: &str, from_env: Option<&str>) -> anyhow::Result<serde_json::Value> {
+fn auth_set(
+    provider: &str,
+    from_env: Option<&str>,
+    from_stdin: bool,
+    from_file: Option<&std::path::Path>,
+    keep_file: bool,
+) -> anyhow::Result<serde_json::Value> {
     if !ALL_PROVIDERS.contains(&provider) {
         anyhow::bail!("unknown provider `{provider}`; supported: {}", ALL_PROVIDERS.join(", "));
     }
-    let key = match from_env {
-        Some(name) => std::env::var(name).map_err(|_| anyhow::anyhow!("env var {name} unset"))?,
-        None => rpassword::prompt_password(format!("API key for {provider} (paste, hidden): "))?
-            .trim()
-            .to_string(),
+    let raw = if let Some(name) = from_env {
+        std::env::var(name).map_err(|_| anyhow::anyhow!("env var {name} unset"))?
+    } else if from_stdin {
+        use std::io::Read;
+        let mut buf = String::new();
+        std::io::stdin().read_to_string(&mut buf)?;
+        buf
+    } else if let Some(path) = from_file {
+        let contents = std::fs::read_to_string(path)
+            .map_err(|e| anyhow::anyhow!("could not read --from-file {}: {e}", path.display()))?;
+        if !keep_file {
+            // Best-effort delete; warn if it fails but don't abort — the user
+            // explicitly handed us this file.
+            if let Err(e) = std::fs::remove_file(path) {
+                eprintln!("  ⚠ could not delete source file after read: {e}");
+            } else {
+                eprintln!("  ✓ source file deleted: {}", path.display());
+            }
+        }
+        contents
+    } else {
+        rpassword::prompt_password(format!("API key for {provider} (paste, hidden): "))?
     };
-    eprintln!("Captured {} characters.", key.chars().count());
+    let key = sanitize_secret(&raw);
+    eprintln!("Captured {} characters (after cleanup).", key.chars().count());
     if key.is_empty() {
-        anyhow::bail!("empty key — nothing stored. If hidden input isn't working in your terminal, run with `--from-env NAME` instead.");
+        anyhow::bail!(
+            "empty key — nothing stored. If the hidden prompt isn't working in your terminal, try one of:\n  pbpaste | aphrodite auth set {provider} --from-stdin\n  echo \"<key>\" > /tmp/k && aphrodite auth set {provider} --from-file /tmp/k\n  APHRODITE_{}_API_KEY=<key> aphrodite auth set {provider} --from-env APHRODITE_{}_API_KEY",
+            provider.to_ascii_uppercase(),
+            provider.to_ascii_uppercase()
+        );
     }
     // `store()` now verifies the round-trip internally; if it returns Ok the
     // key is in the keychain *and* readable.
@@ -202,6 +243,22 @@ fn auth_set(provider: &str, from_env: Option<&str>) -> anyhow::Result<serde_json
         provider.to_ascii_uppercase()
     ))?;
     Ok(json!({ "kind": "auth_set", "provider": provider, "stored": true, "verified": true, "key_chars": key.chars().count() }))
+}
+
+/// Strip bracketed-paste wrappers (`\x1b[200~ … \x1b[201~`), CR/LF, NULs, and
+/// surrounding whitespace from a captured secret. This is the single biggest
+/// silent failure mode for keys pasted into hidden prompts on macOS — the
+/// terminal emits the wrappers, rpassword captures them verbatim, and the
+/// resulting "key" is invalid to every API. We never print the key, only its
+/// post-sanitisation length.
+fn sanitize_secret(raw: &str) -> String {
+    let mut s = raw.to_string();
+    // Bracketed-paste open/close markers.
+    s = s.replace("\u{1b}[200~", "").replace("\u{1b}[201~", "");
+    // Lone ESC, then any stray newlines and NULs.
+    s = s.replace('\u{1b}', "");
+    s.retain(|c| c != '\r' && c != '\n' && c != '\0');
+    s.trim().to_string()
 }
 
 fn auth_verify(provider: &str) -> serde_json::Value {

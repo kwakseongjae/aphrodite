@@ -79,7 +79,8 @@ pub async fn run() -> anyhow::Result<serde_json::Value> {
         .dim()
     );
     let prompt = format!("  {} API key ", provider.human_name());
-    let key: String = rpassword::prompt_password(prompt)?.trim().to_string();
+    let raw_key: String = rpassword::prompt_password(prompt)?;
+    let key = clean_secret(&raw_key);
 
     // Diagnostic: show length so the user can verify the input was actually
     // received. Common failure modes on macOS are (a) paste mangled by
@@ -179,4 +180,13 @@ async fn finish_offline() -> anyhow::Result<serde_json::Value> {
         "provider": "offline",
         "key_stored": false,
     }))
+}
+
+/// Strip bracketed-paste wrappers + control characters + whitespace.
+fn clean_secret(raw: &str) -> String {
+    let mut s = raw.to_string();
+    s = s.replace("\u{1b}[200~", "").replace("\u{1b}[201~", "");
+    s = s.replace('\u{1b}', "");
+    s.retain(|c| c != '\r' && c != '\n' && c != '\0');
+    s.trim().to_string()
 }
