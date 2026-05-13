@@ -11,7 +11,7 @@
 //!   7. Optional immediate smoke-call to confirm key + endpoint.
 
 use crate::banner;
-use aphrodite_core::config::{self, Config, ProviderConfig};
+use aphrodite_core::config::{self, ProviderConfig};
 use aphrodite_generator::provider::ProviderId;
 use console::style;
 use dialoguer::{theme::ColorfulTheme, FuzzySelect};
