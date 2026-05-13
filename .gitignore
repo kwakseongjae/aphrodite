@@ -52,6 +52,8 @@ artifacts/
 sessions/
 scratch/
 tmp/
+# Agent-eval sandbox runs (each run-XX has its own git init; we don't track them)
+experiments/
 
 # --- Optional: model/asset caches if downloaded ---
 models/

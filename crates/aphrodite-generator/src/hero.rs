@@ -214,13 +214,42 @@ fn pick(tokens: &std::collections::BTreeMap<String, String>, keys: &[&str]) -> O
 }
 
 fn derive_headline(description: &str, name: &str) -> String {
-    let d = description.trim();
-    if d.is_empty() || d.len() < 8 {
-        format!("Meet {name}.")
-    } else {
-        // Use the description as the headline; trim trailing period if any.
-        d.trim_end_matches('.').to_string() + "."
+    // Long, multi-clause intents look terrible as a hero H1. Cap at ~80 chars
+    // and prefer the first clause break (`,` `;` `—` or sentence end). Never
+    // split on a `.` that's mid-word (`three.js`, `DESIGN.md`) — only when
+    // followed by whitespace or end-of-string.
+    let d = description.trim().trim_end_matches('.');
+    if d.is_empty() {
+        return format!("Meet {name}.");
     }
+    let chars: Vec<char> = d.chars().collect();
+    let mut cut: Option<usize> = None;
+    for (i, c) in chars.iter().enumerate() {
+        let next_is_break = matches!(chars.get(i + 1), Some(c) if c.is_whitespace()) || i + 1 == chars.len();
+        let is_terminator = matches!(c, '.' | '!' | '?');
+        let is_separator = matches!(c, ',' | ';' | '—' | '·' | ':');
+        if (is_terminator && next_is_break) || is_separator {
+            cut = Some(i);
+            break;
+        }
+    }
+    let first_clause: String = match cut {
+        Some(i) => chars[..i].iter().collect(),
+        None => d.to_string(),
+    };
+    let first_clause = first_clause.trim().to_string();
+
+    if first_clause.chars().count() == 0 || first_clause.chars().count() > 80 {
+        return format!("Meet {name}.");
+    }
+
+    // Capitalize the first letter for hero presentation; end with a period.
+    let mut cs = first_clause.chars();
+    let head = match cs.next() {
+        Some(c) => c.to_uppercase().collect::<String>(),
+        None => return format!("Meet {name}."),
+    };
+    format!("{head}{}.", cs.as_str())
 }
 
 fn derive_lede(description: &str) -> String {

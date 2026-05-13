@@ -147,26 +147,46 @@ all text. DON'T introduce shades not defined in this document.
 }
 
 fn derive_name(intent: &str) -> String {
+    // The eyebrow uses this — must read as a project / brand name, not as the
+    // first three words of an instructional prompt.
+    //
+    // Strategy: drop instructional verbs ("include", "use", "make", "build",
+    // "generate"), drop framework names, take the first 2 informative words,
+    // Title-case. Fall back to "Aphrodite Project" if nothing's left.
+    const SKIP: &[&str] = &[
+        "a", "an", "the", "this", "that", "and", "or", "of", "for", "with", "into", "onto",
+        "include", "use", "uses", "using", "make", "made", "build", "built", "generate",
+        "generated", "create", "created", "place", "placed", "show", "showing", "design",
+        "designed", "render", "rendered", "ship", "shipped", "produce", "produced",
+        "three", "threejs", "react", "vue", "svelte", "angular", "tailwind", "figma",
+        "video", "image", "png", "jpg", "mp4", "css", "html", "js",
+    ];
     let cleaned: String = intent
         .chars()
-        .filter(|c| c.is_alphanumeric() || c.is_whitespace())
+        .filter(|c| c.is_alphanumeric() || c.is_whitespace() || *c == '-')
         .collect();
-    let words: Vec<&str> = cleaned.split_whitespace().take(3).collect();
+    let words: Vec<&str> = cleaned
+        .split_whitespace()
+        .filter(|w| {
+            let lower: String = w.to_ascii_lowercase();
+            !SKIP.contains(&lower.as_str()) && lower.len() > 1
+        })
+        .take(2)
+        .collect();
     if words.is_empty() {
-        "Aphrodite Output".to_string()
-    } else {
-        words
-            .iter()
-            .map(|w| {
-                let mut c = w.chars();
-                match c.next() {
-                    Some(first) => first.to_uppercase().collect::<String>() + c.as_str(),
-                    None => String::new(),
-                }
-            })
-            .collect::<Vec<_>>()
-            .join(" ")
+        return "Aphrodite Project".to_string();
     }
+    words
+        .iter()
+        .map(|w| {
+            let mut c = w.chars();
+            match c.next() {
+                Some(first) => first.to_uppercase().collect::<String>() + c.as_str(),
+                None => String::new(),
+            }
+        })
+        .collect::<Vec<_>>()
+        .join(" ")
 }
 
 fn hash_u32(s: &str) -> u32 {

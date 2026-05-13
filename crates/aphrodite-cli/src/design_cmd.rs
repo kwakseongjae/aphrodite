@@ -71,6 +71,7 @@ pub async fn run(
         "invocation_id": invocation.id,
         "output": {
             "provider_used": output.provider_used,
+            "model_used": output.model_used,
             "files": [
                 design_path.to_string_lossy(),
                 hero_path.to_string_lossy(),
@@ -84,6 +85,7 @@ pub async fn run(
                 "ok": report.is_ok(),
                 "violations": report.violations,
             },
+            "warnings": output.warnings,
         },
     }))
 }

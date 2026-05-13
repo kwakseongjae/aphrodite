@@ -81,19 +81,76 @@ pub async fn run() -> anyhow::Result<serde_json::Value> {
     let prompt = format!("  {} API key ", provider.human_name());
     let key: String = rpassword::prompt_password(prompt)?.trim().to_string();
 
-    if !key.trim().is_empty() {
-        aphrodite_keyring::store(provider.label(), key.trim())?;
+    // Diagnostic: show length so the user can verify the input was actually
+    // received. Common failure modes on macOS are (a) paste mangled by
+    // bracketed-paste, (b) input read by another process, (c) the user
+    // pressed Enter on an empty line. Showing length lets us distinguish all
+    // three without ever printing the secret.
+    if key.is_empty() {
         eprintln!(
-            "  {} Key stored in OS keychain (service `aphrodite`, account `provider:{}`)",
-            style("✓").green(),
+            "  {} Captured 0 characters. {}",
+            style("⚠").yellow(),
+            style("Nothing was read from stdin.").dim()
+        );
+        eprintln!(
+            "  {} Aphrodite will look for APHRODITE_{}_API_KEY at call time, or rerun `aphrodite auth set {}`.",
+            style("→").dim(),
+            provider.label().to_uppercase(),
             provider.label()
         );
     } else {
         eprintln!(
-            "  {} No key stored. Aphrodite will look for APHRODITE_{}_API_KEY at call time.",
-            style("⚠").yellow(),
-            provider.label().to_uppercase()
+            "  {} Captured {} characters. Writing to OS keychain…",
+            style("✓").green(),
+            key.chars().count()
         );
+
+        match aphrodite_keyring::store(provider.label(), &key) {
+            Ok(()) => {
+                // Immediate readback. macOS often "succeeds" at store but then
+                // denies read for a binary that hasn't been Always-Allowed.
+                // We catch that here, not at design-call time.
+                match aphrodite_keyring::fetch(provider.label()) {
+                    Ok(stored) if stored == key => {
+                        eprintln!(
+                            "  {} Verified: keychain readback matches. (service `aphrodite`, account `provider:{}`)",
+                            style("✓").green(),
+                            provider.label()
+                        );
+                    }
+                    Ok(_) => {
+                        eprintln!(
+                            "  {} Stored but readback returned a different value. Stop and inspect Keychain Access manually.",
+                            style("✖").red(),
+                        );
+                    }
+                    Err(e) => {
+                        eprintln!(
+                            "  {} Stored, but immediate readback failed: {}",
+                            style("✖").red(),
+                            e
+                        );
+                        eprintln!(
+                            "  {} On macOS this usually means you denied the Keychain access prompt. Run init again and choose `Always Allow`. Or set APHRODITE_{}_API_KEY as an env var.",
+                            style("→").dim(),
+                            provider.label().to_uppercase()
+                        );
+                    }
+                }
+            }
+            Err(e) => {
+                eprintln!(
+                    "  {} Keychain write failed: {}",
+                    style("✖").red(),
+                    e
+                );
+                eprintln!(
+                    "  {} Fallback: set APHRODITE_{}_API_KEY in your shell rc and rerun.",
+                    style("→").dim(),
+                    provider.label().to_uppercase()
+                );
+            }
+        }
     }
 
     // Persist config

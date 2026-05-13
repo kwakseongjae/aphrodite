@@ -17,6 +17,17 @@ pub struct GenerationOutput {
     pub hero_html: String,
     pub provider_used: String,
     pub model_used: String,
+    /// Non-fatal observations: out-of-scope intent terms, provider downgrades,
+    /// deprecated config keys. Empty array on clean runs. Always present so
+    /// agents can `payload.warnings.length > 0` test reliably.
+    pub warnings: Vec<Warning>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Warning {
+    pub kind: String,
+    pub message: String,
+    pub hint: String,
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -49,6 +60,7 @@ pub async fn generate_with(
     let design_doc = parse_design(&design_md)?;
     let variants = resolve_variants(&design_doc);
     let hero_html = hero::render(&design_doc, &variants).map_err(GenError::Hero)?;
+    let warnings = warnings_for(&invocation.intent, &provider_used);
 
     Ok(GenerationOutput {
         design_md,
@@ -57,7 +69,68 @@ pub async fn generate_with(
         hero_html,
         provider_used,
         model_used,
+        warnings,
     })
+}
+
+/// Inspect intent + context for v0.1 out-of-scope asks and emit non-fatal
+/// warnings. Agents can branch on `warnings[].kind` without parsing free text.
+fn warnings_for(intent: &str, provider_used: &str) -> Vec<Warning> {
+    let mut out = Vec::new();
+    let lower = intent.to_ascii_lowercase();
+
+    // Out-of-scope content vocabulary the v0.1 generator does not produce.
+    let buckets: &[(&[&str], &str, &str)] = &[
+        (
+            &["image", "illustration", "photo", "photograph", "render an", "png", "jpg", "jpeg", "webp"],
+            "image_generation",
+            "Aphrodite v0.1 does not generate or fetch images. Variants ship token-driven HTML/CSS only. The intent for an image was ignored; consider adding the asset yourself or wait for the image adapter (post-v0.1).",
+        ),
+        (
+            &["video", "mp4", "mov", "webm", "motion", "animate", "scroll-jacking", "parallax"],
+            "motion_or_video",
+            "Aphrodite v0.1 emits a static hero. Motion / video lands with the HyperFrames adapter in v0.2.",
+        ),
+        (
+            &["three.js", "threejs", "webgl", "3d ", "canvas", " glb", " gltf"],
+            "three_d_scene",
+            "Aphrodite v0.1 has no 3D adapter. three.js/Blender support lands in v0.3.",
+        ),
+        (
+            &["figma", "sketch.com", "framer"],
+            "design_tool_roundtrip",
+            "Aphrodite v0.1 does not round-trip with design tools. Figma Tokens import/export lands in v0.2.",
+        ),
+    ];
+
+    for (keys, kind, hint) in buckets {
+        if keys.iter().any(|k| lower.contains(k)) {
+            out.push(Warning {
+                kind: (*kind).to_string(),
+                message: format!("intent mentions `{}`, which Aphrodite v0.1 does not produce; the request was satisfied without it.", keys[0]),
+                hint: (*hint).to_string(),
+            });
+        }
+    }
+
+    // Provider downgrade — config intends one, runtime resolved another.
+    let cfg = aphrodite_core::config::load();
+    if let Some(intended) = cfg.default_provider.as_deref() {
+        if provider_used == "offline" && intended != "offline" {
+            out.push(Warning {
+                kind: "provider_downgraded".to_string(),
+                message: format!(
+                    "config sets default_provider=`{intended}` but no credential was readable; fell back to offline."
+                ),
+                hint: format!(
+                    "Run `aphrodite auth set {intended}` or set APHRODITE_{}_API_KEY. `aphrodite auth verify {intended}` checks the keychain entry.",
+                    intended.to_ascii_uppercase()
+                ),
+            });
+        }
+    }
+
+    out
 }
 
 /// Resolve a provider. Honors `~/.aphrodite/config.toml` for default_provider

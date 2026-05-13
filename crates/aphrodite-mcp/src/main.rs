@@ -291,6 +291,7 @@ async fn do_design(args: Value, is_redesign: bool) -> anyhow::Result<Value> {
     Ok(json!({
         "invocation_id": invocation.id,
         "provider_used": output.provider_used,
+        "model_used": output.model_used,
         "design_path": design_path.to_string_lossy(),
         "hero_path": hero_path.to_string_lossy(),
         "variants": output.variants.iter().map(|v| v.kind.label()).collect::<Vec<_>>(),
@@ -299,6 +300,7 @@ async fn do_design(args: Value, is_redesign: bool) -> anyhow::Result<Value> {
             "ok": report.is_ok(),
             "violations": report.violations,
         },
+        "warnings": output.warnings,
     }))
 }
 

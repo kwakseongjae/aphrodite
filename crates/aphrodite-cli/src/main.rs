@@ -76,6 +76,8 @@ enum AuthSub {
     },
     /// Remove a provider's stored credential.
     Remove { provider: String },
+    /// Verify that a provider's stored key is readable (round-trip test).
+    Verify { provider: String },
 }
 
 #[tokio::main]
@@ -100,6 +102,7 @@ async fn main() -> anyhow::Result<()> {
             AuthSub::Status => auth_status(),
             AuthSub::Set { provider, from_env } => auth_set(&provider, from_env.as_deref())?,
             AuthSub::Remove { provider } => auth_remove(&provider),
+            AuthSub::Verify { provider } => auth_verify(&provider),
         },
     };
 
@@ -170,11 +173,50 @@ fn auth_set(provider: &str, from_env: Option<&str>) -> anyhow::Result<serde_json
             .trim()
             .to_string(),
     };
+    eprintln!("Captured {} characters.", key.chars().count());
     if key.is_empty() {
-        anyhow::bail!("empty key — nothing stored");
+        anyhow::bail!("empty key — nothing stored. If hidden input isn't working in your terminal, run with `--from-env NAME` instead.");
     }
     aphrodite_keyring::store(provider, &key)?;
-    Ok(json!({ "kind": "auth_set", "provider": provider, "stored": true }))
+    let verified = aphrodite_keyring::fetch(provider).ok().as_deref() == Some(key.as_str());
+    if !verified {
+        anyhow::bail!(
+            "Stored, but readback failed — macOS Keychain probably needs `Always Allow` permission for this binary. Open Keychain Access app, search service `aphrodite`, account `provider:{provider}`, and tick Always Allow."
+        );
+    }
+    Ok(json!({ "kind": "auth_set", "provider": provider, "stored": true, "verified": true, "key_chars": key.chars().count() }))
+}
+
+fn auth_verify(provider: &str) -> serde_json::Value {
+    use console::style;
+    if !ALL_PROVIDERS.contains(&provider) {
+        return json!({ "kind": "auth_verify", "provider": provider, "ok": false, "reason": "unknown provider" });
+    }
+    match aphrodite_keyring::fetch(provider) {
+        Ok(k) => {
+            eprintln!(
+                "  {} {} present in OS keychain ({} chars)",
+                style("✓").green(),
+                provider,
+                k.chars().count()
+            );
+            json!({ "kind": "auth_verify", "provider": provider, "ok": true, "key_chars": k.chars().count() })
+        }
+        Err(e) => {
+            eprintln!(
+                "  {} {} NOT readable from keychain: {}",
+                style("✖").red(),
+                provider,
+                e
+            );
+            eprintln!(
+                "  {} Try `aphrodite auth set {}` again, and on macOS click `Always Allow` if prompted.",
+                style("→").dim(),
+                provider
+            );
+            json!({ "kind": "auth_verify", "provider": provider, "ok": false, "error": e.to_string() })
+        }
+    }
 }
 
 fn auth_remove(provider: &str) -> serde_json::Value {
@@ -246,6 +288,19 @@ fn render_pretty(payload: &serde_json::Value) {
                         if let Some(arr) = validation.get("violations").and_then(|v| v.as_array()) {
                             for v in arr.iter().take(5) {
                                 println!("    - {}", v.get("message").and_then(|x| x.as_str()).unwrap_or("?"));
+                            }
+                        }
+                    }
+                }
+                if let Some(warnings) = out.get("warnings").and_then(|v| v.as_array()) {
+                    if !warnings.is_empty() {
+                        println!("  Warnings     :");
+                        for w in warnings {
+                            let kind = w.get("kind").and_then(|v| v.as_str()).unwrap_or("?");
+                            let msg = w.get("message").and_then(|v| v.as_str()).unwrap_or("");
+                            println!("    {} {} — {}", style("⚠").yellow(), style(kind).yellow(), msg);
+                            if let Some(hint) = w.get("hint").and_then(|v| v.as_str()) {
+                                println!("      {} {}", style("→").dim(), style(hint).dim());
                             }
                         }
                     }
