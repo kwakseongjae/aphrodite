@@ -1,0 +1,19 @@
+[package]
+name = "aphrodite-generator"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Prompt + skill + DESIGN.md context → DESIGN.md + hero HTML."
+
+[dependencies]
+aphrodite-core = { path = "../aphrodite-core" }
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+reqwest.workspace = true
+tracing.workspace = true
+minijinja.workspace = true

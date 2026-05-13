@@ -1,0 +1,27 @@
+[package]
+name = "aphrodite-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Aphrodite CLI — the human-facing entry point. Thin pretty layer over the MCP JSON contract."
+
+[[bin]]
+name = "aphrodite"
+path = "src/main.rs"
+
+[dependencies]
+aphrodite-core = { path = "../aphrodite-core" }
+aphrodite-generator = { path = "../aphrodite-generator" }
+aphrodite-keyring = { path = "../aphrodite-keyring" }
+clap.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml.workspace = true
+anyhow.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+indicatif.workspace = true
+console.workspace = true
+uuid = { version = "1", features = ["v4"] }

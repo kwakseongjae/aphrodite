@@ -1,0 +1,66 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/aphrodite-core",
+    "crates/aphrodite-cli",
+    "crates/aphrodite-mcp",
+    "crates/aphrodite-generator",
+    "crates/aphrodite-keyring",
+]
+
+[workspace.package]
+version = "0.1.0-dev"
+edition = "2024"
+rust-version = "1.85"
+license = "Apache-2.0"
+authors = ["The Aphrodite contributors"]
+repository = "https://github.com/<owner>/aphrodite"
+homepage = "https://github.com/<owner>/aphrodite"
+readme = "../../README.md"
+
+[workspace.dependencies]
+# JSON / serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+
+# Error handling
+thiserror = "2"
+anyhow = "1"
+
+# CLI / TUI
+clap = { version = "4", features = ["derive", "env"] }
+indicatif = "0.17"
+console = "0.15"
+
+# Async runtime (MCP server, LLM calls)
+tokio = { version = "1", features = ["full"] }
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json", "stream"] }
+futures = "0.3"
+
+# Tracing / logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# Storage
+rusqlite = { version = "0.31", features = ["bundled"] }
+keyring = "3"
+
+# Markdown / DESIGN.md parsing
+pulldown-cmark = "0.11"
+gray_matter = "0.2"  # YAML frontmatter
+
+# Color / contrast
+palette = "0.7"
+
+# Templating (hero HTML emit)
+minijinja = "2"
+
+# MCP protocol (placeholder — confirm crate at impl time)
+# rmcp = "0.1"   # rust-mcp; verify at first commit
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "symbols"
+opt-level = 3

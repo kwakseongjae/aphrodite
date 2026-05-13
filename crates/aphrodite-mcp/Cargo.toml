@@ -1,0 +1,23 @@
+[package]
+name = "aphrodite-mcp"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+description = "Aphrodite MCP server — the primary surface under the seed's agent-first decision."
+
+[[bin]]
+name = "aphrodite-mcp"
+path = "src/main.rs"
+
+[dependencies]
+aphrodite-core = { path = "../aphrodite-core" }
+aphrodite-generator = { path = "../aphrodite-generator" }
+aphrodite-keyring = { path = "../aphrodite-keyring" }
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "io-std", "io-util"] }
+tracing.workspace = true
+tracing-subscriber.workspace = true
+uuid = { version = "1", features = ["v4"] }
