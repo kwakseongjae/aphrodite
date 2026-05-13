@@ -66,20 +66,43 @@ pub async fn run() -> anyhow::Result<serde_json::Value> {
         .interact()?;
     let model_id = models[model_idx].1;
 
-    // Step 4 — API key
+    // Step 4 — API key (with multiple input paths because hidden prompts
+    // are unreliable in some terminals).
     eprintln!();
     eprintln!("{}", style("◆ Step 4/4 — API key").bold().cyan());
-    eprintln!(
-        "  {} {}",
-        style("Tip:").dim(),
-        style(format!(
-            "Paste your key (input hidden, paste-safe). Press Enter on an empty line to skip and set APHRODITE_{}_API_KEY later.",
-            provider.label().to_uppercase()
-        ))
-        .dim()
-    );
-    let prompt = format!("  {} API key ", provider.human_name());
-    let raw_key: String = rpassword::prompt_password(prompt)?;
+
+    let methods = [
+        "Paste from system clipboard (pbpaste / wl-paste / xclip) — most reliable",
+        "Type or paste into a hidden prompt",
+        "Read from a file path (file deleted after read)",
+        "Skip — I'll set the env var myself later",
+    ];
+    let method_idx = FuzzySelect::with_theme(&theme)
+        .with_prompt("How would you like to provide the key?")
+        .default(0)
+        .items(&methods)
+        .interact()?;
+
+    let raw_key: String = match method_idx {
+        0 => read_from_clipboard()?,
+        1 => rpassword::prompt_password(format!("  {} API key (hidden): ", provider.human_name()))?,
+        2 => {
+            use dialoguer::Input;
+            let path: String = Input::with_theme(&theme)
+                .with_prompt("File path containing the key")
+                .interact_text()?;
+            let p = std::path::PathBuf::from(path.trim());
+            let body = std::fs::read_to_string(&p)?;
+            // Best-effort delete to mirror `auth set --from-file` behaviour.
+            if let Err(e) = std::fs::remove_file(&p) {
+                eprintln!("  {} could not delete source file: {}", style("⚠").yellow(), e);
+            } else {
+                eprintln!("  {} source file deleted: {}", style("✓").green(), p.display());
+            }
+            body
+        }
+        _ => String::new(),
+    };
     let key = clean_secret(&raw_key);
 
     // Diagnostic: show length so the user can verify the input was actually
@@ -180,6 +203,41 @@ async fn finish_offline() -> anyhow::Result<serde_json::Value> {
         "provider": "offline",
         "key_stored": false,
     }))
+}
+
+/// Read from the system clipboard using whichever native tool is on PATH.
+/// macOS: `pbpaste`. Wayland: `wl-paste`. X11: `xclip -selection clipboard -o`.
+/// Windows: PowerShell `Get-Clipboard`.
+fn read_from_clipboard() -> anyhow::Result<String> {
+    use std::process::Command;
+    let candidates: &[(&str, &[&str])] = &[
+        ("pbpaste", &[]),
+        ("wl-paste", &["--no-newline"]),
+        ("xclip", &["-selection", "clipboard", "-o"]),
+        ("xsel", &["--clipboard", "--output"]),
+        ("powershell.exe", &["-Command", "Get-Clipboard"]),
+    ];
+    for (bin, args) in candidates {
+        if let Ok(out) = Command::new(bin).args(*args).output() {
+            if out.status.success() {
+                let s = String::from_utf8_lossy(&out.stdout).to_string();
+                if !s.trim().is_empty() {
+                    eprintln!(
+                        "  {} Read {} bytes from clipboard via `{}`",
+                        console::style("✓").green(),
+                        out.stdout.len(),
+                        bin
+                    );
+                    return Ok(s);
+                }
+            }
+        }
+    }
+    anyhow::bail!(
+        "No clipboard tool found on PATH (tried pbpaste / wl-paste / xclip / xsel). \
+         Pick a different input method or pipe the key in: \
+         `pbpaste | aphrodite auth set zai --from-stdin`"
+    )
 }
 
 /// Strip bracketed-paste wrappers + control characters + whitespace.
