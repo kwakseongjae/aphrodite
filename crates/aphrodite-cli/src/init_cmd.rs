@@ -100,52 +100,30 @@ pub async fn run() -> anyhow::Result<serde_json::Value> {
         );
     } else {
         eprintln!(
-            "  {} Captured {} characters. Writing to OS keychain…",
+            "  {} Captured {} characters. Writing to OS keychain (round-trip verified)…",
             style("✓").green(),
             key.chars().count()
         );
-
         match aphrodite_keyring::store(provider.label(), &key) {
             Ok(()) => {
-                // Immediate readback. macOS often "succeeds" at store but then
-                // denies read for a binary that hasn't been Always-Allowed.
-                // We catch that here, not at design-call time.
-                match aphrodite_keyring::fetch(provider.label()) {
-                    Ok(stored) if stored == key => {
-                        eprintln!(
-                            "  {} Verified: keychain readback matches. (service `aphrodite`, account `provider:{}`)",
-                            style("✓").green(),
-                            provider.label()
-                        );
-                    }
-                    Ok(_) => {
-                        eprintln!(
-                            "  {} Stored but readback returned a different value. Stop and inspect Keychain Access manually.",
-                            style("✖").red(),
-                        );
-                    }
-                    Err(e) => {
-                        eprintln!(
-                            "  {} Stored, but immediate readback failed: {}",
-                            style("✖").red(),
-                            e
-                        );
-                        eprintln!(
-                            "  {} On macOS this usually means you denied the Keychain access prompt. Run init again and choose `Always Allow`. Or set APHRODITE_{}_API_KEY as an env var.",
-                            style("→").dim(),
-                            provider.label().to_uppercase()
-                        );
-                    }
-                }
+                eprintln!(
+                    "  {} Verified: keychain readback matches. (service `aphrodite`, account `provider:{}`)",
+                    style("✓").green(),
+                    provider.label()
+                );
             }
             Err(e) => {
+                eprintln!("  {} Keychain failed: {}", style("✖").red(), e);
                 eprintln!(
-                    "  {} Keychain write failed: {}",
-                    style("✖").red(),
-                    e
+                    "  {} On macOS this usually means you denied or dismissed the Keychain Access dialog.",
+                    style("→").dim()
                 );
                 eprintln!(
-                    "  {} Fallback: set APHRODITE_{}_API_KEY in your shell rc and rerun.",
+                    "  {} Open Keychain Access → search `aphrodite` → delete stale entries → rerun init and click `Always Allow`.",
+                    style("→").dim()
+                );
+                eprintln!(
+                    "  {} Or skip the keychain entirely: `export APHRODITE_{}_API_KEY=…` in your shell rc.",
                     style("→").dim(),
                     provider.label().to_uppercase()
                 );

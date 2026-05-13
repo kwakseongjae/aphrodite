@@ -193,13 +193,14 @@ fn auth_set(provider: &str, from_env: Option<&str>) -> anyhow::Result<serde_json
     if key.is_empty() {
         anyhow::bail!("empty key — nothing stored. If hidden input isn't working in your terminal, run with `--from-env NAME` instead.");
     }
-    aphrodite_keyring::store(provider, &key)?;
-    let verified = aphrodite_keyring::fetch(provider).ok().as_deref() == Some(key.as_str());
-    if !verified {
-        anyhow::bail!(
-            "Stored, but readback failed — macOS Keychain probably needs `Always Allow` permission for this binary. Open Keychain Access app, search service `aphrodite`, account `provider:{provider}`, and tick Always Allow."
-        );
-    }
+    // `store()` now verifies the round-trip internally; if it returns Ok the
+    // key is in the keychain *and* readable.
+    aphrodite_keyring::store(provider, &key).map_err(|e| anyhow::anyhow!(
+        "Keychain write or readback failed: {e}.\n\
+         On macOS this usually means the Keychain Access dialog was denied or dismissed.\n\
+         Steps:\n  1. Open Keychain Access app\n  2. Search for `aphrodite`\n  3. Delete any existing entry (or right-click → Get Info → Access Control → Always allow)\n  4. Run `aphrodite auth set {provider}` again — this time click `Always Allow` when prompted.\n  Or skip the keychain entirely: `export APHRODITE_{}_API_KEY=...` in your shell rc.",
+        provider.to_ascii_uppercase()
+    ))?;
     Ok(json!({ "kind": "auth_set", "provider": provider, "stored": true, "verified": true, "key_chars": key.chars().count() }))
 }
 

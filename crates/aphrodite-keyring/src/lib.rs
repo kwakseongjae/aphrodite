@@ -32,14 +32,29 @@ pub enum Credential {
     OAuth { access: String, refresh: Option<String>, expires_at: Option<i64> },
 }
 
-/// Write an API key (v0.1 fast path).
+/// Write an API key + verify the OS keychain entry round-trips. Returns Ok
+/// only when the store *and* a fresh subsequent fetch both succeed.
 pub fn store(provider: &str, secret: &str) -> Result<(), KeyringError> {
     let entry = keyring::Entry::new(SERVICE, &format!("provider:{provider}"))?;
     entry.set_password(secret)?;
+    // Immediate readback through a *fresh* Entry so we exercise the same
+    // permission gate `fetch()` will see. macOS sometimes accepts a write but
+    // blocks subsequent reads from a different process or different
+    // permission context — we catch that here, not at design-call time.
+    let fresh = keyring::Entry::new(SERVICE, &format!("provider:{provider}"))?;
+    let back = fresh.get_password()?;
+    if back != secret {
+        return Err(KeyringError::Backend(keyring::Error::Invalid(
+            "keychain readback mismatch".into(),
+            "fetched value differs from stored value".into(),
+        )));
+    }
     Ok(())
 }
 
-/// Read the API key. Returns `NotFound` when no entry exists.
+/// Read the API key from the OS keychain. Returns `NotFound` when no entry
+/// exists. Per seed acceptance #9, secrets only live in the keychain — there
+/// is no on-disk file fallback for `secret material`.
 pub fn fetch(provider: &str) -> Result<String, KeyringError> {
     let entry = keyring::Entry::new(SERVICE, &format!("provider:{provider}"))?;
     entry.get_password().map_err(|e| match e {
