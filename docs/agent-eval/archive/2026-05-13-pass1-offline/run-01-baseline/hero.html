@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>A Minimal Landing — Aphrodite</title>
+<style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant="brand-a"] {
+    --colors-background-primary: #fff8f1;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #dedcf9;
+    --colors-primary-200: #bcbaf3;
+    --colors-primary-300: #8f8aea;
+    --colors-primary-400: #5952e0;
+    --colors-primary-50: #f3f2fd;
+    --colors-primary-500: #2a22c3;
+    --colors-primary-600: #221c9c;
+    --colors-primary-700: #1a1579;
+    --colors-primary-800: #130f57;
+    --colors-primary-900: #0b0934;
+    --colors-secondary-50: #fcfdf2;
+    --colors-secondary-500: #bbc322;
+    --colors-secondary-900: #323409;
+    --colors-text-primary: #241407;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #fff8f1;
+    --fg: #241407;
+    --accent: #2a22c3;
+    --muted: #8f8aea;
+  }
+  
+  [data-variant="brand-b"] {
+    --colors-background-primary: #f1faf8;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #dedcf9;
+    --colors-primary-200: #bcbaf3;
+    --colors-primary-300: #8f8aea;
+    --colors-primary-400: #5952e0;
+    --colors-primary-50: #f3f2fd;
+    --colors-primary-500: #2a22c3;
+    --colors-primary-600: #221c9c;
+    --colors-primary-700: #1a1579;
+    --colors-primary-800: #130f57;
+    --colors-primary-900: #0b0934;
+    --colors-secondary-50: #fcfdf2;
+    --colors-secondary-500: #bbc322;
+    --colors-secondary-900: #323409;
+    --colors-text-primary: #04231d;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #f1faf8;
+    --fg: #04231d;
+    --accent: #2a22c3;
+    --muted: #8f8aea;
+  }
+  
+  [data-variant="dark"] {
+    --colors-background-primary: #0b0b10;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #dedcf9;
+    --colors-primary-200: #bcbaf3;
+    --colors-primary-300: #8f8aea;
+    --colors-primary-400: #5952e0;
+    --colors-primary-50: #f3f2fd;
+    --colors-primary-500: #2a22c3;
+    --colors-primary-600: #221c9c;
+    --colors-primary-700: #1a1579;
+    --colors-primary-800: #130f57;
+    --colors-primary-900: #0b0934;
+    --colors-secondary-50: #fcfdf2;
+    --colors-secondary-500: #bbc322;
+    --colors-secondary-900: #323409;
+    --colors-text-primary: #f5f5f7;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #0b0b10;
+    --fg: #f5f5f7;
+    --accent: #2a22c3;
+    --muted: #8f8aea;
+  }
+  
+  [data-variant="light"] {
+    --colors-background-primary: #ffffff;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #dedcf9;
+    --colors-primary-200: #bcbaf3;
+    --colors-primary-300: #8f8aea;
+    --colors-primary-400: #5952e0;
+    --colors-primary-50: #f3f2fd;
+    --colors-primary-500: #2a22c3;
+    --colors-primary-600: #221c9c;
+    --colors-primary-700: #1a1579;
+    --colors-primary-800: #130f57;
+    --colors-primary-900: #0b0934;
+    --colors-secondary-50: #fcfdf2;
+    --colors-secondary-500: #bbc322;
+    --colors-secondary-900: #323409;
+    --colors-text-primary: #0b0b10;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #ffffff;
+    --fg: #0b0b10;
+    --accent: #2a22c3;
+    --muted: #8f8aea;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style>
+</head>
+<body data-variant="light">
+  <nav class="switcher" aria-label="Variant switcher">
+    <button data-set="brand-a" aria-pressed="false">brand-a</button>
+    <button data-set="brand-b" aria-pressed="false">brand-b</button>
+    <button data-set="dark" aria-pressed="false">dark</button>
+    <button data-set="light" aria-pressed="true">light</button>
+    </nav>
+  <main class="wrap">
+    <p class="eyebrow">A Minimal Landing</p>
+    <h1>A minimal landing page for a developer tool: bold serif headline, monospace body, single accent color.</h1>
+    <p class="lede">A minimal landing page for a developer tool: bold serif headline, monospace body, single accent color Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class="cta" href="#" aria-label="Primary call to action">Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

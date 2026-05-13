@@ -1,0 +1,25 @@
+{
+  "invocation_id": "61ccb76c-e3b0-47ed-be30-57b7987b5298",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "design_path": "/Users/kwakseongjae/Desktop/projects/aphrodite/experiments/agent-eval-20260513/run-06-video/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/Users/kwakseongjae/Desktop/projects/aphrodite/experiments/agent-eval-20260513/run-06-video/DESIGN.md",
+      "/Users/kwakseongjae/Desktop/projects/aphrodite/experiments/agent-eval-20260513/run-06-video/hero.html"
+    ],
+    "hero_path": "/Users/kwakseongjae/Desktop/projects/aphrodite/experiments/agent-eval-20260513/run-06-video/hero.html",
+    "provider_used": "offline",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ]
+  }
+}

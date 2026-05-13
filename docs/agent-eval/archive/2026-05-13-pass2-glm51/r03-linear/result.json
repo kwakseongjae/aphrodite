@@ -1,0 +1,27 @@
+{
+  "invocation_id": "328300e4-b10a-411d-83dd-b47492a6dbe3",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "design_path": "/Users/kwakseongjae/Desktop/projects/aphrodite/experiments/agent-eval-20260513-pass2/r03-linear/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/Users/kwakseongjae/Desktop/projects/aphrodite/experiments/agent-eval-20260513-pass2/r03-linear/DESIGN.md",
+      "/Users/kwakseongjae/Desktop/projects/aphrodite/experiments/agent-eval-20260513-pass2/r03-linear/hero.html"
+    ],
+    "hero_path": "/Users/kwakseongjae/Desktop/projects/aphrodite/experiments/agent-eval-20260513-pass2/r03-linear/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}

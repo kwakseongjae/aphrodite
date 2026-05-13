@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>구독자만 들어오는 한국어 — Aphrodite</title>
+<style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant="brand-a"] {
+    --colors-background-primary: #fff8f1;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dcf7;
+    --colors-primary-200: #f3baee;
+    --colors-primary-300: #ea8ae2;
+    --colors-primary-400: #e052d5;
+    --colors-primary-50: #fdf2fc;
+    --colors-primary-500: #c322b6;
+    --colors-primary-600: #9c1c91;
+    --colors-primary-700: #791571;
+    --colors-primary-800: #570f51;
+    --colors-primary-900: #340930;
+    --colors-secondary-50: #f2fdf3;
+    --colors-secondary-500: #22c330;
+    --colors-secondary-900: #09340d;
+    --colors-text-primary: #241407;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #fff8f1;
+    --fg: #241407;
+    --accent: #c322b6;
+    --muted: #ea8ae2;
+  }
+  
+  [data-variant="brand-b"] {
+    --colors-background-primary: #f1faf8;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dcf7;
+    --colors-primary-200: #f3baee;
+    --colors-primary-300: #ea8ae2;
+    --colors-primary-400: #e052d5;
+    --colors-primary-50: #fdf2fc;
+    --colors-primary-500: #c322b6;
+    --colors-primary-600: #9c1c91;
+    --colors-primary-700: #791571;
+    --colors-primary-800: #570f51;
+    --colors-primary-900: #340930;
+    --colors-secondary-50: #f2fdf3;
+    --colors-secondary-500: #22c330;
+    --colors-secondary-900: #09340d;
+    --colors-text-primary: #04231d;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #f1faf8;
+    --fg: #04231d;
+    --accent: #c322b6;
+    --muted: #ea8ae2;
+  }
+  
+  [data-variant="dark"] {
+    --colors-background-primary: #0b0b10;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dcf7;
+    --colors-primary-200: #f3baee;
+    --colors-primary-300: #ea8ae2;
+    --colors-primary-400: #e052d5;
+    --colors-primary-50: #fdf2fc;
+    --colors-primary-500: #c322b6;
+    --colors-primary-600: #9c1c91;
+    --colors-primary-700: #791571;
+    --colors-primary-800: #570f51;
+    --colors-primary-900: #340930;
+    --colors-secondary-50: #f2fdf3;
+    --colors-secondary-500: #22c330;
+    --colors-secondary-900: #09340d;
+    --colors-text-primary: #f5f5f7;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #0b0b10;
+    --fg: #f5f5f7;
+    --accent: #c322b6;
+    --muted: #ea8ae2;
+  }
+  
+  [data-variant="light"] {
+    --colors-background-primary: #ffffff;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dcf7;
+    --colors-primary-200: #f3baee;
+    --colors-primary-300: #ea8ae2;
+    --colors-primary-400: #e052d5;
+    --colors-primary-50: #fdf2fc;
+    --colors-primary-500: #c322b6;
+    --colors-primary-600: #9c1c91;
+    --colors-primary-700: #791571;
+    --colors-primary-800: #570f51;
+    --colors-primary-900: #340930;
+    --colors-secondary-50: #f2fdf3;
+    --colors-secondary-500: #22c330;
+    --colors-secondary-900: #09340d;
+    --colors-text-primary: #0b0b10;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #ffffff;
+    --fg: #0b0b10;
+    --accent: #c322b6;
+    --muted: #ea8ae2;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style>
+</head>
+<body data-variant="light">
+  <nav class="switcher" aria-label="Variant switcher">
+    <button data-set="brand-a" aria-pressed="false">brand-a</button>
+    <button data-set="brand-b" aria-pressed="false">brand-b</button>
+    <button data-set="dark" aria-pressed="false">dark</button>
+    <button data-set="light" aria-pressed="true">light</button>
+    </nav>
+  <main class="wrap">
+    <p class="eyebrow">구독자만 들어오는 한국어</p>
+    <h1>구독자만 들어오는 한국어 뉴스레터 랜딩 페이지, 진하고 따뜻한 색감, 본문은 Noto Sans KR, 헤드라인은 굵은 명조.</h1>
+    <p class="lede">구독자만 들어오는 한국어 뉴스레터 랜딩 페이지, 진하고 따뜻한 색감, 본문은 Noto Sans KR, 헤드라인은 굵은 명조 Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class="cta" href="#" aria-label="Primary call to action">Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

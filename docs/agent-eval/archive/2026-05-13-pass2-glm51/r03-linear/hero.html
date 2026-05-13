@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>devtool-launch — Aphrodite</title>
+<style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant="brand-a"] {
+    --colors-accent-200: #f5cca0;
+    --colors-accent-400: #c98e1a;
+    --colors-accent-50: #fef3e7;
+    --colors-accent-600: #9a6c13;
+    --colors-accent-800: #6b4a0e;
+    --colors-background-primary: #fef3e7;
+    --colors-border-default: #e8d8b8;
+    --colors-error-500: #c45b4a;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f2f1ed;
+    --colors-neutral-1000: #0e0e0c;
+    --colors-neutral-200: #e4e3dd;
+    --colors-neutral-300: #d0cec5;
+    --colors-neutral-400: #b3b0a4;
+    --colors-neutral-50: #fafaf8;
+    --colors-neutral-500: #989589;
+    --colors-neutral-600: #7d7a6f;
+    --colors-neutral-700: #65635a;
+    --colors-neutral-800: #525049;
+    --colors-neutral-900: #3a3935;
+    --colors-primary-100: #dbdbd6;
+    --colors-primary-200: #b8b8af;
+    --colors-primary-300: #909085;
+    --colors-primary-400: #6e6e63;
+    --colors-primary-50: #f0f0ee;
+    --colors-primary-500: #58584d;
+    --colors-primary-600: #4e4e44;
+    --colors-primary-700: #42423a;
+    --colors-primary-800: #373731;
+    --colors-primary-900: #2a2a26;
+    --colors-success-500: #5a8a5c;
+    --colors-surface-raised: #fff8f0;
+    --colors-text-primary: #2a1f0a;
+    --colors-text-secondary: #7a6535;
+    --rounded-lg: 10px;
+    --rounded-md: 6px;
+    --rounded-none: 0px;
+    --rounded-sm: 2px;
+    --spacing-0: 0px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Commit Mono;
+    --typography-body-weight: 400;
+    --typography-display-family: Instrument Serif;
+    --typography-display-weight: 700;
+    --bg: #fef3e7;
+    --fg: #2a1f0a;
+    --accent: #58584d;
+    --muted: #909085;
+  }
+  
+  [data-variant="brand-b"] {
+    --colors-accent-200: #f5cca0;
+    --colors-accent-400: #c98e1a;
+    --colors-accent-50: #fef3e7;
+    --colors-accent-600: #9a6c13;
+    --colors-accent-800: #6b4a0e;
+    --colors-background-primary: #f0f4f0;
+    --colors-border-default: #c8d4c8;
+    --colors-error-500: #c45b4a;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f2f1ed;
+    --colors-neutral-1000: #0e0e0c;
+    --colors-neutral-200: #e4e3dd;
+    --colors-neutral-300: #d0cec5;
+    --colors-neutral-400: #b3b0a4;
+    --colors-neutral-50: #fafaf8;
+    --colors-neutral-500: #989589;
+    --colors-neutral-600: #7d7a6f;
+    --colors-neutral-700: #65635a;
+    --colors-neutral-800: #525049;
+    --colors-neutral-900: #3a3935;
+    --colors-primary-100: #dbdbd6;
+    --colors-primary-200: #b8b8af;
+    --colors-primary-300: #909085;
+    --colors-primary-400: #6e6e63;
+    --colors-primary-50: #f0f0ee;
+    --colors-primary-500: #58584d;
+    --colors-primary-600: #4e4e44;
+    --colors-primary-700: #42423a;
+    --colors-primary-800: #373731;
+    --colors-primary-900: #2a2a26;
+    --colors-success-500: #5a8a5c;
+    --colors-surface-raised: #f8faf8;
+    --colors-text-primary: #1a2a1a;
+    --colors-text-secondary: #4a5f4a;
+    --rounded-lg: 10px;
+    --rounded-md: 6px;
+    --rounded-none: 0px;
+    --rounded-sm: 2px;
+    --spacing-0: 0px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Commit Mono;
+    --typography-body-weight: 400;
+    --typography-display-family: Instrument Serif;
+    --typography-display-weight: 700;
+    --bg: #f0f4f0;
+    --fg: #1a2a1a;
+    --accent: #58584d;
+    --muted: #909085;
+  }
+  
+  [data-variant="dark"] {
+    --colors-accent-200: #f5cca0;
+    --colors-accent-400: #c98e1a;
+    --colors-accent-50: #fef3e7;
+    --colors-accent-600: #9a6c13;
+    --colors-accent-800: #6b4a0e;
+    --colors-background-primary: #121210;
+    --colors-border-default: #3a3935;
+    --colors-error-500: #c45b4a;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f2f1ed;
+    --colors-neutral-1000: #0e0e0c;
+    --colors-neutral-200: #e4e3dd;
+    --colors-neutral-300: #d0cec5;
+    --colors-neutral-400: #b3b0a4;
+    --colors-neutral-50: #fafaf8;
+    --colors-neutral-500: #989589;
+    --colors-neutral-600: #7d7a6f;
+    --colors-neutral-700: #65635a;
+    --colors-neutral-800: #525049;
+    --colors-neutral-900: #3a3935;
+    --colors-primary-100: #dbdbd6;
+    --colors-primary-200: #b8b8af;
+    --colors-primary-300: #909085;
+    --colors-primary-400: #6e6e63;
+    --colors-primary-50: #f0f0ee;
+    --colors-primary-500: #58584d;
+    --colors-primary-600: #4e4e44;
+    --colors-primary-700: #42423a;
+    --colors-primary-800: #373731;
+    --colors-primary-900: #2a2a26;
+    --colors-success-500: #5a8a5c;
+    --colors-surface-raised: #1e1e1b;
+    --colors-text-primary: #f2f1ed;
+    --colors-text-secondary: #989589;
+    --rounded-lg: 10px;
+    --rounded-md: 6px;
+    --rounded-none: 0px;
+    --rounded-sm: 2px;
+    --spacing-0: 0px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Commit Mono;
+    --typography-body-weight: 400;
+    --typography-display-family: Instrument Serif;
+    --typography-display-weight: 700;
+    --bg: #121210;
+    --fg: #f2f1ed;
+    --accent: #58584d;
+    --muted: #909085;
+  }
+  
+  [data-variant="light"] {
+    --colors-accent-200: #f5cca0;
+    --colors-accent-400: #c98e1a;
+    --colors-accent-50: #fef3e7;
+    --colors-accent-600: #9a6c13;
+    --colors-accent-800: #6b4a0e;
+    --colors-background-primary: #fafaf8;
+    --colors-border-default: #e4e3dd;
+    --colors-error-500: #c45b4a;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f2f1ed;
+    --colors-neutral-1000: #0e0e0c;
+    --colors-neutral-200: #e4e3dd;
+    --colors-neutral-300: #d0cec5;
+    --colors-neutral-400: #b3b0a4;
+    --colors-neutral-50: #fafaf8;
+    --colors-neutral-500: #989589;
+    --colors-neutral-600: #7d7a6f;
+    --colors-neutral-700: #65635a;
+    --colors-neutral-800: #525049;
+    --colors-neutral-900: #3a3935;
+    --colors-primary-100: #dbdbd6;
+    --colors-primary-200: #b8b8af;
+    --colors-primary-300: #909085;
+    --colors-primary-400: #6e6e63;
+    --colors-primary-50: #f0f0ee;
+    --colors-primary-500: #58584d;
+    --colors-primary-600: #4e4e44;
+    --colors-primary-700: #42423a;
+    --colors-primary-800: #373731;
+    --colors-primary-900: #2a2a26;
+    --colors-success-500: #5a8a5c;
+    --colors-surface-raised: #ffffff;
+    --colors-text-primary: #1a1917;
+    --colors-text-secondary: #65635a;
+    --rounded-lg: 10px;
+    --rounded-md: 6px;
+    --rounded-none: 0px;
+    --rounded-sm: 2px;
+    --spacing-0: 0px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Commit Mono;
+    --typography-body-weight: 400;
+    --typography-display-family: Instrument Serif;
+    --typography-display-weight: 700;
+    --bg: #fafaf8;
+    --fg: #1a1917;
+    --accent: #58584d;
+    --muted: #909085;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style>
+</head>
+<body data-variant="light">
+  <nav class="switcher" aria-label="Variant switcher">
+    <button data-set="brand-a" aria-pressed="false">brand-a</button>
+    <button data-set="brand-b" aria-pressed="false">brand-b</button>
+    <button data-set="dark" aria-pressed="false">dark</button>
+    <button data-set="light" aria-pressed="true">light</button>
+    </nav>
+  <main class="wrap">
+    <p class="eyebrow">devtool-launch</p>
+    <h1>Meet devtool-launch.</h1>
+    <p class="lede">Feature-launch microsite for a developer tool with refined restraint and precision Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class="cta" href="#" aria-label="Primary call to action">Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

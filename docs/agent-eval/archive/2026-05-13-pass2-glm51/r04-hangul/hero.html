@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hanul-letter — Aphrodite</title>
+<style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant="brand-a"] {
+    --colors-background-primary: #fdf5ee;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f2ede8;
+    --colors-neutral-1000: #0d0b09;
+    --colors-neutral-200: #e0d8cf;
+    --colors-neutral-300: #c4b9ab;
+    --colors-neutral-400: #9e9284;
+    --colors-neutral-50: #faf8f6;
+    --colors-neutral-500: #7a6f62;
+    --colors-neutral-600: #5c5348;
+    --colors-neutral-700: #3e3830;
+    --colors-neutral-800: #2a2520;
+    --colors-neutral-900: #1a1714;
+    --colors-primary-100: #f9e5d5;
+    --colors-primary-200: #f0c5a8;
+    --colors-primary-300: #e5a074;
+    --colors-primary-400: #d87d49;
+    --colors-primary-50: #fdf5ee;
+    --colors-primary-500: #b85a2e;
+    --colors-primary-600: #944422;
+    --colors-primary-700: #6e311a;
+    --colors-primary-800: #4a2113;
+    --colors-primary-900: #2c140b;
+    --colors-text-primary: #2c140b;
+    --colors-warm-100: #fbf0e3;
+    --colors-warm-200: #f5dfc5;
+    --colors-warm-300: #eacc9f;
+    --colors-warm-400: #ddb476;
+    --colors-warm-50: #fef9f3;
+    --colors-warm-500: #cda065;
+    --colors-warm-600: #a87d44;
+    --colors-warm-700: #7d5b30;
+    --colors-warm-800: #574022;
+    --colors-warm-900: #382816;
+    --rounded-lg: 12px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --rounded-xl: 16px;
+    --spacing-1: 4px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    --typography-body-weight: 400;
+    --typography-display-family: 'Noto Serif KR', 'Batang', 'SimSun', serif;
+    --typography-display-weight: 700;
+    --bg: #fdf5ee;
+    --fg: #2c140b;
+    --accent: #b85a2e;
+    --muted: #e5a074;
+  }
+  
+  [data-variant="brand-b"] {
+    --colors-background-primary: #2c140b;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f2ede8;
+    --colors-neutral-1000: #0d0b09;
+    --colors-neutral-200: #e0d8cf;
+    --colors-neutral-300: #c4b9ab;
+    --colors-neutral-400: #9e9284;
+    --colors-neutral-50: #faf8f6;
+    --colors-neutral-500: #7a6f62;
+    --colors-neutral-600: #5c5348;
+    --colors-neutral-700: #3e3830;
+    --colors-neutral-800: #2a2520;
+    --colors-neutral-900: #1a1714;
+    --colors-primary-100: #f9e5d5;
+    --colors-primary-200: #f0c5a8;
+    --colors-primary-300: #e5a074;
+    --colors-primary-400: #d87d49;
+    --colors-primary-50: #fdf5ee;
+    --colors-primary-500: #b85a2e;
+    --colors-primary-600: #944422;
+    --colors-primary-700: #6e311a;
+    --colors-primary-800: #4a2113;
+    --colors-primary-900: #2c140b;
+    --colors-text-primary: #fbf0e3;
+    --colors-warm-100: #fbf0e3;
+    --colors-warm-200: #f5dfc5;
+    --colors-warm-300: #eacc9f;
+    --colors-warm-400: #ddb476;
+    --colors-warm-50: #fef9f3;
+    --colors-warm-500: #cda065;
+    --colors-warm-600: #a87d44;
+    --colors-warm-700: #7d5b30;
+    --colors-warm-800: #574022;
+    --colors-warm-900: #382816;
+    --rounded-lg: 12px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --rounded-xl: 16px;
+    --spacing-1: 4px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    --typography-body-weight: 400;
+    --typography-display-family: 'Noto Serif KR', 'Batang', 'SimSun', serif;
+    --typography-display-weight: 700;
+    --bg: #2c140b;
+    --fg: #fbf0e3;
+    --accent: #b85a2e;
+    --muted: #e5a074;
+  }
+  
+  [data-variant="dark"] {
+    --colors-background-primary: #0d0b09;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f2ede8;
+    --colors-neutral-1000: #0d0b09;
+    --colors-neutral-200: #e0d8cf;
+    --colors-neutral-300: #c4b9ab;
+    --colors-neutral-400: #9e9284;
+    --colors-neutral-50: #faf8f6;
+    --colors-neutral-500: #7a6f62;
+    --colors-neutral-600: #5c5348;
+    --colors-neutral-700: #3e3830;
+    --colors-neutral-800: #2a2520;
+    --colors-neutral-900: #1a1714;
+    --colors-primary-100: #f9e5d5;
+    --colors-primary-200: #f0c5a8;
+    --colors-primary-300: #e5a074;
+    --colors-primary-400: #d87d49;
+    --colors-primary-50: #fdf5ee;
+    --colors-primary-500: #b85a2e;
+    --colors-primary-600: #944422;
+    --colors-primary-700: #6e311a;
+    --colors-primary-800: #4a2113;
+    --colors-primary-900: #2c140b;
+    --colors-text-primary: #f5f0ea;
+    --colors-warm-100: #fbf0e3;
+    --colors-warm-200: #f5dfc5;
+    --colors-warm-300: #eacc9f;
+    --colors-warm-400: #ddb476;
+    --colors-warm-50: #fef9f3;
+    --colors-warm-500: #cda065;
+    --colors-warm-600: #a87d44;
+    --colors-warm-700: #7d5b30;
+    --colors-warm-800: #574022;
+    --colors-warm-900: #382816;
+    --rounded-lg: 12px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --rounded-xl: 16px;
+    --spacing-1: 4px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    --typography-body-weight: 400;
+    --typography-display-family: 'Noto Serif KR', 'Batang', 'SimSun', serif;
+    --typography-display-weight: 700;
+    --bg: #0d0b09;
+    --fg: #f5f0ea;
+    --accent: #b85a2e;
+    --muted: #e5a074;
+  }
+  
+  [data-variant="light"] {
+    --colors-background-primary: #faf8f6;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f2ede8;
+    --colors-neutral-1000: #0d0b09;
+    --colors-neutral-200: #e0d8cf;
+    --colors-neutral-300: #c4b9ab;
+    --colors-neutral-400: #9e9284;
+    --colors-neutral-50: #faf8f6;
+    --colors-neutral-500: #7a6f62;
+    --colors-neutral-600: #5c5348;
+    --colors-neutral-700: #3e3830;
+    --colors-neutral-800: #2a2520;
+    --colors-neutral-900: #1a1714;
+    --colors-primary-100: #f9e5d5;
+    --colors-primary-200: #f0c5a8;
+    --colors-primary-300: #e5a074;
+    --colors-primary-400: #d87d49;
+    --colors-primary-50: #fdf5ee;
+    --colors-primary-500: #b85a2e;
+    --colors-primary-600: #944422;
+    --colors-primary-700: #6e311a;
+    --colors-primary-800: #4a2113;
+    --colors-primary-900: #2c140b;
+    --colors-text-primary: #1a1714;
+    --colors-warm-100: #fbf0e3;
+    --colors-warm-200: #f5dfc5;
+    --colors-warm-300: #eacc9f;
+    --colors-warm-400: #ddb476;
+    --colors-warm-50: #fef9f3;
+    --colors-warm-500: #cda065;
+    --colors-warm-600: #a87d44;
+    --colors-warm-700: #7d5b30;
+    --colors-warm-800: #574022;
+    --colors-warm-900: #382816;
+    --rounded-lg: 12px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --rounded-xl: 16px;
+    --spacing-1: 4px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    --typography-body-weight: 400;
+    --typography-display-family: 'Noto Serif KR', 'Batang', 'SimSun', serif;
+    --typography-display-weight: 700;
+    --bg: #faf8f6;
+    --fg: #1a1714;
+    --accent: #b85a2e;
+    --muted: #e5a074;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style>
+</head>
+<body data-variant="light">
+  <nav class="switcher" aria-label="Variant switcher">
+    <button data-set="brand-a" aria-pressed="false">brand-a</button>
+    <button data-set="brand-b" aria-pressed="false">brand-b</button>
+    <button data-set="dark" aria-pressed="false">dark</button>
+    <button data-set="light" aria-pressed="true">light</button>
+    </nav>
+  <main class="wrap">
+    <p class="eyebrow">Hanul-letter</p>
+    <h1>Meet Hanul-letter.</h1>
+    <p class="lede">Korean subscriber-only newsletter landing page with deep warm terracotta tones and bold serif headlines Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class="cta" href="#" aria-label="Primary call to action">Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
