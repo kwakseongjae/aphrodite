@@ -1,0 +1,59 @@
+# --- Secrets / Auth (NEVER commit) ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+.aphrodite/auth/
+.aphrodite/tokens/
+.aphrodite/cache/
+.aphrodite/events.db*
+.aphrodite/out/
+.aphrodite/taste.jsonl
+.aphrodite/ouroboros-issue-draft.md
+# Ouroboros runtime state is ignored; the seed itself is the contract — track it.
+.ouroboros/*
+!.ouroboros/seeds/
+!.ouroboros/seeds/**
+.claude/
+!.claude/CLAUDE.md
+.mcp.json
+
+# --- Runtime / caches ---
+node_modules/
+.pnpm-store/
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+# Rust
+target/
+**/*.rs.bk
+# Cargo.lock IS tracked — workspace ships binaries (CLI + MCP).
+dist/
+build/
+.next/
+.turbo/
+.parcel-cache/
+.cache/
+coverage/
+*.log
+
+# --- Tooling local state ---
+.idea/
+.vscode/
+!.vscode/extensions.json
+.zed/
+*.swp
+
+# --- Aphrodite session/work artifacts (local-only) ---
+artifacts/
+sessions/
+scratch/
+tmp/
+
+# --- Optional: model/asset caches if downloaded ---
+models/
+*.glb.cache
+*.blend1
