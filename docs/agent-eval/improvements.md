@@ -28,6 +28,9 @@ When a finding here resolves, update the row and link the commit. When a new age
 | 8 | 🟢 P3 | No fuzz tests for non-ASCII typography roundtrip | 2026-05-13 | Hangul worked by accident in run 8. | Unit + property tests for UTF-8 in intent, frontmatter, body. | ⏳ |
 | 9 | 🟢 P3 | No `aphrodite capabilities` CLI / MCP introspection | 2026-05-13 | Agents guess scope from docs. | `aphrodite capabilities` CLI shipped — returns structured `in_scope`/`out_of_scope_v01`. MCP-side `capabilities` tool still pending (CLI is enough to unblock humans). | ✅ partial — CLI ships, MCP tool pending |
 | 10 | 🟠 P1 | macOS Keychain "Always Allow" first-prompt may silently fail | 2026-05-13 | `store` returns OK while subsequent `fetch` fails. | Store→immediate-fetch verification in `init`/`auth set`; new `auth verify`. Once-per-binary onboarding hint in docs still pending. | ✅ shipped (CLI), doc note pending |
+| 16 | 🟠 P1 | Frontmatter parser rejects valid YAML shapes from LLM (C1-forced-palette) | 2026-05-13 (pass 3) | LLM returned `colors:` shape that doesn't match Rust `Frontmatter` struct → parse failed. | Make `colors:` parse leniently; or preserve raw LLM response when parse fails so user can inspect. | ⏳ |
+| 17 | 🟡 P2 | Hero template has no RTL flow (D2 Arabic renders LTR) | 2026-05-13 (pass 3) | Arabic content correct but reads LTR; no `dir="rtl"`. | Detect script direction from frontmatter `metadata.lang` or content, inject `dir="rtl"` + logical CSS properties. | ⏳ |
+| 18 | 🟢 P3 | Convergence-test methodology bug | 2026-05-13 (pass 3) | E1-E5 ran `design × 5`, not `design + redesign × 4` → Regenerate count stayed 0, taste loop unexercised. | Pass 4 script: interleave design/redesign for proper convergence test. | ⏳ |
 
 ## Done (history)
 
