@@ -7,6 +7,7 @@ use std::path::PathBuf;
 
 mod banner;
 mod design_cmd;
+mod feedback_cmd;
 mod gallery_cmd;
 mod init_cmd;
 mod setup_cmd;
@@ -86,6 +87,28 @@ enum Command {
         /// result.json, DESIGN.md, composition.html / hero.html).
         dir: PathBuf,
     },
+
+    /// Record strong positive feedback on the latest design in the current
+    /// repo. Boosts the observable patterns (hue family, fonts, density,
+    /// type style, accent intensity) in your accumulated TastePreferences
+    /// so future designs lean toward what worked.
+    Love {
+        #[arg(long)]
+        repo: Option<PathBuf>,
+    },
+
+    /// Record strong negative feedback. Decays the same patterns so future
+    /// designs avoid this direction.
+    Hate {
+        #[arg(long)]
+        repo: Option<PathBuf>,
+    },
+
+    /// Show accumulated taste preferences (global + project merged).
+    Prefs {
+        #[arg(long)]
+        repo: Option<PathBuf>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -149,6 +172,9 @@ async fn main() -> anyhow::Result<()> {
             println!("✓ wrote {}", out.display());
             json!({ "kind": "gallery", "path": out.to_string_lossy() })
         }
+        Command::Love { repo } => feedback_cmd::run(0.30, "love", repo)?,
+        Command::Hate { repo } => feedback_cmd::run(-0.30, "hate", repo)?,
+        Command::Prefs { repo } => feedback_cmd::show(repo)?,
     };
 
     if cli.json {

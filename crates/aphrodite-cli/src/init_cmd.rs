@@ -29,50 +29,41 @@ pub async fn run() -> anyhow::Result<serde_json::Value> {
 
     let theme = ColorfulTheme::default();
 
-    // Step 1 — provider
-    eprintln!("{}", style("◆ Step 1/4 — Pick a provider").bold().cyan());
-    let labels: Vec<&str> = PROVIDERS_TOP.iter().map(|(l, _)| *l).collect();
-    let provider_idx = FuzzySelect::with_theme(&theme)
-        .with_prompt("Provider")
+    // Opinionated default — z.ai GLM Coding Plan + GLM-5.1. Most users hit
+    // this for the same reasons (cheapest Anthropic-compatible LLM with real
+    // design fluency). The wizard only asks for what we genuinely cannot
+    // default — the API key — and offers an "advanced" branch for the rare
+    // user who wants something else.
+    eprintln!("{}", style("◆ Aphrodite first-run setup").bold().cyan());
+    eprintln!("  {}", style("Default: z.ai GLM Coding Plan · model glm-5.1").dim());
+    eprintln!("  {}", style("Faster mode: glm-5-turbo (smaller, ~30% faster, slightly less rich)").dim());
+
+    let modes = [
+        "Use defaults (z.ai · glm-5.1) and paste my key",
+        "Same, but use glm-5-turbo for faster iteration",
+        "Advanced — let me pick provider / plan / model",
+        "Offline only — no API, deterministic generator",
+    ];
+    let mode_idx = FuzzySelect::with_theme(&theme)
+        .with_prompt("Mode")
         .default(0)
-        .items(&labels)
+        .items(&modes)
         .interact()?;
 
-    let is_offline = provider_idx == 3;
-    if is_offline {
-        return finish_offline().await;
-    }
-    let provider = PROVIDERS_TOP[provider_idx].1;
+    let (provider, plan_id, model_id): (ProviderId, &str, &str) = match mode_idx {
+        0 => (ProviderId::Zai, "coding_plan", "glm-5.1"),
+        1 => (ProviderId::Zai, "coding_plan", "glm-5-turbo"),
+        2 => return run_advanced(&theme).await,
+        _ => return finish_offline().await,
+    };
 
-    // Step 2 — plan (z.ai has two; others have one)
-    eprintln!();
-    eprintln!("{}", style("◆ Step 2/4 — Pick a plan").bold().cyan());
-    let plans = provider.plans();
-    let plan_idx = FuzzySelect::with_theme(&theme)
-        .with_prompt(format!("{} plan", provider.human_name()))
-        .default(0)
-        .items(&plans.iter().map(|(l, _)| *l).collect::<Vec<_>>())
-        .interact()?;
-    let plan_id = plans[plan_idx].1;
-
-    // Step 3 — model
-    eprintln!();
-    eprintln!("{}", style("◆ Step 3/4 — Pick a model").bold().cyan());
-    let models = provider.curated_models();
-    let model_idx = FuzzySelect::with_theme(&theme)
-        .with_prompt(format!("{} model", provider.human_name()))
-        .default(0)
-        .items(&models.iter().map(|(l, _)| *l).collect::<Vec<_>>())
-        .interact()?;
-    let model_id = models[model_idx].1;
-
-    // Step 4 — API key. Single input field, type or paste at the same spot.
+    // Step — API key. Single input field, type or paste at the same spot.
     // dialoguer::Input uses readline-style editing (paste, backspace, arrow
     // keys all work). The captured value passes through `clean_secret()` to
     // strip any bracketed-paste markers the terminal may have wrapped around
     // the paste.
     eprintln!();
-    eprintln!("{}", style("◆ Step 4/4 — API key").bold().cyan());
+    eprintln!("{}", style("◆ API key").bold().cyan());
     eprintln!(
         "  {}",
         style("Type or paste your key, then Enter. Empty to skip.").dim()
@@ -163,6 +154,89 @@ pub async fn run() -> anyhow::Result<serde_json::Value> {
         "plan": plan_id,
         "model": model_id,
         "key_stored": !key.trim().is_empty(),
+        "config_path": config::config_path().display().to_string(),
+    }))
+}
+
+/// Advanced path — restores the 4-step wizard for users who want full control.
+async fn run_advanced(theme: &ColorfulTheme) -> anyhow::Result<serde_json::Value> {
+    eprintln!();
+    eprintln!("{}", style("◆ Step 1/4 — Pick a provider").bold().cyan());
+    let labels: Vec<&str> = PROVIDERS_TOP.iter().map(|(l, _)| *l).collect();
+    let provider_idx = FuzzySelect::with_theme(theme).with_prompt("Provider").default(0).items(&labels).interact()?;
+    if provider_idx == 3 {
+        return finish_offline().await;
+    }
+    let provider = PROVIDERS_TOP[provider_idx].1;
+
+    eprintln!();
+    eprintln!("{}", style("◆ Step 2/4 — Pick a plan").bold().cyan());
+    let plans = provider.plans();
+    let plan_idx = FuzzySelect::with_theme(theme).with_prompt(format!("{} plan", provider.human_name())).default(0).items(&plans.iter().map(|(l, _)| *l).collect::<Vec<_>>()).interact()?;
+    let plan_id = plans[plan_idx].1;
+
+    eprintln!();
+    eprintln!("{}", style("◆ Step 3/4 — Pick a model").bold().cyan());
+    let models = provider.curated_models();
+    let model_idx = FuzzySelect::with_theme(theme).with_prompt(format!("{} model", provider.human_name())).default(0).items(&models.iter().map(|(l, _)| *l).collect::<Vec<_>>()).interact()?;
+    let model_id = models[model_idx].1;
+
+    finish_with_key_prompt(provider, plan_id, model_id, theme).await
+}
+
+/// Shared post-decision flow: prompt for key, store, write config.
+async fn finish_with_key_prompt(
+    provider: ProviderId,
+    plan_id: &str,
+    model_id: &str,
+    theme: &ColorfulTheme,
+) -> anyhow::Result<serde_json::Value> {
+    eprintln!();
+    eprintln!("{}", style("◆ API key").bold().cyan());
+    eprintln!("  {}", style("Type or paste your key, then Enter. Empty to skip.").dim());
+    let raw_key: String = Input::with_theme(theme)
+        .with_prompt(format!("{} API key", provider.human_name()))
+        .allow_empty(true)
+        .report(false)
+        .interact_text()?;
+    let key = clean_secret(&raw_key);
+    persist_and_finish(provider, plan_id, model_id, &key)
+}
+
+fn persist_and_finish(provider: ProviderId, plan_id: &str, model_id: &str, key: &str) -> anyhow::Result<serde_json::Value> {
+    if key.is_empty() {
+        eprintln!(
+            "  {} No key captured. Set APHRODITE_{}_API_KEY later or rerun init.",
+            style("⚠").yellow(),
+            provider.label().to_uppercase()
+        );
+    } else {
+        eprintln!("  {} Captured {} characters. Writing to OS keychain…", style("✓").green(), key.chars().count());
+        match aphrodite_keyring::store(provider.label(), key) {
+            Ok(()) => eprintln!("  {} Verified.", style("✓").green()),
+            Err(e) => eprintln!("  {} keychain: {e}", style("✖").red()),
+        }
+    }
+    let mut cfg = config::load();
+    cfg.default_provider = Some(provider.label().to_string());
+    cfg.providers.insert(provider.label().to_string(), ProviderConfig {
+        plan: Some(plan_id.to_string()),
+        model: Some(model_id.to_string()),
+        base_url: Some(provider.base_url_for_plan(plan_id).to_string()),
+    });
+    config::save(&cfg)?;
+    eprintln!("  {} Preferences saved to {}", style("✓").green(), style(config::config_path().display()).underlined());
+    eprintln!();
+    eprintln!("{}", style("Try it now:").bold());
+    eprintln!("  {}", style("aphrodite design \"<your intent>\"").yellow());
+    eprintln!("  {}", style("aphrodite love     ← record a positive signal after you see something you like").dim());
+    eprintln!("  {}", style("aphrodite hate     ← negative signal").dim());
+    Ok(json!({
+        "kind": "init",
+        "provider": provider.label(),
+        "plan": plan_id,
+        "model": model_id,
+        "key_stored": !key.is_empty(),
         "config_path": config::config_path().display().to_string(),
     }))
 }

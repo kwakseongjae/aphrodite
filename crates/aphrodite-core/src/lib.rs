@@ -7,7 +7,8 @@ pub mod config;     // ~/.aphrodite/config.toml — provider preferences
 pub mod design;     // DESIGN.md parse / model / serialize
 pub mod validator;  // schema + WCAG-AA contrast
 pub mod variant;    // light / dark / brand resolution
-pub mod taste;      // global ⊕ project taste store (.jsonl + sqlite)
+pub mod taste;      // global ⊕ project taste store (.jsonl)
+pub mod preferences; // accumulated TastePreferences (summary of events)
 pub mod policy;     // deny-list policy
 pub mod invocation; // Invocation type — the contract entry point
 pub mod seed;       // Reads .ouroboros/seeds/*.yaml

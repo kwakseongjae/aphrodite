@@ -1,5 +1,6 @@
 //! aphrodite-generator — orchestrates LLM provider + hero HTML rendering.
 
+pub mod extractor;
 pub mod hero;
 pub mod offline;
 pub mod provider;
@@ -54,13 +55,14 @@ pub async fn generate_with(
     invocation: &Invocation,
     resolved: Option<&ResolvedProvider>,
 ) -> Result<GenerationOutput, GenError> {
-    // Finding #5 / seed acceptance #8: read accumulated taste before
-    // generating so successive `redesign` calls actually diverge.
+    // Finding #5 / seed acceptance #8: read accumulated taste + preferences
+    // before generating so each call reflects what the user has signaled.
     let taste = aphrodite_core::taste_snapshot(&invocation.target_repo);
+    let prefs = aphrodite_core::preferences::load(&invocation.target_repo);
 
     let (design_md, provider_used, model_used) = match resolved {
         Some(r) => {
-            let md = provider::call_with_taste(r, &invocation.intent, &taste).await?;
+            let md = call_with_retry(r, &invocation.intent, &taste, &prefs, &invocation.target_repo).await?;
             (md, r.id.label().to_string(), r.model.clone())
         }
         None => (
@@ -195,6 +197,54 @@ pub fn resolve_default_provider() -> Option<ResolvedProvider> {
         }
     }
     None
+}
+
+/// Wrap the provider call with one retry on parse failure (Finding #19).
+/// On retry, send a sharper instruction to force valid frontmatter. On the
+/// final failure, dump the raw response to `<project>/.aphrodite/failures/`.
+async fn call_with_retry(
+    resolved: &provider::ResolvedProvider,
+    intent: &str,
+    taste: &aphrodite_core::TasteSnapshot,
+    prefs: &aphrodite_core::preferences::TastePreferences,
+    project_root: &std::path::Path,
+) -> Result<String, GenError> {
+    let pref_hint = prefs.as_prompt_hint();
+    let intent_with_prefs = if pref_hint.is_empty() {
+        intent.to_string()
+    } else {
+        format!("{intent}\n\n--- User taste profile (accumulated across past sessions) ---{pref_hint}\n--- End taste profile ---\n\nBias the output toward the preferences above when the intent doesn't otherwise specify.")
+    };
+
+    let first = provider::call_with_taste(resolved, &intent_with_prefs, taste).await?;
+    if aphrodite_core::parse_design(&first).is_ok() {
+        return Ok(first);
+    }
+    let _ = save_failure(project_root, "first-attempt", &first);
+    let stricter = format!(
+        "{intent_with_prefs}\n\nIMPORTANT: A previous attempt at this design returned text that failed to parse. \
+         Your response MUST start with exactly `---` on line 1 (three dashes, nothing else), \
+         then the YAML frontmatter, then exactly `---` on its own line, then the markdown body. \
+         No prose before, no commentary after, no code fences."
+    );
+    let second = provider::call_with_taste(resolved, &stricter, taste).await?;
+    match aphrodite_core::parse_design(&second) {
+        Ok(_) => Ok(second),
+        Err(e2) => {
+            let _ = save_failure(project_root, "retry", &second);
+            Err(GenError::Design(e2))
+        }
+    }
+}
+
+fn save_failure(project_root: &std::path::Path, label: &str, raw: &str) -> std::io::Result<std::path::PathBuf> {
+    let dir = project_root.join(".aphrodite").join("failures");
+    std::fs::create_dir_all(&dir)?;
+    let ts = aphrodite_core::taste::now_rfc3339().replace(':', "-");
+    let path = dir.join(format!("{ts}-{label}.md"));
+    let body = format!("# Aphrodite parse failure\n\n- when: {ts}\n- attempt: {label}\n\n## Raw LLM response\n\n```\n{raw}\n```\n");
+    std::fs::write(&path, body)?;
+    Ok(path)
 }
 
 fn resolve(
