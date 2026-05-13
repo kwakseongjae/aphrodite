@@ -428,5 +428,19 @@ fn strip_fences(s: &str) -> String {
         .strip_suffix("\n```")
         .or_else(|| without_open.strip_suffix("```"))
         .unwrap_or(without_open);
-    without_close.to_string()
+    // LLMs sometimes prefix DESIGN.md output with conversational prose
+    // ("Here's your design system…") before the actual `---` frontmatter
+    // delimiter. Find the first `---` on its own line and drop anything before.
+    let s = without_close;
+    if !s.starts_with("---") {
+        let key = "\n---\n";
+        if let Some(idx) = s.find(key) {
+            return s[idx + 1..].to_string();
+        }
+        let key_cr = "\n---\r\n";
+        if let Some(idx) = s.find(key_cr) {
+            return s[idx + 1..].to_string();
+        }
+    }
+    s.to_string()
 }

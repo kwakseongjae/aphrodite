@@ -45,6 +45,8 @@ When a finding here resolves, update the row and link the commit. When a new age
 | #5 | 2026-05-13 | Taste loop read-at-generate-time; satisfies seed acceptance #8 | (this commit) |
 | #9 | 2026-05-13 | `aphrodite doctor` + `aphrodite capabilities` for one-shot self-diagnosis | (this commit) |
 | #11 | 2026-05-13 | `auth set --from-stdin` / `--from-file` + bracketed-paste sanitization (rpassword bypass for terminals where hidden input is unreliable) | (this commit) |
+| — | 2026-05-13 | `init` Step 4 → single visible input + report(false) (no key echo); macOS keyring → `security` CLI subprocess (fix Sequoia same-process set→read NoEntry) | `a12ae1d` |
+| — | 2026-05-13 | Parser: tolerate LLM responses with prose prefix before `---` | `(this commit)` |
 
 ## Re-runs scheduled for next eval pass
 
