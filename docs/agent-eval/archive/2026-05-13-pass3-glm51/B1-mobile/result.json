@@ -1,0 +1,27 @@
+{
+  "invocation_id": "b293a97e-7be5-4590-a583-8af555d6a65d",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "design_path": "/private/tmp/pass3-retry-B1-mobile/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass3-retry-B1-mobile/DESIGN.md",
+      "/private/tmp/pass3-retry-B1-mobile/hero.html"
+    ],
+    "hero_path": "/private/tmp/pass3-retry-B1-mobile/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>wa-land — Aphrodite</title>
+<style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant="brand-a"] {
+    --colors-accent-100: #c8d5e2;
+    --colors-accent-200: #a1b9cf;
+    --colors-accent-300: #7a9dbb;
+    --colors-accent-400: #5e8aab;
+    --colors-accent-50: #f0f4f7;
+    --colors-accent-500: #3a6484;
+    --colors-accent-600: #2d4e67;
+    --colors-accent-700: #21394a;
+    --colors-accent-800: #16252f;
+    --colors-accent-900: #0b131a;
+    --colors-background-primary: #f5f0eb;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0eeea;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #ddd9d2;
+    --colors-neutral-300: #c4bfb5;
+    --colors-neutral-400: #a69f92;
+    --colors-neutral-50: #faf9f7;
+    --colors-neutral-500: #7a7368;
+    --colors-neutral-600: #5c5650;
+    --colors-neutral-700: #3d3935;
+    --colors-neutral-800: #252320;
+    --colors-neutral-900: #141210;
+    --colors-primary-100: #e2d5c4;
+    --colors-primary-200: #d4c0a4;
+    --colors-primary-300: #c4a67e;
+    --colors-primary-400: #b08d5f;
+    --colors-primary-50: #f5f0eb;
+    --colors-primary-500: #8b6d47;
+    --colors-primary-600: #6d5436;
+    --colors-primary-700: #4f3c27;
+    --colors-primary-800: #33261a;
+    --colors-primary-900: #1a130d;
+    --colors-text-primary: #252320;
+    --rounded-lg: 12px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+    --typography-body-weight: 400;
+    --typography-display-family: 'Noto Serif JP', 'Shippori Mincho', 'Hiragino Mincho ProN', serif;
+    --typography-display-weight: 700;
+    --bg: #f5f0eb;
+    --fg: #252320;
+    --accent: #8b6d47;
+    --muted: #c4a67e;
+  }
+  
+  [data-variant="brand-b"] {
+    --colors-accent-100: #c8d5e2;
+    --colors-accent-200: #a1b9cf;
+    --colors-accent-300: #7a9dbb;
+    --colors-accent-400: #5e8aab;
+    --colors-accent-50: #f0f4f7;
+    --colors-accent-500: #3a6484;
+    --colors-accent-600: #2d4e67;
+    --colors-accent-700: #21394a;
+    --colors-accent-800: #16252f;
+    --colors-accent-900: #0b131a;
+    --colors-background-primary: #f0f4f7;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0eeea;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #ddd9d2;
+    --colors-neutral-300: #c4bfb5;
+    --colors-neutral-400: #a69f92;
+    --colors-neutral-50: #faf9f7;
+    --colors-neutral-500: #7a7368;
+    --colors-neutral-600: #5c5650;
+    --colors-neutral-700: #3d3935;
+    --colors-neutral-800: #252320;
+    --colors-neutral-900: #141210;
+    --colors-primary-100: #e2d5c4;
+    --colors-primary-200: #d4c0a4;
+    --colors-primary-300: #c4a67e;
+    --colors-primary-400: #b08d5f;
+    --colors-primary-50: #f5f0eb;
+    --colors-primary-500: #8b6d47;
+    --colors-primary-600: #6d5436;
+    --colors-primary-700: #4f3c27;
+    --colors-primary-800: #33261a;
+    --colors-primary-900: #1a130d;
+    --colors-text-primary: #141210;
+    --rounded-lg: 12px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+    --typography-body-weight: 400;
+    --typography-display-family: 'Noto Serif JP', 'Shippori Mincho', 'Hiragino Mincho ProN', serif;
+    --typography-display-weight: 700;
+    --bg: #f0f4f7;
+    --fg: #141210;
+    --accent: #8b6d47;
+    --muted: #c4a67e;
+  }
+  
+  [data-variant="dark"] {
+    --colors-accent-100: #c8d5e2;
+    --colors-accent-200: #a1b9cf;
+    --colors-accent-300: #7a9dbb;
+    --colors-accent-400: #5e8aab;
+    --colors-accent-50: #f0f4f7;
+    --colors-accent-500: #3a6484;
+    --colors-accent-600: #2d4e67;
+    --colors-accent-700: #21394a;
+    --colors-accent-800: #16252f;
+    --colors-accent-900: #0b131a;
+    --colors-background-primary: #141210;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0eeea;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #ddd9d2;
+    --colors-neutral-300: #c4bfb5;
+    --colors-neutral-400: #a69f92;
+    --colors-neutral-50: #faf9f7;
+    --colors-neutral-500: #7a7368;
+    --colors-neutral-600: #5c5650;
+    --colors-neutral-700: #3d3935;
+    --colors-neutral-800: #252320;
+    --colors-neutral-900: #141210;
+    --colors-primary-100: #e2d5c4;
+    --colors-primary-200: #d4c0a4;
+    --colors-primary-300: #c4a67e;
+    --colors-primary-400: #b08d5f;
+    --colors-primary-50: #f5f0eb;
+    --colors-primary-500: #8b6d47;
+    --colors-primary-600: #6d5436;
+    --colors-primary-700: #4f3c27;
+    --colors-primary-800: #33261a;
+    --colors-primary-900: #1a130d;
+    --colors-text-primary: #f0eeea;
+    --rounded-lg: 12px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+    --typography-body-weight: 400;
+    --typography-display-family: 'Noto Serif JP', 'Shippori Mincho', 'Hiragino Mincho ProN', serif;
+    --typography-display-weight: 700;
+    --bg: #141210;
+    --fg: #f0eeea;
+    --accent: #8b6d47;
+    --muted: #c4a67e;
+  }
+  
+  [data-variant="light"] {
+    --colors-accent-100: #c8d5e2;
+    --colors-accent-200: #a1b9cf;
+    --colors-accent-300: #7a9dbb;
+    --colors-accent-400: #5e8aab;
+    --colors-accent-50: #f0f4f7;
+    --colors-accent-500: #3a6484;
+    --colors-accent-600: #2d4e67;
+    --colors-accent-700: #21394a;
+    --colors-accent-800: #16252f;
+    --colors-accent-900: #0b131a;
+    --colors-background-primary: #faf9f7;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0eeea;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #ddd9d2;
+    --colors-neutral-300: #c4bfb5;
+    --colors-neutral-400: #a69f92;
+    --colors-neutral-50: #faf9f7;
+    --colors-neutral-500: #7a7368;
+    --colors-neutral-600: #5c5650;
+    --colors-neutral-700: #3d3935;
+    --colors-neutral-800: #252320;
+    --colors-neutral-900: #141210;
+    --colors-primary-100: #e2d5c4;
+    --colors-primary-200: #d4c0a4;
+    --colors-primary-300: #c4a67e;
+    --colors-primary-400: #b08d5f;
+    --colors-primary-50: #f5f0eb;
+    --colors-primary-500: #8b6d47;
+    --colors-primary-600: #6d5436;
+    --colors-primary-700: #4f3c27;
+    --colors-primary-800: #33261a;
+    --colors-primary-900: #1a130d;
+    --colors-text-primary: #1a130d;
+    --rounded-lg: 12px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+    --typography-body-weight: 400;
+    --typography-display-family: 'Noto Serif JP', 'Shippori Mincho', 'Hiragino Mincho ProN', serif;
+    --typography-display-weight: 700;
+    --bg: #faf9f7;
+    --fg: #1a130d;
+    --accent: #8b6d47;
+    --muted: #c4a67e;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style>
+</head>
+<body data-variant="light">
+  <nav class="switcher" aria-label="Variant switcher">
+    <button data-set="brand-a" aria-pressed="false">brand-a</button>
+    <button data-set="brand-b" aria-pressed="false">brand-b</button>
+    <button data-set="dark" aria-pressed="false">dark</button>
+    <button data-set="light" aria-pressed="true">light</button>
+    </nav>
+  <main class="wrap">
+    <p class="eyebrow">wa-land</p>
+    <h1>日本の美意識を反映したミニマル和風ランディングページ.</h1>
+    <p class="lede">日本の美意識を反映したミニマル和風ランディングページ Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class="cta" href="#" aria-label="Primary call to action">Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

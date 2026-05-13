@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>longevity-editorial — Aphrodite</title>
+<style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant="brand-a"] {
+    --colors-accent-100: #e5e3e0;
+    --colors-accent-200: #c9c5be;
+    --colors-accent-300: #aaa49a;
+    --colors-accent-400: #908878;
+    --colors-accent-50: #f7f5f3;
+    --colors-accent-500: #7a7268;
+    --colors-accent-600: #5e574e;
+    --colors-accent-700: #4a443d;
+    --colors-accent-800: #3d3833;
+    --colors-accent-900: #34302c;
+    --colors-background-primary: #faf5ea;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0eeea;
+    --colors-neutral-1000: #1a1816;
+    --colors-neutral-200: #ddd9d2;
+    --colors-neutral-300: #c4bfb5;
+    --colors-neutral-400: #a49e92;
+    --colors-neutral-50: #faf9f7;
+    --colors-neutral-500: #878179;
+    --colors-neutral-600: #6b6660;
+    --colors-neutral-700: #55514c;
+    --colors-neutral-800: #3d3a37;
+    --colors-neutral-900: #2a2826;
+    --colors-primary-100: #ded8cb;
+    --colors-primary-200: #c4bba6;
+    --colors-primary-300: #a89d84;
+    --colors-primary-400: #8a7f6a;
+    --colors-primary-50: #f2efe8;
+    --colors-primary-500: #7a7062;
+    --colors-primary-600: #635a4e;
+    --colors-primary-700: #524b42;
+    --colors-primary-800: #443f38;
+    --colors-primary-900: #3a3530;
+    --colors-text-primary: #261e12;
+    --rounded-md: 6px;
+    --rounded-sm: 3px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Cormorant Garamond;
+    --typography-body-weight: 400;
+    --typography-display-family: Newsreader;
+    --typography-display-weight: 700;
+    --bg: #faf5ea;
+    --fg: #261e12;
+    --accent: #7a7062;
+    --muted: #a89d84;
+  }
+  
+  [data-variant="brand-b"] {
+    --colors-accent-100: #e5e3e0;
+    --colors-accent-200: #c9c5be;
+    --colors-accent-300: #aaa49a;
+    --colors-accent-400: #908878;
+    --colors-accent-50: #f7f5f3;
+    --colors-accent-500: #7a7268;
+    --colors-accent-600: #5e574e;
+    --colors-accent-700: #4a443d;
+    --colors-accent-800: #3d3833;
+    --colors-accent-900: #34302c;
+    --colors-background-primary: #f3f0e6;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0eeea;
+    --colors-neutral-1000: #1a1816;
+    --colors-neutral-200: #ddd9d2;
+    --colors-neutral-300: #c4bfb5;
+    --colors-neutral-400: #a49e92;
+    --colors-neutral-50: #faf9f7;
+    --colors-neutral-500: #878179;
+    --colors-neutral-600: #6b6660;
+    --colors-neutral-700: #55514c;
+    --colors-neutral-800: #3d3a37;
+    --colors-neutral-900: #2a2826;
+    --colors-primary-100: #ded8cb;
+    --colors-primary-200: #c4bba6;
+    --colors-primary-300: #a89d84;
+    --colors-primary-400: #8a7f6a;
+    --colors-primary-50: #f2efe8;
+    --colors-primary-500: #7a7062;
+    --colors-primary-600: #635a4e;
+    --colors-primary-700: #524b42;
+    --colors-primary-800: #443f38;
+    --colors-primary-900: #3a3530;
+    --colors-text-primary: #1a2418;
+    --rounded-md: 6px;
+    --rounded-sm: 3px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Cormorant Garamond;
+    --typography-body-weight: 400;
+    --typography-display-family: Newsreader;
+    --typography-display-weight: 700;
+    --bg: #f3f0e6;
+    --fg: #1a2418;
+    --accent: #7a7062;
+    --muted: #a89d84;
+  }
+  
+  [data-variant="dark"] {
+    --colors-accent-100: #e5e3e0;
+    --colors-accent-200: #c9c5be;
+    --colors-accent-300: #aaa49a;
+    --colors-accent-400: #908878;
+    --colors-accent-50: #f7f5f3;
+    --colors-accent-500: #7a7268;
+    --colors-accent-600: #5e574e;
+    --colors-accent-700: #4a443d;
+    --colors-accent-800: #3d3833;
+    --colors-accent-900: #34302c;
+    --colors-background-primary: #1e1c18;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0eeea;
+    --colors-neutral-1000: #1a1816;
+    --colors-neutral-200: #ddd9d2;
+    --colors-neutral-300: #c4bfb5;
+    --colors-neutral-400: #a49e92;
+    --colors-neutral-50: #faf9f7;
+    --colors-neutral-500: #878179;
+    --colors-neutral-600: #6b6660;
+    --colors-neutral-700: #55514c;
+    --colors-neutral-800: #3d3a37;
+    --colors-neutral-900: #2a2826;
+    --colors-primary-100: #ded8cb;
+    --colors-primary-200: #c4bba6;
+    --colors-primary-300: #a89d84;
+    --colors-primary-400: #8a7f6a;
+    --colors-primary-50: #f2efe8;
+    --colors-primary-500: #7a7062;
+    --colors-primary-600: #635a4e;
+    --colors-primary-700: #524b42;
+    --colors-primary-800: #443f38;
+    --colors-primary-900: #3a3530;
+    --colors-text-primary: #ede8de;
+    --rounded-md: 6px;
+    --rounded-sm: 3px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Cormorant Garamond;
+    --typography-body-weight: 400;
+    --typography-display-family: Newsreader;
+    --typography-display-weight: 700;
+    --bg: #1e1c18;
+    --fg: #ede8de;
+    --accent: #7a7062;
+    --muted: #a89d84;
+  }
+  
+  [data-variant="light"] {
+    --colors-accent-100: #e5e3e0;
+    --colors-accent-200: #c9c5be;
+    --colors-accent-300: #aaa49a;
+    --colors-accent-400: #908878;
+    --colors-accent-50: #f7f5f3;
+    --colors-accent-500: #7a7268;
+    --colors-accent-600: #5e574e;
+    --colors-accent-700: #4a443d;
+    --colors-accent-800: #3d3833;
+    --colors-accent-900: #34302c;
+    --colors-background-primary: #f8f4eb;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0eeea;
+    --colors-neutral-1000: #1a1816;
+    --colors-neutral-200: #ddd9d2;
+    --colors-neutral-300: #c4bfb5;
+    --colors-neutral-400: #a49e92;
+    --colors-neutral-50: #faf9f7;
+    --colors-neutral-500: #878179;
+    --colors-neutral-600: #6b6660;
+    --colors-neutral-700: #55514c;
+    --colors-neutral-800: #3d3a37;
+    --colors-neutral-900: #2a2826;
+    --colors-primary-100: #ded8cb;
+    --colors-primary-200: #c4bba6;
+    --colors-primary-300: #a89d84;
+    --colors-primary-400: #8a7f6a;
+    --colors-primary-50: #f2efe8;
+    --colors-primary-500: #7a7062;
+    --colors-primary-600: #635a4e;
+    --colors-primary-700: #524b42;
+    --colors-primary-800: #443f38;
+    --colors-primary-900: #3a3530;
+    --colors-text-primary: #2a2318;
+    --rounded-md: 6px;
+    --rounded-sm: 3px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Cormorant Garamond;
+    --typography-body-weight: 400;
+    --typography-display-family: Newsreader;
+    --typography-display-weight: 700;
+    --bg: #f8f4eb;
+    --fg: #2a2318;
+    --accent: #7a7062;
+    --muted: #a89d84;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style>
+</head>
+<body data-variant="light">
+  <nav class="switcher" aria-label="Variant switcher">
+    <button data-set="brand-a" aria-pressed="false">brand-a</button>
+    <button data-set="brand-b" aria-pressed="false">brand-b</button>
+    <button data-set="dark" aria-pressed="false">dark</button>
+    <button data-set="light" aria-pressed="true">light</button>
+    </nav>
+  <main class="wrap">
+    <p class="eyebrow">longevity-editorial</p>
+    <h1>Calm editorial site for a longevity research clinic with warm off-white grounds.</h1>
+    <p class="lede">Calm editorial site for a longevity research clinic with warm off-white grounds, muted sage accents, and scholarly serif typography Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class="cta" href="#" aria-label="Primary call to action">Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

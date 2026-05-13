@@ -1,0 +1,27 @@
+{
+  "invocation_id": "2b5ef7d9-c5cd-41d9-ac94-1424290e5bcb",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "design_path": "/private/tmp/pass3-sandbox-C2-forced-font/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass3-sandbox-C2-forced-font/DESIGN.md",
+      "/private/tmp/pass3-sandbox-C2-forced-font/hero.html"
+    ],
+    "hero_path": "/private/tmp/pass3-sandbox-C2-forced-font/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}

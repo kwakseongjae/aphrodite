@@ -1,0 +1,27 @@
+{
+  "invocation_id": "b686f3b8-5640-433e-83fb-f394fa324a9c",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "design_path": "/private/tmp/pass3-sandbox-D3-emoji/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass3-sandbox-D3-emoji/DESIGN.md",
+      "/private/tmp/pass3-sandbox-D3-emoji/hero.html"
+    ],
+    "hero_path": "/private/tmp/pass3-sandbox-D3-emoji/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}

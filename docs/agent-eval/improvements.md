@@ -47,6 +47,7 @@ When a finding here resolves, update the row and link the commit. When a new age
 | #11 | 2026-05-13 | `auth set --from-stdin` / `--from-file` + bracketed-paste sanitization (rpassword bypass for terminals where hidden input is unreliable) | (this commit) |
 | — | 2026-05-13 | `init` Step 4 → single visible input + report(false) (no key echo); macOS keyring → `security` CLI subprocess (fix Sequoia same-process set→read NoEntry) | `a12ae1d` |
 | — | 2026-05-13 | Parser: tolerate LLM responses with prose prefix before `---` | `(this commit)` |
+| — | 2026-05-13 | Parser: more aggressive prose-prefix strip in `split_frontmatter` (Pass 3 retry rescue) | `(this commit)` |
 
 ## Re-runs scheduled for next eval pass
 

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>bauhaus-kinder — Aphrodite</title>
+<style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant="brand-a"] {
+    --colors-accent-100: #ebe5ff;
+    --colors-accent-200: #d6caff;
+    --colors-accent-300: #b9a0ff;
+    --colors-accent-400: #9b73ff;
+    --colors-accent-50: #f6f3ff;
+    --colors-accent-500: #804dff;
+    --colors-accent-600: #6b30e6;
+    --colors-accent-700: #5720b8;
+    --colors-accent-800: #43168a;
+    --colors-accent-900: #2e0c5c;
+    --colors-background-primary: #fffbf2;
+    --colors-background-secondary: #fff5e6;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0eeea;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #ddd9d3;
+    --colors-neutral-300: #c4bfb6;
+    --colors-neutral-400: #a69f93;
+    --colors-neutral-50: #faf9f7;
+    --colors-neutral-500: #8a8278;
+    --colors-neutral-600: #6d665c;
+    --colors-neutral-700: #524c44;
+    --colors-neutral-800: #38342e;
+    --colors-neutral-900: #1f1d19;
+    --colors-pastel-mint-100: #edfaf4;
+    --colors-pastel-mint-200: #c8f0de;
+    --colors-pastel-mint-300: #a3e6c8;
+    --colors-pastel-rose-100: #fff0f0;
+    --colors-pastel-rose-200: #ffd9d9;
+    --colors-pastel-rose-300: #ffc2c2;
+    --colors-pastel-yellow-100: #fff9e6;
+    --colors-pastel-yellow-200: #ffefb3;
+    --colors-pastel-yellow-300: #ffe580;
+    --colors-primary-100: #ffe8dd;
+    --colors-primary-200: #ffc4a8;
+    --colors-primary-300: #ff9e75;
+    --colors-primary-400: #ff6b3d;
+    --colors-primary-50: #fff5f0;
+    --colors-primary-500: #e85d30;
+    --colors-primary-600: #c44a22;
+    --colors-primary-700: #9c3818;
+    --colors-primary-800: #752a12;
+    --colors-primary-900: #4e1c0c;
+    --colors-secondary-100: #d6ebe4;
+    --colors-secondary-200: #add7c9;
+    --colors-secondary-300: #80c2ab;
+    --colors-secondary-400: #58b08f;
+    --colors-secondary-50: #f0f6f4;
+    --colors-secondary-500: #3d9a76;
+    --colors-secondary-600: #2f7a5e;
+    --colors-secondary-700: #245c46;
+    --colors-secondary-800: #1a3e30;
+    --colors-secondary-900: #11221a;
+    --colors-surface: #fffdf8;
+    --colors-text-primary: #2a2010;
+    --colors-text-secondary: #6b5a3a;
+    --rounded-full: 9999px;
+    --rounded-lg: 20px;
+    --rounded-md: 12px;
+    --rounded-none: 0px;
+    --rounded-sm: 6px;
+    --rounded-xl: 28px;
+    --spacing-1: 4px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Nunito;
+    --typography-body-weight: 400;
+    --typography-display-family: Archivo Black;
+    --typography-display-weight: 900;
+    --bg: #fffbf2;
+    --fg: #2a2010;
+    --accent: #e85d30;
+    --muted: #ff9e75;
+  }
+  
+  [data-variant="brand-b"] {
+    --colors-accent-100: #ebe5ff;
+    --colors-accent-200: #d6caff;
+    --colors-accent-300: #b9a0ff;
+    --colors-accent-400: #9b73ff;
+    --colors-accent-50: #f6f3ff;
+    --colors-accent-500: #804dff;
+    --colors-accent-600: #6b30e6;
+    --colors-accent-700: #5720b8;
+    --colors-accent-800: #43168a;
+    --colors-accent-900: #2e0c5c;
+    --colors-background-primary: #f4f7f5;
+    --colors-background-secondary: #e4ebe6;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0eeea;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #ddd9d3;
+    --colors-neutral-300: #c4bfb6;
+    --colors-neutral-400: #a69f93;
+    --colors-neutral-50: #faf9f7;
+    --colors-neutral-500: #8a8278;
+    --colors-neutral-600: #6d665c;
+    --colors-neutral-700: #524c44;
+    --colors-neutral-800: #38342e;
+    --colors-neutral-900: #1f1d19;
+    --colors-pastel-mint-100: #edfaf4;
+    --colors-pastel-mint-200: #c8f0de;
+    --colors-pastel-mint-300: #a3e6c8;
+    --colors-pastel-rose-100: #fff0f0;
+    --colors-pastel-rose-200: #ffd9d9;
+    --colors-pastel-rose-300: #ffc2c2;
+    --colors-pastel-yellow-100: #fff9e6;
+    --colors-pastel-yellow-200: #ffefb3;
+    --colors-pastel-yellow-300: #ffe580;
+    --colors-primary-100: #ffe8dd;
+    --colors-primary-200: #ffc4a8;
+    --colors-primary-300: #ff9e75;
+    --colors-primary-400: #ff6b3d;
+    --colors-primary-50: #fff5f0;
+    --colors-primary-500: #e85d30;
+    --colors-primary-600: #c44a22;
+    --colors-primary-700: #9c3818;
+    --colors-primary-800: #752a12;
+    --colors-primary-900: #4e1c0c;
+    --colors-secondary-100: #d6ebe4;
+    --colors-secondary-200: #add7c9;
+    --colors-secondary-300: #80c2ab;
+    --colors-secondary-400: #58b08f;
+    --colors-secondary-50: #f0f6f4;
+    --colors-secondary-500: #3d9a76;
+    --colors-secondary-600: #2f7a5e;
+    --colors-secondary-700: #245c46;
+    --colors-secondary-800: #1a3e30;
+    --colors-secondary-900: #11221a;
+    --colors-surface: #f9fbfa;
+    --colors-text-primary: #121f18;
+    --colors-text-secondary: #3a5245;
+    --rounded-full: 9999px;
+    --rounded-lg: 20px;
+    --rounded-md: 12px;
+    --rounded-none: 0px;
+    --rounded-sm: 6px;
+    --rounded-xl: 28px;
+    --spacing-1: 4px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Nunito;
+    --typography-body-weight: 400;
+    --typography-display-family: Archivo Black;
+    --typography-display-weight: 900;
+    --bg: #f4f7f5;
+    --fg: #121f18;
+    --accent: #e85d30;
+    --muted: #ff9e75;
+  }
+  
+  [data-variant="dark"] {
+    --colors-accent-100: #ebe5ff;
+    --colors-accent-200: #d6caff;
+    --colors-accent-300: #b9a0ff;
+    --colors-accent-400: #9b73ff;
+    --colors-accent-50: #f6f3ff;
+    --colors-accent-500: #804dff;
+    --colors-accent-600: #6b30e6;
+    --colors-accent-700: #5720b8;
+    --colors-accent-800: #43168a;
+    --colors-accent-900: #2e0c5c;
+    --colors-background-primary: #141210;
+    --colors-background-secondary: #1f1d19;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0eeea;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #ddd9d3;
+    --colors-neutral-300: #c4bfb6;
+    --colors-neutral-400: #a69f93;
+    --colors-neutral-50: #faf9f7;
+    --colors-neutral-500: #8a8278;
+    --colors-neutral-600: #6d665c;
+    --colors-neutral-700: #524c44;
+    --colors-neutral-800: #38342e;
+    --colors-neutral-900: #1f1d19;
+    --colors-pastel-mint-100: #edfaf4;
+    --colors-pastel-mint-200: #c8f0de;
+    --colors-pastel-mint-300: #a3e6c8;
+    --colors-pastel-rose-100: #fff0f0;
+    --colors-pastel-rose-200: #ffd9d9;
+    --colors-pastel-rose-300: #ffc2c2;
+    --colors-pastel-yellow-100: #fff9e6;
+    --colors-pastel-yellow-200: #ffefb3;
+    --colors-pastel-yellow-300: #ffe580;
+    --colors-primary-100: #ffe8dd;
+    --colors-primary-200: #ffc4a8;
+    --colors-primary-300: #ff9e75;
+    --colors-primary-400: #ff6b3d;
+    --colors-primary-50: #fff5f0;
+    --colors-primary-500: #e85d30;
+    --colors-primary-600: #c44a22;
+    --colors-primary-700: #9c3818;
+    --colors-primary-800: #752a12;
+    --colors-primary-900: #4e1c0c;
+    --colors-secondary-100: #d6ebe4;
+    --colors-secondary-200: #add7c9;
+    --colors-secondary-300: #80c2ab;
+    --colors-secondary-400: #58b08f;
+    --colors-secondary-50: #f0f6f4;
+    --colors-secondary-500: #3d9a76;
+    --colors-secondary-600: #2f7a5e;
+    --colors-secondary-700: #245c46;
+    --colors-secondary-800: #1a3e30;
+    --colors-secondary-900: #11221a;
+    --colors-surface: #252320;
+    --colors-text-primary: #f0eeea;
+    --colors-text-secondary: #a69f93;
+    --rounded-full: 9999px;
+    --rounded-lg: 20px;
+    --rounded-md: 12px;
+    --rounded-none: 0px;
+    --rounded-sm: 6px;
+    --rounded-xl: 28px;
+    --spacing-1: 4px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Nunito;
+    --typography-body-weight: 400;
+    --typography-display-family: Archivo Black;
+    --typography-display-weight: 900;
+    --bg: #141210;
+    --fg: #f0eeea;
+    --accent: #e85d30;
+    --muted: #ff9e75;
+  }
+  
+  [data-variant="light"] {
+    --colors-accent-100: #ebe5ff;
+    --colors-accent-200: #d6caff;
+    --colors-accent-300: #b9a0ff;
+    --colors-accent-400: #9b73ff;
+    --colors-accent-50: #f6f3ff;
+    --colors-accent-500: #804dff;
+    --colors-accent-600: #6b30e6;
+    --colors-accent-700: #5720b8;
+    --colors-accent-800: #43168a;
+    --colors-accent-900: #2e0c5c;
+    --colors-background-primary: #faf9f7;
+    --colors-background-secondary: #f0eeea;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0eeea;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #ddd9d3;
+    --colors-neutral-300: #c4bfb6;
+    --colors-neutral-400: #a69f93;
+    --colors-neutral-50: #faf9f7;
+    --colors-neutral-500: #8a8278;
+    --colors-neutral-600: #6d665c;
+    --colors-neutral-700: #524c44;
+    --colors-neutral-800: #38342e;
+    --colors-neutral-900: #1f1d19;
+    --colors-pastel-mint-100: #edfaf4;
+    --colors-pastel-mint-200: #c8f0de;
+    --colors-pastel-mint-300: #a3e6c8;
+    --colors-pastel-rose-100: #fff0f0;
+    --colors-pastel-rose-200: #ffd9d9;
+    --colors-pastel-rose-300: #ffc2c2;
+    --colors-pastel-yellow-100: #fff9e6;
+    --colors-pastel-yellow-200: #ffefb3;
+    --colors-pastel-yellow-300: #ffe580;
+    --colors-primary-100: #ffe8dd;
+    --colors-primary-200: #ffc4a8;
+    --colors-primary-300: #ff9e75;
+    --colors-primary-400: #ff6b3d;
+    --colors-primary-50: #fff5f0;
+    --colors-primary-500: #e85d30;
+    --colors-primary-600: #c44a22;
+    --colors-primary-700: #9c3818;
+    --colors-primary-800: #752a12;
+    --colors-primary-900: #4e1c0c;
+    --colors-secondary-100: #d6ebe4;
+    --colors-secondary-200: #add7c9;
+    --colors-secondary-300: #80c2ab;
+    --colors-secondary-400: #58b08f;
+    --colors-secondary-50: #f0f6f4;
+    --colors-secondary-500: #3d9a76;
+    --colors-secondary-600: #2f7a5e;
+    --colors-secondary-700: #245c46;
+    --colors-secondary-800: #1a3e30;
+    --colors-secondary-900: #11221a;
+    --colors-surface: #ffffff;
+    --colors-text-primary: #1f1d19;
+    --colors-text-secondary: #524c44;
+    --rounded-full: 9999px;
+    --rounded-lg: 20px;
+    --rounded-md: 12px;
+    --rounded-none: 0px;
+    --rounded-sm: 6px;
+    --rounded-xl: 28px;
+    --spacing-1: 4px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Nunito;
+    --typography-body-weight: 400;
+    --typography-display-family: Archivo Black;
+    --typography-display-weight: 900;
+    --bg: #faf9f7;
+    --fg: #1f1d19;
+    --accent: #e85d30;
+    --muted: #ff9e75;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style>
+</head>
+<body data-variant="light">
+  <nav class="switcher" aria-label="Variant switcher">
+    <button data-set="brand-a" aria-pressed="false">brand-a</button>
+    <button data-set="brand-b" aria-pressed="false">brand-b</button>
+    <button data-set="dark" aria-pressed="false">dark</button>
+    <button data-set="light" aria-pressed="true">light</button>
+    </nav>
+  <main class="wrap">
+    <p class="eyebrow">bauhaus-kinder</p>
+    <h1>Meet bauhaus-kinder.</h1>
+    <p class="lede">Bauhaus-inspired pastel learning app for children with geometric discipline and warm coral geometry Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class="cta" href="#" aria-label="Primary call to action">Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

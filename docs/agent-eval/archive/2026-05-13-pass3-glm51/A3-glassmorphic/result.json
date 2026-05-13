@@ -1,0 +1,68 @@
+{
+  "invocation_id": "d9d07f43-4010-4042-a6de-89c19d691042",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "design_path": "/private/tmp/pass3-sandbox-A3-glassmorphic/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass3-sandbox-A3-glassmorphic/DESIGN.md",
+      "/private/tmp/pass3-sandbox-A3-glassmorphic/hero.html"
+    ],
+    "hero_path": "/private/tmp/pass3-sandbox-A3-glassmorphic/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "validation": {
+      "ok": false,
+      "violations": [
+        {
+          "kind": "invalid_color_hex",
+          "message": "token `colors.background.glass` = `rgba(246, 243, 238, 0.5)` is not a valid `#RRGGBB` hex",
+          "variant": "brand-a"
+        },
+        {
+          "kind": "invalid_color_hex",
+          "message": "token `colors.border.glass` = `rgba(255, 255, 255, 0.45)` is not a valid `#RRGGBB` hex",
+          "variant": "brand-a"
+        },
+        {
+          "kind": "invalid_color_hex",
+          "message": "token `colors.background.glass` = `rgba(243, 244, 246, 0.48)` is not a valid `#RRGGBB` hex",
+          "variant": "brand-b"
+        },
+        {
+          "kind": "invalid_color_hex",
+          "message": "token `colors.border.glass` = `rgba(255, 255, 255, 0.5)` is not a valid `#RRGGBB` hex",
+          "variant": "brand-b"
+        },
+        {
+          "kind": "invalid_color_hex",
+          "message": "token `colors.background.glass` = `rgba(26, 24, 22, 0.55)` is not a valid `#RRGGBB` hex",
+          "variant": "dark"
+        },
+        {
+          "kind": "invalid_color_hex",
+          "message": "token `colors.border.glass` = `rgba(255, 255, 255, 0.08)` is not a valid `#RRGGBB` hex",
+          "variant": "dark"
+        },
+        {
+          "kind": "invalid_color_hex",
+          "message": "token `colors.background.glass` = `rgba(255, 255, 255, 0.45)` is not a valid `#RRGGBB` hex",
+          "variant": "light"
+        },
+        {
+          "kind": "invalid_color_hex",
+          "message": "token `colors.border.glass` = `rgba(255, 255, 255, 0.5)` is not a valid `#RRGGBB` hex",
+          "variant": "light"
+        }
+      ]
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}

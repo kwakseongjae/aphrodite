@@ -1,0 +1,27 @@
+{
+  "invocation_id": "6f5906d1-7c21-4a4e-9124-cb91f144739f",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "design_path": "/private/tmp/pass3-retry-A4-bauhaus/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass3-retry-A4-bauhaus/DESIGN.md",
+      "/private/tmp/pass3-retry-A4-bauhaus/hero.html"
+    ],
+    "hero_path": "/private/tmp/pass3-retry-A4-bauhaus/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}

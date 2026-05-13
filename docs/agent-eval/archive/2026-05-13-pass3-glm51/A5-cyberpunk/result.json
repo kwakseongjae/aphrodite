@@ -1,0 +1,27 @@
+{
+  "invocation_id": "0547a85f-2d91-41e8-b9df-bd154baf3103",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "design_path": "/private/tmp/pass3-sandbox-A5-cyberpunk/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass3-sandbox-A5-cyberpunk/DESIGN.md",
+      "/private/tmp/pass3-sandbox-A5-cyberpunk/hero.html"
+    ],
+    "hero_path": "/private/tmp/pass3-sandbox-A5-cyberpunk/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}

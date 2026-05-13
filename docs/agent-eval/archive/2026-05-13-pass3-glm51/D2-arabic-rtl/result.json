@@ -1,0 +1,27 @@
+{
+  "invocation_id": "3944a4dd-1aa8-4d2f-af5f-d56d66bae2ec",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "design_path": "/private/tmp/pass3-sandbox-D2-arabic-rtl/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass3-sandbox-D2-arabic-rtl/DESIGN.md",
+      "/private/tmp/pass3-sandbox-D2-arabic-rtl/hero.html"
+    ],
+    "hero_path": "/private/tmp/pass3-sandbox-D2-arabic-rtl/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}

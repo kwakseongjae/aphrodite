@@ -149,7 +149,22 @@ pub fn parse(src: &str) -> Result<DesignDocument, DesignError> {
 }
 
 fn split_frontmatter(src: &str) -> Option<(&str, &str)> {
-    let stripped = src.strip_prefix("---\n").or_else(|| src.strip_prefix("---\r\n"))?;
+    // Tolerate (a) leading whitespace / newlines, (b) LLM prose before the
+    // opening `---`. Find the first line that's exactly `---` and treat
+    // everything after as candidate frontmatter; close on the next `---`
+    // line.
+    let trimmed = src.trim_start();
+    let stripped = if let Some(s) = trimmed.strip_prefix("---\n").or_else(|| trimmed.strip_prefix("---\r\n")) {
+        s
+    } else {
+        // Look for `\n---\n` after a prose prefix.
+        let key = "\n---\n";
+        if let Some(idx) = trimmed.find(key) {
+            &trimmed[idx + key.len()..]
+        } else {
+            return None;
+        }
+    };
     // find the closing `---` on its own line
     let idx = stripped.find("\n---")?;
     let fm = &stripped[..idx];

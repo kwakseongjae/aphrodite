@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aevum Editorial — Aphrodite</title>
+<style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant="brand-a"] {
+    --colors-background-primary: #f5f0e8;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0ebe4;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #ddd7ce;
+    --colors-neutral-300: #c4bcae;
+    --colors-neutral-400: #a89e8f;
+    --colors-neutral-50: #faf6f1;
+    --colors-neutral-500: #8a8071;
+    --colors-neutral-600: #6b6357;
+    --colors-neutral-700: #4e4940;
+    --colors-neutral-800: #332f29;
+    --colors-neutral-900: #1a1714;
+    --colors-primary-100: #c5d9ce;
+    --colors-primary-200: #9dbfab;
+    --colors-primary-300: #74a58e;
+    --colors-primary-400: #5c9379;
+    --colors-primary-50: #eef4f1;
+    --colors-primary-500: #448264;
+    --colors-primary-600: #3a7060;
+    --colors-primary-700: #2e5a4d;
+    --colors-primary-800: #23443b;
+    --colors-primary-900: #172e28;
+    --colors-text-primary: #241d10;
+    --rounded-lg: 6px;
+    --rounded-md: 4px;
+    --rounded-sm: 2px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Source Serif 4;
+    --typography-body-weight: 400;
+    --typography-display-family: Newsreader;
+    --typography-display-weight: 700;
+    --bg: #f5f0e8;
+    --fg: #241d10;
+    --accent: #448264;
+    --muted: #74a58e;
+  }
+  
+  [data-variant="brand-b"] {
+    --colors-background-primary: #f2f5f0;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0ebe4;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #ddd7ce;
+    --colors-neutral-300: #c4bcae;
+    --colors-neutral-400: #a89e8f;
+    --colors-neutral-50: #faf6f1;
+    --colors-neutral-500: #8a8071;
+    --colors-neutral-600: #6b6357;
+    --colors-neutral-700: #4e4940;
+    --colors-neutral-800: #332f29;
+    --colors-neutral-900: #1a1714;
+    --colors-primary-100: #c5d9ce;
+    --colors-primary-200: #9dbfab;
+    --colors-primary-300: #74a58e;
+    --colors-primary-400: #5c9379;
+    --colors-primary-50: #eef4f1;
+    --colors-primary-500: #448264;
+    --colors-primary-600: #3a7060;
+    --colors-primary-700: #2e5a4d;
+    --colors-primary-800: #23443b;
+    --colors-primary-900: #172e28;
+    --colors-text-primary: #141a12;
+    --rounded-lg: 6px;
+    --rounded-md: 4px;
+    --rounded-sm: 2px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Source Serif 4;
+    --typography-body-weight: 400;
+    --typography-display-family: Newsreader;
+    --typography-display-weight: 700;
+    --bg: #f2f5f0;
+    --fg: #141a12;
+    --accent: #448264;
+    --muted: #74a58e;
+  }
+  
+  [data-variant="dark"] {
+    --colors-background-primary: #1a1714;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0ebe4;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #ddd7ce;
+    --colors-neutral-300: #c4bcae;
+    --colors-neutral-400: #a89e8f;
+    --colors-neutral-50: #faf6f1;
+    --colors-neutral-500: #8a8071;
+    --colors-neutral-600: #6b6357;
+    --colors-neutral-700: #4e4940;
+    --colors-neutral-800: #332f29;
+    --colors-neutral-900: #1a1714;
+    --colors-primary-100: #c5d9ce;
+    --colors-primary-200: #9dbfab;
+    --colors-primary-300: #74a58e;
+    --colors-primary-400: #5c9379;
+    --colors-primary-50: #eef4f1;
+    --colors-primary-500: #448264;
+    --colors-primary-600: #3a7060;
+    --colors-primary-700: #2e5a4d;
+    --colors-primary-800: #23443b;
+    --colors-primary-900: #172e28;
+    --colors-text-primary: #f0ebe4;
+    --rounded-lg: 6px;
+    --rounded-md: 4px;
+    --rounded-sm: 2px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Source Serif 4;
+    --typography-body-weight: 400;
+    --typography-display-family: Newsreader;
+    --typography-display-weight: 700;
+    --bg: #1a1714;
+    --fg: #f0ebe4;
+    --accent: #448264;
+    --muted: #74a58e;
+  }
+  
+  [data-variant="light"] {
+    --colors-background-primary: #faf6f1;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0ebe4;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #ddd7ce;
+    --colors-neutral-300: #c4bcae;
+    --colors-neutral-400: #a89e8f;
+    --colors-neutral-50: #faf6f1;
+    --colors-neutral-500: #8a8071;
+    --colors-neutral-600: #6b6357;
+    --colors-neutral-700: #4e4940;
+    --colors-neutral-800: #332f29;
+    --colors-neutral-900: #1a1714;
+    --colors-primary-100: #c5d9ce;
+    --colors-primary-200: #9dbfab;
+    --colors-primary-300: #74a58e;
+    --colors-primary-400: #5c9379;
+    --colors-primary-50: #eef4f1;
+    --colors-primary-500: #448264;
+    --colors-primary-600: #3a7060;
+    --colors-primary-700: #2e5a4d;
+    --colors-primary-800: #23443b;
+    --colors-primary-900: #172e28;
+    --colors-text-primary: #1a1714;
+    --rounded-lg: 6px;
+    --rounded-md: 4px;
+    --rounded-sm: 2px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Source Serif 4;
+    --typography-body-weight: 400;
+    --typography-display-family: Newsreader;
+    --typography-display-weight: 700;
+    --bg: #faf6f1;
+    --fg: #1a1714;
+    --accent: #448264;
+    --muted: #74a58e;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style>
+</head>
+<body data-variant="light">
+  <nav class="switcher" aria-label="Variant switcher">
+    <button data-set="brand-a" aria-pressed="false">brand-a</button>
+    <button data-set="brand-b" aria-pressed="false">brand-b</button>
+    <button data-set="dark" aria-pressed="false">dark</button>
+    <button data-set="light" aria-pressed="true">light</button>
+    </nav>
+  <main class="wrap">
+    <p class="eyebrow">Aevum Editorial</p>
+    <h1>Calm scholarly editorial presence for a longevity research clinic.</h1>
+    <p class="lede">Calm scholarly editorial presence for a longevity research clinic, warm stone grounds with desaturated celadon accents and classic serif typography. Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class="cta" href="#" aria-label="Primary call to action">Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

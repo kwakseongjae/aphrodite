@@ -1,0 +1,27 @@
+{
+  "invocation_id": "2d8449fb-e528-46ac-b50b-dacd681d6857",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "design_path": "/private/tmp/pass3-sandbox-E4-convergence/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass3-sandbox-E4-convergence/DESIGN.md",
+      "/private/tmp/pass3-sandbox-E4-convergence/hero.html"
+    ],
+    "hero_path": "/private/tmp/pass3-sandbox-E4-convergence/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>brutal-tutorials — Aphrodite</title>
+<style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant="brand-a"] {
+    --colors-background-primary: #050a05;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #d9d9d9;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #b3b3b3;
+    --colors-neutral-300: #8c8c8c;
+    --colors-neutral-400: #666666;
+    --colors-neutral-50: #f5f5f5;
+    --colors-neutral-500: #404040;
+    --colors-neutral-600: #2a2a2a;
+    --colors-neutral-700: #1a1a1a;
+    --colors-neutral-800: #111111;
+    --colors-neutral-900: #0a0a0a;
+    --colors-primary-100: #fffce6;
+    --colors-primary-200: #fff9cc;
+    --colors-primary-300: #fff4a3;
+    --colors-primary-400: #ffee7a;
+    --colors-primary-50: #fffff5;
+    --colors-primary-500: #ffe600;
+    --colors-primary-600: #ccb800;
+    --colors-primary-700: #998a00;
+    --colors-primary-800: #665c00;
+    --colors-primary-900: #332e00;
+    --colors-text-primary: #33ff33;
+    --rounded-lg: 0px;
+    --rounded-md: 0px;
+    --rounded-sm: 0px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: "IBM Plex Mono", monospace;
+    --typography-body-weight: 400;
+    --typography-display-family: "IBM Plex Mono", monospace;
+    --typography-display-weight: 700;
+    --bg: #050a05;
+    --fg: #33ff33;
+    --accent: #ffe600;
+    --muted: #fff4a3;
+  }
+  
+  [data-variant="brand-b"] {
+    --colors-background-primary: #1a1200;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #d9d9d9;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #b3b3b3;
+    --colors-neutral-300: #8c8c8c;
+    --colors-neutral-400: #666666;
+    --colors-neutral-50: #f5f5f5;
+    --colors-neutral-500: #404040;
+    --colors-neutral-600: #2a2a2a;
+    --colors-neutral-700: #1a1a1a;
+    --colors-neutral-800: #111111;
+    --colors-neutral-900: #0a0a0a;
+    --colors-primary-100: #fffce6;
+    --colors-primary-200: #fff9cc;
+    --colors-primary-300: #fff4a3;
+    --colors-primary-400: #ffee7a;
+    --colors-primary-50: #fffff5;
+    --colors-primary-500: #ffe600;
+    --colors-primary-600: #ccb800;
+    --colors-primary-700: #998a00;
+    --colors-primary-800: #665c00;
+    --colors-primary-900: #332e00;
+    --colors-text-primary: #ffcc66;
+    --rounded-lg: 0px;
+    --rounded-md: 0px;
+    --rounded-sm: 0px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: "IBM Plex Mono", monospace;
+    --typography-body-weight: 400;
+    --typography-display-family: "IBM Plex Mono", monospace;
+    --typography-display-weight: 700;
+    --bg: #1a1200;
+    --fg: #ffcc66;
+    --accent: #ffe600;
+    --muted: #fff4a3;
+  }
+  
+  [data-variant="dark"] {
+    --colors-background-primary: #0a0a0a;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #d9d9d9;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #b3b3b3;
+    --colors-neutral-300: #8c8c8c;
+    --colors-neutral-400: #666666;
+    --colors-neutral-50: #f5f5f5;
+    --colors-neutral-500: #404040;
+    --colors-neutral-600: #2a2a2a;
+    --colors-neutral-700: #1a1a1a;
+    --colors-neutral-800: #111111;
+    --colors-neutral-900: #0a0a0a;
+    --colors-primary-100: #fffce6;
+    --colors-primary-200: #fff9cc;
+    --colors-primary-300: #fff4a3;
+    --colors-primary-400: #ffee7a;
+    --colors-primary-50: #fffff5;
+    --colors-primary-500: #ffe600;
+    --colors-primary-600: #ccb800;
+    --colors-primary-700: #998a00;
+    --colors-primary-800: #665c00;
+    --colors-primary-900: #332e00;
+    --colors-text-primary: #f0f0f0;
+    --rounded-lg: 0px;
+    --rounded-md: 0px;
+    --rounded-sm: 0px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: "IBM Plex Mono", monospace;
+    --typography-body-weight: 400;
+    --typography-display-family: "IBM Plex Mono", monospace;
+    --typography-display-weight: 700;
+    --bg: #0a0a0a;
+    --fg: #f0f0f0;
+    --accent: #ffe600;
+    --muted: #fff4a3;
+  }
+  
+  [data-variant="light"] {
+    --colors-background-primary: #ffffff;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #d9d9d9;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #b3b3b3;
+    --colors-neutral-300: #8c8c8c;
+    --colors-neutral-400: #666666;
+    --colors-neutral-50: #f5f5f5;
+    --colors-neutral-500: #404040;
+    --colors-neutral-600: #2a2a2a;
+    --colors-neutral-700: #1a1a1a;
+    --colors-neutral-800: #111111;
+    --colors-neutral-900: #0a0a0a;
+    --colors-primary-100: #fffce6;
+    --colors-primary-200: #fff9cc;
+    --colors-primary-300: #fff4a3;
+    --colors-primary-400: #ffee7a;
+    --colors-primary-50: #fffff5;
+    --colors-primary-500: #ffe600;
+    --colors-primary-600: #ccb800;
+    --colors-primary-700: #998a00;
+    --colors-primary-800: #665c00;
+    --colors-primary-900: #332e00;
+    --colors-text-primary: #0a0a0a;
+    --rounded-lg: 0px;
+    --rounded-md: 0px;
+    --rounded-sm: 0px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: "IBM Plex Mono", monospace;
+    --typography-body-weight: 400;
+    --typography-display-family: "IBM Plex Mono", monospace;
+    --typography-display-weight: 700;
+    --bg: #ffffff;
+    --fg: #0a0a0a;
+    --accent: #ffe600;
+    --muted: #fff4a3;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style>
+</head>
+<body data-variant="light">
+  <nav class="switcher" aria-label="Variant switcher">
+    <button data-set="brand-a" aria-pressed="false">brand-a</button>
+    <button data-set="brand-b" aria-pressed="false">brand-b</button>
+    <button data-set="dark" aria-pressed="false">dark</button>
+    <button data-set="light" aria-pressed="true">light</button>
+    </nav>
+  <main class="wrap">
+    <p class="eyebrow">brutal-tutorials</p>
+    <h1>Raw brutalist coding tutorial site.</h1>
+    <p class="lede">Raw brutalist coding tutorial site — monochrome violence with a single screaming yellow accent Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class="cta" href="#" aria-label="Primary call to action">Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

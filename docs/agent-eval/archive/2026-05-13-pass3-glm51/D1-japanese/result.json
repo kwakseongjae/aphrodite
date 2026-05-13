@@ -1,0 +1,27 @@
+{
+  "invocation_id": "8784c259-ef4e-4c57-b0ed-2fca04959725",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "design_path": "/private/tmp/pass3-sandbox-D1-japanese/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass3-sandbox-D1-japanese/DESIGN.md",
+      "/private/tmp/pass3-sandbox-D1-japanese/hero.html"
+    ],
+    "hero_path": "/private/tmp/pass3-sandbox-D1-japanese/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}
