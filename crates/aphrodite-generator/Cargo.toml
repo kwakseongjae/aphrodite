@@ -8,6 +8,7 @@ description = "Prompt + skill + DESIGN.md context → DESIGN.md + hero HTML."
 
 [dependencies]
 aphrodite-core = { path = "../aphrodite-core" }
+aphrodite-keyring = { path = "../aphrodite-keyring" }
 serde.workspace = true
 serde_json.workspace = true
 serde_yaml.workspace = true

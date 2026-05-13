@@ -57,7 +57,17 @@ enum Command {
 
 #[derive(Subcommand)]
 enum AuthSub {
+    /// List configured providers.
     Status,
+    /// Store an API key for a provider in the OS keychain.
+    Set {
+        provider: String,
+        /// Read key from this env var instead of prompting.
+        #[arg(long)]
+        from_env: Option<String>,
+    },
+    /// Remove a provider's stored credential.
+    Remove { provider: String },
 }
 
 #[tokio::main]
@@ -76,7 +86,11 @@ async fn main() -> anyhow::Result<()> {
         Command::Redesign { intent, no_write, repo } => {
             design_cmd::run(intent, no_write, repo, true).await?
         }
-        Command::Auth { sub: AuthSub::Status } => auth_status(),
+        Command::Auth { sub } => match sub {
+            AuthSub::Status => auth_status(),
+            AuthSub::Set { provider, from_env } => auth_set(&provider, from_env.as_deref())?,
+            AuthSub::Remove { provider } => auth_remove(&provider),
+        },
     };
 
     if cli.json {
@@ -87,9 +101,10 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
+const ALL_PROVIDERS: &[&str] = &["zai", "anthropic", "openrouter", "openai", "moonshot", "gemini"];
+
 fn auth_status() -> serde_json::Value {
-    let providers = ["anthropic", "openai", "moonshot", "gemini"];
-    let configured: Vec<_> = providers
+    let configured: Vec<_> = ALL_PROVIDERS
         .iter()
         .map(|p| {
             let present = aphrodite_keyring::fetch(p).is_ok();
@@ -97,6 +112,33 @@ fn auth_status() -> serde_json::Value {
         })
         .collect();
     json!({ "kind": "auth_status", "providers": configured })
+}
+
+fn auth_set(provider: &str, from_env: Option<&str>) -> anyhow::Result<serde_json::Value> {
+    if !ALL_PROVIDERS.contains(&provider) {
+        anyhow::bail!("unknown provider `{provider}`; supported: {}", ALL_PROVIDERS.join(", "));
+    }
+    let key = match from_env {
+        Some(name) => std::env::var(name).map_err(|_| anyhow::anyhow!("env var {name} unset"))?,
+        None => {
+            use std::io::{BufRead, Write};
+            eprint!("API key for {provider} (paste, then Enter): ");
+            std::io::stderr().flush().ok();
+            let mut s = String::new();
+            std::io::stdin().lock().read_line(&mut s)?;
+            s.trim().to_string()
+        }
+    };
+    if key.is_empty() {
+        anyhow::bail!("empty key — nothing stored");
+    }
+    aphrodite_keyring::store(provider, &key)?;
+    Ok(json!({ "kind": "auth_set", "provider": provider, "stored": true }))
+}
+
+fn auth_remove(provider: &str) -> serde_json::Value {
+    let removed = aphrodite_keyring::delete(provider).is_ok();
+    json!({ "kind": "auth_remove", "provider": provider, "removed": removed })
 }
 
 fn render_pretty(payload: &serde_json::Value) {

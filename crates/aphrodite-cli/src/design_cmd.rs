@@ -30,14 +30,8 @@ pub async fn run(
         write_mode,
     };
 
-    // Fetch Anthropic key — keychain first, then env fallback.
-    let key = aphrodite_keyring::fetch("anthropic")
-        .ok()
-        .or_else(|| std::env::var("APHRODITE_ANTHROPIC_API_KEY").ok())
-        .or_else(|| std::env::var("ANTHROPIC_API_KEY").ok());
-
-    // Generate.
-    let output = aphrodite_generator::generate(&invocation, key).await?;
+    // Generator resolves provider internally (z.ai → Anthropic → OpenRouter → offline).
+    let output = aphrodite_generator::generate(&invocation).await?;
 
     // Validate.
     let report = validate_design(&output.design_doc, &output.variants);

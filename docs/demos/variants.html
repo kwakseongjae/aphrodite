@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aphrodite — variants showcase</title>
+<style>
+  body {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+    background: #f6f6f8;
+    color: #111;
+    padding: 24px;
+  }
+  h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: -0.01em; }
+  p.sub { margin: 0 0 24px; color: #555; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .frame {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06);
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    position: relative;
+  }
+  .frame-label {
+    position: absolute;
+    top: 8px;
+    left: 12px;
+    z-index: 10;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  iframe { width: 100%; height: 100%; border: 0; transform: scale(0.62); transform-origin: top left; width: 161.3%; height: 161.3%; }
+  @media (max-width: 720px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+  <h1>Aphrodite — variants showcase</h1>
+  <p class="sub">All four variants of the same DESIGN.md, rendered from the offline generator. Each one independently validates against WCAG-AA contrast.</p>
+  <div class="grid">
+      <div class="frame">
+        <div class="frame-label">light</div>
+        <iframe srcdoc="<!DOCTYPE html><html><head><meta charset='utf-8'><style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: ui-sans-serif, system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant=&quot;brand-a&quot;] {
+    --colors-background-primary: #fff8f1;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dce3;
+    --colors-primary-200: #f3bac6;
+    --colors-primary-300: #ea8a9f;
+    --colors-primary-400: #e05271;
+    --colors-primary-50: #fdf2f4;
+    --colors-primary-500: #c32245;
+    --colors-primary-600: #9c1c37;
+    --colors-primary-700: #79152b;
+    --colors-primary-800: #570f1f;
+    --colors-primary-900: #340912;
+    --colors-secondary-50: #f2fdfa;
+    --colors-secondary-500: #22c3a0;
+    --colors-secondary-900: #09342b;
+    --colors-text-primary: #241407;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #fff8f1;
+    --fg: #241407;
+    --accent: #c32245;
+    --muted: #ea8a9f;
+  }
+  
+  [data-variant=&quot;brand-b&quot;] {
+    --colors-background-primary: #f1faf8;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dce3;
+    --colors-primary-200: #f3bac6;
+    --colors-primary-300: #ea8a9f;
+    --colors-primary-400: #e05271;
+    --colors-primary-50: #fdf2f4;
+    --colors-primary-500: #c32245;
+    --colors-primary-600: #9c1c37;
+    --colors-primary-700: #79152b;
+    --colors-primary-800: #570f1f;
+    --colors-primary-900: #340912;
+    --colors-secondary-50: #f2fdfa;
+    --colors-secondary-500: #22c3a0;
+    --colors-secondary-900: #09342b;
+    --colors-text-primary: #04231d;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #f1faf8;
+    --fg: #04231d;
+    --accent: #c32245;
+    --muted: #ea8a9f;
+  }
+  
+  [data-variant=&quot;dark&quot;] {
+    --colors-background-primary: #0b0b10;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dce3;
+    --colors-primary-200: #f3bac6;
+    --colors-primary-300: #ea8a9f;
+    --colors-primary-400: #e05271;
+    --colors-primary-50: #fdf2f4;
+    --colors-primary-500: #c32245;
+    --colors-primary-600: #9c1c37;
+    --colors-primary-700: #79152b;
+    --colors-primary-800: #570f1f;
+    --colors-primary-900: #340912;
+    --colors-secondary-50: #f2fdfa;
+    --colors-secondary-500: #22c3a0;
+    --colors-secondary-900: #09342b;
+    --colors-text-primary: #f5f5f7;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #0b0b10;
+    --fg: #f5f5f7;
+    --accent: #c32245;
+    --muted: #ea8a9f;
+  }
+  
+  [data-variant=&quot;light&quot;] {
+    --colors-background-primary: #ffffff;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dce3;
+    --colors-primary-200: #f3bac6;
+    --colors-primary-300: #ea8a9f;
+    --colors-primary-400: #e05271;
+    --colors-primary-50: #fdf2f4;
+    --colors-primary-500: #c32245;
+    --colors-primary-600: #9c1c37;
+    --colors-primary-700: #79152b;
+    --colors-primary-800: #570f1f;
+    --colors-primary-900: #340912;
+    --colors-secondary-50: #f2fdfa;
+    --colors-secondary-500: #22c3a0;
+    --colors-secondary-900: #09342b;
+    --colors-text-primary: #0b0b10;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #ffffff;
+    --fg: #0b0b10;
+    --accent: #c32245;
+    --muted: #ea8a9f;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed=&quot;true&quot;] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style></head><body data-variant='light'>
+  <nav class=&quot;switcher&quot; aria-label=&quot;Variant switcher&quot;>
+    <button data-set=&quot;brand-a&quot; aria-pressed=&quot;false&quot;>brand-a</button>
+    <button data-set=&quot;brand-b&quot; aria-pressed=&quot;false&quot;>brand-b</button>
+    <button data-set=&quot;dark&quot; aria-pressed=&quot;false&quot;>dark</button>
+    <button data-set=&quot;light&quot; aria-pressed=&quot;true&quot;>light</button>
+    </nav>
+  <main class=&quot;wrap&quot;>
+    <p class=&quot;eyebrow&quot;>Aphrodite UI Generation</p>
+    <h1>Aphrodite UI generation harness.</h1>
+    <p class=&quot;lede&quot;>Aphrodite UI generation harness Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class=&quot;cta&quot; href=&quot;#&quot; aria-label=&quot;Primary call to action&quot;>Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body></html>" loading="lazy"></iframe>
+      </div>
+      <div class="frame">
+        <div class="frame-label">dark</div>
+        <iframe srcdoc="<!DOCTYPE html><html><head><meta charset='utf-8'><style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: ui-sans-serif, system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant=&quot;brand-a&quot;] {
+    --colors-background-primary: #fff8f1;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dce3;
+    --colors-primary-200: #f3bac6;
+    --colors-primary-300: #ea8a9f;
+    --colors-primary-400: #e05271;
+    --colors-primary-50: #fdf2f4;
+    --colors-primary-500: #c32245;
+    --colors-primary-600: #9c1c37;
+    --colors-primary-700: #79152b;
+    --colors-primary-800: #570f1f;
+    --colors-primary-900: #340912;
+    --colors-secondary-50: #f2fdfa;
+    --colors-secondary-500: #22c3a0;
+    --colors-secondary-900: #09342b;
+    --colors-text-primary: #241407;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #fff8f1;
+    --fg: #241407;
+    --accent: #c32245;
+    --muted: #ea8a9f;
+  }
+  
+  [data-variant=&quot;brand-b&quot;] {
+    --colors-background-primary: #f1faf8;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dce3;
+    --colors-primary-200: #f3bac6;
+    --colors-primary-300: #ea8a9f;
+    --colors-primary-400: #e05271;
+    --colors-primary-50: #fdf2f4;
+    --colors-primary-500: #c32245;
+    --colors-primary-600: #9c1c37;
+    --colors-primary-700: #79152b;
+    --colors-primary-800: #570f1f;
+    --colors-primary-900: #340912;
+    --colors-secondary-50: #f2fdfa;
+    --colors-secondary-500: #22c3a0;
+    --colors-secondary-900: #09342b;
+    --colors-text-primary: #04231d;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #f1faf8;
+    --fg: #04231d;
+    --accent: #c32245;
+    --muted: #ea8a9f;
+  }
+  
+  [data-variant=&quot;dark&quot;] {
+    --colors-background-primary: #0b0b10;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dce3;
+    --colors-primary-200: #f3bac6;
+    --colors-primary-300: #ea8a9f;
+    --colors-primary-400: #e05271;
+    --colors-primary-50: #fdf2f4;
+    --colors-primary-500: #c32245;
+    --colors-primary-600: #9c1c37;
+    --colors-primary-700: #79152b;
+    --colors-primary-800: #570f1f;
+    --colors-primary-900: #340912;
+    --colors-secondary-50: #f2fdfa;
+    --colors-secondary-500: #22c3a0;
+    --colors-secondary-900: #09342b;
+    --colors-text-primary: #f5f5f7;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #0b0b10;
+    --fg: #f5f5f7;
+    --accent: #c32245;
+    --muted: #ea8a9f;
+  }
+  
+  [data-variant=&quot;light&quot;] {
+    --colors-background-primary: #ffffff;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dce3;
+    --colors-primary-200: #f3bac6;
+    --colors-primary-300: #ea8a9f;
+    --colors-primary-400: #e05271;
+    --colors-primary-50: #fdf2f4;
+    --colors-primary-500: #c32245;
+    --colors-primary-600: #9c1c37;
+    --colors-primary-700: #79152b;
+    --colors-primary-800: #570f1f;
+    --colors-primary-900: #340912;
+    --colors-secondary-50: #f2fdfa;
+    --colors-secondary-500: #22c3a0;
+    --colors-secondary-900: #09342b;
+    --colors-text-primary: #0b0b10;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #ffffff;
+    --fg: #0b0b10;
+    --accent: #c32245;
+    --muted: #ea8a9f;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed=&quot;true&quot;] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style></head><body data-variant='dark'>
+  <nav class=&quot;switcher&quot; aria-label=&quot;Variant switcher&quot;>
+    <button data-set=&quot;brand-a&quot; aria-pressed=&quot;false&quot;>brand-a</button>
+    <button data-set=&quot;brand-b&quot; aria-pressed=&quot;false&quot;>brand-b</button>
+    <button data-set=&quot;dark&quot; aria-pressed=&quot;false&quot;>dark</button>
+    <button data-set=&quot;light&quot; aria-pressed=&quot;true&quot;>light</button>
+    </nav>
+  <main class=&quot;wrap&quot;>
+    <p class=&quot;eyebrow&quot;>Aphrodite UI Generation</p>
+    <h1>Aphrodite UI generation harness.</h1>
+    <p class=&quot;lede&quot;>Aphrodite UI generation harness Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class=&quot;cta&quot; href=&quot;#&quot; aria-label=&quot;Primary call to action&quot;>Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body></html>" loading="lazy"></iframe>
+      </div>
+      <div class="frame">
+        <div class="frame-label">brand-a</div>
+        <iframe srcdoc="<!DOCTYPE html><html><head><meta charset='utf-8'><style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: ui-sans-serif, system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant=&quot;brand-a&quot;] {
+    --colors-background-primary: #fff8f1;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dce3;
+    --colors-primary-200: #f3bac6;
+    --colors-primary-300: #ea8a9f;
+    --colors-primary-400: #e05271;
+    --colors-primary-50: #fdf2f4;
+    --colors-primary-500: #c32245;
+    --colors-primary-600: #9c1c37;
+    --colors-primary-700: #79152b;
+    --colors-primary-800: #570f1f;
+    --colors-primary-900: #340912;
+    --colors-secondary-50: #f2fdfa;
+    --colors-secondary-500: #22c3a0;
+    --colors-secondary-900: #09342b;
+    --colors-text-primary: #241407;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #fff8f1;
+    --fg: #241407;
+    --accent: #c32245;
+    --muted: #ea8a9f;
+  }
+  
+  [data-variant=&quot;brand-b&quot;] {
+    --colors-background-primary: #f1faf8;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dce3;
+    --colors-primary-200: #f3bac6;
+    --colors-primary-300: #ea8a9f;
+    --colors-primary-400: #e05271;
+    --colors-primary-50: #fdf2f4;
+    --colors-primary-500: #c32245;
+    --colors-primary-600: #9c1c37;
+    --colors-primary-700: #79152b;
+    --colors-primary-800: #570f1f;
+    --colors-primary-900: #340912;
+    --colors-secondary-50: #f2fdfa;
+    --colors-secondary-500: #22c3a0;
+    --colors-secondary-900: #09342b;
+    --colors-text-primary: #04231d;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #f1faf8;
+    --fg: #04231d;
+    --accent: #c32245;
+    --muted: #ea8a9f;
+  }
+  
+  [data-variant=&quot;dark&quot;] {
+    --colors-background-primary: #0b0b10;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dce3;
+    --colors-primary-200: #f3bac6;
+    --colors-primary-300: #ea8a9f;
+    --colors-primary-400: #e05271;
+    --colors-primary-50: #fdf2f4;
+    --colors-primary-500: #c32245;
+    --colors-primary-600: #9c1c37;
+    --colors-primary-700: #79152b;
+    --colors-primary-800: #570f1f;
+    --colors-primary-900: #340912;
+    --colors-secondary-50: #f2fdfa;
+    --colors-secondary-500: #22c3a0;
+    --colors-secondary-900: #09342b;
+    --colors-text-primary: #f5f5f7;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #0b0b10;
+    --fg: #f5f5f7;
+    --accent: #c32245;
+    --muted: #ea8a9f;
+  }
+  
+  [data-variant=&quot;light&quot;] {
+    --colors-background-primary: #ffffff;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dce3;
+    --colors-primary-200: #f3bac6;
+    --colors-primary-300: #ea8a9f;
+    --colors-primary-400: #e05271;
+    --colors-primary-50: #fdf2f4;
+    --colors-primary-500: #c32245;
+    --colors-primary-600: #9c1c37;
+    --colors-primary-700: #79152b;
+    --colors-primary-800: #570f1f;
+    --colors-primary-900: #340912;
+    --colors-secondary-50: #f2fdfa;
+    --colors-secondary-500: #22c3a0;
+    --colors-secondary-900: #09342b;
+    --colors-text-primary: #0b0b10;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #ffffff;
+    --fg: #0b0b10;
+    --accent: #c32245;
+    --muted: #ea8a9f;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed=&quot;true&quot;] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style></head><body data-variant='brand-a'>
+  <nav class=&quot;switcher&quot; aria-label=&quot;Variant switcher&quot;>
+    <button data-set=&quot;brand-a&quot; aria-pressed=&quot;false&quot;>brand-a</button>
+    <button data-set=&quot;brand-b&quot; aria-pressed=&quot;false&quot;>brand-b</button>
+    <button data-set=&quot;dark&quot; aria-pressed=&quot;false&quot;>dark</button>
+    <button data-set=&quot;light&quot; aria-pressed=&quot;true&quot;>light</button>
+    </nav>
+  <main class=&quot;wrap&quot;>
+    <p class=&quot;eyebrow&quot;>Aphrodite UI Generation</p>
+    <h1>Aphrodite UI generation harness.</h1>
+    <p class=&quot;lede&quot;>Aphrodite UI generation harness Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class=&quot;cta&quot; href=&quot;#&quot; aria-label=&quot;Primary call to action&quot;>Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body></html>" loading="lazy"></iframe>
+      </div>
+      <div class="frame">
+        <div class="frame-label">brand-b</div>
+        <iframe srcdoc="<!DOCTYPE html><html><head><meta charset='utf-8'><style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: ui-sans-serif, system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant=&quot;brand-a&quot;] {
+    --colors-background-primary: #fff8f1;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dce3;
+    --colors-primary-200: #f3bac6;
+    --colors-primary-300: #ea8a9f;
+    --colors-primary-400: #e05271;
+    --colors-primary-50: #fdf2f4;
+    --colors-primary-500: #c32245;
+    --colors-primary-600: #9c1c37;
+    --colors-primary-700: #79152b;
+    --colors-primary-800: #570f1f;
+    --colors-primary-900: #340912;
+    --colors-secondary-50: #f2fdfa;
+    --colors-secondary-500: #22c3a0;
+    --colors-secondary-900: #09342b;
+    --colors-text-primary: #241407;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #fff8f1;
+    --fg: #241407;
+    --accent: #c32245;
+    --muted: #ea8a9f;
+  }
+  
+  [data-variant=&quot;brand-b&quot;] {
+    --colors-background-primary: #f1faf8;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dce3;
+    --colors-primary-200: #f3bac6;
+    --colors-primary-300: #ea8a9f;
+    --colors-primary-400: #e05271;
+    --colors-primary-50: #fdf2f4;
+    --colors-primary-500: #c32245;
+    --colors-primary-600: #9c1c37;
+    --colors-primary-700: #79152b;
+    --colors-primary-800: #570f1f;
+    --colors-primary-900: #340912;
+    --colors-secondary-50: #f2fdfa;
+    --colors-secondary-500: #22c3a0;
+    --colors-secondary-900: #09342b;
+    --colors-text-primary: #04231d;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #f1faf8;
+    --fg: #04231d;
+    --accent: #c32245;
+    --muted: #ea8a9f;
+  }
+  
+  [data-variant=&quot;dark&quot;] {
+    --colors-background-primary: #0b0b10;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dce3;
+    --colors-primary-200: #f3bac6;
+    --colors-primary-300: #ea8a9f;
+    --colors-primary-400: #e05271;
+    --colors-primary-50: #fdf2f4;
+    --colors-primary-500: #c32245;
+    --colors-primary-600: #9c1c37;
+    --colors-primary-700: #79152b;
+    --colors-primary-800: #570f1f;
+    --colors-primary-900: #340912;
+    --colors-secondary-50: #f2fdfa;
+    --colors-secondary-500: #22c3a0;
+    --colors-secondary-900: #09342b;
+    --colors-text-primary: #f5f5f7;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #0b0b10;
+    --fg: #f5f5f7;
+    --accent: #c32245;
+    --muted: #ea8a9f;
+  }
+  
+  [data-variant=&quot;light&quot;] {
+    --colors-background-primary: #ffffff;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-1000: #000000;
+    --colors-primary-100: #f9dce3;
+    --colors-primary-200: #f3bac6;
+    --colors-primary-300: #ea8a9f;
+    --colors-primary-400: #e05271;
+    --colors-primary-50: #fdf2f4;
+    --colors-primary-500: #c32245;
+    --colors-primary-600: #9c1c37;
+    --colors-primary-700: #79152b;
+    --colors-primary-800: #570f1f;
+    --colors-primary-900: #340912;
+    --colors-secondary-50: #f2fdfa;
+    --colors-secondary-500: #22c3a0;
+    --colors-secondary-900: #09342b;
+    --colors-text-primary: #0b0b10;
+    --rounded-lg: 16px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-4: 16px;
+    --spacing-8: 32px;
+    --typography-body-family: Inter;
+    --typography-body-weight: 400;
+    --typography-display-family: Inter Tight;
+    --typography-display-weight: 700;
+    --bg: #ffffff;
+    --fg: #0b0b10;
+    --accent: #c32245;
+    --muted: #ea8a9f;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed=&quot;true&quot;] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style></head><body data-variant='brand-b'>
+  <nav class=&quot;switcher&quot; aria-label=&quot;Variant switcher&quot;>
+    <button data-set=&quot;brand-a&quot; aria-pressed=&quot;false&quot;>brand-a</button>
+    <button data-set=&quot;brand-b&quot; aria-pressed=&quot;false&quot;>brand-b</button>
+    <button data-set=&quot;dark&quot; aria-pressed=&quot;false&quot;>dark</button>
+    <button data-set=&quot;light&quot; aria-pressed=&quot;true&quot;>light</button>
+    </nav>
+  <main class=&quot;wrap&quot;>
+    <p class=&quot;eyebrow&quot;>Aphrodite UI Generation</p>
+    <h1>Aphrodite UI generation harness.</h1>
+    <p class=&quot;lede&quot;>Aphrodite UI generation harness Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class=&quot;cta&quot; href=&quot;#&quot; aria-label=&quot;Primary call to action&quot;>Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body></html>" loading="lazy"></iframe>
+      </div>
+  </div>
+</body>
+</html>

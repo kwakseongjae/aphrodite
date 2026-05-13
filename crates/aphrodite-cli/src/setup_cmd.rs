@@ -1,60 +1,80 @@
 //! `aphrodite setup` — interactive auth bootstrap.
 //!
-//! v0.1: API-key only (Anthropic mandatory; others optional). Storage via
-//! aphrodite-keyring (OS keychain). Never to disk.
+//! v0.1: API-key only. Provider priority: z.ai GLM (default for the user
+//! who funded this project) > Anthropic > OpenRouter. Direct OpenAI/
+//! Moonshot/Gemini API keys are also accepted but not first-class in v0.1.
+//! Storage via aphrodite-keyring (OS keychain). Never to disk.
 
 use serde_json::json;
 use std::io::{BufRead, Write};
 
-pub async fn run() -> anyhow::Result<serde_json::Value> {
-    // Check what's already in the keychain.
-    let providers = ["anthropic", "openai", "moonshot", "gemini"];
-    let already: Vec<&str> = providers
-        .iter()
-        .copied()
-        .filter(|p| aphrodite_keyring::fetch(p).is_ok())
-        .collect();
+const PROVIDERS: &[(&str, &str)] = &[
+    ("zai", "z.ai GLM Coding Plan (recommended; api.z.ai/api/anthropic)"),
+    ("anthropic", "Anthropic direct (api.anthropic.com)"),
+    ("openrouter", "OpenRouter proxy (openrouter.ai)"),
+    ("openai", "OpenAI direct (v0.2 surface)"),
+    ("moonshot", "Moonshot / Kimi (v0.2 surface)"),
+    ("gemini", "Google Gemini (v0.2 surface)"),
+];
 
+pub async fn run() -> anyhow::Result<serde_json::Value> {
     eprintln!("Aphrodite setup — provider credentials");
+    let already: Vec<&str> = PROVIDERS
+        .iter()
+        .filter(|(p, _)| aphrodite_keyring::fetch(p).is_ok())
+        .map(|(p, _)| *p)
+        .collect();
     if !already.is_empty() {
         eprintln!("  Already configured: {}", already.join(", "));
     }
 
-    // Env-var preferred path (non-interactive).
     let mut stored: Vec<String> = Vec::new();
-    if let Ok(k) = std::env::var("APHRODITE_ANTHROPIC_API_KEY") {
-        if !k.trim().is_empty() {
-            aphrodite_keyring::store("anthropic", k.trim())?;
-            stored.push("anthropic".into());
+
+    // Non-interactive paths: env vars in priority order.
+    for (id, env_names) in [
+        ("zai", &["APHRODITE_ZAI_API_KEY", "ZAI_API_KEY", "GLM_API_KEY"][..]),
+        ("anthropic", &["APHRODITE_ANTHROPIC_API_KEY", "ANTHROPIC_API_KEY"][..]),
+        ("openrouter", &["APHRODITE_OPENROUTER_API_KEY", "OPENROUTER_API_KEY"][..]),
+    ] {
+        for n in env_names {
+            if let Ok(k) = std::env::var(n) {
+                if !k.trim().is_empty() && aphrodite_keyring::fetch(id).is_err() {
+                    aphrodite_keyring::store(id, k.trim())?;
+                    stored.push(id.to_string());
+                    eprintln!("  ✓ Stored {id} key from {n}");
+                    break;
+                }
+            }
         }
     }
 
-    // Interactive prompt only if stdin is a tty and Anthropic still missing.
-    if !stored.contains(&"anthropic".to_string())
-        && aphrodite_keyring::fetch("anthropic").is_err()
-        && atty_stdin()
-    {
-        eprint!("Anthropic API key (paste, or press Enter to skip): ");
-        std::io::stderr().flush().ok();
-        let stdin = std::io::stdin();
-        let mut line = String::new();
-        stdin.lock().read_line(&mut line)?;
-        let trimmed = line.trim();
-        if !trimmed.is_empty() {
-            aphrodite_keyring::store("anthropic", trimmed)?;
-            stored.push("anthropic".into());
+    // Interactive prompt — z.ai first (user-stated preference).
+    if atty_stdin() {
+        for (id, label) in PROVIDERS.iter().take(3) {
+            if aphrodite_keyring::fetch(id).is_ok() {
+                continue;
+            }
+            eprint!("{label}\n  API key (paste, or Enter to skip): ");
+            std::io::stderr().flush().ok();
+            let mut line = String::new();
+            std::io::stdin().lock().read_line(&mut line)?;
+            let trimmed = line.trim();
+            if !trimmed.is_empty() {
+                aphrodite_keyring::store(id, trimmed)?;
+                stored.push((*id).to_string());
+            }
         }
     }
 
-    let configured: Vec<_> = providers
+    let configured: Vec<_> = PROVIDERS
         .iter()
-        .map(|p| json!({ "provider": p, "configured": aphrodite_keyring::fetch(p).is_ok() }))
+        .map(|(p, _)| json!({ "provider": p, "configured": aphrodite_keyring::fetch(p).is_ok() }))
         .collect();
 
     Ok(json!({
         "kind": "setup",
         "message": if stored.is_empty() {
-            "No new keys stored. Run again with APHRODITE_ANTHROPIC_API_KEY env or in a tty."
+            "No new keys stored. Set APHRODITE_ZAI_API_KEY env var or rerun in a tty."
         } else {
             "Keys stored in OS keychain."
         },
@@ -64,7 +84,6 @@ pub async fn run() -> anyhow::Result<serde_json::Value> {
 }
 
 fn atty_stdin() -> bool {
-    // Very small portable check; avoids the `atty` crate.
     #[cfg(unix)]
     {
         unsafe extern "C" {

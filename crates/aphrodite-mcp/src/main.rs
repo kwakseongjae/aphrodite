@@ -175,12 +175,7 @@ async fn do_design(args: Value, is_redesign: bool) -> anyhow::Result<Value> {
         write_mode,
     };
 
-    let key = aphrodite_keyring::fetch("anthropic")
-        .ok()
-        .or_else(|| std::env::var("APHRODITE_ANTHROPIC_API_KEY").ok())
-        .or_else(|| std::env::var("ANTHROPIC_API_KEY").ok());
-
-    let output = aphrodite_generator::generate(&invocation, key).await?;
+    let output = aphrodite_generator::generate(&invocation).await?;
     let report = validate_design(&output.design_doc, &output.variants);
 
     let (design_path, hero_path, committed) = match invocation.write_mode {

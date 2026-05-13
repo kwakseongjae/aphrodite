@@ -1,6 +1,14 @@
-//! LLM provider routing. v0.1 supports Anthropic via API key. The Messages
-//! API call asks the model to return *only* DESIGN.md markdown — we strip any
-//! fence wrapping and hand the raw body to `aphrodite_core::parse_design`.
+//! Multi-provider LLM routing.
+//!
+//! v0.1 priority (per Goal 2026-05-13):
+//!   1. **z.ai GLM Coding Plan** — Anthropic-format endpoint at api.z.ai
+//!   2. Anthropic (Claude) direct
+//!   3. OpenRouter (OpenAI-format proxy; useful for any model)
+//!   4. Offline fallback (deterministic, no network)
+//!
+//! v0.2 adds OAuth flows for OpenAI / Moonshot / Gemini. The credential
+//! abstraction in `aphrodite-keyring` already supports an `oauth_token`
+//! variant; the call sites here will switch when those flows ship.
 
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -8,17 +16,52 @@ use thiserror::Error;
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
 #[serde(rename_all = "snake_case")]
 pub enum ProviderId {
+    Zai,         // z.ai GLM Coding Plan (Anthropic-format)
     Anthropic,
-    Openai,    // v0.2
-    Moonshot,  // v0.2
-    Gemini,    // v0.2
+    Openrouter,
+    Openai,      // v0.2
+    Moonshot,    // v0.2
+    Gemini,      // v0.2
 }
+
+impl ProviderId {
+    pub fn keyring_id(self) -> &'static str {
+        match self {
+            Self::Zai => "zai",
+            Self::Anthropic => "anthropic",
+            Self::Openrouter => "openrouter",
+            Self::Openai => "openai",
+            Self::Moonshot => "moonshot",
+            Self::Gemini => "gemini",
+        }
+    }
+
+    pub fn default_model(self) -> &'static str {
+        match self {
+            Self::Zai => "glm-4.7",
+            Self::Anthropic => "claude-sonnet-4-6",
+            Self::Openrouter => "anthropic/claude-sonnet-4.6",
+            Self::Openai => "gpt-4o",
+            Self::Moonshot => "moonshot-v1-128k",
+            Self::Gemini => "gemini-2.0-flash",
+        }
+    }
+
+    /// Display label for the JSON contract.
+    pub fn label(self) -> &'static str {
+        self.keyring_id()
+    }
+}
+
+/// The order Aphrodite tries providers in when none is explicitly requested.
+pub const DEFAULT_PRIORITY: &[ProviderId] =
+    &[ProviderId::Zai, ProviderId::Anthropic, ProviderId::Openrouter];
 
 #[derive(Debug, Error)]
 pub enum ProviderError {
     #[error("http: {0}")]
     Http(#[from] reqwest::Error),
-    #[error("anthropic api: status {status}: {body}")]
+    #[error("provider api: status {status}: {body}")]
     Api { status: u16, body: String },
     #[error("malformed response: {0}")]
     Malformed(String),
@@ -92,7 +135,42 @@ After the frontmatter, write the eight ordered sections:
 
 Each section is 2-5 short paragraphs of design rationale. No code, no JSON, no fences."##;
 
-pub async fn call_anthropic(api_key: &str, intent: &str) -> Result<String, ProviderError> {
+/// A resolved call target. CLI/MCP build one of these from keyring lookups,
+/// then hand it to `call`.
+pub struct ResolvedProvider {
+    pub id: ProviderId,
+    pub api_key: String,
+    pub model: String,
+}
+
+impl ResolvedProvider {
+    pub fn with_default_model(id: ProviderId, api_key: String) -> Self {
+        Self { id, api_key, model: id.default_model().to_string() }
+    }
+}
+
+/// Run the resolved provider against the user intent. Returns DESIGN.md text.
+pub async fn call(resolved: &ResolvedProvider, intent: &str) -> Result<String, ProviderError> {
+    let user = format!(
+        "Design intent: {intent}\n\nReturn the DESIGN.md now. Remember: start with `---`, no fences, all four variants (light, dark, brand-a, brand-b), WCAG-AA contrast in every variant."
+    );
+    match resolved.id {
+        ProviderId::Zai => call_anthropic_compat("https://api.z.ai/api/anthropic", &resolved.api_key, &resolved.model, &user).await,
+        ProviderId::Anthropic => call_anthropic_compat("https://api.anthropic.com", &resolved.api_key, &resolved.model, &user).await,
+        ProviderId::Openrouter => call_openai_compat("https://openrouter.ai/api/v1", &resolved.api_key, &resolved.model, &user).await,
+        ProviderId::Openai => call_openai_compat("https://api.openai.com/v1", &resolved.api_key, &resolved.model, &user).await,
+        ProviderId::Moonshot => call_openai_compat("https://api.moonshot.cn/v1", &resolved.api_key, &resolved.model, &user).await,
+        ProviderId::Gemini => Err(ProviderError::Malformed("Gemini provider lands in v0.2".into())),
+    }
+}
+
+/// Anthropic-format /v1/messages. Works for api.anthropic.com and api.z.ai/api/anthropic.
+async fn call_anthropic_compat(
+    base_url: &str,
+    api_key: &str,
+    model: &str,
+    user_msg: &str,
+) -> Result<String, ProviderError> {
     #[derive(Serialize)]
     struct Req<'a> {
         model: &'a str,
@@ -107,6 +185,7 @@ pub async fn call_anthropic(api_key: &str, intent: &str) -> Result<String, Provi
     }
     #[derive(Deserialize)]
     struct Resp {
+        #[serde(default)]
         content: Vec<Block>,
     }
     #[derive(Deserialize)]
@@ -117,26 +196,21 @@ pub async fn call_anthropic(api_key: &str, intent: &str) -> Result<String, Provi
         text: String,
     }
 
-    let user = format!(
-        "Design intent: {intent}\n\nReturn the DESIGN.md now. Remember: start with `---`, no fences, all four variants, WCAG-AA contrast in every variant."
-    );
-
+    let url = format!("{}/v1/messages", base_url.trim_end_matches('/'));
     let req = Req {
-        model: "claude-sonnet-4-6",
+        model,
         max_tokens: 4096,
         system: SYSTEM_PROMPT,
-        messages: vec![Msg { role: "user", content: &user }],
+        messages: vec![Msg { role: "user", content: user_msg }],
     };
-
     let resp = reqwest::Client::new()
-        .post("https://api.anthropic.com/v1/messages")
+        .post(&url)
         .header("x-api-key", api_key)
         .header("anthropic-version", "2023-06-01")
         .header("content-type", "application/json")
         .json(&req)
         .send()
         .await?;
-
     let status = resp.status();
     if !status.is_success() {
         let body = resp.text().await.unwrap_or_default();
@@ -150,6 +224,74 @@ pub async fn call_anthropic(api_key: &str, intent: &str) -> Result<String, Provi
         .map(|b| b.text)
         .collect::<Vec<_>>()
         .join("\n");
+    Ok(strip_fences(&text))
+}
+
+/// OpenAI-format /chat/completions. Works for OpenRouter, OpenAI direct, Moonshot.
+async fn call_openai_compat(
+    base_url: &str,
+    api_key: &str,
+    model: &str,
+    user_msg: &str,
+) -> Result<String, ProviderError> {
+    #[derive(Serialize)]
+    struct Req<'a> {
+        model: &'a str,
+        max_tokens: u32,
+        messages: Vec<Msg<'a>>,
+    }
+    #[derive(Serialize)]
+    struct Msg<'a> {
+        role: &'a str,
+        content: &'a str,
+    }
+    #[derive(Deserialize)]
+    struct Resp {
+        #[serde(default)]
+        choices: Vec<Choice>,
+    }
+    #[derive(Deserialize)]
+    struct Choice {
+        #[serde(default)]
+        message: Option<RespMsg>,
+    }
+    #[derive(Deserialize)]
+    struct RespMsg {
+        #[serde(default)]
+        content: String,
+    }
+
+    let url = format!("{}/chat/completions", base_url.trim_end_matches('/'));
+    let req = Req {
+        model,
+        max_tokens: 4096,
+        messages: vec![
+            Msg { role: "system", content: SYSTEM_PROMPT },
+            Msg { role: "user", content: user_msg },
+        ],
+    };
+    let resp = reqwest::Client::new()
+        .post(&url)
+        .header("authorization", format!("Bearer {api_key}"))
+        .header("content-type", "application/json")
+        .header("http-referer", "https://github.com/aphrodite-ui")
+        .header("x-title", "Aphrodite")
+        .json(&req)
+        .send()
+        .await?;
+    let status = resp.status();
+    if !status.is_success() {
+        let body = resp.text().await.unwrap_or_default();
+        return Err(ProviderError::Api { status: status.as_u16(), body });
+    }
+    let parsed: Resp = resp.json().await?;
+    let text = parsed
+        .choices
+        .into_iter()
+        .next()
+        .and_then(|c| c.message)
+        .map(|m| m.content)
+        .ok_or_else(|| ProviderError::Malformed("no choices/message in response".into()))?;
     Ok(strip_fences(&text))
 }
 
