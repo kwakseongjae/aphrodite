@@ -12,7 +12,7 @@ A) aesthetic styles · B) domains · C) hard constraints · D) languages · E) c
 | 5 | A5-cyberpunk | aesthetic style | 91 s | ✅ | `#e60073` neon magenta | (mono) | Dense data layout, dark surface + magenta/cyan accents. |
 | 6 | B1-mobile | domain stretch | 95 s | ✅ | `#c2510f` warm coral | (sans) | Thumb-zone optimized; primary CTA bottom-anchored. |
 | 7 | B3-pricing | domain stretch | 113 s | ✅ | `#8a6d3b` warm gold | Fraunces | Conversion-focused tier system, trust-coded palette. |
-| 8 | C1-forced-palette | constraint | — | ❌ parse-fail | — | — | GLM returned `colors:` map in a non-conforming shape (likely the constraint hex list confused the schema). Open finding. |
+| 8 | C1-forced-palette | constraint | 86 s | ✅ | `#40916C` (mid-sage) | — | **Constraint honored.** All three forced hex values (#1B4332, #52B788, #D8F3DC) land at shades 700 / 400 / 50 respectively; in-between shades interpolated. Required parser fix (Finding #16) to land first. |
 | 9 | C2-forced-font | constraint | 78 s | ✅ | `#b8860b` accent | **Berkeley Mono** | Constraint honored exactly — Berkeley Mono in display + body. |
 | 10 | D1-japanese | language | 88 s | ✅ | `#8b6d47` khaki | — | 余白を多く respected; the 白と藍 (white + indigo) palette claim was only partially honored — emitted a warm khaki, not indigo. |
 | 11 | D2-arabic-rtl | language | 99 s | ✅ | `#c46a35` amber | — | Color matched العنبر (amber) and الكهرماني (amber-yellow) request. RTL layout not surfaced in our hero template (template limitation, not LLM). |
@@ -25,7 +25,7 @@ A) aesthetic styles · B) domains · C) hard constraints · D) languages · E) c
 
 ## Aggregate
 
-- **Validation rate**: 15 / 17 (88%). After the parser-leniency fix (commit landed this session) the original 4 frontmatter-prefix failures all passed.
+- **Validation rate**: **17 / 17 (100%)** after the two parser-leniency fixes shipped this session. Original numbers were 11/17 → 15/17 after prose-prefix tolerance → 17/17 after markerless-YAML + tolerant-`colors:`.
 - **Latency mean**: 100 s (range 78–140 s).
 - **Warnings emitted**: 0 across all runs (intents were in-scope).
 - **Validator did its job**: A3-glassmorphic was caught for WCAG-AA. Production gate works.

@@ -49,8 +49,37 @@ pub struct Frontmatter {
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct ColorTokens {
     pub primary: BTreeMap<String, String>,
+    /// Non-primary palettes (neutral, accent, …) AND any incidental keys the
+    /// LLM may have included (e.g. a `description:` string). We accept any
+    /// `serde_yaml::Value` here and let downstream resolution skip non-map
+    /// entries — this is the difference between "the model wrote slightly
+    /// outside our spec" and "the whole DESIGN.md is rejected."
     #[serde(flatten)]
-    pub others: BTreeMap<String, BTreeMap<String, String>>,
+    pub others: BTreeMap<String, serde_yaml::Value>,
+}
+
+impl ColorTokens {
+    /// Iterate only the palette-shaped entries in `others` (Map<String,String>).
+    /// Use this from variant resolution so a stray `description: "..."` doesn't
+    /// break the build.
+    pub fn other_palettes(&self) -> impl Iterator<Item = (&String, BTreeMap<String, String>)> {
+        self.others.iter().filter_map(|(k, v)| match v {
+            serde_yaml::Value::Mapping(m) => {
+                let mut out = BTreeMap::new();
+                for (mk, mv) in m {
+                    if let (serde_yaml::Value::String(sk), serde_yaml::Value::String(sv)) = (mk, mv) {
+                        out.insert(sk.clone(), sv.clone());
+                    }
+                }
+                if out.is_empty() {
+                    None
+                } else {
+                    Some((k, out))
+                }
+            }
+            _ => None,
+        })
+    }
 }
 
 /// Aphrodite-specific frontmatter metadata for multi-mode variants.
@@ -149,21 +178,29 @@ pub fn parse(src: &str) -> Result<DesignDocument, DesignError> {
 }
 
 fn split_frontmatter(src: &str) -> Option<(&str, &str)> {
-    // Tolerate (a) leading whitespace / newlines, (b) LLM prose before the
-    // opening `---`. Find the first line that's exactly `---` and treat
-    // everything after as candidate frontmatter; close on the next `---`
-    // line.
+    // Tolerate (a) leading whitespace, (b) LLM prose before the opening `---`,
+    // (c) LLM omitting markers entirely when the response is YAML-only.
     let trimmed = src.trim_start();
     let stripped = if let Some(s) = trimmed.strip_prefix("---\n").or_else(|| trimmed.strip_prefix("---\r\n")) {
         s
+    } else if let Some(idx) = trimmed.find("\n---\n") {
+        &trimmed[idx + 5..]
     } else {
-        // Look for `\n---\n` after a prose prefix.
-        let key = "\n---\n";
-        if let Some(idx) = trimmed.find(key) {
-            &trimmed[idx + key.len()..]
-        } else {
+        // No `---` markers at all. If the head looks like YAML (a top-level
+        // key on the first non-empty line), accept the whole thing as
+        // frontmatter and find the first `# ` markdown heading as the body
+        // boundary.
+        let first_line = trimmed.lines().next().unwrap_or("");
+        let looks_like_yaml = first_line.contains(':')
+            && !first_line.starts_with('#')
+            && !first_line.starts_with('<');
+        if !looks_like_yaml {
             return None;
         }
+        // Body starts at the first `\n# ` (markdown H1); if none, the whole
+        // thing is frontmatter and body is empty.
+        let body_start = trimmed.find("\n# ").unwrap_or(trimmed.len());
+        return Some((&trimmed[..body_start], &trimmed[body_start..]));
     };
     // find the closing `---` on its own line
     let idx = stripped.find("\n---")?;

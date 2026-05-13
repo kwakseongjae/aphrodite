@@ -78,8 +78,10 @@ fn flatten_base(doc: &DesignDocument) -> BTreeMap<String, String> {
         for (shade, hex) in &colors.primary {
             out.insert(format!("colors.primary.{shade}"), hex.clone());
         }
-        for (palette, shades) in &colors.others {
-            for (shade, hex) in shades {
+        // Use the palette-only iterator; stray string entries (e.g. an
+        // explanatory `description: "..."` the LLM might emit) are skipped.
+        for (palette, shades) in colors.other_palettes() {
+            for (shade, hex) in &shades {
                 out.insert(format!("colors.{palette}.{shade}"), hex.clone());
             }
         }

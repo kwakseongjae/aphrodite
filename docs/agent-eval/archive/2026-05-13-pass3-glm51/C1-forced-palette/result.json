@@ -1,0 +1,27 @@
+{
+  "invocation_id": "33a7ab42-e785-4767-b1d2-b9c10649b1aa",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "design_path": "/private/tmp/pass3-C1-final/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass3-C1-final/DESIGN.md",
+      "/private/tmp/pass3-C1-final/hero.html"
+    ],
+    "hero_path": "/private/tmp/pass3-C1-final/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}
