@@ -7,11 +7,20 @@
 //! exists to make tests pass, not to be beautiful.
 
 pub fn generate(intent: &str) -> String {
+    generate_with_taste(intent, &aphrodite_core::TasteSnapshot::default())
+}
+
+/// Same deterministic offline path, but perturbed by accumulated taste.
+/// Each Regenerate event in the project store nudges the hue ~73° (a coprime
+/// step against 360, so the palette tours the wheel without revisiting).
+pub fn generate_with_taste(intent: &str, taste: &aphrodite_core::TasteSnapshot) -> String {
     let name = derive_name(intent);
     let seed = hash_u32(intent);
 
-    // Pick a primary hue from the intent hash; emit a 9-shade palette.
-    let hue = (seed % 360) as f64;
+    let regen = taste.regenerate_count();
+    let hue_shift = (regen as f64) * 73.0;
+
+    let hue = ((seed % 360) as f64 + hue_shift) % 360.0;
     let primary = palette_from_hue(hue);
     let secondary = palette_from_hue((hue + 180.0) % 360.0);
 

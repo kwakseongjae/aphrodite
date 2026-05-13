@@ -22,7 +22,7 @@ When a finding here resolves, update the row and link the commit. When a new age
 | 2 | 🔴 P0 | Silent capability ignorance — image/video/3D asks return `isError:false` with intent stuffed into `<h1>` | 2026-05-13 | "include three.js parallax" → no canvas, no signal. Same for image/video. | Detect out-of-scope vocab → emit `warnings[]` (4 buckets: image_generation, motion_or_video, three_d_scene, design_tool_roundtrip) with agent-branchable `kind`. | ✅ shipped |
 | 3 | 🟠 P1 | Offline generator dumps full intent into `<h1>` verbatim | 2026-05-13 | Long intents → unreadable hero. | First-clause split with whitespace-required terminators (`three.js`/`DESIGN.md` survive), 80-char cap, `Meet {name}.` fallback. | ✅ shipped |
 | 4 | 🟠 P1 | `<p class="eyebrow">` reads as imperative ("Include A Threejs") | 2026-05-13 | First-3-words rule. | `derive_name()` skips imperatives + framework/format names; takes first 2 informative words. | ✅ shipped |
-| 5 | 🟠 P1 | Taste loop is write-only — `redesign × N` produces byte-identical output | 2026-05-13 (seed #8) | Storage works, read at generate-time absent. | Inject recent taste events into LLM system prompt; mutate hash seed in offline path. | ⏳ — most valuable open item |
+| 5 | 🟠 P1 | Taste loop is write-only — `redesign × N` produces byte-identical output | 2026-05-13 (seed #8) | Storage works, read at generate-time absent. | `aphrodite_core::taste_snapshot()` returns project + global counts + recent events. `generate_with` reads at call start. Offline path rotates hue by 73° × project-weighted-regenerate count; LLM path injects "User taste signals so far" section into user prompt. | ✅ shipped — measured: 5 successive runs against same intent produce 4 distinct hue families (gold → violet → green → wine). Far exceeds seed #8's 20% threshold. |
 | 6 | 🟡 P2 | Success payloads have no `warnings` field | 2026-05-13 | Provider downgrade, out-of-scope, deprecation — no slot. | Added `warnings: [{kind, message, hint}]` to design/redesign payloads (CLI + MCP). | ✅ shipped |
 | 7 | 🟡 P2 | Pretty CLI doesn't explain *why* a provider was chosen | 2026-05-13 | Just "Provider: offline" with no reason. | Provider-downgrade warning above carries the reason. The `Provider:` line itself still doesn't annotate. | ✅ partial |
 | 8 | 🟢 P3 | No fuzz tests for non-ASCII typography roundtrip | 2026-05-13 | Hangul worked by accident in run 8. | Unit + property tests for UTF-8 in intent, frontmatter, body. | ⏳ |
@@ -42,6 +42,7 @@ When a finding here resolves, update the row and link the commit. When a new age
 | #4 | 2026-05-13 | `derive_name()` skips imperatives + framework names | (this commit) |
 | #6 | 2026-05-13 | `warnings: [{kind,message,hint}]` in design/redesign payloads (CLI+MCP) | (this commit) |
 | #10 | 2026-05-13 | `auth verify <provider>` + immediate readback in `auth set` / `init` | (this commit) |
+| #5 | 2026-05-13 | Taste loop read-at-generate-time; satisfies seed acceptance #8 | (this commit) |
 
 ## Re-runs scheduled for next eval pass
 

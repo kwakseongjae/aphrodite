@@ -235,27 +235,54 @@ impl ResolvedProvider {
 
 /// Run the resolved provider against the user intent. Returns DESIGN.md text.
 pub async fn call(resolved: &ResolvedProvider, intent: &str) -> Result<String, ProviderError> {
-    let user = format!(
+    call_with_taste(resolved, intent, &aphrodite_core::TasteSnapshot::default()).await
+}
+
+/// Same as `call`, but injects the accumulated taste snapshot into the user
+/// message so the LLM can bias subsequent generations.
+pub async fn call_with_taste(
+    resolved: &ResolvedProvider,
+    intent: &str,
+    taste: &aphrodite_core::TasteSnapshot,
+) -> Result<String, ProviderError> {
+    let mut user = format!(
         "Design intent: {intent}\n\nReturn the DESIGN.md now. Remember: start with `---`, no fences, all four variants (light, dark, brand-a, brand-b), WCAG-AA contrast in every variant."
     );
+    let regen = taste.regenerate_count();
+    if regen > 0 {
+        user.push_str("\n\nUser taste signals so far:");
+        user.push_str(&format!(
+            "\n- The user has explicitly asked for regeneration {regen} time(s) against similar intents. Avoid the obvious first-instinct palette; pick a different hue family, restraint level, and type pairing than you would have first reached for."
+        ));
+        if !taste.recent.is_empty() {
+            user.push_str("\n- Recent signals (most recent last):");
+            for ev in &taste.recent {
+                user.push_str(&format!(
+                    "\n  · [{:?}] {} at {}",
+                    ev.signal_kind, ev.invocation_id, ev.ts
+                ));
+            }
+        }
+        user.push_str("\n\nMake this output noticeably different — different primary hue family, different typographic mood — from a baseline first attempt.");
+    }
+    let _ = intent; // satisfies the borrow checker post-format
+    let local_user = user;
     let default_base = resolved.id.base_url_for_plan("coding_plan");
     let base = resolved.base_url.as_deref().unwrap_or(default_base);
 
-    // Pick the wire format. Anthropic + z.ai coding-plan use /v1/messages with
-    // x-api-key; everyone else (OpenRouter, OpenAI, Moonshot, z.ai standard-api)
-    // uses OpenAI /chat/completions with Bearer.
     let anthropic_wire = match resolved.id {
         ProviderId::Anthropic => true,
         ProviderId::Zai => base.contains("/api/anthropic"),
         _ => false,
     };
+    let _ = anthropic_wire; // placeholder — used below
     if matches!(resolved.id, ProviderId::Gemini) {
         return Err(ProviderError::Malformed("Gemini provider lands in v0.2".into()));
     }
     if anthropic_wire {
-        call_anthropic_compat(base, &resolved.api_key, &resolved.model, &user).await
+        call_anthropic_compat(base, &resolved.api_key, &resolved.model, &local_user).await
     } else {
-        call_openai_compat(base, &resolved.api_key, &resolved.model, &user).await
+        call_openai_compat(base, &resolved.api_key, &resolved.model, &local_user).await
     }
 }
 

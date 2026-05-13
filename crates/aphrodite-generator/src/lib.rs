@@ -49,12 +49,20 @@ pub async fn generate_with(
     invocation: &Invocation,
     resolved: Option<&ResolvedProvider>,
 ) -> Result<GenerationOutput, GenError> {
+    // Finding #5 / seed acceptance #8: read accumulated taste before
+    // generating so successive `redesign` calls actually diverge.
+    let taste = aphrodite_core::taste_snapshot(&invocation.target_repo);
+
     let (design_md, provider_used, model_used) = match resolved {
         Some(r) => {
-            let md = provider::call(r, &invocation.intent).await?;
+            let md = provider::call_with_taste(r, &invocation.intent, &taste).await?;
             (md, r.id.label().to_string(), r.model.clone())
         }
-        None => (offline::generate(&invocation.intent), "offline".to_string(), "deterministic".to_string()),
+        None => (
+            offline::generate_with_taste(&invocation.intent, &taste),
+            "offline".to_string(),
+            "deterministic".to_string(),
+        ),
     };
 
     let design_doc = parse_design(&design_md)?;

@@ -16,6 +16,6 @@ pub use design::{parse as parse_design, DesignDocument, DesignError, SectionKind
 pub use invocation::{Caller, Invocation, Surface, WriteMode};
 pub use policy::Policy;
 pub use seed::{load as load_seed, Seed};
-pub use taste::{record as record_taste, SignalKind, TasteEvent};
+pub use taste::{record as record_taste, snapshot_for as taste_snapshot, SignalKind, TasteEvent, TasteSnapshot};
 pub use validator::{validate as validate_design, ValidationReport, ValidationViolation, ViolationKind};
 pub use variant::{resolve as resolve_variants, Variant, VariantKind};

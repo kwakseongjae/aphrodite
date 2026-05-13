@@ -90,6 +90,54 @@ fn append(path: &Path, event: &TasteEvent) -> std::io::Result<()> {
     Ok(())
 }
 
+/// Snapshot of accumulated taste, ready to feed into a generation pass.
+/// Resolved as global ⊕ project at read time (seed-mandated).
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct TasteSnapshot {
+    /// Number of explicit Regenerate events in the project store for any intent.
+    pub project_regenerate_count: u32,
+    /// Same, in the global store.
+    pub global_regenerate_count: u32,
+    /// Most recent events (up to 8) — used by LLM provider to seed a
+    /// "User taste signals so far" system-prompt section, and by the
+    /// offline generator to perturb its deterministic hash seed.
+    pub recent: Vec<TasteEvent>,
+}
+
+impl TasteSnapshot {
+    /// Combined Regenerate count; offline path uses this to perturb the hash.
+    pub fn regenerate_count(&self) -> u32 {
+        // Project takes precedence (per seed); cap weight so a noisy global
+        // store doesn't drown a fresh project.
+        self.project_regenerate_count * 2 + self.global_regenerate_count
+    }
+}
+
+/// Snapshot for a generation call. Reads project + global, dedupes, sorts.
+pub fn snapshot_for(project_root: &Path) -> TasteSnapshot {
+    let events = read_all(project_root).unwrap_or_default();
+    let mut project_re = 0u32;
+    let mut global_re = 0u32;
+    for ev in &events {
+        if ev.signal_kind == SignalKind::Regenerate {
+            match ev.source {
+                Source::Project => project_re += 1,
+                Source::Global => global_re += 1,
+            }
+        }
+    }
+    let mut recent = events;
+    // Keep last 8 by timestamp (string sort works for RFC 3339).
+    recent.sort_by(|a, b| a.ts.cmp(&b.ts));
+    let cut = recent.len().saturating_sub(8);
+    let recent = recent.split_off(cut);
+    TasteSnapshot {
+        project_regenerate_count: project_re,
+        global_regenerate_count: global_re,
+        recent,
+    }
+}
+
 /// Read both stores; project-source events take precedence on conflict.
 pub fn read_all(project_root: &Path) -> std::io::Result<Vec<TasteEvent>> {
     let mut out = Vec::new();
