@@ -1,12 +1,4 @@
 //! aphrodite-generator — orchestrates LLM provider + hero HTML rendering.
-//!
-//! Pipeline:
-//!   1. Resolve a provider: keyring lookup in priority order (z.ai → Anthropic
-//!      → OpenRouter), or use the caller-supplied `ResolvedProvider`.
-//!   2. Call the provider OR fall back to the offline generator.
-//!   3. Parse returned DESIGN.md.
-//!   4. Resolve variants (light/dark/brand-A/brand-B).
-//!   5. Render hero HTML against the resolved variants.
 
 pub mod hero;
 pub mod offline;
@@ -24,6 +16,7 @@ pub struct GenerationOutput {
     pub variants: Vec<Variant>,
     pub hero_html: String,
     pub provider_used: String,
+    pub model_used: String,
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -36,25 +29,21 @@ pub enum GenError {
     Hero(String),
 }
 
-/// End-to-end generation. Walks the default provider priority looking for a
-/// usable credential; falls back to the offline generator if nothing is
-/// configured.
 pub async fn generate(invocation: &Invocation) -> Result<GenerationOutput, GenError> {
     let resolved = resolve_default_provider();
     generate_with(invocation, resolved.as_ref()).await
 }
 
-/// Generate against an explicit provider (or `None` for offline).
 pub async fn generate_with(
     invocation: &Invocation,
     resolved: Option<&ResolvedProvider>,
 ) -> Result<GenerationOutput, GenError> {
-    let (design_md, provider_used) = match resolved {
+    let (design_md, provider_used, model_used) = match resolved {
         Some(r) => {
             let md = provider::call(r, &invocation.intent).await?;
-            (md, r.id.label().to_string())
+            (md, r.id.label().to_string(), r.model.clone())
         }
-        None => (offline::generate(&invocation.intent), "offline".to_string()),
+        None => (offline::generate(&invocation.intent), "offline".to_string(), "deterministic".to_string()),
     };
 
     let design_doc = parse_design(&design_md)?;
@@ -67,23 +56,48 @@ pub async fn generate_with(
         variants,
         hero_html,
         provider_used,
+        model_used,
     })
 }
 
-/// Walk the keyring priority order and return the first provider with a
-/// stored credential. Also honors env-var fallbacks for headless / CI:
-///   - `APHRODITE_ZAI_API_KEY`         → z.ai
-///   - `APHRODITE_ANTHROPIC_API_KEY`   → Anthropic
-///   - `ANTHROPIC_API_KEY`             → Anthropic (compat with native env)
-///   - `APHRODITE_OPENROUTER_API_KEY`  → OpenRouter
-///   - `OPENROUTER_API_KEY`            → OpenRouter (compat)
+/// Resolve a provider. Honors `~/.aphrodite/config.toml` for default_provider
+/// + per-provider model/base_url overrides. Falls back to scanning all
+/// providers in priority order. Honors env-var fallbacks for headless / CI.
 pub fn resolve_default_provider() -> Option<ResolvedProvider> {
+    let cfg = aphrodite_core::config::load();
+
+    // 1) If user pinned default_provider in config, try that first.
+    if let Some(name) = cfg.default_provider.as_deref() {
+        if let Some(id) = ProviderId::from_label(name) {
+            if let Some(key) = fetch_key(id) {
+                return Some(resolve(id, key, cfg.providers.get(name).cloned()));
+            }
+        }
+    }
+    // 2) Walk the canonical priority order.
     for id in DEFAULT_PRIORITY.iter().copied() {
         if let Some(key) = fetch_key(id) {
-            return Some(ResolvedProvider::with_default_model(id, key));
+            let pcfg = cfg.providers.get(id.keyring_id()).cloned();
+            return Some(resolve(id, key, pcfg));
         }
     }
     None
+}
+
+fn resolve(
+    id: ProviderId,
+    api_key: String,
+    pcfg: Option<aphrodite_core::config::ProviderConfig>,
+) -> ResolvedProvider {
+    let model = pcfg
+        .as_ref()
+        .and_then(|c| c.model.clone())
+        .unwrap_or_else(|| id.default_model().to_string());
+    let base_url = pcfg
+        .as_ref()
+        .and_then(|c| c.base_url.clone())
+        .or_else(|| pcfg.as_ref().and_then(|c| c.plan.as_deref()).map(|plan| id.base_url_for_plan(plan).to_string()));
+    ResolvedProvider { id, api_key, model, base_url }
 }
 
 fn fetch_key(id: ProviderId) -> Option<String> {

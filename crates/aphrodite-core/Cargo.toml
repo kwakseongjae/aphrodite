@@ -21,6 +21,7 @@ palette.workspace = true
 time = { version = "0.3", features = ["serde", "formatting", "parsing", "macros"] }
 glob-match = "0.2"
 uuid = { version = "1", features = ["v4", "serde"] }
+toml = "0.8"
 
 [dev-dependencies]
 indoc = "2"

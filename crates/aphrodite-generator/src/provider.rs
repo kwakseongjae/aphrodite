@@ -36,6 +36,18 @@ impl ProviderId {
         }
     }
 
+    pub fn from_label(s: &str) -> Option<Self> {
+        Some(match s {
+            "zai" => Self::Zai,
+            "anthropic" => Self::Anthropic,
+            "openrouter" => Self::Openrouter,
+            "openai" => Self::Openai,
+            "moonshot" => Self::Moonshot,
+            "gemini" => Self::Gemini,
+            _ => return None,
+        })
+    }
+
     pub fn default_model(self) -> &'static str {
         match self {
             Self::Zai => "glm-4.7",
@@ -47,9 +59,73 @@ impl ProviderId {
         }
     }
 
-    /// Display label for the JSON contract.
+    /// Curated model list (label, model_id) shown to the user during `aphrodite init`.
+    pub fn curated_models(self) -> &'static [(&'static str, &'static str)] {
+        match self {
+            Self::Zai => &[
+                ("glm-4.7 — fast, default, 200K context", "glm-4.7"),
+                ("glm-5.1 — newest, best quality, slower", "glm-5.1"),
+                ("glm-5-turbo — balanced", "glm-5-turbo"),
+                ("glm-4.5-air — cheapest, 100K context", "glm-4.5-air"),
+            ],
+            Self::Anthropic => &[
+                ("claude-sonnet-4-6 — default", "claude-sonnet-4-6"),
+                ("claude-opus-4-7 — strongest, slowest", "claude-opus-4-7"),
+                ("claude-haiku-4-5 — fast & cheap", "claude-haiku-4-5"),
+            ],
+            Self::Openrouter => &[
+                ("anthropic/claude-sonnet-4.6 — default", "anthropic/claude-sonnet-4.6"),
+                ("anthropic/claude-opus-4.7 — premium", "anthropic/claude-opus-4.7"),
+                ("openai/gpt-4o", "openai/gpt-4o"),
+                ("z-ai/glm-4.7", "z-ai/glm-4.7"),
+            ],
+            _ => &[],
+        }
+    }
+
+    /// Plan options recognised by `aphrodite init`. Each plan maps to a
+    /// default base_url; the user can still override per-provider.
+    pub fn plans(self) -> &'static [(&'static str, &'static str)] {
+        match self {
+            Self::Zai => &[
+                ("Coding Plan subscription — Anthropic-compatible (recommended)", "coding_plan"),
+                ("Standard API — pay-per-token, OpenAI-format", "standard_api"),
+            ],
+            _ => &[("Standard API", "standard_api")],
+        }
+    }
+
+    pub fn base_url_for_plan(self, plan: &str) -> &'static str {
+        match (self, plan) {
+            (Self::Zai, "coding_plan") => "https://api.z.ai/api/anthropic",
+            (Self::Zai, "standard_api") => "https://api.z.ai/api/coding/paas/v4",
+            (Self::Anthropic, _) => "https://api.anthropic.com",
+            (Self::Openrouter, _) => "https://openrouter.ai/api/v1",
+            (Self::Openai, _) => "https://api.openai.com/v1",
+            (Self::Moonshot, _) => "https://api.moonshot.cn/v1",
+            (Self::Gemini, _) => "https://generativelanguage.googleapis.com/v1beta",
+            _ => "",
+        }
+    }
+
     pub fn label(self) -> &'static str {
         self.keyring_id()
+    }
+
+    pub fn human_name(self) -> &'static str {
+        match self {
+            Self::Zai => "z.ai GLM",
+            Self::Anthropic => "Anthropic",
+            Self::Openrouter => "OpenRouter",
+            Self::Openai => "OpenAI",
+            Self::Moonshot => "Moonshot / Kimi",
+            Self::Gemini => "Google Gemini",
+        }
+    }
+
+    /// Anthropic-compatible (uses `/v1/messages` with `x-api-key`)
+    pub fn is_anthropic_format(self, plan: Option<&str>) -> bool {
+        matches!((self, plan), (Self::Anthropic, _) | (Self::Zai, Some("coding_plan")) | (Self::Zai, None))
     }
 }
 
@@ -135,17 +211,23 @@ After the frontmatter, write the eight ordered sections:
 
 Each section is 2-5 short paragraphs of design rationale. No code, no JSON, no fences."##;
 
-/// A resolved call target. CLI/MCP build one of these from keyring lookups,
-/// then hand it to `call`.
+/// A resolved call target. CLI/MCP build one of these from keyring + config
+/// lookups, then hand it to `call`.
 pub struct ResolvedProvider {
     pub id: ProviderId,
     pub api_key: String,
     pub model: String,
+    pub base_url: Option<String>,
 }
 
 impl ResolvedProvider {
     pub fn with_default_model(id: ProviderId, api_key: String) -> Self {
-        Self { id, api_key, model: id.default_model().to_string() }
+        Self {
+            id,
+            api_key,
+            model: id.default_model().to_string(),
+            base_url: None,
+        }
     }
 }
 
@@ -154,13 +236,24 @@ pub async fn call(resolved: &ResolvedProvider, intent: &str) -> Result<String, P
     let user = format!(
         "Design intent: {intent}\n\nReturn the DESIGN.md now. Remember: start with `---`, no fences, all four variants (light, dark, brand-a, brand-b), WCAG-AA contrast in every variant."
     );
-    match resolved.id {
-        ProviderId::Zai => call_anthropic_compat("https://api.z.ai/api/anthropic", &resolved.api_key, &resolved.model, &user).await,
-        ProviderId::Anthropic => call_anthropic_compat("https://api.anthropic.com", &resolved.api_key, &resolved.model, &user).await,
-        ProviderId::Openrouter => call_openai_compat("https://openrouter.ai/api/v1", &resolved.api_key, &resolved.model, &user).await,
-        ProviderId::Openai => call_openai_compat("https://api.openai.com/v1", &resolved.api_key, &resolved.model, &user).await,
-        ProviderId::Moonshot => call_openai_compat("https://api.moonshot.cn/v1", &resolved.api_key, &resolved.model, &user).await,
-        ProviderId::Gemini => Err(ProviderError::Malformed("Gemini provider lands in v0.2".into())),
+    let default_base = resolved.id.base_url_for_plan("coding_plan");
+    let base = resolved.base_url.as_deref().unwrap_or(default_base);
+
+    // Pick the wire format. Anthropic + z.ai coding-plan use /v1/messages with
+    // x-api-key; everyone else (OpenRouter, OpenAI, Moonshot, z.ai standard-api)
+    // uses OpenAI /chat/completions with Bearer.
+    let anthropic_wire = match resolved.id {
+        ProviderId::Anthropic => true,
+        ProviderId::Zai => base.contains("/api/anthropic"),
+        _ => false,
+    };
+    if matches!(resolved.id, ProviderId::Gemini) {
+        return Err(ProviderError::Malformed("Gemini provider lands in v0.2".into()));
+    }
+    if anthropic_wire {
+        call_anthropic_compat(base, &resolved.api_key, &resolved.model, &user).await
+    } else {
+        call_openai_compat(base, &resolved.api_key, &resolved.model, &user).await
     }
 }
 

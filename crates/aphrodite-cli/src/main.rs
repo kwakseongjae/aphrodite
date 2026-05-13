@@ -5,7 +5,9 @@ use clap::{Parser, Subcommand};
 use serde_json::json;
 use std::path::PathBuf;
 
+mod banner;
 mod design_cmd;
+mod init_cmd;
 mod setup_cmd;
 
 #[derive(Parser)]
@@ -21,7 +23,13 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Command {
-    /// First-run: configure providers, write API keys to OS keychain.
+    /// First-run guided wizard — banner, provider, plan, model, key.
+    Init,
+
+    /// Print the ASCII banner + current config summary.
+    Version,
+
+    /// Non-interactive setup (env-var driven; kept for CI).
     Setup,
 
     /// Generate a DESIGN.md + hero HTML from an intent string.
@@ -79,6 +87,8 @@ async fn main() -> anyhow::Result<()> {
         .try_init();
 
     let payload = match cli.command {
+        Command::Init => init_cmd::run().await?,
+        Command::Version => version_summary(cli.json)?,
         Command::Setup => setup_cmd::run().await?,
         Command::Design { intent, no_write, repo } => {
             design_cmd::run(intent, no_write, repo, false).await?
@@ -102,6 +112,42 @@ async fn main() -> anyhow::Result<()> {
 }
 
 const ALL_PROVIDERS: &[&str] = &["zai", "anthropic", "openrouter", "openai", "moonshot", "gemini"];
+
+fn version_summary(_json: bool) -> anyhow::Result<serde_json::Value> {
+    banner::print(env!("CARGO_PKG_VERSION"));
+    let cfg = aphrodite_core::config::load();
+    let active = cfg.default_provider.clone();
+    let configured: Vec<_> = ALL_PROVIDERS
+        .iter()
+        .filter(|p| aphrodite_keyring::fetch(p).is_ok())
+        .map(|s| s.to_string())
+        .collect();
+    if let Some(p) = active.as_deref() {
+        let pc = cfg.providers.get(p);
+        eprintln!(
+            "  active provider : {} {} model={} plan={}",
+            console::style(p).bold().yellow(),
+            console::style("·").dim(),
+            console::style(pc.and_then(|c| c.model.as_deref()).unwrap_or("(default)")).cyan(),
+            console::style(pc.and_then(|c| c.plan.as_deref()).unwrap_or("(default)")).cyan()
+        );
+    } else {
+        eprintln!(
+            "  active provider : {}  (run `aphrodite init` to pick one)",
+            console::style("offline").dim()
+        );
+    }
+    eprintln!(
+        "  configured keys : {}",
+        if configured.is_empty() { "(none)".into() } else { configured.join(", ") }
+    );
+    Ok(json!({
+        "kind": "version",
+        "version": env!("CARGO_PKG_VERSION"),
+        "active_provider": active,
+        "configured": configured,
+    }))
+}
 
 fn auth_status() -> serde_json::Value {
     let configured: Vec<_> = ALL_PROVIDERS

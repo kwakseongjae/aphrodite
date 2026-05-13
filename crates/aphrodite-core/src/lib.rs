@@ -3,6 +3,7 @@
 //! Modules in this crate define the *types* that every binding (CLI, MCP, TS, Python)
 //! agrees on. Concrete adapters (LLM providers, file emitters) live in sibling crates.
 
+pub mod config;     // ~/.aphrodite/config.toml — provider preferences
 pub mod design;     // DESIGN.md parse / model / serialize
 pub mod validator;  // schema + WCAG-AA contrast
 pub mod variant;    // light / dark / brand resolution
