@@ -1,5 +1,7 @@
 # Agent-eval archive
 
+> **TL;DR for the human reader**: open **[`index.html`](index.html)** in a browser. From there everything is one click away. Each pass has a `gallery.html` that lays out all the runs side-by-side as cards (intent + palette + scaled `hero.html` preview + metadata). One scroll = the whole story.
+
 User-inspectable archive of every Aphrodite dogfood run. Each subdirectory below contains the *exact* artifacts the harness emitted for each test intent — no edits, no trimming. Open the `hero.html` files directly in a browser to see what the calling agent actually received.
 
 ## What's here

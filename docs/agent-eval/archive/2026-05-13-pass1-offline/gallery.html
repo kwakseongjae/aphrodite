@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pass 1 — Offline deterministic generator</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #0e0e10;
+  color: #e8e8ea;
+  padding: 24px;
+}
+header {
+  margin-bottom: 32px;
+}
+h1 { margin: 0 0 8px; letter-spacing: -0.01em; }
+.sub { color: #8a8a93; margin: 0 0 6px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 24px;
+}
+.card {
+  background: #18181b;
+  border: 1px solid #27272a;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.card h2 {
+  font-size: 15px;
+  margin: 0;
+  padding: 14px 18px;
+  background: #1f1f23;
+  border-bottom: 1px solid #27272a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.card h2 .slug { color: #a78bfa; font-weight: 600; }
+.card h2 .badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.badge.ok { background: #14532d; color: #86efac; }
+.badge.fail { background: #7f1d1d; color: #fca5a5; }
+.badge.parse { background: #422006; color: #fcd34d; }
+.intent {
+  padding: 14px 18px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #d4d4d8;
+  border-bottom: 1px solid #27272a;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.intent::before {
+  content: "INTENT";
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: #71717a;
+  margin-bottom: 6px;
+}
+.meta {
+  padding: 12px 18px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 14px;
+  font-size: 12px;
+  border-bottom: 1px solid #27272a;
+}
+.meta dt { color: #71717a; }
+.meta dd { margin: 0; color: #e4e4e7; font-family: ui-monospace, "SF Mono", monospace; font-size: 12px; }
+.swatches { display: flex; gap: 2px; flex-wrap: wrap; padding: 12px 18px; border-bottom: 1px solid #27272a; }
+.swatch {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  position: relative;
+  cursor: pointer;
+}
+.swatch::after {
+  content: attr(data-hex);
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  font-family: ui-monospace, monospace;
+  white-space: nowrap;
+  color: #71717a;
+  opacity: 0;
+  transition: opacity 120ms;
+  pointer-events: none;
+}
+.swatch:hover::after { opacity: 1; }
+.preview {
+  background: #fff;
+  height: 320px;
+  position: relative;
+  overflow: hidden;
+}
+.preview iframe {
+  border: 0;
+  width: 200%;
+  height: 200%;
+  transform: scale(0.5);
+  transform-origin: top left;
+  pointer-events: none;
+}
+.preview-missing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #71717a;
+  font-size: 13px;
+}
+.links {
+  padding: 10px 18px;
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  background: #18181b;
+}
+.links a { color: #a78bfa; text-decoration: none; }
+.links a:hover { text-decoration: underline; }
+.pill { color: #71717a; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Pass 1 — Offline deterministic generator</h1>
+  <p class="sub">Offline path. No real LLM was reached. Each intent produced via hash-derived palette + fixed schema fill. Demonstrates the contract more than aesthetic capability.</p>
+  <p class="sub">8 runs · each card embeds the actual hero.html scaled 50% · click <em>open hero ↗</em> to view full size</p>
+</header>
+<main class="grid">
+
+    <article class="card">
+      <h2><span class="slug">run-01-baseline</span><span class="badge ok">valid</span></h2>
+      <div class="intent">01 baseline</div>
+      <dl class="meta">
+        <dt>provider</dt><dd>offline</dd>
+        <dt>model</dt><dd>—</dd>
+        <dt>time</dt><dd>—</dd>
+        <dt>display</dt><dd>Inter Tight</dd>
+        <dt>body</dt><dd>Inter</dd>
+        <dt>warnings</dt><dd>0</dd>
+      </dl>
+      <div class="swatches"><div class="swatch" style="background:#f3f2fd" data-hex="#f3f2fd"></div><div class="swatch" style="background:#dedcf9" data-hex="#dedcf9"></div><div class="swatch" style="background:#bcbaf3" data-hex="#bcbaf3"></div><div class="swatch" style="background:#8f8aea" data-hex="#8f8aea"></div><div class="swatch" style="background:#5952e0" data-hex="#5952e0"></div><div class="swatch" style="background:#2a22c3" data-hex="#2a22c3"></div><div class="swatch" style="background:#221c9c" data-hex="#221c9c"></div><div class="swatch" style="background:#1a1579" data-hex="#1a1579"></div><div class="swatch" style="background:#130f57" data-hex="#130f57"></div><div class="swatch" style="background:#0b0934" data-hex="#0b0934"></div></div>
+      <div class="preview"><iframe src="run-01-baseline/hero.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+      <div class="links"><a href="run-01-baseline/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="run-01-baseline/hero.html" target="_blank">open hero ↗</a> &nbsp;·&nbsp; <a href="run-01-baseline/result.json">result.json</a><span class="pill" style="margin-left:auto">run-01-baseline</span></div>
+    </article>
+    
+
+    <article class="card">
+      <h2><span class="slug">run-02-jargon</span><span class="badge ok">valid</span></h2>
+      <div class="intent">02 jargon</div>
+      <dl class="meta">
+        <dt>provider</dt><dd>offline</dd>
+        <dt>model</dt><dd>—</dd>
+        <dt>time</dt><dd>—</dd>
+        <dt>display</dt><dd>Inter Tight</dd>
+        <dt>body</dt><dd>Inter</dd>
+        <dt>warnings</dt><dd>0</dd>
+      </dl>
+      <div class="swatches"><div class="swatch" style="background:#fdf4f2" data-hex="#fdf4f2"></div><div class="swatch" style="background:#f9e3dc" data-hex="#f9e3dc"></div><div class="swatch" style="background:#f3c6ba" data-hex="#f3c6ba"></div><div class="swatch" style="background:#ea9f8a" data-hex="#ea9f8a"></div><div class="swatch" style="background:#e07152" data-hex="#e07152"></div><div class="swatch" style="background:#c34522" data-hex="#c34522"></div><div class="swatch" style="background:#9c371c" data-hex="#9c371c"></div><div class="swatch" style="background:#792b15" data-hex="#792b15"></div><div class="swatch" style="background:#571f0f" data-hex="#571f0f"></div><div class="swatch" style="background:#341209" data-hex="#341209"></div></div>
+      <div class="preview"><iframe src="run-02-jargon/hero.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+      <div class="links"><a href="run-02-jargon/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="run-02-jargon/hero.html" target="_blank">open hero ↗</a> &nbsp;·&nbsp; <a href="run-02-jargon/result.json">result.json</a><span class="pill" style="margin-left:auto">run-02-jargon</span></div>
+    </article>
+    
+
+    <article class="card">
+      <h2><span class="slug">run-03-iteration</span><span class="badge parse">parse fail</span></h2>
+      <div class="intent">03 iteration</div>
+      <dl class="meta">
+        <dt>provider</dt><dd>—</dd>
+        <dt>model</dt><dd>—</dd>
+        <dt>time</dt><dd>—</dd>
+        <dt>display</dt><dd>Inter Tight</dd>
+        <dt>body</dt><dd>Inter</dd>
+        <dt>warnings</dt><dd>0</dd>
+      </dl>
+      <div class="swatches"><div class="swatch" style="background:#f2fdf5" data-hex="#f2fdf5"></div><div class="swatch" style="background:#dcf9e4" data-hex="#dcf9e4"></div><div class="swatch" style="background:#baf3c9" data-hex="#baf3c9"></div><div class="swatch" style="background:#8aeaa4" data-hex="#8aeaa4"></div><div class="swatch" style="background:#52e078" data-hex="#52e078"></div><div class="swatch" style="background:#22c34d" data-hex="#22c34d"></div><div class="swatch" style="background:#1c9c3e" data-hex="#1c9c3e"></div><div class="swatch" style="background:#157930" data-hex="#157930"></div><div class="swatch" style="background:#0f5722" data-hex="#0f5722"></div><div class="swatch" style="background:#093415" data-hex="#093415"></div></div>
+      <div class="preview"><iframe src="run-03-iteration/hero.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+      <div class="links"><a href="run-03-iteration/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="run-03-iteration/hero.html" target="_blank">open hero ↗</a><span class="pill" style="margin-left:auto">run-03-iteration</span></div>
+    </article>
+    
+
+    <article class="card">
+      <h2><span class="slug">run-04-external</span><span class="badge ok">valid</span></h2>
+      <div class="intent">04 external</div>
+      <dl class="meta">
+        <dt>provider</dt><dd>offline</dd>
+        <dt>model</dt><dd>—</dd>
+        <dt>time</dt><dd>—</dd>
+        <dt>display</dt><dd>Inter Tight</dd>
+        <dt>body</dt><dd>Inter</dd>
+        <dt>warnings</dt><dd>0</dd>
+      </dl>
+      <div class="swatches"><div class="swatch" style="background:#fdf2fa" data-hex="#fdf2fa"></div><div class="swatch" style="background:#f9dcf3" data-hex="#f9dcf3"></div><div class="swatch" style="background:#f3bae6" data-hex="#f3bae6"></div><div class="swatch" style="background:#ea8ad5" data-hex="#ea8ad5"></div><div class="swatch" style="background:#e052c1" data-hex="#e052c1"></div><div class="swatch" style="background:#c322a0" data-hex="#c322a0"></div><div class="swatch" style="background:#9c1c80" data-hex="#9c1c80"></div><div class="swatch" style="background:#791564" data-hex="#791564"></div><div class="swatch" style="background:#570f47" data-hex="#570f47"></div><div class="swatch" style="background:#34092b" data-hex="#34092b"></div></div>
+      <div class="preview"><iframe src="run-04-external/hero.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+      <div class="links"><a href="run-04-external/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="run-04-external/hero.html" target="_blank">open hero ↗</a> &nbsp;·&nbsp; <a href="run-04-external/result.json">result.json</a><span class="pill" style="margin-left:auto">run-04-external</span></div>
+    </article>
+    
+
+    <article class="card">
+      <h2><span class="slug">run-05-image</span><span class="badge ok">valid</span></h2>
+      <div class="intent">05 image</div>
+      <dl class="meta">
+        <dt>provider</dt><dd>offline</dd>
+        <dt>model</dt><dd>—</dd>
+        <dt>time</dt><dd>—</dd>
+        <dt>display</dt><dd>Inter Tight</dd>
+        <dt>body</dt><dd>Inter</dd>
+        <dt>warnings</dt><dd>0</dd>
+      </dl>
+      <div class="swatches"><div class="swatch" style="background:#f2f6fd" data-hex="#f2f6fd"></div><div class="swatch" style="background:#dce6f9" data-hex="#dce6f9"></div><div class="swatch" style="background:#bacef3" data-hex="#bacef3"></div><div class="swatch" style="background:#8aacea" data-hex="#8aacea"></div><div class="swatch" style="background:#5284e0" data-hex="#5284e0"></div><div class="swatch" style="background:#225bc3" data-hex="#225bc3"></div><div class="swatch" style="background:#1c499c" data-hex="#1c499c"></div><div class="swatch" style="background:#153879" data-hex="#153879"></div><div class="swatch" style="background:#0f2857" data-hex="#0f2857"></div><div class="swatch" style="background:#091834" data-hex="#091834"></div></div>
+      <div class="preview"><iframe src="run-05-image/hero.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+      <div class="links"><a href="run-05-image/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="run-05-image/hero.html" target="_blank">open hero ↗</a> &nbsp;·&nbsp; <a href="run-05-image/result.json">result.json</a><span class="pill" style="margin-left:auto">run-05-image</span></div>
+    </article>
+    
+
+    <article class="card">
+      <h2><span class="slug">run-06-video</span><span class="badge ok">valid</span></h2>
+      <div class="intent">06 video</div>
+      <dl class="meta">
+        <dt>provider</dt><dd>offline</dd>
+        <dt>model</dt><dd>—</dd>
+        <dt>time</dt><dd>—</dd>
+        <dt>display</dt><dd>Inter Tight</dd>
+        <dt>body</dt><dd>Inter</dd>
+        <dt>warnings</dt><dd>0</dd>
+      </dl>
+      <div class="swatches"><div class="swatch" style="background:#fdf2f4" data-hex="#fdf2f4"></div><div class="swatch" style="background:#f9dce1" data-hex="#f9dce1"></div><div class="swatch" style="background:#f3bac3" data-hex="#f3bac3"></div><div class="swatch" style="background:#ea8a9a" data-hex="#ea8a9a"></div><div class="swatch" style="background:#e05269" data-hex="#e05269"></div><div class="swatch" style="background:#c3223d" data-hex="#c3223d"></div><div class="swatch" style="background:#9c1c31" data-hex="#9c1c31"></div><div class="swatch" style="background:#791526" data-hex="#791526"></div><div class="swatch" style="background:#570f1b" data-hex="#570f1b"></div><div class="swatch" style="background:#340910" data-hex="#340910"></div></div>
+      <div class="preview"><iframe src="run-06-video/hero.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+      <div class="links"><a href="run-06-video/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="run-06-video/hero.html" target="_blank">open hero ↗</a> &nbsp;·&nbsp; <a href="run-06-video/result.json">result.json</a><span class="pill" style="margin-left:auto">run-06-video</span></div>
+    </article>
+    
+
+    <article class="card">
+      <h2><span class="slug">run-07-3d</span><span class="badge ok">valid</span></h2>
+      <div class="intent">07 3d</div>
+      <dl class="meta">
+        <dt>provider</dt><dd>offline</dd>
+        <dt>model</dt><dd>—</dd>
+        <dt>time</dt><dd>—</dd>
+        <dt>display</dt><dd>Inter Tight</dd>
+        <dt>body</dt><dd>Inter</dd>
+        <dt>warnings</dt><dd>0</dd>
+      </dl>
+      <div class="swatches"><div class="swatch" style="background:#fdf6f2" data-hex="#fdf6f2"></div><div class="swatch" style="background:#f9e8dc" data-hex="#f9e8dc"></div><div class="swatch" style="background:#f3d1ba" data-hex="#f3d1ba"></div><div class="swatch" style="background:#eab28a" data-hex="#eab28a"></div><div class="swatch" style="background:#e08d52" data-hex="#e08d52"></div><div class="swatch" style="background:#c36522" data-hex="#c36522"></div><div class="swatch" style="background:#9c511c" data-hex="#9c511c"></div><div class="swatch" style="background:#793f15" data-hex="#793f15"></div><div class="swatch" style="background:#572d0f" data-hex="#572d0f"></div><div class="swatch" style="background:#341b09" data-hex="#341b09"></div></div>
+      <div class="preview"><iframe src="run-07-3d/hero.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+      <div class="links"><a href="run-07-3d/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="run-07-3d/hero.html" target="_blank">open hero ↗</a> &nbsp;·&nbsp; <a href="run-07-3d/result.json">result.json</a><span class="pill" style="margin-left:auto">run-07-3d</span></div>
+    </article>
+    
+
+    <article class="card">
+      <h2><span class="slug">run-08-hangul</span><span class="badge ok">valid</span></h2>
+      <div class="intent">08 hangul</div>
+      <dl class="meta">
+        <dt>provider</dt><dd>offline</dd>
+        <dt>model</dt><dd>—</dd>
+        <dt>time</dt><dd>—</dd>
+        <dt>display</dt><dd>Inter Tight</dd>
+        <dt>body</dt><dd>Inter</dd>
+        <dt>warnings</dt><dd>0</dd>
+      </dl>
+      <div class="swatches"><div class="swatch" style="background:#fdf2fc" data-hex="#fdf2fc"></div><div class="swatch" style="background:#f9dcf7" data-hex="#f9dcf7"></div><div class="swatch" style="background:#f3baee" data-hex="#f3baee"></div><div class="swatch" style="background:#ea8ae2" data-hex="#ea8ae2"></div><div class="swatch" style="background:#e052d5" data-hex="#e052d5"></div><div class="swatch" style="background:#c322b6" data-hex="#c322b6"></div><div class="swatch" style="background:#9c1c91" data-hex="#9c1c91"></div><div class="swatch" style="background:#791571" data-hex="#791571"></div><div class="swatch" style="background:#570f51" data-hex="#570f51"></div><div class="swatch" style="background:#340930" data-hex="#340930"></div></div>
+      <div class="preview"><iframe src="run-08-hangul/hero.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+      <div class="links"><a href="run-08-hangul/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="run-08-hangul/hero.html" target="_blank">open hero ↗</a> &nbsp;·&nbsp; <a href="run-08-hangul/result.json">result.json</a><span class="pill" style="margin-left:auto">run-08-hangul</span></div>
+    </article>
+    
+</main>
+</body>
+</html>

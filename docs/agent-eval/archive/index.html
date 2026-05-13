@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aphrodite — agent-eval archive</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #0e0e10;
+    color: #e8e8ea;
+    padding: 48px 32px;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  h1 { letter-spacing: -0.02em; margin: 0 0 8px; font-size: 36px; }
+  .sub { color: #a1a1aa; margin: 0 0 36px; font-size: 15px; line-height: 1.5; }
+  .pass {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 16px;
+    padding: 22px 24px;
+    margin-bottom: 14px;
+    transition: border-color 120ms, transform 120ms;
+  }
+  .pass:hover { border-color: #a78bfa; transform: translateY(-1px); }
+  .pass h2 { margin: 0 0 6px; font-size: 18px; }
+  .pass .meta { color: #71717a; font-size: 13px; }
+  .pass .tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    margin-left: 8px;
+    border-radius: 999px;
+    background: #27272a;
+    color: #d4d4d8;
+    letter-spacing: 0.02em;
+  }
+  .pass .tag.live { background: #14532d; color: #86efac; }
+  .pass .desc { color: #d4d4d8; font-size: 14px; line-height: 1.55; margin: 10px 0 0; }
+  hr { border: 0; border-top: 1px solid #27272a; margin: 36px 0; }
+  .testimony { font-size: 13px; color: #a1a1aa; line-height: 1.7; }
+  .testimony a { color: #a78bfa; text-decoration: none; }
+  .testimony a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Aphrodite — agent-eval archive</h1>
+  <p class="sub">Every dogfood run the calling agent (Claude) put through Aphrodite. Each gallery embeds the actual <code>hero.html</code> output scaled 50% in a card alongside the intent text, palette swatches, and metadata. Click <em>open hero ↗</em> on any card to view full size.</p>
+
+  <a class="pass" href="2026-05-13-pass1-offline/gallery.html">
+    <h2>Pass 1 — Offline deterministic generator <span class="tag">8 runs</span></h2>
+    <div class="meta">2026-05-13 · no LLM credential at the time · pure offline fallback</div>
+    <p class="desc">Baseline contract test. Each intent produced via FNV-hash → hue rotation → fixed schema fill. Demonstrates the harness contract, not aesthetic capability.</p>
+  </a>
+
+  <a class="pass" href="2026-05-13-pass2-glm51/gallery.html">
+    <h2>Pass 2 — z.ai GLM-5.1, first live runs <span class="tag live">4 runs · live LLM</span></h2>
+    <div class="meta">2026-05-13 · first real GLM-5.1 responses after the keychain bug chain ended</div>
+    <p class="desc">Four representative intents: baseline dev-tool, design-jargon overload (Pentagram), brand-name recall (Linear), Korean Hangul + Noto Serif KR. The first time the harness produced something I would actually ship.</p>
+  </a>
+
+  <a class="pass" href="2026-05-13-pass3-glm51/gallery.html">
+    <h2>Pass 3 — z.ai GLM-5.1, wide breadth <span class="tag live">17 runs · live LLM</span></h2>
+    <div class="meta">2026-05-13 · 5 orthogonal axes · 17/17 valid after two same-day parser fixes</div>
+    <p class="desc">5 aesthetic styles (editorial / brutalist / glassmorphic / Bauhaus / cyberpunk) + 2 domain stretches (mobile / pricing) + 2 hard constraints (forced palette / forced font) + 3 languages (Japanese / Arabic RTL / emoji) + 5-run convergence series.</p>
+  </a>
+
+  <hr>
+
+  <div class="testimony">
+    <strong>Companion reading (one folder up):</strong>
+    <ul>
+      <li><a href="../2026-05-13-first-agent-pass.md">first-agent-pass.md</a> — Pass 1 testimony (frozen)</li>
+      <li><a href="../2026-05-13-second-agent-pass.md">second-agent-pass.md</a> — Pass 2 testimony</li>
+      <li><a href="../2026-05-13-third-agent-pass.md">third-agent-pass.md</a> — Pass 3 testimony</li>
+      <li><a href="../2026-05-13-narrative.md">narrative.md</a> — the story across passes</li>
+      <li><a href="../improvements.md">improvements.md</a> — append-only backlog (18 findings, 14 closed, 4 open)</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>
