@@ -131,6 +131,37 @@ const HERO_TEMPLATE: &str = r##"<!DOCTYPE html>
 </html>
 "##;
 
+/// Inject CSS custom properties for every variant into an HTML document.
+/// Used to bridge the surface composer (which references `--colors-primary-500`
+/// etc.) and the DESIGN.md variants. We insert a `<style>` block as the
+/// last child of `<head>` so it overrides anything inline.
+pub fn inject_variant_css(html: &str, _doc: &DesignDocument, variants: &[Variant]) -> String {
+    let mut css = String::from("\n<style data-aphrodite-variants>\n");
+    for v in variants {
+        css.push_str(&format!("[data-variant=\"{}\"] {{\n", v.kind.label()));
+        for (k, val) in &v.tokens {
+            css.push_str(&format!("  --{}: {};\n", k.replace('.', "-"), val));
+        }
+        // Convenience aliases the composer prompt expects.
+        let bg = v.tokens.get("colors.background.primary").or_else(|| v.tokens.get("colors.primary.50")).cloned().unwrap_or_else(|| "#ffffff".into());
+        let fg = v.tokens.get("colors.text.primary").or_else(|| v.tokens.get("colors.primary.900")).cloned().unwrap_or_else(|| "#111111".into());
+        let muted = v.tokens.get("colors.text.muted").or_else(|| v.tokens.get("colors.primary.500")).cloned().unwrap_or_else(|| "#777777".into());
+        css.push_str(&format!("  --bg: {bg};\n  --fg: {fg};\n  --muted: {muted};\n"));
+        css.push_str("}\n");
+    }
+    css.push_str("body{background:var(--bg);color:var(--fg);}\n</style>\n");
+    // Inject before `</head>`; if no `</head>` (LLM omitted it), prepend to body.
+    if let Some(idx) = html.find("</head>") {
+        let mut out = String::with_capacity(html.len() + css.len());
+        out.push_str(&html[..idx]);
+        out.push_str(&css);
+        out.push_str(&html[idx..]);
+        out
+    } else {
+        format!("{css}{html}")
+    }
+}
+
 pub fn render(doc: &DesignDocument, variants: &[Variant]) -> Result<String, String> {
     let mut env = Environment::new();
     env.add_template("hero", HERO_TEMPLATE).map_err(|e| e.to_string())?;

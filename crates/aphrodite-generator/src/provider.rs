@@ -238,6 +238,32 @@ pub async fn call(resolved: &ResolvedProvider, intent: &str) -> Result<String, P
     call_with_taste(resolved, intent, &aphrodite_core::TasteSnapshot::default()).await
 }
 
+/// Low-level provider call with a caller-supplied system prompt and max-tokens.
+/// Used by the surface composer. Returns the model's raw text (after fence
+/// stripping that's defensive against minor prefixes).
+pub async fn call_raw(
+    resolved: &ResolvedProvider,
+    system: &str,
+    user: &str,
+    max_tokens: u32,
+) -> Result<String, ProviderError> {
+    let default_base = resolved.id.base_url_for_plan("coding_plan");
+    let base = resolved.base_url.as_deref().unwrap_or(default_base);
+    let anthropic_wire = match resolved.id {
+        ProviderId::Anthropic => true,
+        ProviderId::Zai => base.contains("/api/anthropic"),
+        _ => false,
+    };
+    if matches!(resolved.id, ProviderId::Gemini) {
+        return Err(ProviderError::Malformed("Gemini provider lands in v0.2".into()));
+    }
+    if anthropic_wire {
+        call_anthropic_compat_custom(base, &resolved.api_key, &resolved.model, system, user, max_tokens).await
+    } else {
+        call_openai_compat_custom(base, &resolved.api_key, &resolved.model, system, user, max_tokens).await
+    }
+}
+
 /// Same as `call`, but injects the accumulated taste snapshot into the user
 /// message so the LLM can bias subsequent generations.
 pub async fn call_with_taste(
@@ -284,6 +310,89 @@ pub async fn call_with_taste(
     } else {
         call_openai_compat(base, &resolved.api_key, &resolved.model, &local_user).await
     }
+}
+
+/// Anthropic-format with caller-supplied system/user/max_tokens.
+async fn call_anthropic_compat_custom(
+    base_url: &str,
+    api_key: &str,
+    model: &str,
+    system: &str,
+    user_msg: &str,
+    max_tokens: u32,
+) -> Result<String, ProviderError> {
+    #[derive(Serialize)]
+    struct Req<'a> {
+        model: &'a str,
+        max_tokens: u32,
+        system: &'a str,
+        messages: Vec<Msg<'a>>,
+    }
+    #[derive(Serialize)]
+    struct Msg<'a> { role: &'a str, content: &'a str }
+    #[derive(Deserialize)]
+    struct Resp { #[serde(default)] content: Vec<Block> }
+    #[derive(Deserialize)]
+    struct Block { #[serde(rename = "type")] ty: String, #[serde(default)] text: String }
+    let url = format!("{}/v1/messages", base_url.trim_end_matches('/'));
+    let req = Req { model, max_tokens, system, messages: vec![Msg { role: "user", content: user_msg }] };
+    let resp = reqwest::Client::new()
+        .post(&url)
+        .header("x-api-key", api_key)
+        .header("anthropic-version", "2023-06-01")
+        .header("content-type", "application/json")
+        .json(&req)
+        .send().await?;
+    let status = resp.status();
+    if !status.is_success() {
+        let body = resp.text().await.unwrap_or_default();
+        return Err(ProviderError::Api { status: status.as_u16(), body });
+    }
+    let parsed: Resp = resp.json().await?;
+    let text = parsed.content.into_iter().filter(|b| b.ty == "text").map(|b| b.text).collect::<Vec<_>>().join("\n");
+    Ok(strip_fences(&text))
+}
+
+async fn call_openai_compat_custom(
+    base_url: &str,
+    api_key: &str,
+    model: &str,
+    system: &str,
+    user_msg: &str,
+    max_tokens: u32,
+) -> Result<String, ProviderError> {
+    #[derive(Serialize)]
+    struct Req<'a> { model: &'a str, max_tokens: u32, messages: Vec<Msg<'a>> }
+    #[derive(Serialize)]
+    struct Msg<'a> { role: &'a str, content: &'a str }
+    #[derive(Deserialize)]
+    struct Resp { #[serde(default)] choices: Vec<Choice> }
+    #[derive(Deserialize)]
+    struct Choice { #[serde(default)] message: Option<RespMsg> }
+    #[derive(Deserialize)]
+    struct RespMsg { #[serde(default)] content: String }
+    let url = format!("{}/chat/completions", base_url.trim_end_matches('/'));
+    let req = Req { model, max_tokens, messages: vec![
+        Msg { role: "system", content: system },
+        Msg { role: "user", content: user_msg },
+    ]};
+    let resp = reqwest::Client::new()
+        .post(&url)
+        .header("authorization", format!("Bearer {api_key}"))
+        .header("content-type", "application/json")
+        .header("http-referer", "https://github.com/aphrodite-ui")
+        .header("x-title", "Aphrodite")
+        .json(&req)
+        .send().await?;
+    let status = resp.status();
+    if !status.is_success() {
+        let body = resp.text().await.unwrap_or_default();
+        return Err(ProviderError::Api { status: status.as_u16(), body });
+    }
+    let parsed: Resp = resp.json().await?;
+    let text = parsed.choices.into_iter().next().and_then(|c| c.message).map(|m| m.content)
+        .ok_or_else(|| ProviderError::Malformed("no choices/message in response".into()))?;
+    Ok(strip_fences(&text))
 }
 
 /// Anthropic-format /v1/messages. Works for api.anthropic.com and api.z.ai/api/anthropic.

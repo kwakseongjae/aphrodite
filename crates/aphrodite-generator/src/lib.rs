@@ -4,6 +4,7 @@ pub mod hero;
 pub mod offline;
 pub mod provider;
 pub mod skill;
+pub mod surface;
 
 use aphrodite_core::{parse_design, resolve_variants, DesignDocument, Invocation, Variant};
 use provider::{ProviderId, ResolvedProvider, DEFAULT_PRIORITY};
@@ -15,11 +16,15 @@ pub struct GenerationOutput {
     pub design_doc: DesignDocument,
     pub variants: Vec<Variant>,
     pub hero_html: String,
+    /// Real intent-specific composition (pricing / dashboard / mobile / editorial /
+    /// landing / portfolio). Empty when the second LLM call wasn't made (e.g.
+    /// offline provider) — `hero_html` is then the only artifact.
+    pub composition_html: String,
+    pub surface_type: Option<String>,
     pub provider_used: String,
     pub model_used: String,
     /// Non-fatal observations: out-of-scope intent terms, provider downgrades,
-    /// deprecated config keys. Empty array on clean runs. Always present so
-    /// agents can `payload.warnings.length > 0` test reliably.
+    /// deprecated config keys. Empty array on clean runs.
     pub warnings: Vec<Warning>,
 }
 
@@ -70,11 +75,38 @@ pub async fn generate_with(
     let hero_html = hero::render(&design_doc, &variants).map_err(GenError::Hero)?;
     let warnings = warnings_for(&invocation.intent, &provider_used);
 
+    // Second LLM call — compose the *real* intent-specific surface. Skipped
+    // in offline mode (no useful composition is possible without a real
+    // model). On failure, we still return the design + hero; composition_html
+    // stays empty and a warning is emitted.
+    let (composition_html, surface_type, surface_warnings) = match resolved {
+        Some(r) => match surface::compose(r, &invocation.intent, &design_md, &design_doc).await {
+            Ok(out) => {
+                let html = hero::inject_variant_css(&out.html, &design_doc, &variants);
+                (html, Some(out.surface_type.label().to_string()), Vec::new())
+            }
+            Err(e) => (
+                String::new(),
+                None,
+                vec![Warning {
+                    kind: "surface_compose_failed".to_string(),
+                    message: format!("second LLM call failed: {e}"),
+                    hint: "DESIGN.md + hero.html still emitted. Retry the design call.".to_string(),
+                }],
+            ),
+        },
+        None => (String::new(), None, Vec::new()),
+    };
+    let mut warnings = warnings;
+    warnings.extend(surface_warnings);
+
     Ok(GenerationOutput {
         design_md,
         design_doc,
         variants,
         hero_html,
+        composition_html,
+        surface_type,
         provider_used,
         model_used,
         warnings,

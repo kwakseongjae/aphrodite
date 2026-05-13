@@ -18,7 +18,7 @@ pub enum DesignError {
     FrontmatterParse(#[from] serde_yaml::Error),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct DesignDocument {
     pub frontmatter: Frontmatter,
     pub body: String,

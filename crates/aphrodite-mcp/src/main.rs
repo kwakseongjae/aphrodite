@@ -261,7 +261,7 @@ async fn do_design(args: Value, is_redesign: bool) -> anyhow::Result<Value> {
     let output = aphrodite_generator::generate(&invocation).await?;
     let report = validate_design(&output.design_doc, &output.variants);
 
-    let (design_path, hero_path, committed) = match invocation.write_mode {
+    let (design_path, hero_path, composition_path, committed) = match invocation.write_mode {
         WriteMode::ArtifactOnly => {
             let out = invocation.target_repo.join(".aphrodite").join("out");
             std::fs::create_dir_all(&out)?;
@@ -269,15 +269,27 @@ async fn do_design(args: Value, is_redesign: bool) -> anyhow::Result<Value> {
             let hp = out.join("hero.html");
             std::fs::write(&dp, &output.design_md)?;
             std::fs::write(&hp, &output.hero_html)?;
-            (dp, hp, false)
+            let cp = if !output.composition_html.is_empty() {
+                let cp = out.join("composition.html");
+                std::fs::write(&cp, &output.composition_html)?;
+                Some(cp)
+            } else { None };
+            (dp, hp, cp, false)
         }
         WriteMode::Commit => {
             let dp = invocation.target_repo.join("DESIGN.md");
             let hp = invocation.target_repo.join("hero.html");
             std::fs::write(&dp, &output.design_md)?;
             std::fs::write(&hp, &output.hero_html)?;
-            let committed = try_git_commit(&invocation.target_repo, &[&dp, &hp], &intent).is_ok();
-            (dp, hp, committed)
+            let cp = if !output.composition_html.is_empty() {
+                let cp = invocation.target_repo.join("composition.html");
+                std::fs::write(&cp, &output.composition_html)?;
+                Some(cp)
+            } else { None };
+            let mut paths: Vec<&std::path::Path> = vec![&dp, &hp];
+            if let Some(c) = cp.as_ref() { paths.push(c); }
+            let committed = try_git_commit(&invocation.target_repo, &paths, &intent).is_ok();
+            (dp, hp, cp, committed)
         }
     };
 
@@ -294,6 +306,8 @@ async fn do_design(args: Value, is_redesign: bool) -> anyhow::Result<Value> {
         "model_used": output.model_used,
         "design_path": design_path.to_string_lossy(),
         "hero_path": hero_path.to_string_lossy(),
+        "composition_path": composition_path.as_ref().map(|p| p.to_string_lossy().to_string()),
+        "surface_type": output.surface_type,
         "variants": output.variants.iter().map(|v| v.kind.label()).collect::<Vec<_>>(),
         "committed": committed,
         "validation": {

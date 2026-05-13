@@ -7,6 +7,7 @@ use std::path::PathBuf;
 
 mod banner;
 mod design_cmd;
+mod gallery_cmd;
 mod init_cmd;
 mod setup_cmd;
 
@@ -75,6 +76,16 @@ enum Command {
 
     /// Print the v0.1 capability matrix — what Aphrodite can and cannot do.
     Capabilities,
+
+    /// Build a single-file gallery.html that previews every run subdirectory
+    /// under the given path. Each run becomes a card with intent text,
+    /// metrics, palette swatches, and an iframe of the composition (or hero
+    /// fallback). Drop the output anywhere; it's self-contained.
+    Gallery {
+        /// Directory containing run-XX/ subdirectories (each with intent.txt,
+        /// result.json, DESIGN.md, composition.html / hero.html).
+        dir: PathBuf,
+    },
 }
 
 #[derive(Subcommand)]
@@ -133,6 +144,11 @@ async fn main() -> anyhow::Result<()> {
         },
         Command::Doctor => doctor(),
         Command::Capabilities => capabilities(),
+        Command::Gallery { dir } => {
+            let out = gallery_cmd::build(&dir)?;
+            println!("✓ wrote {}", out.display());
+            json!({ "kind": "gallery", "path": out.to_string_lossy() })
+        }
     };
 
     if cli.json {

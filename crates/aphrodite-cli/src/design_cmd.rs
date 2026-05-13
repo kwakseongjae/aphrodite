@@ -46,21 +46,33 @@ pub async fn run(
     let report = validate_design(&output.design_doc, &output.variants);
 
     // Choose write destination.
-    let (design_path, hero_path, committed, dest_label) = if no_write {
+    let (design_path, hero_path, composition_path, committed, dest_label) = if no_write {
         let out = target_repo.join(".aphrodite").join("out");
         std::fs::create_dir_all(&out)?;
         let dp = out.join("DESIGN.md");
         let hp = out.join("hero.html");
+        let cp = if !output.composition_html.is_empty() {
+            let cp = out.join("composition.html");
+            std::fs::write(&cp, &output.composition_html)?;
+            Some(cp)
+        } else { None };
         std::fs::write(&dp, &output.design_md)?;
         std::fs::write(&hp, &output.hero_html)?;
-        (dp, hp, false, "artifact-only".to_string())
+        (dp, hp, cp, false, "artifact-only".to_string())
     } else {
         let dp = target_repo.join("DESIGN.md");
         let hp = target_repo.join("hero.html");
         std::fs::write(&dp, &output.design_md)?;
         std::fs::write(&hp, &output.hero_html)?;
-        let committed = try_git_commit(&target_repo, &[&dp, &hp], &intent).is_ok();
-        (dp, hp, committed, "repo-root".to_string())
+        let cp = if !output.composition_html.is_empty() {
+            let cp = target_repo.join("composition.html");
+            std::fs::write(&cp, &output.composition_html)?;
+            Some(cp)
+        } else { None };
+        let mut paths: Vec<&std::path::Path> = vec![&dp, &hp];
+        if let Some(c) = cp.as_ref() { paths.push(c); }
+        let committed = try_git_commit(&target_repo, &paths, &intent).is_ok();
+        (dp, hp, cp, committed, "repo-root".to_string())
     };
 
     // Record taste event.
@@ -75,18 +87,24 @@ pub async fn run(
         }),
     );
 
+    let mut files = vec![
+        design_path.to_string_lossy().to_string(),
+        hero_path.to_string_lossy().to_string(),
+    ];
+    if let Some(c) = composition_path.as_ref() {
+        files.push(c.to_string_lossy().to_string());
+    }
     Ok(json!({
         "kind": "design",
         "invocation_id": invocation.id,
         "output": {
             "provider_used": output.provider_used,
             "model_used": output.model_used,
-            "files": [
-                design_path.to_string_lossy(),
-                hero_path.to_string_lossy(),
-            ],
+            "files": files,
             "design_path": design_path.to_string_lossy(),
             "hero_path": hero_path.to_string_lossy(),
+            "composition_path": composition_path.as_ref().map(|p| p.to_string_lossy().to_string()),
+            "surface_type": output.surface_type,
             "committed": committed,
             "destination": dest_label,
             "variants": output.variants.iter().map(|v| v.kind.label()).collect::<Vec<_>>(),
