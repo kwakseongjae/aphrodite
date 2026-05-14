@@ -9,6 +9,7 @@ pub mod validator;  // schema + WCAG-AA contrast
 pub mod variant;    // light / dark / brand resolution
 pub mod taste;      // global ⊕ project taste store (.jsonl)
 pub mod preferences; // accumulated TastePreferences (summary of events)
+pub mod skills;     // on-disk SKILL.md substrate + usage tracker (ADR 0004)
 pub mod policy;     // deny-list policy
 pub mod invocation; // Invocation type — the contract entry point
 pub mod seed;       // Reads .ouroboros/seeds/*.yaml
