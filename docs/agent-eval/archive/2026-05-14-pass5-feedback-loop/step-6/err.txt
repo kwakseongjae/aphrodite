@@ -1,0 +1,8 @@
+Error: provider: http: error sending request for url (https://api.z.ai/api/anthropic/v1/messages)
+
+Caused by:
+    0: http: error sending request for url (https://api.z.ai/api/anthropic/v1/messages)
+    1: error sending request for url (https://api.z.ai/api/anthropic/v1/messages)
+    2: client error (SendRequest)
+    3: connection error
+    4: Connection reset by peer (os error 54)

@@ -1,0 +1,33 @@
+{
+  "kind": "feedback",
+  "label": "love",
+  "observation": {
+    "accent_intensity": 0.21411767601966858,
+    "body_font": "Instrument Sans",
+    "density": 0.30000001192092896,
+    "display_font": "Instrument Sans",
+    "hue_family": "saturated green",
+    "serif_vs_sans": null
+  },
+  "preferences_after": {
+    "accent_intensity": 0.7807059288024902,
+    "density": -0.9099999666213989,
+    "serif_vs_sans": 1.0,
+    "top_hue_families": [
+      [
+        "saturated green",
+        -0.30000001192092896
+      ],
+      [
+        "blue",
+        -1.0
+      ],
+      [
+        "olive",
+        -1.0
+      ]
+    ],
+    "total_runs_observed": 10
+  },
+  "weight": 0.30000001192092896
+}

@@ -1,0 +1,25 @@
+{
+  "kind": "feedback",
+  "label": "hate",
+  "observation": {
+    "accent_intensity": -0.3294117748737335,
+    "body_font": "Source Serif 4",
+    "density": 0.30000001192092896,
+    "display_font": "Fraunces",
+    "hue_family": "olive",
+    "serif_vs_sans": -1.0
+  },
+  "preferences_after": {
+    "accent_intensity": 0.09882353991270065,
+    "density": -0.09000000357627869,
+    "serif_vs_sans": 0.30000001192092896,
+    "top_hue_families": [
+      [
+        "olive",
+        -0.30000001192092896
+      ]
+    ],
+    "total_runs_observed": 1
+  },
+  "weight": -0.30000001192092896
+}

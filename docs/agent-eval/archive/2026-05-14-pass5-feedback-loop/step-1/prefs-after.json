@@ -1,0 +1,23 @@
+Aphrodite taste preferences (merged: global + project)
+  total runs observed : 2
+  
+  The user has provided 2 prior signals on similar tasks. Bias your output accordingly:
+  - Has consistently disliked: olive
+  - Display fonts the user has rejected: Fraunces
+  - Leans toward sans-serif at scale (signal +0.6).
+{
+  "accent_intensity": 0.1976470798254013,
+  "body_fonts": {
+    "Source Serif 4": -0.6000000238418579
+  },
+  "density": -0.18000000715255737,
+  "display_fonts": {
+    "Fraunces": -0.6000000238418579
+  },
+  "hue_families": {
+    "olive": -0.6000000238418579
+  },
+  "last_updated": "2026-05-13T18:28:37.174417Z",
+  "serif_vs_sans": 0.6000000238418579,
+  "total_runs_observed": 2
+}

@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Quiet Science of Living Longer — Luma Longevity Institute</title>
+<style>
+  :root {
+    --colors-primary-50: #edf5f4;
+    --colors-primary-100: #d1e8e5;
+    --colors-primary-200: #a3d1cb;
+    --colors-primary-300: #75bab2;
+    --colors-primary-400: #47a398;
+    --colors-primary-500: #298c80;
+    --colors-primary-600: #217067;
+    --colors-primary-700: #19554e;
+    --colors-primary-800: #113935;
+    --colors-primary-900: #091e1c;
+    --colors-accent-50: #eef4f8;
+    --colors-accent-100: #d0e3ee;
+    --colors-accent-200: #a1c7dd;
+    --colors-accent-300: #72abcc;
+    --colors-accent-400: #438fbb;
+    --colors-accent-500: #2d7da8;
+    --colors-accent-600: #246486;
+    --colors-accent-700: #1b4b65;
+    --colors-accent-800: #123243;
+    --colors-accent-900: #091922;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-50: #f7f8f6;
+    --colors-neutral-100: #ebede8;
+    --colors-neutral-200: #d6d9d2;
+    --colors-neutral-300: #b8bcb2;
+    --colors-neutral-400: #94988b;
+    --colors-neutral-500: #747868;
+    --colors-neutral-600: #5c6052;
+    --colors-neutral-700: #46493d;
+    --colors-neutral-800: #30322a;
+    --colors-neutral-900: #1c1e18;
+    --colors-neutral-1000: #000000;
+    --colors-background-primary: #f7f8f6;
+    --colors-text-primary: #1c1e18;
+    --colors-text-muted: #747868;
+    --typography-display-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --typography-body-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --rounded-sm: 4px;
+    --rounded-md: 8px;
+    --rounded-lg: 12px;
+  }
+
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: var(--typography-body-family);
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--colors-text-primary);
+    background-color: var(--colors-background-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  body[data-variant="dark"] {
+    --colors-background-primary: #0e110d;
+    --colors-text-primary: #ebede8;
+    --colors-text-muted: #94988b;
+  }
+
+  body[data-variant="brand-a"] {
+    --colors-background-primary: #eef4f8;
+    --colors-text-primary: #091922;
+    --colors-text-muted: #438fbb;
+  }
+
+  body[data-variant="brand-b"] {
+    --colors-background-primary: #edf5f4;
+    --colors-text-primary: #091e1c;
+    --colors-text-muted: #47a398;
+  }
+
+  /* Switcher */
+  .switcher {
+    position: fixed;
+    top: var(--spacing-4);
+    right: var(--spacing-4);
+    z-index: 1000;
+    display: flex;
+    gap: var(--spacing-1);
+    background: var(--colors-neutral-0);
+    border: 1px solid var(--colors-neutral-200);
+    border-radius: var(--rounded-md);
+    padding: 3px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .switcher button {
+    font-family: var(--typography-body-family);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border: none;
+    border-radius: var(--rounded-sm);
+    background: transparent;
+    color: var(--colors-neutral-600);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .switcher button:hover {
+    background: var(--colors-neutral-100);
+  }
+
+  .switcher button.active {
+    background: var(--colors-primary-500);
+    color: var(--colors-neutral-0);
+  }
+
+  /* Navigation */
+  .site-nav {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: var(--spacing-6) var(--spacing-6);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .site-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    text-decoration: none;
+    color: var(--colors-text-primary);
+  }
+
+  .site-logo svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .site-logo-text {
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: var(--spacing-8);
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--colors-text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover {
+    color: var(--colors-primary-500);
+  }
+
+  /* Article header */
+  .article-header {
+    max-width: 660px;
+    margin: 0 auto;
+    padding: var(--spacing-16) var(--spacing-6) 0;
+    padding-top: 100px;
+  }
+
+  .kicker {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--colors-primary-500);
+    margin-bottom: var(--spacing-4);
+  }
+
+  .headline {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 1.15;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-6);
+    max-width: 600px;
+  }
+
+  .byline {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    padding-bottom: var(--spacing-8);
+    border-bottom: 1px solid var(--colors-neutral-200);
+  }
+
+  .author-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--colors-primary-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .author-avatar svg {
+    width: 22px;
+    height: 22px;
+    color: var(--colors-primary-600);
+  }
+
+  .byline-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .author-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--colors-text-primary);
+  }
+
+  .author-role {
+    font-size: 13px;
+    color: var(--colors-text-muted);
+  }
+
+  .publish-date {
+    margin-left: auto;
+    font-size: 13px;
+    color: var(--colors-text-muted);
+    white-space: nowrap;
+  }
+
+  /* Article body */
+  .article-body {
+    max-width: 660px;
+    margin: 0 auto;
+    padding: var(--spacing-12) var(--spacing-6);
+  }
+
+  .article-body p {
+    margin-bottom: var(--spacing-8);
+  }
+
+  .drop-cap::first-letter {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 72px;
+    float: left;
+    line-height: 0.85;
+    margin-right: var(--spacing-2);
+    margin-top: 6px;
+    color: var(--colors-primary-600);
+  }
+
+  .lede {
+    font-size: 19px;
+    line-height: 1.6;
+    color: var(--colors-neutral-700);
+    margin-bottom: var(--spacing-8);
+  }
+
+  body[data-variant="dark"] .lede {
+    color: var(--colors-neutral-300);
+  }
+
+  .subheading {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.25;
+    color: var(--colors-text-primary);
+    margin-top: var(--spacing-16);
+    margin-bottom: var(--spacing-6);
+  }
+
+  /* Pull quote */
+  .pull-quote {
+    position: relative;
+    margin: var(--spacing-16) 0;
+    padding: var(--spacing-8) var(--spacing-8);
+    border-left: 3px solid var(--colors-primary-400);
+    background: var(--colors-primary-50);
+    border-radius: 0 var(--rounded-md) var(--rounded-md) 0;
+  }
+
+  body[data-variant="dark"] .pull-quote {
+    background: var(--colors-primary-900);
+    border-left-color: var(--colors-primary-400);
+  }
+
+  .pull-quote p {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1.45;
+    color: var(--colors-primary-700);
+    margin-bottom: var(--spacing-4) !important;
+  }
+
+  body[data-variant="dark"] .pull-quote p {
+    color: var(--colors-primary-200);
+  }
+
+  .pull-quote cite {
+    font-style: normal;
+    font-size: 14px;
+    color: var(--colors-text-muted);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+
+  /* Research callout */
+  .research-callout {
+    margin: var(--spacing-12) 0;
+    padding: var(--spacing-6);
+    background: var(--colors-neutral-50);
+    border-radius: var(--rounded-md);
+    border: 1px solid var(--colors-neutral-200);
+  }
+
+  body[data-variant="dark"] .research-callout {
+    background: var(--colors-neutral-900);
+    border-color: var(--colors-neutral-800);
+  }
+
+  .research-callout-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--colors-accent-500);
+    margin-bottom: var(--spacing-3);
+  }
+
+  .research-callout-stat {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 40px;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-2);
+  }
+
+  .research-callout-desc {
+    font-size: 15px;
+    color: var(--colors-text-muted);
+    line-height: 1.55;
+  }
+
+  /* Separator */
+  .separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-3);
+    margin: var(--spacing-12) 0;
+  }
+
+  .separator-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--colors-primary-300);
+  }
+
+  /* Inline illustration */
+  .article-illustration {
+    margin: var(--spacing-12) calc(-1 * var(--spacing-6));
+    padding: var(--spacing-8) var(--spacing-6);
+    background: linear-gradient(135deg, var(--colors-primary-50), var(--colors-accent-50));
+    text-align: center;
+  }
+
+  body[data-variant="dark"] .article-illustration {
+    background: linear-gradient(135deg, var(--colors-primary-900), var(--colors-accent-900));
+  }
+
+  .article-illustration svg {
+    max-width: 480px;
+    width: 100%;
+    height: auto;
+  }
+
+  .illustration-caption {
+    font-size: 13px;
+    color: var(--colors-text-muted);
+    margin-top: var(--spacing-4);
+    font-style: italic;
+  }
+
+  /* Article footer */
+  .article-footer {
+    max-width: 660px;
+    margin: 0 auto;
+    padding: var(--spacing-8) var(--spacing-6) var(--spacing-16);
+    border-top: 1px solid var(--colors-neutral-200);
+  }
+
+  .footer-tags {
+    display: flex;
+    gap: var(--spacing-2);
+    margin-bottom: var(--spacing-6);
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: var(--rounded-sm);
+    background: var(--colors-neutral-100);
+    color: var(--colors-text-muted);
+  }
+
+  body[data-variant="dark"] .tag {
+    background: var(--colors-neutral-800);
+    color: var(--colors-neutral-400);
+  }
+
+  .footer-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-4);
+  }
+
+  .footer-category {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--colors-primary-500);
+  }
+
+  .footer-date {
+    font-size: 13px;
+    color: var(--colors-text-muted);
+  }
+
+  /* Related */
+  .related-section {
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-6) var(--spacing-16);
+  }
+
+  .related-heading {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-6);
+  }
+
+  .related-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+
+  .related-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-4);
+    padding: var(--spacing-4);
+    border-radius: var(--rounded-md);
+    text-decoration: none;
+    color: var(--colors-text-primary);
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+
+  .related-item:hover {
+    background: var(--colors-neutral-100);
+  }
+
+  body[data-variant="dark"] .related-item:hover {
+    background: var(--colors-neutral-800);
+  }
+
+  .related-number {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 28px;
+    color: var(--colors-primary-200);
+    line-height: 1;
+    min-width: 32px;
+  }
+
+  .related-content {
+    flex: 1;
+  }
+
+  .related-title {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 2px;
+  }
+
+  .related-desc {
+    font-size: 13px;
+    color: var(--colors-text-muted);
+    line-height: 1.5;
+  }
+
+  /* Site footer */
+  .site-footer {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: var(--spacing-12) var(--spacing-6);
+    border-top: 1px solid var(--colors-neutral-200);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-4);
+  }
+
+  .footer-left {
+    font-size: 13px;
+    color: var(--colors-text-muted);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: var(--spacing-6);
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-size: 13px;
+    color: var(--colors-text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover {
+    color: var(--colors-primary-500);
+  }
+
+  @media (max-width: 640px) {
+    .headline {
+      font-size: 32px;
+    }
+
+    .switcher {
+      top: auto;
+      bottom: var(--spacing-4);
+      right: var(--spacing-4);
+    }
+
+    .nav-links {
+      gap: var(--spacing-4);
+    }
+
+    .nav-links a {
+      font-size: 13px;
+    }
+
+    .site-nav {
+      flex-wrap: wrap;
+      gap: var(--spacing-3);
+    }
+
+    .publish-date {
+      margin-left: 0;
+    }
+
+    .byline {
+      flex-wrap: wrap;
+    }
+
+    .article-header {
+      padding-top: var(--spacing-12);
+    }
+
+    .subheading {
+      font-size: 24px;
+    }
+
+    .pull-quote p {
+      font-size: 18px;
+    }
+
+    .research-callout-stat {
+      font-size: 32px;
+    }
+
+    .article-illustration {
+      margin: var(--spacing-8) calc(-1 * var(--spacing-3));
+      padding: var(--spacing-6) var(--spacing-3);
+    }
+  }
+</style>
+
+<style data-aphrodite-variants>
+[data-variant="brand-a"] {
+  --colors-accent-100: #d0e3ee;
+  --colors-accent-200: #a1c7dd;
+  --colors-accent-300: #72abcc;
+  --colors-accent-400: #438fbb;
+  --colors-accent-50: #eef4f8;
+  --colors-accent-500: #2d7da8;
+  --colors-accent-600: #246486;
+  --colors-accent-700: #1b4b65;
+  --colors-accent-800: #123243;
+  --colors-accent-900: #091922;
+  --colors-background-primary: #eef4f8;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #ebede8;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d6d9d2;
+  --colors-neutral-300: #b8bcb2;
+  --colors-neutral-400: #94988b;
+  --colors-neutral-50: #f7f8f6;
+  --colors-neutral-500: #747868;
+  --colors-neutral-600: #5c6052;
+  --colors-neutral-700: #46493d;
+  --colors-neutral-800: #30322a;
+  --colors-neutral-900: #1c1e18;
+  --colors-primary-100: #d1e8e5;
+  --colors-primary-200: #a3d1cb;
+  --colors-primary-300: #75bab2;
+  --colors-primary-400: #47a398;
+  --colors-primary-50: #edf5f4;
+  --colors-primary-500: #298c80;
+  --colors-primary-600: #217067;
+  --colors-primary-700: #19554e;
+  --colors-primary-800: #113935;
+  --colors-primary-900: #091e1c;
+  --colors-text-primary: #091922;
+  --rounded-lg: 12px;
+  --rounded-md: 8px;
+  --rounded-sm: 4px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: DM Sans;
+  --typography-body-weight: 400;
+  --typography-display-family: DM Sans;
+  --typography-display-weight: 700;
+  --bg: #eef4f8;
+  --fg: #091922;
+  --muted: #298c80;
+}
+[data-variant="brand-b"] {
+  --colors-accent-100: #d0e3ee;
+  --colors-accent-200: #a1c7dd;
+  --colors-accent-300: #72abcc;
+  --colors-accent-400: #438fbb;
+  --colors-accent-50: #eef4f8;
+  --colors-accent-500: #2d7da8;
+  --colors-accent-600: #246486;
+  --colors-accent-700: #1b4b65;
+  --colors-accent-800: #123243;
+  --colors-accent-900: #091922;
+  --colors-background-primary: #edf5f4;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #ebede8;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d6d9d2;
+  --colors-neutral-300: #b8bcb2;
+  --colors-neutral-400: #94988b;
+  --colors-neutral-50: #f7f8f6;
+  --colors-neutral-500: #747868;
+  --colors-neutral-600: #5c6052;
+  --colors-neutral-700: #46493d;
+  --colors-neutral-800: #30322a;
+  --colors-neutral-900: #1c1e18;
+  --colors-primary-100: #d1e8e5;
+  --colors-primary-200: #a3d1cb;
+  --colors-primary-300: #75bab2;
+  --colors-primary-400: #47a398;
+  --colors-primary-50: #edf5f4;
+  --colors-primary-500: #298c80;
+  --colors-primary-600: #217067;
+  --colors-primary-700: #19554e;
+  --colors-primary-800: #113935;
+  --colors-primary-900: #091e1c;
+  --colors-text-primary: #091e1c;
+  --rounded-lg: 12px;
+  --rounded-md: 8px;
+  --rounded-sm: 4px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: DM Sans;
+  --typography-body-weight: 400;
+  --typography-display-family: DM Sans;
+  --typography-display-weight: 700;
+  --bg: #edf5f4;
+  --fg: #091e1c;
+  --muted: #298c80;
+}
+[data-variant="dark"] {
+  --colors-accent-100: #d0e3ee;
+  --colors-accent-200: #a1c7dd;
+  --colors-accent-300: #72abcc;
+  --colors-accent-400: #438fbb;
+  --colors-accent-50: #eef4f8;
+  --colors-accent-500: #2d7da8;
+  --colors-accent-600: #246486;
+  --colors-accent-700: #1b4b65;
+  --colors-accent-800: #123243;
+  --colors-accent-900: #091922;
+  --colors-background-primary: #0e110d;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #ebede8;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d6d9d2;
+  --colors-neutral-300: #b8bcb2;
+  --colors-neutral-400: #94988b;
+  --colors-neutral-50: #f7f8f6;
+  --colors-neutral-500: #747868;
+  --colors-neutral-600: #5c6052;
+  --colors-neutral-700: #46493d;
+  --colors-neutral-800: #30322a;
+  --colors-neutral-900: #1c1e18;
+  --colors-primary-100: #d1e8e5;
+  --colors-primary-200: #a3d1cb;
+  --colors-primary-300: #75bab2;
+  --colors-primary-400: #47a398;
+  --colors-primary-50: #edf5f4;
+  --colors-primary-500: #298c80;
+  --colors-primary-600: #217067;
+  --colors-primary-700: #19554e;
+  --colors-primary-800: #113935;
+  --colors-primary-900: #091e1c;
+  --colors-text-primary: #ebede8;
+  --rounded-lg: 12px;
+  --rounded-md: 8px;
+  --rounded-sm: 4px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: DM Sans;
+  --typography-body-weight: 400;
+  --typography-display-family: DM Sans;
+  --typography-display-weight: 700;
+  --bg: #0e110d;
+  --fg: #ebede8;
+  --muted: #298c80;
+}
+[data-variant="light"] {
+  --colors-accent-100: #d0e3ee;
+  --colors-accent-200: #a1c7dd;
+  --colors-accent-300: #72abcc;
+  --colors-accent-400: #438fbb;
+  --colors-accent-50: #eef4f8;
+  --colors-accent-500: #2d7da8;
+  --colors-accent-600: #246486;
+  --colors-accent-700: #1b4b65;
+  --colors-accent-800: #123243;
+  --colors-accent-900: #091922;
+  --colors-background-primary: #f7f8f6;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #ebede8;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d6d9d2;
+  --colors-neutral-300: #b8bcb2;
+  --colors-neutral-400: #94988b;
+  --colors-neutral-50: #f7f8f6;
+  --colors-neutral-500: #747868;
+  --colors-neutral-600: #5c6052;
+  --colors-neutral-700: #46493d;
+  --colors-neutral-800: #30322a;
+  --colors-neutral-900: #1c1e18;
+  --colors-primary-100: #d1e8e5;
+  --colors-primary-200: #a3d1cb;
+  --colors-primary-300: #75bab2;
+  --colors-primary-400: #47a398;
+  --colors-primary-50: #edf5f4;
+  --colors-primary-500: #298c80;
+  --colors-primary-600: #217067;
+  --colors-primary-700: #19554e;
+  --colors-primary-800: #113935;
+  --colors-primary-900: #091e1c;
+  --colors-text-primary: #1c1e18;
+  --rounded-lg: 12px;
+  --rounded-md: 8px;
+  --rounded-sm: 4px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: DM Sans;
+  --typography-body-weight: 400;
+  --typography-display-family: DM Sans;
+  --typography-display-weight: 700;
+  --bg: #f7f8f6;
+  --fg: #1c1e18;
+  --muted: #298c80;
+}
+body{background:var(--bg);color:var(--fg);}
+</style>
+</head>
+<body>
+
+<nav class="switcher" aria-label="Theme switcher">
+  <button data-variant="light" class="active">light</button>
+  <button data-variant="dark">dark</button>
+  <button data-variant="brand-a">ocean</button>
+  <button data-variant="brand-b">forest</button>
+</nav>
+
+<script>
+  document.querySelector('.switcher').addEventListener('click', function(e) {
+    if (e.target.tagName !== 'BUTTON') return;
+    var variant = e.target.dataset.variant;
+    document.body.dataset.variant = variant;
+    document.querySelectorAll('.switcher button').forEach(function(btn) {
+      btn.classList.toggle('active', btn.dataset.variant === variant);
+    });
+  });
+</script>
+
+<nav class="site-nav">
+  <a href="#" class="site-logo">
+    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="14" cy="14" r="13" stroke="currentColor" stroke-width="1.5"/>
+      <circle cx="14" cy="14" r="7" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+      <line x1="14" y1="1" x2="14" y2="27" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+      <line x1="1" y1="14" x2="27" y2="14" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+      <circle cx="14" cy="14" r="2.5" fill="currentColor" opacity="0.7"/>
+    </svg>
+    <span class="site-logo-text">Luma Institute</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#">Research</a></li>
+    <li><a href="#">Publications</a></li>
+    <li><a href="#">Protocol</a></li>
+    <li><a href="#">About</a></li>
+  </ul>
+</nav>
+
+<header class="article-header">
+  <div class="kicker">Cellular Longevity · Peer-Reviewed</div>
+  <h1 class="headline">The Quiet Science of Living Longer: What Twelve Years of Human Trials Have Revealed</h1>
+  <div class="byline">
+    <div class="author-avatar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+    </div>
+    <div class="byline-info">
+      <span class="author-name">Dr. Elena Marchetti</span>
+      <span class="author-role">Director of Longevity Research, Luma Institute</span>
+    </div>
+    <span class="publish-date">June 12, 2025</span>
+  </div>
+</header>
+
+<main class="article-body">
+  <p class="lede drop-cap">Longevity research has entered a remarkably different phase. Where the field once concerned itself primarily with modest extensions of lifespan in model organisms — yeast, worms, flies — it now grapples with questions that would have seemed fantastical even a decade ago. Can we meaningfully slow the fundamental processes of aging in humans? Can we restore function to tissues that have already deteriorated? These are no longer theoretical questions. They are active areas of clinical investigation.</p>
+
+  <p>At the Luma Institute, we have spent the last twelve years conducting what we believe to be the most comprehensive longitudinal study of cellular aging interventions ever undertaken in human subjects. Our cohort of 2,400 participants, ranging from 35 to 78 years old at enrollment, has provided an unprecedented window into how targeted therapies affect the biology of aging at the molecular level.</p>
+
+  <p>The results are more nuanced than the headlines suggest. They are also, in our view, more encouraging. Not because they point to a single dramatic breakthrough, but because they reveal a constellation of smaller, cumulative effects that — taken together — reshape our understanding of what aging actually is, and what it might become.</p>
+
+  <div class="research-callout">
+    <div class="research-callout-label">Key Finding</div>
+    <div class="research-callout-stat">7.3 years</div>
+    <div class="research-callout-desc">Average reduction in epigenetic age across the intervention group after 8 years of consistent protocol adherence, as measured by the GrimAge and PhenoAge clocks.</div>
+  </div>
+
+  <h2 class="subheading">Redefining the Endpoint</h2>
+
+  <p>For most of its history, longevity research has been hampered by a seemingly simple problem: how do you measure success? Lifespan — the total number of years a person lives — is the obvious metric, but it is extraordinarily difficult to study in humans. A clinical trial that waits seventy years for its endpoint is not a clinical trial. It is an actuarial table.</p>
+
+  <p>This measurement problem has shaped the entire trajectory of the field. Researchers focused on model organisms precisely because their short lifespans allowed for complete observation. The genetics of aging in C. elegans, the effects of caloric restriction in mice, the role of sirtuins in yeast — all of this foundational work was possible because the organisms in question live days or months rather than decades.</p>
+
+  <div class="separator">
+    <div class="separator-dot"></div>
+    <div class="separator-dot"></div>
+    <div class="separator-dot"></div>
+  </div>
+
+  <p>The shift toward studying aging biomarkers in humans has changed the landscape fundamentally. Epigenetic clocks — algorithms that estimate biological age based on DNA methylation patterns — have provided researchers with a surrogate endpoint that updates on a timescale of years rather than decades. This is the technology that made our study possible, and it continues to reshape how we think about measuring the efficacy of interventions.</p>
+
+  <div class="article-illustration">
+    <svg viewBox="0 0 480 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Abstract cellular/longevity illustration -->
+      <rect width="480" height="260" fill="none"/>
+      <!-- DNA helix stylized -->
+      <path d="M60 30 Q120 70 180 30 Q240 -10 300 30 Q360 70 420 30" stroke="var(--colors-primary-400, #47a398)" stroke-width="2" fill="none" opacity="0.6"/>
+      <path d="M60 60 Q120 20 180 60 Q240 100 300 60 Q360 20 420 60" stroke="var(--colors-primary-400, #47a398)" stroke-width="2" fill="none" opacity="0.6"/>
+      <!-- Rungs -->
+      <line x1="90" y1="42" x2="90" y2="48" stroke="var(--colors-primary-300, #75bab2)" stroke-width="3" opacity="0.5"/>
+      <line x1="150" y1="42" x2="150" y2="48" stroke="var(--colors-primary-300, #75bab2)" stroke-width="3" opacity="0.5"/>
+      <line x1="210" y1="34" x2="210" y2="56" stroke="var(--colors-primary-300, #75bab2)" stroke-width="3" opacity="0.5"/>
+      <line x1="270" y1="34" x2="270" y2="56" stroke="var(--colors-primary-300, #75bab2)" stroke-width="3" opacity="0.5"/>
+      <line x1="330" y1="42" x2="330" y2="48" stroke="var(--colors-primary-300, #75bab2)" stroke-width="3" opacity="0.5"/>
+      <line x1="390" y1="42" x2="390" y2="48" stroke="var(--colors-primary-300, #75bab2)" stroke-width="3" opacity="0.5"/>
+
+      <!-- Telomere visualization -->
+      <g transform="translate(40, 100)">
+        <rect x="0" y="0" width="400" height="40" rx="20" fill="var(--colors-primary-100, #d1e8e5)" opacity="0.3"/>
+        <rect x="0" y="0" width="280" height="40" rx="20" fill="var(--colors-primary-300, #75bab2)" opacity="0.4"/>
+        <rect x="0" y="0" width="160" height="40" rx="20" fill="var(--colors-primary-500, #298c80)" opacity="0.5"/>
+        <text x="200" y="25" text-anchor="middle" font-size="12" font-weight="600" fill="var(--colors-text-primary, #1c1e18)" opacity="0.7">Telomere Length Preservation</text>
+      </g>
+
+      <!-- Cellular circles representing health spans -->
+      <g transform="translate(60, 170)">
+        <circle cx="0" cy="0" r="35" fill="var(--colors-primary-200, #a3d1cb)" opacity="0.3"/>
+        <circle cx="0" cy="0" r="22" fill="var(--colors-primary-400, #47a398)" opacity="0.4"/>
+        <circle cx="0" cy="0" r="10" fill="var(--colors-primary-600, #217067)" opacity="0.5"/>
+        <text x="0" y="55" text-anchor="middle" font-size="11" fill="var(--colors-text-muted, #747868)">Year 0</text>
+      </g>
+      <g transform="translate(180, 170)">
+        <circle cx="0" cy="0" r="35" fill="var(--colors-primary-200, #a3d1cb)" opacity="0.3"/>
+        <circle cx="0" cy="0" r="26" fill="var(--colors-primary-400, #47a398)" opacity="0.45"/>
+        <circle cx="0" cy="0" r="13" fill="var(--colors-primary-600, #217067)" opacity="0.55"/>
+        <text x="0" y="55" text-anchor="middle" font-size="11" fill="var(--colors-text-muted, #747868)">Year 4</text>
+      </g>
+      <g transform="translate(300, 170)">
+        <circle cx="0" cy="0" r="35" fill="var(--colors-primary-200, #a3d1cb)" opacity="0.3"/>
+        <circle cx="0" cy="0" r="28" fill="var(--colors-primary-400, #47a398)" opacity="0.5"/>
+        <circle cx="0" cy="0" r="16" fill="var(--colors-primary-600, #217067)" opacity="0.6"/>
+        <text x="0" y="55" text-anchor="middle" font-size="11" fill="var(--colors-text-muted, #747868)">Year 8</text>
+      </g>
+      <g transform="translate(420, 170)">
+        <circle cx="0" cy="0" r="35" fill="var(--colors-primary-200, #a3d1cb)" opacity="0.3"/>
+        <circle cx="0" cy="0" r="30" fill="var(--colors-primary-400, #47a398)" opacity="0.55"/>
+        <circle cx="0" cy="0" r="18" fill="var(--colors-primary-600, #217067)" opacity="0.65"/>
+        <text x="0" y="55" text-anchor="middle" font-size="11" fill="var(--colors-text-muted, #747868)">Year 12</text>
+      </g>
+    </svg>
+    <p class="illustration-caption">Fig. 1 — Longitudinal biomarker progression across the Luma cohort, showing telomere preservation and cellular health index over twelve years.</p>
+  </div>
+
+  <p>Our protocol did not target a single pathway. Instead, we designed a combinatorial intervention that addressed what we identified as the seven pillars of cellular aging: telomere attrition, epigenetic alterations, mitochondrial dysfunction, cellular senescence, stem cell exhaustion, altered intercellular communication, and loss of proteostasis. Each participant received a personalized regimen calibrated to their baseline biomarker profile, with adjustments made at annual reassessments.</p>
+
+  <aside class="pull-quote">
+    <p>The most surprising finding was not that we could slow aging in specific tissues. It was that the interventions appeared to create a kind of biological momentum — improvements in one system cascaded into others in ways we had not predicted.</p>
+    <cite>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      Dr. Elena Marchetti, Principal Investigator
+    </cite>
+  </aside>
+
+  <p>This cascading effect has profound implications for how we design future clinical trials. The traditional model — testing a single drug against a single endpoint — may be fundamentally unsuited to a condition as interconnected and systemic as aging. Our data suggest that synergistic effects between interventions are not additive but multiplicative, meaning that modest individual effects can compound into significant outcomes when combined thoughtfully.</p>
+
+  <p>The senolytic component of our protocol deserves particular attention. Senescent cells — often called "zombie cells" in popular coverage — accumulate with age and secrete inflammatory compounds that damage surrounding tissue. Our approach used a proprietary combination of dasatinib and quercetin analogues, administered in intermittent pulses rather than continuously, to selectively clear these cells without affecting healthy tissue.</p>
+
+  <p>The results were striking. Participants in the highest-adherence quartile showed a 34% reduction in circulating senescent cell burden after just eighteen months. More importantly, this reduction was accompanied by measurable improvements in physical function: grip strength increased by an average of 11%, walking speed by 8%, and VO2 max by 6%. These are not marginal gains. They represent the difference between independence and assisted living for many older adults.</p>
+
+  <div class="research-callout">
+    <div class="research-callout-label">Participant Outcome</div>
+    <div class="research-callout-stat">89%</div>
+    <div class="research-callout-desc">Of participants in the intervention group reported improved sleep quality and sustained energy levels throughout the day — a secondary endpoint that emerged as one of the most personally significant outcomes for the cohort.</div>
+  </div>
+
+  <p>But we must be honest about the limitations. Our cohort was not randomly selected. Participants were volunteers who had already demonstrated a commitment to their health — they were, in the language of clinical research, a motivated population. Whether our results would generalize to a broader, less engaged population remains an open question. The socioeconomic and demographic homogeneity of our initial cohort is also a limitation we are actively working to address in our follow-up studies.</p>
+
+  <p>There is also the question of what we might call the "longevity paradox": the gap between biological age reduction and actual lifespan extension. Our participants' epigenetic ages decreased significantly, but we do not yet know — and cannot know for many years — whether this translates into additional years of life. The correlation between epigenetic age and mortality is well-established, but correlation is not causation, and reducing a clock does not necessarily reduce risk by the same amount.</p>
+
+  <div class="separator">
+    <div class="separator-dot"></div>
+    <div class="separator-dot"></div>
+    <div class="separator-dot"></div>
+  </div>
+
+  <p>What we can say with confidence is this: the interventions we tested produced measurable, reproducible improvements in biological markers of aging. They improved physical and cognitive function in ways that participants could perceive in their daily lives. And they did so with an acceptable safety profile — adverse events were generally mild and manageable, with no serious safety signals emerging over the twelve-year observation period.</p>
+
+  <p>The field of longevity research stands at an inflection point. The science is maturing. The clinical tools are improving. The public interest is real and growing. What we need now is not hype, but rigor — more trials, larger cohorts, longer follow-up, and a willingness to publish negative results alongside positive ones. The quiet science of living longer demands nothing less than the highest standards of evidence. Our participants, and the millions who may one day benefit from this work, deserve that standard.</p>
+</main>
+
+<footer class="article-footer">
+  <div class="footer-tags">
+    <span class="tag">Longevity</span>
+    <span class="tag">Cellular Aging</span>
+    <span class="tag">Clinical Trials</span>
+    <span class="tag">Senolytics</span>
+    <span class="tag">Epigenetics</span>
+  </div>
+  <div class="footer-meta">
+    <span class="footer-category">Published in Cellular Longevity, Vol. 48</span>
+    <span class="footer-date">June 12, 2025 · 18 min read</span>
+  </div>
+</footer>
+
+<section class="related-section">
+  <h2 class="related-heading">Related Research</h2>
+  <ul class="related-list">
+    <li class="related-item">
+      <span class="related-number">01</span>
+      <div class="related-content">
+        <div class="related-title">Mitochondrial Function and Cognitive Resilience in Aging Populations</div>
+        <div class="related-desc

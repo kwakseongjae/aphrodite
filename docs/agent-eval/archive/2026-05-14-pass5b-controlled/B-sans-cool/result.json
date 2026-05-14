@@ -1,0 +1,30 @@
+{
+  "invocation_id": "f8879142-9206-4158-8a29-37145720eab4",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "composition_path": "/private/tmp/pass5b-B-sans-cool/composition.html",
+    "design_path": "/private/tmp/pass5b-B-sans-cool/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass5b-B-sans-cool/DESIGN.md",
+      "/private/tmp/pass5b-B-sans-cool/hero.html",
+      "/private/tmp/pass5b-B-sans-cool/composition.html"
+    ],
+    "hero_path": "/private/tmp/pass5b-B-sans-cool/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "surface_type": "editorial",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}

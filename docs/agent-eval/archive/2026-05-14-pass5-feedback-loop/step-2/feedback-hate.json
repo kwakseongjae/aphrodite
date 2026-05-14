@@ -1,0 +1,29 @@
+{
+  "kind": "feedback",
+  "label": "hate",
+  "observation": {
+    "accent_intensity": -0.26352939009666443,
+    "body_font": "DM Sans",
+    "density": 0.30000001192092896,
+    "display_font": "DM Serif Display",
+    "hue_family": "blue",
+    "serif_vs_sans": -1.0
+  },
+  "preferences_after": {
+    "accent_intensity": 0.27670589089393616,
+    "density": -0.27000001072883606,
+    "serif_vs_sans": 0.9000000357627869,
+    "top_hue_families": [
+      [
+        "blue",
+        -0.30000001192092896
+      ],
+      [
+        "olive",
+        -0.6000000238418579
+      ]
+    ],
+    "total_runs_observed": 3
+  },
+  "weight": -0.30000001192092896
+}

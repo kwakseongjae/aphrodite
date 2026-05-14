@@ -22,12 +22,14 @@ pub fn run(weight: f32, label: &str, repo: Option<PathBuf>) -> anyhow::Result<se
     let md = std::fs::read_to_string(&design_path)?;
     let obs = extractor::observe(&md);
 
-    let mut prefs = preferences::load(&target);
+    // Read pure project prefs (NOT merged) so we update only this scope's
+    // counters; merging happens at generation read time.
+    let mut prefs = preferences::load_project(&target);
     prefs.apply(obs.clone(), weight);
     preferences::save(&target, &prefs)?;
 
-    let mut global = read_global();
-    global.apply(obs.clone(), weight * 0.5); // half-weight to global; project is primary
+    let mut global = preferences::load_global();
+    global.apply(obs.clone(), weight * 0.5);
     let _ = preferences::save_global(&global);
 
     Ok(json!({
@@ -73,14 +75,6 @@ pub fn show(repo: Option<PathBuf>) -> anyhow::Result<serde_json::Value> {
         println!("  (no feedback recorded — try `aphrodite design \"…\"` then `aphrodite love` or `aphrodite hate`)");
     }
     Ok(serde_json::to_value(&prefs)?)
-}
-
-fn read_global() -> TastePreferences {
-    let path = preferences::global_path();
-    std::fs::read_to_string(&path)
-        .ok()
-        .and_then(|s| toml::from_str(&s).ok())
-        .unwrap_or_default()
 }
 
 fn top_n<T: Clone + serde::Serialize>(map: &std::collections::BTreeMap<String, T>, n: usize) -> serde_json::Value

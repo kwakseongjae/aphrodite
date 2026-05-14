@@ -1,0 +1,18 @@
+density = +0.7
+serif_vs_sans = +0.9
+accent_intensity = +0.6
+total_runs_observed = 8
+last_updated = "2026-05-14T01:00:00Z"
+
+[hue_families]
+blue = 0.9
+teal = 0.85
+"warm-orange" = -0.85
+
+[display_fonts]
+"DM Sans" = 0.9
+Inter = 0.85
+Fraunces = -0.7
+
+[body_fonts]
+Inter = 0.8

@@ -1,0 +1,30 @@
+{
+  "invocation_id": "c119a1c7-bae5-4423-a33c-7fd59e2e452a",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "composition_path": "/private/tmp/pass5-feedback/composition.html",
+    "design_path": "/private/tmp/pass5-feedback/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass5-feedback/DESIGN.md",
+      "/private/tmp/pass5-feedback/hero.html",
+      "/private/tmp/pass5-feedback/composition.html"
+    ],
+    "hero_path": "/private/tmp/pass5-feedback/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "surface_type": "editorial",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}

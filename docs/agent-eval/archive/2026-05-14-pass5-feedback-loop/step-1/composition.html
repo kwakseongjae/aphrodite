@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ara — Longevity Research Clinic</title>
+<style>
+  /* ── Reset ── */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* ── Variant switcher ── */
+  .switcher {
+    position: fixed; top: 20px; right: 24px; z-index: 1000;
+    display: flex; gap: 4px;
+    background: var(--colors-background-primary);
+    border: 1px solid var(--colors-neutral-200);
+    border-radius: var(--rounded-md);
+    padding: 3px;
+  }
+  .switcher button {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; letter-spacing: 0.03em;
+    padding: 5px 14px;
+    border: none; border-radius: var(--rounded-sm);
+    background: transparent;
+    color: var(--colors-text-muted);
+    cursor: pointer;
+    transition: background 150ms ease, color 150ms ease;
+  }
+  .switcher button:hover { color: var(--colors-text-primary); }
+  .switcher button.active {
+    background: var(--colors-primary-500);
+    color: #fff;
+  }
+
+  /* ── Nav ── */
+  .site-nav {
+    position: sticky; top: 0; z-index: 900;
+    display: flex; align-items: center; justify-content: space-between;
+    max-width: 1120px; margin: 0 auto;
+    padding: var(--spacing-5) var(--spacing-8);
+    border-bottom: 1px solid var(--colors-neutral-200);
+    background: var(--colors-background-primary);
+    transition: box-shadow 200ms ease;
+  }
+  .site-nav .logo {
+    font-family: var(--typography-display-family);
+    font-weight: 700; font-size: 22px;
+    color: var(--colors-text-primary);
+    letter-spacing: -0.02em;
+  }
+  .site-nav .nav-links {
+    display: flex; gap: var(--spacing-8); list-style: none;
+  }
+  .site-nav .nav-links a {
+    font-family: var(--typography-body-family);
+    font-size: 14px; font-weight: 400;
+    color: var(--colors-text-muted);
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+  .site-nav .nav-links a:hover,
+  .site-nav .nav-links a.active {
+    color: var(--colors-primary-500);
+  }
+
+  /* ── Main layout ── */
+  .page-wrapper {
+    background: var(--colors-background-primary);
+    color: var(--colors-text-primary);
+    min-height: 100vh;
+  }
+  .content-column {
+    max-width: 720px;
+    margin: 0 auto;
+    padding-left: var(--spacing-8);
+    padding-right: var(--spacing-8);
+  }
+  .wide-section {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding-left: var(--spacing-8);
+    padding-right: var(--spacing-8);
+  }
+
+  /* ── Article header ── */
+  .article-header {
+    padding-top: var(--spacing-24);
+    padding-bottom: var(--spacing-16);
+  }
+  .kicker {
+    font-family: system-ui, sans-serif;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--colors-primary-500);
+    margin-bottom: var(--spacing-4);
+  }
+  .article-header h1 {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 52px;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-6);
+    max-width: 620px;
+  }
+  .byline {
+    font-family: system-ui, sans-serif;
+    font-size: 14px;
+    color: var(--colors-text-muted);
+    display: flex; align-items: center; gap: var(--spacing-3);
+  }
+  .byline .author-name {
+    font-weight: 600;
+    color: var(--colors-text-primary);
+  }
+  .byline .divider {
+    width: 4px; height: 4px;
+    background: var(--colors-neutral-400);
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* ── Hero visual band ── */
+  .hero-band {
+    background: var(--colors-primary-50);
+    padding: var(--spacing-12) 0;
+    margin-bottom: var(--spacing-16);
+  }
+  .hero-band .wide-section {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-12);
+  }
+  .hero-band-text {
+    flex: 1;
+  }
+  .hero-band-text h2 {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 1.2;
+    margin-bottom: var(--spacing-4);
+    color: var(--colors-text-primary);
+  }
+  .hero-band-text p {
+    font-family: var(--typography-body-family);
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--colors-text-muted);
+  }
+  .hero-visual {
+    flex-shrink: 0;
+    width: 280px;
+    height: 220px;
+  }
+
+  /* ── Body text ── */
+  .article-body p {
+    font-family: var(--typography-body-family);
+    font-size: 18px;
+    line-height: 1.7;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-6);
+    max-width: 65ch;
+  }
+  .article-body p:first-of-type::first-letter {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 72px;
+    float: left;
+    line-height: 0.85;
+    margin-right: 10px;
+    margin-top: 6px;
+    color: var(--colors-primary-600);
+  }
+  .article-body h3 {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.2;
+    margin-top: var(--spacing-16);
+    margin-bottom: var(--spacing-4);
+    color: var(--colors-text-primary);
+  }
+  .article-body h4 {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1.25;
+    margin-top: var(--spacing-12);
+    margin-bottom: var(--spacing-3);
+    color: var(--colors-text-primary);
+  }
+
+  /* ── Pull quote ── */
+  .pull-quote {
+    margin: var(--spacing-16) 0;
+    padding: var(--spacing-8) var(--spacing-8);
+    border-left: 3px solid var(--colors-primary-400);
+    background: var(--colors-primary-50);
+  }
+  .pull-quote blockquote {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.35;
+    color: var(--colors-primary-700);
+    font-style: italic;
+    margin-bottom: var(--spacing-3);
+  }
+  .pull-quote cite {
+    font-family: system-ui, sans-serif;
+    font-style: normal;
+    font-size: 13px;
+    color: var(--colors-text-muted);
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Inline figure ── */
+  .article-figure {
+    margin: var(--spacing-12) calc(-1 * var(--spacing-8));
+    padding: var(--spacing-8);
+    background: var(--colors-neutral-50);
+    border-top: 1px solid var(--colors-neutral-200);
+    border-bottom: 1px solid var(--colors-neutral-200);
+  }
+  .article-figure .fig-svg {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    display: block;
+  }
+  .article-figure figcaption {
+    font-family: system-ui, sans-serif;
+    font-size: 13px;
+    color: var(--colors-text-muted);
+    text-align: center;
+    margin-top: var(--spacing-3);
+  }
+
+  /* ── Sidebar callout ── */
+  .sidebar-callout {
+    float: right;
+    width: 260px;
+    margin: var(--spacing-4) 0 var(--spacing-6) var(--spacing-8);
+    padding: var(--spacing-5);
+    background: var(--colors-primary-50);
+    border: 1px solid var(--colors-primary-100);
+    border-radius: var(--rounded-md);
+  }
+  .sidebar-callout h5 {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: var(--spacing-2);
+    color: var(--colors-primary-700);
+  }
+  .sidebar-callout p {
+    font-family: var(--typography-body-family);
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    color: var(--colors-text-muted) !important;
+    margin-bottom: var(--spacing-2) !important;
+  }
+
+  /* ── Related articles ── */
+  .related-section {
+    margin-top: var(--spacing-24);
+    padding-top: var(--spacing-12);
+    border-top: 1px solid var(--colors-neutral-200);
+    padding-bottom: var(--spacing-24);
+  }
+  .related-section h2 {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 28px;
+    margin-bottom: var(--spacing-8);
+    color: var(--colors-text-primary);
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-6);
+  }
+  .related-card {
+    border: 1px solid var(--colors-neutral-200);
+    border-radius: var(--rounded-md);
+    overflow: hidden;
+    transition: border-color 150ms ease;
+  }
+  .related-card:hover {
+    border-color: var(--colors-primary-300);
+  }
+  .related-card-visual {
+    height: 140px;
+    background: var(--colors-primary-50);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .related-card-body {
+    padding: var(--spacing-5);
+  }
+  .related-card .card-tag {
+    font-family: system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--colors-primary-500);
+    margin-bottom: var(--spacing-2);
+  }
+  .related-card h3 {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.3;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-2);
+  }
+  .related-card .card-date {
+    font-family: system-ui, sans-serif;
+    font-size: 12px;
+    color: var(--colors-text-muted);
+  }
+
+  /* ── Footer ── */
+  .site-footer {
+    border-top: 1px solid var(--colors-neutral-200);
+    padding: var(--spacing-8) 0;
+  }
+  .footer-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-8);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-4);
+  }
+  .footer-inner .footer-brand {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--colors-text-primary);
+  }
+  .footer-meta {
+    font-family: system-ui, sans-serif;
+    font-size: 13px;
+    color: var(--colors-text-muted);
+    display: flex;
+    gap: var(--spacing-4);
+    list-style: none;
+  }
+  .footer-category {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-family: system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--colors-primary-600);
+    background: var(--colors-primary-50);
+    padding: 4px 12px;
+    border-radius: var(--rounded-sm);
+  }
+  .article-footer-meta {
+    margin-top: var(--spacing-12);
+    padding-top: var(--spacing-6);
+    border-top: 1px solid var(--colors-neutral-200);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    font-family: system-ui, sans-serif;
+    font-size: 13px;
+    color: var(--colors-text-muted);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .article-header h1 { font-size: 36px; }
+    .hero-band .wide-section { flex-direction: column; }
+    .hero-visual { width: 100%; height: 180px; }
+    .related-grid { grid-template-columns: 1fr; }
+    .sidebar-callout { float: none; width: 100%; margin: var(--spacing-6) 0; }
+    .article-figure { margin-left: calc(-1 * var(--spacing-4)); margin-right: calc(-1 * var(--spacing-4)); }
+    .content-column { padding-left: var(--spacing-4); padding-right: var(--spacing-4); }
+    .site-nav { padding-left: var(--spacing-4); padding-right: var(--spacing-4); }
+    .nav-links .hide-mobile { display: none; }
+    .footer-inner { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+
+<style data-aphrodite-variants>
+[data-variant="brand-a"] {
+  --colors-background-primary: #f7f3eb;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0efe9;
+  --colors-neutral-1000: #0f0e0c;
+  --colors-neutral-200: #e0ddd3;
+  --colors-neutral-300: #c8c4b7;
+  --colors-neutral-400: #a8a395;
+  --colors-neutral-50: #fafaf7;
+  --colors-neutral-500: #8a8578;
+  --colors-neutral-600: #6e6a5f;
+  --colors-neutral-700: #565340;
+  --colors-neutral-800: #3e3c35;
+  --colors-neutral-900: #2a2924;
+  --colors-primary-100: #e0e5d8;
+  --colors-primary-200: #c4ccb6;
+  --colors-primary-300: #a1ad8c;
+  --colors-primary-400: #84926a;
+  --colors-primary-50: #f3f5f0;
+  --colors-primary-500: #63744a;
+  --colors-primary-600: #4e5c3b;
+  --colors-primary-700: #3d4831;
+  --colors-primary-800: #333b2a;
+  --colors-primary-900: #2b3225;
+  --colors-text-primary: #2c2416;
+  --rounded-lg: 6px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: 'Source Serif 4';
+  --typography-body-weight: 400;
+  --typography-display-family: 'Fraunces';
+  --typography-display-weight: 700;
+  --bg: #f7f3eb;
+  --fg: #2c2416;
+  --muted: #63744a;
+}
+[data-variant="brand-b"] {
+  --colors-background-primary: #f0f2ec;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0efe9;
+  --colors-neutral-1000: #0f0e0c;
+  --colors-neutral-200: #e0ddd3;
+  --colors-neutral-300: #c8c4b7;
+  --colors-neutral-400: #a8a395;
+  --colors-neutral-50: #fafaf7;
+  --colors-neutral-500: #8a8578;
+  --colors-neutral-600: #6e6a5f;
+  --colors-neutral-700: #565340;
+  --colors-neutral-800: #3e3c35;
+  --colors-neutral-900: #2a2924;
+  --colors-primary-100: #e0e5d8;
+  --colors-primary-200: #c4ccb6;
+  --colors-primary-300: #a1ad8c;
+  --colors-primary-400: #84926a;
+  --colors-primary-50: #f3f5f0;
+  --colors-primary-500: #63744a;
+  --colors-primary-600: #4e5c3b;
+  --colors-primary-700: #3d4831;
+  --colors-primary-800: #333b2a;
+  --colors-primary-900: #2b3225;
+  --colors-text-primary: #1e2419;
+  --rounded-lg: 6px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: 'Source Serif 4';
+  --typography-body-weight: 400;
+  --typography-display-family: 'Fraunces';
+  --typography-display-weight: 700;
+  --bg: #f0f2ec;
+  --fg: #1e2419;
+  --muted: #63744a;
+}
+[data-variant="dark"] {
+  --colors-background-primary: #141310;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0efe9;
+  --colors-neutral-1000: #0f0e0c;
+  --colors-neutral-200: #e0ddd3;
+  --colors-neutral-300: #c8c4b7;
+  --colors-neutral-400: #a8a395;
+  --colors-neutral-50: #fafaf7;
+  --colors-neutral-500: #8a8578;
+  --colors-neutral-600: #6e6a5f;
+  --colors-neutral-700: #565340;
+  --colors-neutral-800: #3e3c35;
+  --colors-neutral-900: #2a2924;
+  --colors-primary-100: #e0e5d8;
+  --colors-primary-200: #c4ccb6;
+  --colors-primary-300: #a1ad8c;
+  --colors-primary-400: #84926a;
+  --colors-primary-50: #f3f5f0;
+  --colors-primary-500: #63744a;
+  --colors-primary-600: #4e5c3b;
+  --colors-primary-700: #3d4831;
+  --colors-primary-800: #333b2a;
+  --colors-primary-900: #2b3225;
+  --colors-text-primary: #e8e5dc;
+  --rounded-lg: 6px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: 'Source Serif 4';
+  --typography-body-weight: 400;
+  --typography-display-family: 'Fraunces';
+  --typography-display-weight: 700;
+  --bg: #141310;
+  --fg: #e8e5dc;
+  --muted: #63744a;
+}
+[data-variant="light"] {
+  --colors-background-primary: #fafaf7;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0efe9;
+  --colors-neutral-1000: #0f0e0c;
+  --colors-neutral-200: #e0ddd3;
+  --colors-neutral-300: #c8c4b7;
+  --colors-neutral-400: #a8a395;
+  --colors-neutral-50: #fafaf7;
+  --colors-neutral-500: #8a8578;
+  --colors-neutral-600: #6e6a5f;
+  --colors-neutral-700: #565340;
+  --colors-neutral-800: #3e3c35;
+  --colors-neutral-900: #2a2924;
+  --colors-primary-100: #e0e5d8;
+  --colors-primary-200: #c4ccb6;
+  --colors-primary-300: #a1ad8c;
+  --colors-primary-400: #84926a;
+  --colors-primary-50: #f3f5f0;
+  --colors-primary-500: #63744a;
+  --colors-primary-600: #4e5c3b;
+  --colors-primary-700: #3d4831;
+  --colors-primary-800: #333b2a;
+  --colors-primary-900: #2b3225;
+  --colors-text-primary: #2a2924;
+  --rounded-lg: 6px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: 'Source Serif 4';
+  --typography-body-weight: 400;
+  --typography-display-family: 'Fraunces';
+  --typography-display-weight: 700;
+  --bg: #fafaf7;
+  --fg: #2a2924;
+  --muted: #63744a;
+}
+body{background:var(--bg);color:var(--fg);}
+</style>
+</head>
+<body data-variant="light">
+
+<nav class="switcher">
+  <button class="active" data-set-variant="light">light</button>
+  <button data-set-variant="dark">dark</button>
+  <button data-set-variant="brand-a">warm stone</button>
+  <button data-set-variant="brand-b">cool sage</button>
+</nav>
+
+<div class="page-wrapper">
+
+  <!-- ── Navigation ── -->
+  <nav class="site-nav">
+    <div class="logo">Ara</div>
+    <ul class="nav-links">
+      <li><a href="#" class="active">Research</a></li>
+      <li><a href="#" class="hide-mobile">Clinical Programmes</a></li>
+      <li><a href="#" class="hide-mobile">Publications</a></li>
+      <li><a href="#" class="hide-mobile">About</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── Article ── -->
+  <article>
+    <header class="article-header content-column">
+      <div class="kicker">Longevity Research</div>
+      <h1>Cellular Senescence and the Architecture of a Longer Life</h1>
+      <div class="byline">
+        <span class="author-name">Dr. Emilia Marchetti</span>
+        <span class="divider"></span>
+        <span>Director of Cellular Biology, Ara Institute</span>
+        <span class="divider"></span>
+        <span>12 June 2025</span>
+      </div>
+    </header>
+
+    <!-- ── Hero band ── -->
+    <div class="hero-band">
+      <div class="wide-section">
+        <div class="hero-band-text">
+          <h2>Understanding the Bodies We Inhabit</h2>
+          <p>At the Ara Institute, we study the fundamental mechanisms of ageing — not to chase immortality, but to understand how cellular processes shape the trajectory of human health across decades.</p>
+        </div>
+        <div class="hero-visual">
+          <svg viewBox="0 0 280 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Abstract cell / layered rings motif -->
+            <rect width="280" height="220" rx="4" fill="var(--colors-primary-100)" opacity="0.5"/>
+            <circle cx="140" cy="105" r="70" stroke="var(--colors-primary-300)" stroke-width="1" fill="none"/>
+            <circle cx="140" cy="105" r="50" stroke="var(--colors-primary-400)" stroke-width="1.5" fill="none"/>
+            <circle cx="140" cy="105" r="28" stroke="var(--colors-primary-500)" stroke-width="2" fill="var(--colors-primary-50)"/>
+            <circle cx="140" cy="105" r="8" fill="var(--colors-primary-500)"/>
+            <!-- Small satellite dots -->
+            <circle cx="178" cy="78" r="4" fill="var(--colors-primary-300)"/>
+            <circle cx="102" cy="132" r="3" fill="var(--colors-primary-400)"/>
+            <circle cx="155" cy="145" r="3.5" fill="var(--colors-primary-300)"/>
+            <circle cx="120" cy="70" r="2.5" fill="var(--colors-primary-400)"/>
+            <!-- Connecting hairlines -->
+            <line x1="140" y1="105" x2="178" y2="78" stroke="var(--colors-primary-200)" stroke-width="0.8"/>
+            <line x1="140" y1="105" x2="102" y2="132" stroke="var(--colors-primary-200)" stroke-width="0.8"/>
+            <line x1="140" y1="105" x2="155" y2="145" stroke="var(--colors-primary-200)" stroke-width="0.8"/>
+            <line x1="140" y1="105" x2="120" y2="70" stroke="var(--colors-primary-200)" stroke-width="0.8"/>
+            <!-- Outer ring annotations -->
+            <line x1="210" y1="105" x2="250" y2="105" stroke="var(--colors-neutral-300)" stroke-width="0.5" stroke-dasharray="3 3"/>
+            <line x1="140" y1="35" x2="140" y2="18" stroke="var(--colors-neutral-300)" stroke-width="0.5" stroke-dasharray="3 3"/>
+            <text x="253" y="109" font-family="system-ui" font-size="10" fill="var(--colors-text-muted)">Telomere region</text>
+            <text x="118" y="15" font-family="system-ui" font-size="10" fill="var(--colors-text-muted)">Replication fork</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Body ── -->
+    <div class="content-column article-body">
+
+      <p>There is a moment in the life of every cell when it must decide whether to continue dividing or to stop. For most of human history, we had no language for this moment. We called it ageing, as if it were a single phenomenon rather than a cascade of trillions of individual decisions made inside every organ, every tissue, every microscopic structure that sustains us. Today, thanks to advances in molecular biology, we have not only a language but an emerging map. And at the centre of that map lies a process called cellular senescence.</p>
+
+      <p>Senescence is not simply cell death. A senescent cell remains metabolically active — it continues to consume resources, secrete proteins, and communicate with its neighbours. What changes is its refusal to divide further. Triggered by DNA damage, telomere shortening, or oxidative stress, the cell enters a permanent state of cell-cycle arrest. In a young body, the immune system clears these cells efficiently. In an older one, they accumulate, quietly reshaping the tissue environment around them through what researchers call the senescence-associated secretory phenotype, or SASP.</p>
+
+      <div class="sidebar-callout">
+        <h5>Key Terminology</h5>
+        <p><strong>SASP</strong> — Senescence-Associated Secretory Phenotype: the cocktail of inflammatory cytokines, growth factors, and proteases that senescent cells secrete, altering neighbouring cell behaviour.</p>
+      </div>
+
+      <h3>The SASP Paradox</h3>
+
+      <p>One of the most counterintuitive findings in recent ageing research is that senescent cells are not uniformly harmful. In fact, they play essential roles in wound healing, embryonic development, and tumour suppression. The SASP, for all its inflammatory reputation, can signal the immune system to repair damaged tissue. The problem arises not from the existence of senescent cells, but from their persistence. When clearance fails, the chronic low-grade inflammation they produce — sometimes called inflammageing — becomes a driver of virtually every age-related disease studied in the last two decades.</p>
+
+      <!-- Inline figure / data visual -->
+      <figure class="article-figure">
+        <svg class="fig-svg" viewBox="0 0 600 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="600" height="240" fill="var(--colors-neutral-50)" rx="2"/>
+          <!-- Y axis -->
+          <line x1="80" y1="30" x2="80" y2="200" stroke="var(--colors-neutral-300)" stroke-width="1"/>
+          <!-- X axis -->
+          <line x1="80" y1="200" x2="560" y2="200" stroke="var(--colors-neutral-300)" stroke-width="1"/>
+          <!-- Y label -->
+          <text x="24" y="120" font-family="system-ui" font-size="11" fill="var(--colors-text-muted)" text-anchor="middle" transform="rotate(-90 24 120)">Senescent Cell Burden</text>
+          <!-- X label -->
+          <text x="320" y="230" font-family="system-ui" font-size="11" fill="var(--colors-text-muted)" text-anchor="middle">Age (years)</text>
+          <!-- Grid lines -->
+          <line x1="80" y1="160" x2="560" y2="160" stroke="var(--colors-neutral-100)" stroke-width="0.8"/>
+          <line x1="80" y1="120" x2="560" y2="120" stroke="var(--colors-neutral-100)" stroke-width="0.8"/>
+          <line x1="80" y1="80" x2="560" y2="80" stroke="var(--colors-neutral-100)" stroke-width="0.8"/>
+          <!-- X ticks -->
+          <text x="128" y="215" font-family="system-ui" font-size="10" fill="var(--colors-text-muted)" text-anchor="middle">20</text>
+          <text x="224" y="215" font-family="system-ui" font-size="10" fill="var(--colors-text-muted)" text-anchor="middle">40</text>
+          <text x="320" y="215" font-family="system-ui" font-size="10" fill="var(--colors-text-muted)" text-anchor="middle">60</text>
+          <text x="416" y="215" font-family="system-ui" font-size="10" fill="var(--colors-text-muted)" text-anchor="middle">80</text>
+          <text x="512" y="215" font-family="system-ui" font-size="10" fill="var(--colors-text-muted)" text-anchor="middle">100</text>
+          <!-- Curve: natural accumulation -->
+          <path d="M128 185 C180 183 220 175 272 155 C320 135 370 105 416 75 C450 55 490 40 512 35" stroke="var(--colors-primary-500)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <!-- Curve: with senolytics -->
+          <path d="M128 185 C180 183 220 180 272 175 C320 168 370 155 416 140 C450 130 490 122 512 118" stroke="var(--colors-primary-300)" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="6 4"/>
+          <!-- Legend -->
+          <line x1="380" y1="46" x2="405" y2="46" stroke="var(--colors-primary-500)" stroke-width="2.5" stroke-linecap="round"/>
+          <text x="412" y="50" font-family="system-ui" font-size="11" fill="var(--colors-text-primary)">Natural accumulation</text>
+          <line x1="380" y1="64" x2="405" y2="64" stroke="var(--colors-primary-300)" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 4"/>
+          <text x="412" y="68" font-family="system-ui" font-size="11" fill="var(--colors-text-primary)">With senolytic intervention</text>
+        </svg>
+        <figcaption>Figure 1. Modelled senescent cell burden across the human lifespan, comparing natural accumulation with periodic senolytic clearance. Adapted from Ara Institute working data, 2024.</figcaption>
+      </figure>
+
+      <h4>Senolytics: A New Class of Intervention</h4>
+
+      <p>The discovery that selectively eliminating senescent cells could improve health outcomes in mice — published first by the Mayo Clinic in 2011 and reproduced dozens of times since — opened a door that had been firmly shut. These interventions, called senolytics, work not by addressing the root causes of senescence but by targeting the survival pathways that allow senescent cells to resist natural apoptosis. The most studied combination, dasatinib plus quercetin, has shown measurable improvements in physical function, grip strength, and exercise capacity in early-phase human trials.</p>
+
+      <p>At the Ara Institute, our clinical programmes build on these foundations. Rather than asking whether senolytics can extend maximum lifespan — a question that requires decades to answer definitively — we focus on healthspan: the period of life during which an individual remains free from chronic disease and functional decline. This distinction matters. A therapy that compresses morbidity into the final months of life, even if it does not alter the age at death, represents a profound improvement in human welfare.</p>
+
+      <div class="pull-quote">
+        <blockquote>"We are not in the business of adding years to life. We are in the business of adding life to years — and we now have molecular tools precise enough to attempt it responsibly."</blockquote>
+        <cite>— Professor Henrik Sørensen, Chief Medical Officer, Ara Institute</cite>
+      </div>
+
+      <h3>Beyond Clearance: Reprogramming the Aged Cell</h3>
+
+      <p>An alternative to killing senescent cells is reprogramming them — coaxing them back toward a more youthful state without restoring full proliferative capacity (and therefore without increasing cancer risk). This approach, rooted in Shinya Yamanaka's Nobel Prize-winning discovery of induced pluripotent stem cells in 2006, has matured considerably in the past five years. Partial reprogramming, delivered through transient expression of a subset of Yamanaka factors, has reversed hallmarks of ageing in mouse models without triggering teratoma formation.</p>
+
+      <p>The challenge now is delivery specificity. Ageing is systemic, but blanket reprogramming is dangerous. The cell that lines your aorta requires different epigenetic instructions than the neuron in your hippocampus, yet both accumulate similar molecular damage over time. Our research group at Ara has spent the last three years developing tissue-targeted delivery vehicles — lipid nanoparticles that preferentially accumulate in liver, muscle, or brain tissue — to ensure that reprogramming signals reach only the cells equipped to respond appropriately.</p>
+
+      <h4>The Inflammageing Hypothesis</h4>
+
+      <p>Underlying much of this work is a unifying framework: the inflammageing hypothesis. First articulated by Claudio Franceschi and colleagues in 2000, it proposes that the ageing process is driven, at least in part, by a chronic, sterile, low-grade inflammatory state that increases with age. This inflammation is not the acute response to infection that we recognise as fever and swelling. It is subtler — a continuous background signal produced by accumulated senescent cells, altered gut permeability, immune cell dysregulation, and the gradual failure of clearance mechanisms throughout the body.</p>
+
+      <p>Measuring inflammageing has proven remarkably difficult because the signal is diffuse. There is no single biomarker that captures it. Instead, our clinic uses a panel approach: interleukin-6, tumour necrosis factor alpha, C-reactive protein, and a suite of less conventional markers including cellular senescence-associated secretory proteins measured in plasma. By tracking these longitudinally across our patient cohort, we can observe the trajectory of inflammageing over time — and, critically, we can measure whether interventions shift that trajectory downward.</p>
+
+      <p>This longitudinal approach to measurement is, we believe, the future of longevity medicine. Single time-point biomarker snapshots tell you where you are. Only repeated measurement tells you where you are going. And in a field defined by interventions whose effects may take years to become apparent, understanding trajectory is not a luxury — it is the minimum standard of care.</p>
+
+      <!-- Article footer metadata -->
+      <div class="article-footer-meta">
+        <span class="footer-category">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" fill="var(--colors-primary-400)"/></svg>
+          Cellular Biology
+        </span>
+        <span>Published 12 June 2025</span>
+        <span class="divider" style="width:4px;height:4px;background:var(--colors-neutral-300);border-radius:50%;display:inline-block;"></span>
+        <span>Reading time: 11 min</span>
+      </div>
+
+    </div>
+
+    <!-- ── Related articles ── -->
+    <section class="related-section wide-section">
+      <h2>Continue Reading</h2>
+      <div class="related-grid">
+        <a href="#" class="related-card">
+          <div class="related-card-visual">
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+              <circle cx="40" cy="40" r="30" stroke="var(--colors-primary-300)" stroke-width="1.5" fill="none"/>
+              <circle cx="40" cy="40" r="12" stroke="var(--colors-primary-400)" stroke-width="1" fill="var(--colors-primary-50)"/>
+              <line x1="40" y1="10" x2="40" y2="28" stroke="var(--colors-primary-200)" stroke-width="0.8"/>
+              <line x1="40" y1="52" x2="40" y2="70" stroke="var(--colors-primary-200)" stroke-width="0.8"/>
+              <line x1="10" y1="40" x2="28" y2="40" stroke="var(--colors-primary-200)" stroke-width="0.8"/>
+              <line x1="52" y1="40" x2="70" y2="40" stroke="var(--colors-primary-200)" stroke-width="0.8"/>
+            </svg>
+          </div>
+          <div class="related-card-body">
+            <div class="card-tag">Epigenetics</div>
+            <h3>DNA Methylation Clocks and Biological Age Estimation</h3>
+            <span class="card-date">28 May 2025</span>
+          </div>
+        </a>
+        <a href="#" class="related-card">
+          <div class="related-card-visual">
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+              <rect x="15" y="20" width="50" height="40" rx="3" stroke="var(--colors-primary-300)" stroke-width="1.5" fill="none"/>
+              <line x1="22" y1="32" x2="58" y2="32" stroke="var(--colors-primary-200)" stroke-width="0.8"/>
+              <line x1="22" y1="40" x2="52" y2="40" stroke="var(--colors-primary-200)" stroke-width="0.8"/>
+              <line x1="22" y1="48" x2="44" y2="48" stroke="var(--colors-primary-200)" stroke-width="0.8"/>
+            </svg>
+          </div>
+          <div class="related-card-body">
+            <div class="card-tag">Clinical Protocols</div>
+            <h3>Designing Ethical Trials for Longevity Therapeutics</h3>
+            <span class="card-date">14 May 2025</span>
+          </div>
+        </a>
+        <a href="#" class="related-card">
+          <div class="related-card-visual">
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+              <path d="M20 60 C20 35 35 20 40 20 C45 20 60 35 60 60" stroke="var(--colors-primary-300)" stroke-width="1.5" fill="none"/>
+              <line x1="28" y1="42" x2="52" y2="42" stroke="var(--colors-primary-200)" stroke-width="0.8"/>
+              <line x1="24" y1="52" x2="56" y2="52" stroke="var(--colors-primary-200)" stroke-width="0.8"/>
+              <circle cx="40" cy="28" r="3" fill="var(--colors-primary-400)"/>
+            </svg>
+          </div>
+          <div class="related-card-body">
+            <div class="card-tag">Patient Perspectives</div>
+            <h3>Navigating Longevity Decisions at Sixty-Five</h3>
+            <span class="card-date">2 May 2025</span>
+          </div>
+        </a>
+      </div>
+    </section>
+  </article>
+
+  <!-- ── Footer ── -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">Ara Institute for Longevity Research</div>
+      <ul class="footer-meta">
+        <li>© 2025</li>
+        <li>Privacy</li>
+        <li>Terms</li>
+        <li>hello@arainstitute.org</li>
+      </ul>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  document.querySelectorAll('.switcher button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.switcher button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.body.dataset.variant = btn.dataset.variant;
+    });
+  });
+</script>
+</body>
+</html>

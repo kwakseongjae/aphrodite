@@ -1,0 +1,18 @@
+density = -0.85
+serif_vs_sans = -0.9
+accent_intensity = -0.6
+total_runs_observed = 8
+last_updated = "2026-05-14T01:00:00Z"
+
+[hue_families]
+"warm-orange" = 0.9
+amber = 0.85
+blue = -0.85
+
+[display_fonts]
+Fraunces = 0.9
+Newsreader = 0.8
+"DM Sans" = -0.7
+
+[body_fonts]
+"Source Serif 4" = 0.8

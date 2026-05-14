@@ -168,14 +168,13 @@ pub fn project_path(project_root: &Path) -> PathBuf {
     p
 }
 
-/// Read project + global preferences and merge (project values are weighted
-/// more heavily since they're scoped to the current work).
+/// Read project + global preferences and merge for *generation-time injection*.
+/// This is for reading only; never persist the merged result (it would
+/// double-count). Use `load_project` / `load_global` separately when writing.
 pub fn load(project_root: &Path) -> TastePreferences {
-    let global = read_file(&global_path()).unwrap_or_default();
-    let project = read_file(&project_path(project_root)).unwrap_or_default();
-
+    let global = load_global();
+    let project = load_project(project_root);
     let mut merged = global;
-    // Merge project on top with 1.5× weight on shared keys.
     for (k, v) in &project.hue_families {
         let e = merged.hue_families.entry(k.clone()).or_insert(0.0);
         *e = TastePreferences::clamp(*e + v * 1.5);
@@ -193,6 +192,15 @@ pub fn load(project_root: &Path) -> TastePreferences {
     merged.accent_intensity = TastePreferences::clamp(merged.accent_intensity + project.accent_intensity * 1.5);
     merged.total_runs_observed = merged.total_runs_observed.saturating_add(project.total_runs_observed);
     merged
+}
+
+/// Pure project-side prefs. Use this when updating after a feedback event.
+pub fn load_project(project_root: &Path) -> TastePreferences {
+    read_file(&project_path(project_root)).unwrap_or_default()
+}
+
+pub fn load_global() -> TastePreferences {
+    read_file(&global_path()).unwrap_or_default()
 }
 
 pub fn save(project_root: &Path, prefs: &TastePreferences) -> std::io::Result<()> {

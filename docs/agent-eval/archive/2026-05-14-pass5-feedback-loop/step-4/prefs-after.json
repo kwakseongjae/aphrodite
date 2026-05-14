@@ -1,0 +1,31 @@
+Aphrodite taste preferences (merged: global + project)
+  total runs observed : 14
+  
+  The user has provided 14 prior signals on similar tasks. Bias your output accordingly:
+  - Has consistently disliked: saturated green, blue, olive
+  - Display fonts the user has rejected: DM Serif Display, Fraunces
+  - Leans toward generous whitespace (signal -1.0).
+  - Leans toward sans-serif at scale (signal +1.0).
+  - Leans toward bold, saturated accents (signal +1.0).
+{
+  "accent_intensity": 1.0,
+  "body_fonts": {
+    "DM Sans": -1.0,
+    "Instrument Sans": -0.45000001788139343,
+    "Source Serif 4": -1.0
+  },
+  "density": -1.0,
+  "display_fonts": {
+    "DM Serif Display": -1.0,
+    "Fraunces": -1.0,
+    "Instrument Sans": -0.45000001788139343
+  },
+  "hue_families": {
+    "blue": -1.0,
+    "olive": -1.0,
+    "saturated green": -0.45000001788139343
+  },
+  "last_updated": "2026-05-13T19:54:31.547443Z",
+  "serif_vs_sans": 1.0,
+  "total_runs_observed": 14
+}

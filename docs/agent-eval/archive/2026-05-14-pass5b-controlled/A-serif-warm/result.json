@@ -1,0 +1,30 @@
+{
+  "invocation_id": "053cc25e-ce81-4c33-91e1-13fcd317044a",
+  "kind": "design",
+  "output": {
+    "committed": true,
+    "composition_path": "/private/tmp/pass5b-A-serif-warm/composition.html",
+    "design_path": "/private/tmp/pass5b-A-serif-warm/DESIGN.md",
+    "destination": "repo-root",
+    "files": [
+      "/private/tmp/pass5b-A-serif-warm/DESIGN.md",
+      "/private/tmp/pass5b-A-serif-warm/hero.html",
+      "/private/tmp/pass5b-A-serif-warm/composition.html"
+    ],
+    "hero_path": "/private/tmp/pass5b-A-serif-warm/hero.html",
+    "model_used": "glm-5.1",
+    "provider_used": "zai",
+    "surface_type": "editorial",
+    "validation": {
+      "ok": true,
+      "violations": []
+    },
+    "variants": [
+      "brand-a",
+      "brand-b",
+      "dark",
+      "light"
+    ],
+    "warnings": []
+  }
+}

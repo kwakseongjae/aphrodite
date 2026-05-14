@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>2026-05-14-pass5b-controlled</title><style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #0e0e10; color: #e8e8ea; padding: 24px;
+}
+header { margin-bottom: 32px; }
+h1 { margin: 0 0 8px; letter-spacing: -0.01em; }
+.sub { color: #8a8a93; margin: 0 0 6px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 24px; }
+.card { background: #18181b; border: 1px solid #27272a; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; }
+.card h2 { font-size: 15px; margin: 0; padding: 14px 18px; background: #1f1f23; border-bottom: 1px solid #27272a; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.card h2 .slug { color: #a78bfa; font-weight: 600; }
+.badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 500; letter-spacing: 0.02em; }
+.badge.ok { background: #14532d; color: #86efac; }
+.badge.fail { background: #7f1d1d; color: #fca5a5; }
+.badge.parse { background: #422006; color: #fcd34d; }
+.surface-tag { background: #1e1b4b; color: #a5b4fc; font-size: 10px; padding: 2px 7px; border-radius: 999px; margin-left: 6px; }
+.intent { padding: 14px 18px; font-size: 13px; line-height: 1.55; color: #d4d4d8; border-bottom: 1px solid #27272a; white-space: pre-wrap; word-break: break-word; }
+.intent::before { content: "INTENT"; display: block; font-size: 10px; letter-spacing: 0.16em; color: #71717a; margin-bottom: 6px; }
+.meta { padding: 12px 18px; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 12px; border-bottom: 1px solid #27272a; }
+.meta dt { color: #71717a; } .meta dd { margin: 0; color: #e4e4e7; font-family: ui-monospace, "SF Mono", monospace; font-size: 12px; }
+.swatches { display: flex; gap: 2px; flex-wrap: wrap; padding: 12px 18px; border-bottom: 1px solid #27272a; }
+.swatch { width: 36px; height: 36px; border-radius: 6px; position: relative; cursor: pointer; }
+.swatch::after { content: attr(data-hex); position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%); font-size: 10px; font-family: ui-monospace, monospace; white-space: nowrap; color: #71717a; opacity: 0; transition: opacity 120ms; pointer-events: none; }
+.swatch:hover::after { opacity: 1; }
+.preview { background: #fff; height: 420px; position: relative; overflow: hidden; }
+.preview iframe { border: 0; width: 250%; height: 250%; transform: scale(0.4); transform-origin: top left; pointer-events: none; }
+.preview-missing { display: flex; align-items: center; justify-content: center; height: 100%; color: #71717a; font-size: 13px; }
+.links { padding: 10px 18px; display: flex; gap: 12px; font-size: 12px; background: #18181b; align-items: center; }
+.links a { color: #a78bfa; text-decoration: none; } .links a:hover { text-decoration: underline; }
+.pill { color: #71717a; margin-left: auto; }
+</style></head><body>
+<header><h1>2026-05-14-pass5b-controlled</h1><p class="sub">2 runs · each card embeds the actual composition.html (or hero.html fallback) scaled · click <em>open ↗</em> for full size</p></header><main class="grid">
+<article class="card">
+  <h2><span class="slug">A-serif-warm<span class="surface-tag">editorial</span></span><span class="badge ok">valid</span></h2>
+  <div class="intent">a calm editorial site for a longevity research clinic</div>
+  <dl class="meta">
+    <dt>provider</dt><dd>zai</dd>
+    <dt>model</dt><dd>glm-5.1</dd>
+    <dt>time</dt><dd>385s</dd>
+    <dt>display</dt><dd>Fraunces</dd>
+    <dt>body</dt><dd>Newsreader</dd>
+    <dt>warnings</dt><dd>0</dd>
+  </dl>
+  <div class="swatches"><div class="swatch" style="background:#fef9ee" data-hex="#fef9ee"></div><div class="swatch" style="background:#fcf0d4" data-hex="#fcf0d4"></div><div class="swatch" style="background:#f8dda8" data-hex="#f8dda8"></div><div class="swatch" style="background:#f3c76e" data-hex="#f3c76e"></div><div class="swatch" style="background:#edae3c" data-hex="#edae3c"></div><div class="swatch" style="background:#d4922a" data-hex="#d4922a"></div><div class="swatch" style="background:#b87520" data-hex="#b87520"></div><div class="swatch" style="background:#96581c" data-hex="#96581c"></div><div class="swatch" style="background:#7a471d" data-hex="#7a471d"></div><div class="swatch" style="background:#5c3518" data-hex="#5c3518"></div></div>
+  <div class="preview"><iframe src="A-serif-warm/composition.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+  <div class="links"><a href="A-serif-warm/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="A-serif-warm/composition.html" target="_blank">open editorial.html ↗</a> &nbsp;·&nbsp; <a href="A-serif-warm/intent.txt">intent.txt</a> &nbsp;·&nbsp; <a href="A-serif-warm/result.json">result.json</a><span class="pill">A-serif-warm</span></div>
+</article>
+<article class="card">
+  <h2><span class="slug">B-sans-cool<span class="surface-tag">editorial</span></span><span class="badge ok">valid</span></h2>
+  <div class="intent">a calm editorial site for a longevity research clinic</div>
+  <dl class="meta">
+    <dt>provider</dt><dd>zai</dd>
+    <dt>model</dt><dd>glm-5.1</dd>
+    <dt>time</dt><dd>370s</dd>
+    <dt>display</dt><dd>DM Sans</dd>
+    <dt>body</dt><dd>DM Sans</dd>
+    <dt>warnings</dt><dd>0</dd>
+  </dl>
+  <div class="swatches"><div class="swatch" style="background:#edf5f4" data-hex="#edf5f4"></div><div class="swatch" style="background:#d1e8e5" data-hex="#d1e8e5"></div><div class="swatch" style="background:#a3d1cb" data-hex="#a3d1cb"></div><div class="swatch" style="background:#75bab2" data-hex="#75bab2"></div><div class="swatch" style="background:#47a398" data-hex="#47a398"></div><div class="swatch" style="background:#298c80" data-hex="#298c80"></div><div class="swatch" style="background:#217067" data-hex="#217067"></div><div class="swatch" style="background:#19554e" data-hex="#19554e"></div><div class="swatch" style="background:#113935" data-hex="#113935"></div><div class="swatch" style="background:#091e1c" data-hex="#091e1c"></div></div>
+  <div class="preview"><iframe src="B-sans-cool/composition.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+  <div class="links"><a href="B-sans-cool/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="B-sans-cool/composition.html" target="_blank">open editorial.html ↗</a> &nbsp;·&nbsp; <a href="B-sans-cool/intent.txt">intent.txt</a> &nbsp;·&nbsp; <a href="B-sans-cool/result.json">result.json</a><span class="pill">B-sans-cool</span></div>
+</article>
+
+</main></body></html>
