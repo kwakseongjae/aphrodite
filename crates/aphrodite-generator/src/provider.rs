@@ -257,10 +257,48 @@ pub async fn call_raw(
     if matches!(resolved.id, ProviderId::Gemini) {
         return Err(ProviderError::Malformed("Gemini provider lands in v0.2".into()));
     }
-    if anthropic_wire {
-        call_anthropic_compat_custom(base, &resolved.api_key, &resolved.model, system, user, max_tokens).await
-    } else {
-        call_openai_compat_custom(base, &resolved.api_key, &resolved.model, system, user, max_tokens).await
+    // Finding #29 mitigation: retry transient failures (429 / 5xx / connect
+    // / timeout) with exponential back-off. Bounded at 3 attempts so a single
+    // call costs ≤ 1 + 2 + 4 = 7 s of extra wall clock in the worst case.
+    let mut attempt: u32 = 0;
+    loop {
+        let result = if anthropic_wire {
+            call_anthropic_compat_custom(base, &resolved.api_key, &resolved.model, system, user, max_tokens).await
+        } else {
+            call_openai_compat_custom(base, &resolved.api_key, &resolved.model, system, user, max_tokens).await
+        };
+        match result {
+            Ok(s) => return Ok(s),
+            Err(e) if is_transient(&e) && attempt < 3 => {
+                let delay_ms = 1000u64 << attempt;
+                tracing::warn!("provider transient failure (attempt {}/3): {} — retrying in {}ms", attempt + 1, e, delay_ms);
+                tokio::time::sleep(std::time::Duration::from_millis(delay_ms)).await;
+                attempt += 1;
+            }
+            Err(e) => return Err(e),
+        }
+    }
+}
+
+/// Returns true if the provider error is worth retrying — 429, 5xx, network
+/// or timeout failures. 4xx other than 429 (auth, bad request) are NOT
+/// retried: the next attempt will fail the same way and waste budget.
+fn is_transient(e: &ProviderError) -> bool {
+    match e {
+        ProviderError::Http(reqwest_err) => {
+            // reqwest::Error doesn't expose a clean "is-timeout-or-connect"
+            // boolean; rely on its is_timeout / is_connect helpers + status check.
+            if reqwest_err.is_timeout() || reqwest_err.is_connect() {
+                return true;
+            }
+            if let Some(status) = reqwest_err.status() {
+                return status.as_u16() == 429 || status.as_u16() >= 500;
+            }
+            // Unknown reqwest failure — treat as transient (likely network)
+            true
+        }
+        ProviderError::Api { status, .. } => *status == 429 || *status >= 500,
+        ProviderError::Malformed(_) => false,
     }
 }
 

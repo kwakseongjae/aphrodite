@@ -96,6 +96,12 @@
     <p class="desc">Verifies that `aphrodite refine "<delta>"` behaves as refinement (not redesign): turn 2 changes the hue alone, turn 3 changes spacing alone, turn 4 changes the display family alone. The cool blue from turn 2 persists three turns later; spacing from turn 3 survives the display swap in turn 4. Body font even stayed unchanged in turn 4 because the request didn't mention it — the nuance landed. <strong>Limitation:</strong> deltas were pre-scripted, not reactive — see Pass 7.</p>
   </a>
 
+  <a class="pass" href="2026-05-14-pass14-assets-retry/">
+    <h2>Pass 14 — Lucide path embeddings + provider retry <span class="tag live">#29 closed · #32 partial · path-data byte-perfect</span></h2>
+    <div class="meta">2026-05-14 · asset-standards skill body now embeds 10 canonical Lucide SVGs · call_raw retries transient failures</div>
+    <p class="desc">Closes Finding #29 (provider call_raw now retries 429 / 5xx / connect / timeout with 1s/2s/4s back-off, max 3 attempts; Pass 13's Vignelli rate-limit crash would have recovered cleanly). Asset injection: skill body embeds 10 canonical Lucide SVGs as copy-paste material. Dogfood on Galileo × clinical-trial dashboard: 11 SVGs emitted with semantically-correct Lucide path data (<code>triangle-alert</code> for adverse events, <code>chart-line</code> for time series, <code>user-plus</code> for enrollment, <code>layout-dashboard</code> for nav, <code>map-pin</code> for sites) — <strong>byte-identical to the skill's embedded chart-line path</strong>. Remaining gap (#32 partial): the <code>class="lucide lucide-X"</code> attribute gets stripped during LLM copy. In-prompt directive added; harmonize-fingerprint injection deferred. Phase 5 (asset create) moves from stub to partial.</p>
+  </a>
+
   <a class="pass" href="2026-05-14-pass13-persona-matrix/">
     <h2>Pass 13 — persona × intent matrix (5 paired runs) <span class="tag live">named-family pick lands 5/5 · critic anchors in persona</span></h2>
     <div class="meta">2026-05-14 · Vignelli × magazine · Ando × architecture · Kawakubo × lookbook · Galileo × dashboard · Hara × clinic · all in parallel</div>

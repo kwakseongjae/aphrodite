@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>galileo-clinical-trial — Aphrodite</title>
+<style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Source Sans 3", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --aphrodite-typography-display: "IBM Plex Mono", "Source Sans 3", Georgia, "Times New Roman", serif;
+    --aphrodite-typography-body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant="brand-a"] {
+    --colors-background-primary: #faf8f5;
+    --colors-background-secondary: #f0ede8;
+    --colors-border-default: #d6d3d1;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f5f5f4;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #e7e5e4;
+    --colors-neutral-300: #d6d3d1;
+    --colors-neutral-400: #a8a29e;
+    --colors-neutral-50: #fafaf9;
+    --colors-neutral-500: #78716c;
+    --colors-neutral-600: #57534e;
+    --colors-neutral-700: #44403c;
+    --colors-neutral-800: #292524;
+    --colors-neutral-900: #1c1917;
+    --colors-primary-100: #dcfce9;
+    --colors-primary-200: #bbf7d4;
+    --colors-primary-300: #86efad;
+    --colors-primary-400: #4ade7e;
+    --colors-primary-50: #f0fdf5;
+    --colors-primary-500: #16a34a;
+    --colors-primary-600: #15803c;
+    --colors-primary-700: #166533;
+    --colors-primary-800: #14532a;
+    --colors-primary-900: #052e16;
+    --colors-text-primary: #292524;
+    --colors-text-secondary: #78716c;
+    --rounded-lg: 8px;
+    --rounded-md: 4px;
+    --rounded-none: 0px;
+    --rounded-sm: 2px;
+    --spacing-1: 4px;
+    --spacing-13: 52px;
+    --spacing-2: 8px;
+    --spacing-21: 84px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-scale_note: Fibonacci-derived: 4, 8, 12, 20, 32, 52, 84 — supplemented at 16 and 24 for grid alignment;
+    --typography-body-family: Source Sans 3;
+    --typography-body-weight: 400;
+    --typography-cjk_latin_pair-chinese: Source Han Sans;
+    --typography-cjk_latin_pair-japanese: Source Han Sans;
+    --typography-cjk_latin_pair-korean: Pretendard;
+    --typography-cjk_latin_pair-note: CJK families selected for published metric specimens; x-height matched to Source Sans 3 within 3.2 percent at 16px;
+    --typography-display-family: IBM Plex Mono;
+    --typography-display-weight: 600;
+    --typography-mono-family: IBM Plex Mono;
+    --typography-mono-weight: 400;
+    --bg: #faf8f5;
+    --fg: #292524;
+    --accent: #16a34a;
+    --muted: #86efad;
+  }
+  
+  [data-variant="brand-b"] {
+    --colors-background-primary: #f0faf5;
+    --colors-background-secondary: #e0f2eb;
+    --colors-border-default: #bbf7d4;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f5f5f4;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #e7e5e4;
+    --colors-neutral-300: #d6d3d1;
+    --colors-neutral-400: #a8a29e;
+    --colors-neutral-50: #fafaf9;
+    --colors-neutral-500: #78716c;
+    --colors-neutral-600: #57534e;
+    --colors-neutral-700: #44403c;
+    --colors-neutral-800: #292524;
+    --colors-neutral-900: #1c1917;
+    --colors-primary-100: #dcfce9;
+    --colors-primary-200: #bbf7d4;
+    --colors-primary-300: #86efad;
+    --colors-primary-400: #4ade7e;
+    --colors-primary-50: #f0fdf5;
+    --colors-primary-500: #16a34a;
+    --colors-primary-600: #15803c;
+    --colors-primary-700: #166533;
+    --colors-primary-800: #14532a;
+    --colors-primary-900: #052e16;
+    --colors-text-primary: #052e16;
+    --colors-text-secondary: #166533;
+    --rounded-lg: 8px;
+    --rounded-md: 4px;
+    --rounded-none: 0px;
+    --rounded-sm: 2px;
+    --spacing-1: 4px;
+    --spacing-13: 52px;
+    --spacing-2: 8px;
+    --spacing-21: 84px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-scale_note: Fibonacci-derived: 4, 8, 12, 20, 32, 52, 84 — supplemented at 16 and 24 for grid alignment;
+    --typography-body-family: Source Sans 3;
+    --typography-body-weight: 400;
+    --typography-cjk_latin_pair-chinese: Source Han Sans;
+    --typography-cjk_latin_pair-japanese: Source Han Sans;
+    --typography-cjk_latin_pair-korean: Pretendard;
+    --typography-cjk_latin_pair-note: CJK families selected for published metric specimens; x-height matched to Source Sans 3 within 3.2 percent at 16px;
+    --typography-display-family: IBM Plex Mono;
+    --typography-display-weight: 600;
+    --typography-mono-family: IBM Plex Mono;
+    --typography-mono-weight: 400;
+    --bg: #f0faf5;
+    --fg: #052e16;
+    --accent: #16a34a;
+    --muted: #86efad;
+  }
+  
+  [data-variant="dark"] {
+    --colors-background-primary: #0f0e0d;
+    --colors-background-secondary: #1c1917;
+    --colors-border-default: #292524;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f5f5f4;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #e7e5e4;
+    --colors-neutral-300: #d6d3d1;
+    --colors-neutral-400: #a8a29e;
+    --colors-neutral-50: #fafaf9;
+    --colors-neutral-500: #78716c;
+    --colors-neutral-600: #57534e;
+    --colors-neutral-700: #44403c;
+    --colors-neutral-800: #292524;
+    --colors-neutral-900: #1c1917;
+    --colors-primary-100: #dcfce9;
+    --colors-primary-200: #bbf7d4;
+    --colors-primary-300: #86efad;
+    --colors-primary-400: #4ade7e;
+    --colors-primary-50: #f0fdf5;
+    --colors-primary-500: #16a34a;
+    --colors-primary-600: #15803c;
+    --colors-primary-700: #166533;
+    --colors-primary-800: #14532a;
+    --colors-primary-900: #052e16;
+    --colors-text-primary: #f5f5f4;
+    --colors-text-secondary: #a8a29e;
+    --rounded-lg: 8px;
+    --rounded-md: 4px;
+    --rounded-none: 0px;
+    --rounded-sm: 2px;
+    --spacing-1: 4px;
+    --spacing-13: 52px;
+    --spacing-2: 8px;
+    --spacing-21: 84px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-scale_note: Fibonacci-derived: 4, 8, 12, 20, 32, 52, 84 — supplemented at 16 and 24 for grid alignment;
+    --typography-body-family: Source Sans 3;
+    --typography-body-weight: 400;
+    --typography-cjk_latin_pair-chinese: Source Han Sans;
+    --typography-cjk_latin_pair-japanese: Source Han Sans;
+    --typography-cjk_latin_pair-korean: Pretendard;
+    --typography-cjk_latin_pair-note: CJK families selected for published metric specimens; x-height matched to Source Sans 3 within 3.2 percent at 16px;
+    --typography-display-family: IBM Plex Mono;
+    --typography-display-weight: 600;
+    --typography-mono-family: IBM Plex Mono;
+    --typography-mono-weight: 400;
+    --bg: #0f0e0d;
+    --fg: #f5f5f4;
+    --accent: #16a34a;
+    --muted: #86efad;
+  }
+  
+  [data-variant="light"] {
+    --colors-background-primary: #ffffff;
+    --colors-background-secondary: #f5f5f4;
+    --colors-border-default: #e7e5e4;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f5f5f4;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #e7e5e4;
+    --colors-neutral-300: #d6d3d1;
+    --colors-neutral-400: #a8a29e;
+    --colors-neutral-50: #fafaf9;
+    --colors-neutral-500: #78716c;
+    --colors-neutral-600: #57534e;
+    --colors-neutral-700: #44403c;
+    --colors-neutral-800: #292524;
+    --colors-neutral-900: #1c1917;
+    --colors-primary-100: #dcfce9;
+    --colors-primary-200: #bbf7d4;
+    --colors-primary-300: #86efad;
+    --colors-primary-400: #4ade7e;
+    --colors-primary-50: #f0fdf5;
+    --colors-primary-500: #16a34a;
+    --colors-primary-600: #15803c;
+    --colors-primary-700: #166533;
+    --colors-primary-800: #14532a;
+    --colors-primary-900: #052e16;
+    --colors-text-primary: #1c1917;
+    --colors-text-secondary: #57534e;
+    --rounded-lg: 8px;
+    --rounded-md: 4px;
+    --rounded-none: 0px;
+    --rounded-sm: 2px;
+    --spacing-1: 4px;
+    --spacing-13: 52px;
+    --spacing-2: 8px;
+    --spacing-21: 84px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-5: 20px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-scale_note: Fibonacci-derived: 4, 8, 12, 20, 32, 52, 84 — supplemented at 16 and 24 for grid alignment;
+    --typography-body-family: Source Sans 3;
+    --typography-body-weight: 400;
+    --typography-cjk_latin_pair-chinese: Source Han Sans;
+    --typography-cjk_latin_pair-japanese: Source Han Sans;
+    --typography-cjk_latin_pair-korean: Pretendard;
+    --typography-cjk_latin_pair-note: CJK families selected for published metric specimens; x-height matched to Source Sans 3 within 3.2 percent at 16px;
+    --typography-display-family: IBM Plex Mono;
+    --typography-display-weight: 600;
+    --typography-mono-family: IBM Plex Mono;
+    --typography-mono-weight: 400;
+    --bg: #ffffff;
+    --fg: #1c1917;
+    --accent: #16a34a;
+    --muted: #86efad;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap">
+</head>
+<body data-variant="light">
+  <nav class="switcher" aria-label="Variant switcher">
+    <button data-set="brand-a" aria-pressed="false">brand-a</button>
+    <button data-set="brand-b" aria-pressed="false">brand-b</button>
+    <button data-set="dark" aria-pressed="false">dark</button>
+    <button data-set="light" aria-pressed="true">light</button>
+    </nav>
+  <main class="wrap">
+    <p class="eyebrow">galileo-clinical-trial</p>
+    <h1>Analytics dashboard for clinical trial monitoring.</h1>
+    <p class="lede">Analytics dashboard for clinical trial monitoring — enrollment, dropout rates, and adverse event time series measured with scientific precision Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class="cta" href="#" aria-label="Primary call to action">Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

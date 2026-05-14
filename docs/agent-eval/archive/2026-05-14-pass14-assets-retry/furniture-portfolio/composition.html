@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="ko" data-variant="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>희양 스튜디오 — Heeyang Studio | Solid Walnut Furniture, Seoul</title>
+<style>
+  /* ─── Reset ─── */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* ─── Tokens (light default) ─── */
+  :root {
+    --colors-primary-50: #f2f0ec;
+    --colors-primary-100: #e2ddd6;
+    --colors-primary-200: #c4b9a8;
+    --colors-primary-400: #8d7b64;
+    --colors-primary-500: #6d5e49;
+    --colors-primary-600: #574a38;
+    --colors-primary-900: #3a3025;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-50: #f6f6f5;
+    --colors-neutral-100: #ececea;
+    --colors-neutral-200: #d5d5d0;
+    --colors-neutral-400: #8e8e86;
+    --colors-neutral-500: #6d6d64;
+    --colors-neutral-700: #3d3d36;
+    --colors-neutral-900: #1a1a17;
+    --colors-neutral-1000: #000000;
+    --colors-accent-50: #f2f0ee;
+    --colors-accent-500: #8a7d6d;
+    --colors-accent-900: #4a4135;
+    --colors-background-primary: #f6f6f5;
+    --colors-text-primary: #1a1a17;
+    --colors-background-secondary: #ececea;
+    --colors-text-secondary: #6d6d64;
+    --typography-display-family: 'Source Serif 4', 'Iosevka', 'Georgia', 'Noto Serif KR', serif;
+    --typography-body-family: 'Inter', 'Helvetica Neue', 'Noto Sans KR', sans-serif;
+    --spacing-0: 0px;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-24: 96px;
+    --spacing-32: 128px;
+    --spacing-40: 160px;
+    --spacing-56: 224px;
+    --rounded-none: 0px;
+    --rounded-xs: 2px;
+    --rounded-sm: 4px;
+    --rounded-md: 6px;
+  }
+
+  /* ─── Variants ─── */
+  body[data-variant="dark"] {
+    --colors-background-primary: #141413;
+    --colors-text-primary: #ececea;
+    --colors-background-secondary: #1f1f1c;
+    --colors-text-secondary: #8e8e86;
+  }
+  body[data-variant="brand-a"] {
+    --colors-background-primary: #f9f8f5;
+    --colors-text-primary: #2a2a24;
+    --colors-background-secondary: #efede8;
+    --colors-text-secondary: #7a7a6e;
+  }
+  body[data-variant="brand-b"] {
+    --colors-background-primary: #242018;
+    --colors-text-primary: #ddd9cf;
+    --colors-background-secondary: #302b22;
+    --colors-text-secondary: #9a9487;
+  }
+
+  /* ─── Base ─── */
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--colors-background-primary);
+    color: var(--colors-text-primary);
+    font-family: var(--typography-body-family);
+    font-weight: 300;
+    line-height: 1.6;
+    transition: background 0.4s ease, color 0.4s ease;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  a:hover { opacity: 0.7; }
+  a:focus-visible { outline: 2px solid var(--colors-primary-500); outline-offset: 2px; }
+  img { display: block; max-width: 100%; }
+
+  /* ─── Navigation ─── */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 var(--spacing-8);
+    background: var(--colors-background-primary);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s ease, background 0.4s ease;
+  }
+  .nav.scrolled { border-bottom-color: var(--colors-neutral-200); }
+  .nav__logo {
+    font-family: var(--typography-display-family);
+    font-weight: 300; font-size: 18px;
+    letter-spacing: 0.02em;
+    color: var(--colors-text-primary);
+  }
+  .nav__links { display: flex; gap: var(--spacing-8); }
+  .nav__links a {
+    font-size: 14px; font-weight: 300;
+    color: var(--colors-text-secondary);
+    transition: color 0.2s ease;
+  }
+  .nav__links a:hover { color: var(--colors-text-primary); opacity: 1; }
+
+  /* ─── Switcher ─── */
+  .switcher {
+    display: flex; gap: var(--spacing-2);
+    position: fixed; top: 16px; right: 16px; z-index: 200;
+  }
+  .switcher button {
+    background: var(--colors-background-secondary);
+    color: var(--colors-text-secondary);
+    border: 1px solid var(--colors-neutral-200);
+    padding: 6px 14px;
+    font-family: var(--typography-body-family);
+    font-size: 12px; font-weight: 300;
+    cursor: pointer;
+    border-radius: var(--rounded-sm);
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+  }
+  .switcher button:hover { background: var(--colors-neutral-400); color: var(--colors-neutral-0); }
+  .switcher button.active {
+    background: var(--colors-primary-900);
+    color: var(--colors-neutral-50);
+    border-color: var(--colors-primary-900);
+  }
+
+  /* ─── Hero ─── */
+  .hero {
+    position: relative;
+    width: 100%; height: 100vh; min-height: 600px;
+    overflow: hidden;
+    display: flex; align-items: flex-end;
+  }
+  .hero__grain-overlay {
+    position: absolute; inset: 0;
+    background:
+      repeating-conic-gradient(var(--colors-neutral-900) 0.0001%, transparent 0.0002%, transparent 0.0004%, var(--colors-neutral-900) 0.0005%) 50% 50% / 200px 200px,
+      linear-gradient(to bottom, rgba(242,240,236,0.02), rgba(58,48,37,0.08));
+    opacity: 0.45;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+  .hero__svg { width: 100%; height: 100%; position: absolute; inset: 0; }
+  .hero__text {
+    position: relative; z-index: 2;
+    padding: var(--spacing-8);
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  .hero__eyebrow {
+    font-size: 11px; font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--colors-primary-200);
+    margin-bottom: var(--spacing-2);
+  }
+  .hero__headline {
+    font-family: var(--typography-display-family);
+    font-weight: 300; font-size: clamp(36px, 6vw, 68px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--colors-neutral-50);
+    max-width: 580px;
+  }
+  .hero__sub {
+    font-weight: 300; font-size: 15px;
+    color: rgba(236,234,232,0.65);
+    margin-top: var(--spacing-4);
+    max-width: 380px;
+    line-height: 1.5;
+  }
+
+  /* ─── Intro ─── */
+  .intro {
+    max-width: 1080px; margin: 0 auto;
+    padding: var(--spacing-56) var(--spacing-8) var(--spacing-24);
+  }
+  .intro__text {
+    font-family: var(--typography-display-family);
+    font-weight: 300;
+    font-size: clamp(22px, 3vw, 32px);
+    line-height: 1.4;
+    max-width: 640px;
+    color: var(--colors-text-primary);
+  }
+
+  /* ─── Section headings ─── */
+  .section-label {
+    font-size: 11px; font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--colors-text-secondary);
+    margin-bottom: var(--spacing-6);
+  }
+  .section-title {
+    font-family: var(--typography-display-family);
+    font-weight: 300;
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-16);
+  }
+
+  /* ─── Work Grid ─── */
+  .work { max-width: 1080px; margin: 0 auto; padding: 0 var(--spacing-8) var(--spacing-24); }
+  .work__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-4);
+  }
+  @media (max-width: 680px) { .work__grid { grid-template-columns: 1fr; } }
+  .work__item { position: relative; cursor: pointer; }
+  .work__item:nth-child(3n+1) .work__image { aspect-ratio: 3/4; }
+  .work__item:nth-child(3n+2) .work__image { aspect-ratio: 1/1; }
+  .work__item:nth-child(3n) .work__image { aspect-ratio: 4/3; }
+  .work__image {
+    width: 100%; position: relative;
+    border-radius: var(--rounded-xs);
+    overflow: hidden;
+    transition: opacity 0.35s ease;
+  }
+  .work__item:hover .work__image { opacity: 0.82; }
+  .work__image svg { width: 100%; height: 100%; display: block; }
+  .work__meta {
+    padding: var(--spacing-2) 0 0;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .work__name {
+    font-family: var(--typography-display-family);
+    font-weight: 300; font-size: 15px;
+    color: var(--colors-text-primary);
+  }
+  .work__year {
+    font-size: 13px; font-weight: 300;
+    color: var(--colors-neutral-400);
+  }
+  .work__category {
+    font-size: 11px; font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--colors-text-secondary);
+    margin-top: 2px;
+  }
+
+  /* ─── Full-bleed interlude ─── */
+  .interlude {
+    width: 100%;
+    padding: var(--spacing-24) var(--spacing-8);
+  }
+  .interlude__inner {
+    max-width: 1080px; margin: 0 auto;
+    position: relative;
+    border-radius: var(--rounded-xs);
+    overflow: hidden;
+    aspect-ratio: 21/9;
+  }
+  .interlude__inner svg { width: 100%; height: 100%; display: block; }
+  .interlude__caption {
+    max-width: 1080px; margin: var(--spacing-4) auto 0;
+    font-size: 13px; font-weight: 300;
+    color: var(--colors-text-secondary);
+  }
+
+  /* ─── Process ─── */
+  .process {
+    max-width: 1080px; margin: 0 auto;
+    padding: var(--spacing-24) var(--spacing-8);
+    display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-16);
+    align-items: start;
+  }
+  @media (max-width: 680px) { .process { grid-template-columns: 1fr; } }
+  .process__image {
+    aspect-ratio: 3/4;
+    border-radius: var(--rounded-xs);
+    overflow: hidden;
+  }
+  .process__image svg { width: 100%; height: 100%; display: block; }
+  .process__content { padding-top: var(--spacing-8); }
+  .process__text {
+    font-size: 15px; line-height: 1.7;
+    color: var(--colors-text-secondary);
+    margin-bottom: var(--spacing-6);
+  }
+  .process__quote {
+    font-family: var(--typography-display-family);
+    font-weight: 300; font-size: 20px;
+    line-height: 1.5;
+    color: var(--colors-text-primary);
+    border-left: 2px solid var(--colors-primary-500);
+    padding-left: var(--spacing-6);
+    margin: var(--spacing-12) 0;
+  }
+
+  /* ─── Materials ─── */
+  .materials {
+    max-width: 1080px; margin: 0 auto;
+    padding: var(--spacing-24) var(--spacing-8);
+  }
+  .materials__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-4);
+  }
+  @media (max-width: 680px) { .materials__grid { grid-template-columns: 1fr; } }
+  .materials__swatch {
+    aspect-ratio: 1/1;
+    border-radius: var(--rounded-xs);
+    position: relative; overflow: hidden;
+  }
+  .materials__swatch svg { width: 100%; height: 100%; display: block; }
+  .materials__swatch-label {
+    position: absolute; bottom: var(--spacing-3); left: var(--spacing-3);
+    font-size: 11px; font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.75);
+  }
+
+  /* ─── Contact ─── */
+  .contact {
+    max-width: 1080px; margin: 0 auto;
+    padding: var(--spacing-32) var(--spacing-8) var(--spacing-24);
+    border-top: 1px solid var(--colors-neutral-200);
+  }
+  .contact__grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-16);
+    margin-top: var(--spacing-12);
+  }
+  @media (max-width: 680px) { .contact__grid { grid-template-columns: 1fr; } }
+  .contact__item {
+    display: flex; align-items: flex-start; gap: var(--spacing-3);
+  }
+  .contact__icon { flex-shrink: 0; color: var(--colors-text-secondary); margin-top: 2px; }
+  .contact__label {
+    font-size: 11px; font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--colors-text-secondary);
+    margin-bottom: var(--spacing-1);
+  }
+  .contact__value {
+    font-family: var(--typography-display-family);
+    font-weight: 300; font-size: 17px;
+    color: var(--colors-text-primary);
+    line-height: 1.5;
+  }
+  .contact__note {
+    font-size: 13px; font-weight: 300;
+    color: var(--colors-text-secondary);
+    line-height: 1.6;
+    max-width: 420px;
+    margin-top: var(--spacing-12);
+  }
+
+  /* ─── Footer ─── */
+  .footer {
+    max-width: 1080px; margin: 0 auto;
+    padding: var(--spacing-8);
+    padding-top: var(--spacing-16);
+    border-top: 1px solid var(--colors-neutral-200);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: var(--spacing-4);
+  }
+  .footer__left {
+    font-family: var(--typography-display-family);
+    font-weight: 300; font-size: 14px;
+    color: var(--colors-text-secondary);
+  }
+  .footer__right {
+    font-size: 12px; font-weight: 300;
+    color: var(--colors-neutral-400);
+    display: flex; gap: var(--spacing-6);
+  }
+
+  /* ─── Scroll progress ─── */
+  .scroll-line {
+    position: fixed; top: 64px; left: 0; z-index: 99;
+    height: 1px;
+    background: var(--colors-primary-500);
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+</style>
+
+<style data-aphrodite-variants>
+[data-variant="brand-a"] {
+  --colors-accent-50: #f2f0ee;
+  --colors-accent-500: #8a7d6d;
+  --colors-accent-900: #4a4135;
+  --colors-background-primary: #f9f8f5;
+  --colors-background-secondary: #efede8;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #ececea;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d5d5d0;
+  --colors-neutral-400: #8e8e86;
+  --colors-neutral-50: #f6f6f5;
+  --colors-neutral-500: #6d6d64;
+  --colors-neutral-700: #3d3d36;
+  --colors-neutral-900: #1a1a17;
+  --colors-primary-100: #e2ddd6;
+  --colors-primary-200: #c4b9a8;
+  --colors-primary-400: #8d7b64;
+  --colors-primary-50: #f2f0ec;
+  --colors-primary-500: #6d5e49;
+  --colors-primary-600: #574a38;
+  --colors-primary-900: #3a3025;
+  --colors-text-primary: #2a2a24;
+  --colors-text-secondary: #7a7a6e;
+  --rounded-md: 6px;
+  --rounded-none: 0px;
+  --rounded-sm: 4px;
+  --rounded-xs: 2px;
+  --spacing-0: 0px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-56: 224px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 300;
+  --typography-display-family: Source Serif 4;
+  --typography-display-weight: 300;
+  --bg: #f9f8f5;
+  --fg: #2a2a24;
+  --muted: #6d5e49;
+}
+[data-variant="brand-b"] {
+  --colors-accent-50: #f2f0ee;
+  --colors-accent-500: #8a7d6d;
+  --colors-accent-900: #4a4135;
+  --colors-background-primary: #242018;
+  --colors-background-secondary: #302b22;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #ececea;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d5d5d0;
+  --colors-neutral-400: #8e8e86;
+  --colors-neutral-50: #f6f6f5;
+  --colors-neutral-500: #6d6d64;
+  --colors-neutral-700: #3d3d36;
+  --colors-neutral-900: #1a1a17;
+  --colors-primary-100: #e2ddd6;
+  --colors-primary-200: #c4b9a8;
+  --colors-primary-400: #8d7b64;
+  --colors-primary-50: #f2f0ec;
+  --colors-primary-500: #6d5e49;
+  --colors-primary-600: #574a38;
+  --colors-primary-900: #3a3025;
+  --colors-text-primary: #ddd9cf;
+  --colors-text-secondary: #9a9487;
+  --rounded-md: 6px;
+  --rounded-none: 0px;
+  --rounded-sm: 4px;
+  --rounded-xs: 2px;
+  --spacing-0: 0px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-56: 224px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 300;
+  --typography-display-family: Source Serif 4;
+  --typography-display-weight: 300;
+  --bg: #242018;
+  --fg: #ddd9cf;
+  --muted: #6d5e49;
+}
+[data-variant="dark"] {
+  --colors-accent-50: #f2f0ee;
+  --colors-accent-500: #8a7d6d;
+  --colors-accent-900: #4a4135;
+  --colors-background-primary: #141413;
+  --colors-background-secondary: #1f1f1c;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #ececea;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d5d5d0;
+  --colors-neutral-400: #8e8e86;
+  --colors-neutral-50: #f6f6f5;
+  --colors-neutral-500: #6d6d64;
+  --colors-neutral-700: #3d3d36;
+  --colors-neutral-900: #1a1a17;
+  --colors-primary-100: #e2ddd6;
+  --colors-primary-200: #c4b9a8;
+  --colors-primary-400: #8d7b64;
+  --colors-primary-50: #f2f0ec;
+  --colors-primary-500: #6d5e49;
+  --colors-primary-600: #574a38;
+  --colors-primary-900: #3a3025;
+  --colors-text-primary: #ececea;
+  --colors-text-secondary: #8e8e86;
+  --rounded-md: 6px;
+  --rounded-none: 0px;
+  --rounded-sm: 4px;
+  --rounded-xs: 2px;
+  --spacing-0: 0px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-56: 224px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 300;
+  --typography-display-family: Source Serif 4;
+  --typography-display-weight: 300;
+  --bg: #141413;
+  --fg: #ececea;
+  --muted: #6d5e49;
+}
+[data-variant="light"] {
+  --colors-accent-50: #f2f0ee;
+  --colors-accent-500: #8a7d6d;
+  --colors-accent-900: #4a4135;
+  --colors-background-primary: #f6f6f5;
+  --colors-background-secondary: #ececea;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #ececea;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d5d5d0;
+  --colors-neutral-400: #8e8e86;
+  --colors-neutral-50: #f6f6f5;
+  --colors-neutral-500: #6d6d64;
+  --colors-neutral-700: #3d3d36;
+  --colors-neutral-900: #1a1a17;
+  --colors-primary-100: #e2ddd6;
+  --colors-primary-200: #c4b9a8;
+  --colors-primary-400: #8d7b64;
+  --colors-primary-50: #f2f0ec;
+  --colors-primary-500: #6d5e49;
+  --colors-primary-600: #574a38;
+  --colors-primary-900: #3a3025;
+  --colors-text-primary: #1a1a17;
+  --colors-text-secondary: #6d6d64;
+  --rounded-md: 6px;
+  --rounded-none: 0px;
+  --rounded-sm: 4px;
+  --rounded-xs: 2px;
+  --spacing-0: 0px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-56: 224px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 300;
+  --typography-display-family: Source Serif 4;
+  --typography-display-weight: 300;
+  --bg: #f6f6f5;
+  --fg: #1a1a17;
+  --muted: #6d5e49;
+}
+body{background:var(--bg);color:var(--fg);}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,700&family=Inter:wght@300;400;500;600;700&display=swap">
+</head>
+<body>
+
+<!-- Scroll progress -->
+<div class="scroll-line" id="scrollLine"></div>
+
+<!-- Navigation -->
+<nav class="nav" id="nav">
+  <a href="#" class="nav__logo">희양 스튜디오</a>
+  <div class="nav__links">
+    <a href="#work">Work</a>
+    <a href="#process">Process</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- Variant Switcher -->
+<nav class="switcher" aria-label="Theme variant switcher">
+  <button data-variant="light" class="active">light</button>
+  <button data-variant="dark">dark</button>
+  <button data-variant="brand-a">gallery</button>
+  <button data-variant="brand-b">workshop</button>
+</nav>
+
+<!-- ════════════ HERO ════════════ -->
+<section class="hero">
+  <svg class="hero__svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="heroBg" x1="0" y1="0" x2="0.3" y2="1">
+        <stop offset="0%" stop-color="#2c2418"/>
+        <stop offset="40%" stop-color="#1f1a12"/>
+        <stop offset="100%" stop-color="#141210"/>
+      </linearGradient>
+      <linearGradient id="tableTop" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#5c4a38"/>
+        <stop offset="50%" stop-color="#6b5a45"/>
+        <stop offset="100%" stop-color="#4e3f30"/>
+      </linearGradient>
+      <linearGradient id="tableFront" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#3d3228"/>
+        <stop offset="100%" stop-color="#2a221a"/>
+      </linearGradient>
+      <linearGradient id="lightCone" x1="0.5" y1="0" x2="0.5" y2="1">
+        <stop offset="0%" stop-color="rgba(255,248,235,0.18)"/>
+        <stop offset="100%" stop-color="rgba(255,248,235,0)"/>
+      </linearGradient>
+      <filter id="grain">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+        <feColorMatrix type="saturate" values="0"/>
+      </filter>
+    </defs>
+    <!-- Background -->
+    <rect width="1440" height="900" fill="url(#heroBg)"/>
+    <!-- Light cone -->
+    <polygon points="520,0 720,0 920,900 420,900" fill="url(#lightCone)"/>
+    <!-- Floor plane -->
+    <rect x="0" y="560" width="1440" height="340" fill="#1a1610" opacity="0.6"/>
+    <line x1="0" y1="560" x2="1440" y2="560" stroke="#3a3228" stroke-width="0.5" opacity="0.4"/>
+    <!-- Back wall subtle texture lines -->
+    <line x1="400" y1="0" x2="400" y2="560" stroke="#2a2218" stroke-width="0.3" opacity="0.2"/>
+    <line x1="1040" y1="0" x2="1040" y2="560" stroke="#2a2218" stroke-width="0.3" opacity="0.2"/>
+    <!-- Table surface (receding perspective) -->
+    <polygon points="340,430 1100,430 1180,560 260,560" fill="url(#tableTop)"/>
+    <!-- Table front apron -->
+    <polygon points="260,560 1180,560 1180,575 260,575" fill="url(#tableFront)"/>
+    <!-- Table legs -->
+    <rect x="290" y="575" width="14" height="180" fill="#2a221a" rx="1"/>
+    <rect x="1136" y="575" width="14" height="180" fill="#2a221a" rx="1"/>
+    <rect x="540" y="575" width="10" height="180" fill="#25201a" rx="1"/>
+    <rect x="890" y="575" width="10" height="180" fill="#25201a" rx="1"/>
+    <!-- Objects on table -->
+    <!-- Vase -->
+    <ellipse cx="680" cy="430" rx="22" ry="6" fill="#4a4035"/>
+    <path d="M665,430 Q665,370 672,350 Q680,335 688,350 Q695,370 695,430 Z" fill="#5a5248"/>
+    <ellipse cx="680" cy="350" rx="10" ry="3" fill="#6a6258"/>
+    <!-- Twig in vase -->
+    <line x1="680" y1="350" x2="675" y2="310" stroke="#8a7d6d" stroke-width="1.5"/>
+    <line x1="676" y1="325" x2="668" y2="305" stroke="#8a7d6d" stroke-width="1"/>
+    <line x1="678" y1="318" x2="688" y2="298" stroke="#8a7d6d" stroke-width="1"/>
+    <!-- Small bowl -->
+    <ellipse cx="500" cy="450" rx="35" ry="10" fill="#4e4035"/>
+    <path d="M465,450 Q465,435 500,432 Q535,435 535,450" fill="#5c4e42"/>
+    <!-- Book stack -->
+    <rect x="830" y="418" width="70" height="8" fill="#6d5e49" rx="1"/>
+    <rect x="833" y="410" width="65" height="8" fill="#8d7b64" rx="1"/>
+    <rect x="836" y="402" width="60" height="8" fill="#7a6b55" rx="1"/>
+    <!-- Chair (partially visible, right side) -->
+    <rect x="1020" y="380" width="120" height="8" fill="#5c4a38" rx="1"/>
+    <rect x="1020" y="300" width="8" height="80" fill="#4e3f30" rx="1"/>
+    <rect x="1132" y="300" width="8" height="80" fill="#4e3f30" rx="1"/>
+    <rect x="1020" y="300" width="120" height="6" fill="#6b5a45" rx="1"/>
+    <!-- Chair back slats -->
+    <rect x="1030" y="230" width="6" height="70" fill="#5c4a38" rx="1"/>
+    <rect x="1050" y="230" width="6" height="70" fill="#5c4a38" rx="1"/>
+    <rect x="1070" y="230" width="6" height="70" fill="#5c4a38" rx="1"/>
+    <!-- Chair seat legs -->
+    <rect x="1024" y="460" width="6" height="120" fill="#3d3228" rx="1"/>
+    <rect x="1130" y="460" width="6" height="120" fill="#3d3228" rx="1"/>
+    <rect x="1040" y="460" width="5" height="120" fill="#352c22" rx="1"/>
+    <rect x="1118" y="460" width="5" height="120" fill="#352c22" rx="1"/>
+    <!-- Shadow under table -->
+    <ellipse cx="720" cy="758" rx="420" ry="12" fill="#0a0908" opacity="0.4"/>
+    <!-- Grain overlay -->
+    <rect width="1440" height="900" filter="url(#grain)" opacity="0.06"/>
+  </svg>
+  <div class="hero__grain-overlay"></div>
+  <div class="hero__text">
+    <p class="hero__eyebrow">Solid Walnut Furniture · Seoul</p>
+    <h1 class="hero__headline">희양 스튜디오<br>Heeyang Studio</h1>
+    <p class="hero__sub">각 가구는 땔감 고호(Juglans regia)의 질감과 결을 따라 손으로 빚어집니다.</p>
+  </div>
+</section>
+
+<!-- ════════════ INTRO ════════════ -->
+<section class="intro">
+  <p class="intro__text">
+    희양 스튜디오는 서울에서 호두나무 원목으로 가구를 만드는 독립 공방입니다.
+    모든 작업은 소재가 가진 고유한 결과 색을 존중하며, 불필요한 장식을 덜어내어
+    형태의 본질만을 남깁니다.
+  </p>
+</section>
+
+<!-- ════════════ WORK ════════════ -->
+<section class="work" id="work">
+  <p class="section-label">Selected Work</p>
+  <h2 class="section-title">작업</h2>
+
+  <div class="work__grid">
+
+    <!-- 1 — Stool -->
+    <article class="work__item">
+      <div class="work__image">
+        <svg viewBox="0 0 600 800" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="bg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--colors-background-secondary)"/><stop offset="100%" stop-color="var(--colors-background-primary)"/></linearGradient>
+          </defs>
+          <rect width="600" height="800" fill="url(#bg1)"/>
+          <!-- Stool seat -->
+          <rect x="160" y="280" width="280" height="22" fill="#6b5a45" rx="3"/>
+          <rect x="165" y="280" width="270" height="4" fill="#7a6b55" rx="1"/>
+          <!-- Grain lines on seat -->
+          <line x1="200" y1="285" x2="200" y2="300" stroke="#8d7b64" stroke-width="0.5" opacity="0.4"/>
+          <line x1="260" y1="284" x2="260" y2="300" stroke="#8d7b64" stroke-width="0.3" opacity="0.3"/>
+          <line x1="320" y1="284" x2="320" y2="300" stroke="#8d7b64" stroke-width="0.5" opacity="0.4"/>
+          <line x1="380" y1="285" x2="380" y2="300" stroke="#8d7b64" stroke-width="0.3" opacity="0.3"/>
+          <!-- Legs -->
+          <rect x="185" y="302" width="16" height="300" fill="#5c4a38" rx="2"/>
+          <rect x="399" y="302" width="16" height="300" fill="#5c4a38" rx="2"/>
+          <rect x="285" y="302" width="14" height="300" fill="#4e3f30" rx="2"/>
+          <!-- Stretchers -->
+          <rect x="195" y="460" width="210" height="8" fill="#4e3f30" rx="1"/>
+          <rect x="195" y="462" width="210" height="2" fill="#5c4a38" rx="1"/>
+          <!-- Shadow -->
+          <ellipse cx="300" cy="610" rx="140" ry="8" fill="#3a3025" opacity="0.15"/>
+        </svg>
+      </div>
+      <div class="work__meta">
+        <div>
+          <div class="work__name">결 스툴</div>
+          <div class="work__category">Stool</div>
+        </div>
+        <span class="work__year">2024</span>
+      </div>
+    </article>
+
+    <!-- 2 — Shelf -->
+    <article class="work__item">
+      <div class="work__image">
+        <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="var(--colors-background-secondary)"/><stop offset="100%" stop-color="var(--colors-background-primary)"/></linearGradient>
+          </defs>
+          <rect width="600" height="600" fill="url(#bg2)"/>
+          <!-- Uprights -->
+          <rect x="100" y="60" width="18" height="480" fill="#5c4a38" rx="2"/>
+          <rect x="482" y="60" width="18" height="480" fill="#5c4a38" rx="2"/>
+          <!-- Shelves -->
+          <rect x="100" y="120" width="400" height="14" fill="#6b5a45" rx="1"/>
+          <rect x="100" y="240" width="400" height="14" fill="#6b5a45" rx="1"/>
+          <rect x="100" y="360" width="400" height="14" fill="#6b5a45" rx="1"/>
+          <rect x="100" y="480" width="400" height="14" fill="#6b5a45" rx="1"/>
+          <!-- Shelf top highlights -->
+          <rect x="100" y="120" width="400" height="3" fill="#7a6b55" rx="1"/>
+          <rect x="100" y="240" width="400" height="3" fill="#7a6b55" rx="1"/>
+          <rect x="100" y="360" width="400" height="3" fill="#7a6b55" rx="1"/>
+          <rect x="100" y="480" width="400" height="3" fill="#7a6b55" rx="1"/>
+          <!-- Books on shelf 1 -->
+          <rect x="130" y="82" width="18" height="38" fill="#8d7b64" rx="1"/>
+          <rect x="152" y="88" width="14" height="32" fill="#c4b9a8" rx="1"/>
+          <rect x="170" y="80" width="20" height="40" fill="#6d5e49" rx="1"/>
+          <rect x="194" y="86" width="12" height="34" fill="#a89880" rx="1"/>
+          <!-- Vase on shelf 2 -->
+          <ellipse cx="380" cy="230" rx="20" ry="5" fill="#4e3f30"/>
+          <path d="M365,230 Q365,195 375,185 Q380,180 385,185 Q395,195 395,230" fill="#5c4e42"/>
+          <!-- Box on shelf 3 -->
+          <rect x="140" y="332" width="40" height="28" fill="#8d7b64" rx="2"/>
+          <rect x="140" y="332" width="40" height="3" fill="#a89880" rx="1"/>
+          <!-- Small object on shelf 4 -->
+          <circle cx="400" cy="472" r="10" fill="#c4b9a8"/>
+          <rect x="430" y="458" width="30" height="22" fill="#6d5e49" rx="2"/>
+        </svg>
+      </div>
+      <div class="work__meta">
+        <div>
+          <div class="work__name">단층 선반</div>
+          <div class="work__category">Shelving</div>
+        </div>
+        <span class="work__year">2024</span>
+      </div>
+    </article>
+
+    <!-- 3 — Dining Table -->
+    <article class="work__item">
+      <div class="work__image">
+        <svg viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="bg3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--colors-background-secondary)"/><stop offset="100%" stop-color="var(--colors-background-primary)"/></linearGradient>
+            <linearGradient id="tableSurf" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#6b5a45"/><stop offset="30%" stop-color="#7a6b55"/><stop offset="70%" stop-color="#6b5a45"/><stop offset="100%" stop-color="#5c4a38"/></linearGradient>
+          </defs>
+          <rect width="600" height="450" fill="url(#bg3)"/>
+          <!-- Table top (perspective) -->
+          <polygon points="60,160 540,160 560,180
