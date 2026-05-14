@@ -4,6 +4,7 @@ pub mod extractor;
 pub mod hero;
 pub mod offline;
 pub mod provider;
+pub mod refine;
 pub mod skill;
 pub mod surface;
 

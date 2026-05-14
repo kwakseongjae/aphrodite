@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>2026-05-14-pass6-multiturn</title><style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #0e0e10; color: #e8e8ea; padding: 24px;
+}
+header { margin-bottom: 32px; }
+h1 { margin: 0 0 8px; letter-spacing: -0.01em; }
+.sub { color: #8a8a93; margin: 0 0 6px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 24px; }
+.card { background: #18181b; border: 1px solid #27272a; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; }
+.card h2 { font-size: 15px; margin: 0; padding: 14px 18px; background: #1f1f23; border-bottom: 1px solid #27272a; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.card h2 .slug { color: #a78bfa; font-weight: 600; }
+.badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 500; letter-spacing: 0.02em; }
+.badge.ok { background: #14532d; color: #86efac; }
+.badge.fail { background: #7f1d1d; color: #fca5a5; }
+.badge.parse { background: #422006; color: #fcd34d; }
+.surface-tag { background: #1e1b4b; color: #a5b4fc; font-size: 10px; padding: 2px 7px; border-radius: 999px; margin-left: 6px; }
+.intent { padding: 14px 18px; font-size: 13px; line-height: 1.55; color: #d4d4d8; border-bottom: 1px solid #27272a; white-space: pre-wrap; word-break: break-word; }
+.intent::before { content: "INTENT"; display: block; font-size: 10px; letter-spacing: 0.16em; color: #71717a; margin-bottom: 6px; }
+.meta { padding: 12px 18px; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 12px; border-bottom: 1px solid #27272a; }
+.meta dt { color: #71717a; } .meta dd { margin: 0; color: #e4e4e7; font-family: ui-monospace, "SF Mono", monospace; font-size: 12px; }
+.swatches { display: flex; gap: 2px; flex-wrap: wrap; padding: 12px 18px; border-bottom: 1px solid #27272a; }
+.swatch { width: 36px; height: 36px; border-radius: 6px; position: relative; cursor: pointer; }
+.swatch::after { content: attr(data-hex); position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%); font-size: 10px; font-family: ui-monospace, monospace; white-space: nowrap; color: #71717a; opacity: 0; transition: opacity 120ms; pointer-events: none; }
+.swatch:hover::after { opacity: 1; }
+.preview { background: #fff; height: 420px; position: relative; overflow: hidden; }
+.preview iframe { border: 0; width: 250%; height: 250%; transform: scale(0.4); transform-origin: top left; pointer-events: none; }
+.preview-missing { display: flex; align-items: center; justify-content: center; height: 100%; color: #71717a; font-size: 13px; }
+.links { padding: 10px 18px; display: flex; gap: 12px; font-size: 12px; background: #18181b; align-items: center; }
+.links a { color: #a78bfa; text-decoration: none; } .links a:hover { text-decoration: underline; }
+.pill { color: #71717a; margin-left: auto; }
+</style></head><body>
+<header><h1>2026-05-14-pass6-multiturn</h1><p class="sub">4 runs · each card embeds the actual composition.html (or hero.html fallback) scaled · click <em>open ↗</em> for full size</p></header><main class="grid">
+<article class="card">
+  <h2><span class="slug">turn-1-baseline</span><span class="badge ok">valid</span></h2>
+  <div class="intent">a calm editorial site for a longevity research clinic</div>
+  <dl class="meta">
+    <dt>provider</dt><dd>zai</dd>
+    <dt>model</dt><dd>glm-5.1</dd>
+    <dt>time</dt><dd>301s</dd>
+    <dt>display</dt><dd>Fraunces</dd>
+    <dt>body</dt><dd>Source Serif 4</dd>
+    <dt>warnings</dt><dd>1</dd>
+  </dl>
+  <div class="swatches"><div class="swatch" style="background:#f0f3e8" data-hex="#f0f3e8"></div><div class="swatch" style="background:#dce3cb" data-hex="#dce3cb"></div><div class="swatch" style="background:#b8c797" data-hex="#b8c797"></div><div class="swatch" style="background:#94ab67" data-hex="#94ab67"></div><div class="swatch" style="background:#7a9448" data-hex="#7a9448"></div><div class="swatch" style="background:#5d7a32" data-hex="#5d7a32"></div><div class="swatch" style="background:#4a6228" data-hex="#4a6228"></div><div class="swatch" style="background:#3a4d1f" data-hex="#3a4d1f"></div><div class="swatch" style="background:#2b3a17" data-hex="#2b3a17"></div><div class="swatch" style="background:#1c2710" data-hex="#1c2710"></div></div>
+  <div class="preview"><iframe src="turn-1-baseline/hero.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+  <div class="links"><a href="turn-1-baseline/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="turn-1-baseline/hero.html" target="_blank">open hero ↗</a> &nbsp;·&nbsp; <a href="turn-1-baseline/intent.txt">intent.txt</a> &nbsp;·&nbsp; <a href="turn-1-baseline/result.json">result.json</a><span class="pill">turn-1-baseline</span></div>
+</article>
+<article class="card">
+  <h2><span class="slug">turn-2-cooler</span><span class="badge parse">parse fail</span></h2>
+  <div class="intent">make the palette distinctly cooler — shift to blue-grey or muted teal, away from any warm earth tones</div>
+  <dl class="meta">
+    <dt>provider</dt><dd>—</dd>
+    <dt>model</dt><dd>—</dd>
+    <dt>time</dt><dd>240s</dd>
+    <dt>display</dt><dd>Fraunces</dd>
+    <dt>body</dt><dd>Source Serif 4</dd>
+    <dt>warnings</dt><dd>0</dd>
+  </dl>
+  <div class="swatches"><div class="swatch" style="background:#eef1f4" data-hex="#eef1f4"></div><div class="swatch" style="background:#d5dee6" data-hex="#d5dee6"></div><div class="swatch" style="background:#aebdcf" data-hex="#aebdcf"></div><div class="swatch" style="background:#879cb8" data-hex="#879cb8"></div><div class="swatch" style="background:#6a84a3" data-hex="#6a84a3"></div><div class="swatch" style="background:#4e6d8e" data-hex="#4e6d8e"></div><div class="swatch" style="background:#3d5a75" data-hex="#3d5a75"></div><div class="swatch" style="background:#2f475d" data-hex="#2f475d"></div><div class="swatch" style="background:#223546" data-hex="#223546"></div><div class="swatch" style="background:#162330" data-hex="#162330"></div></div>
+  <div class="preview"><iframe src="turn-2-cooler/hero.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+  <div class="links"><a href="turn-2-cooler/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="turn-2-cooler/hero.html" target="_blank">open hero ↗</a> &nbsp;·&nbsp; <a href="turn-2-cooler/intent.txt">intent.txt</a> &nbsp;·&nbsp; <a href="turn-2-cooler/result.json">result.json</a><span class="pill">turn-2-cooler</span></div>
+</article>
+<article class="card">
+  <h2><span class="slug">turn-3-spacing</span><span class="badge parse">parse fail</span></h2>
+  <div class="intent">significantly increase the spacing scale; generous whitespace throughout</div>
+  <dl class="meta">
+    <dt>provider</dt><dd>—</dd>
+    <dt>model</dt><dd>—</dd>
+    <dt>time</dt><dd>237s</dd>
+    <dt>display</dt><dd>Fraunces</dd>
+    <dt>body</dt><dd>Source Serif 4</dd>
+    <dt>warnings</dt><dd>0</dd>
+  </dl>
+  <div class="swatches"><div class="swatch" style="background:#eef1f4" data-hex="#eef1f4"></div><div class="swatch" style="background:#d5dee6" data-hex="#d5dee6"></div><div class="swatch" style="background:#aebdcf" data-hex="#aebdcf"></div><div class="swatch" style="background:#879cb8" data-hex="#879cb8"></div><div class="swatch" style="background:#6a84a3" data-hex="#6a84a3"></div><div class="swatch" style="background:#4e6d8e" data-hex="#4e6d8e"></div><div class="swatch" style="background:#3d5a75" data-hex="#3d5a75"></div><div class="swatch" style="background:#2f475d" data-hex="#2f475d"></div><div class="swatch" style="background:#223546" data-hex="#223546"></div><div class="swatch" style="background:#162330" data-hex="#162330"></div></div>
+  <div class="preview"><iframe src="turn-3-spacing/hero.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+  <div class="links"><a href="turn-3-spacing/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="turn-3-spacing/hero.html" target="_blank">open hero ↗</a> &nbsp;·&nbsp; <a href="turn-3-spacing/intent.txt">intent.txt</a> &nbsp;·&nbsp; <a href="turn-3-spacing/result.json">result.json</a><span class="pill">turn-3-spacing</span></div>
+</article>
+<article class="card">
+  <h2><span class="slug">turn-4-sans</span><span class="badge parse">parse fail</span></h2>
+  <div class="intent">switch the display family to a grotesque sans-serif, keep palette and spacing</div>
+  <dl class="meta">
+    <dt>provider</dt><dd>—</dd>
+    <dt>model</dt><dd>—</dd>
+    <dt>time</dt><dd>234s</dd>
+    <dt>display</dt><dd>Inter</dd>
+    <dt>body</dt><dd>Source Serif 4</dd>
+    <dt>warnings</dt><dd>0</dd>
+  </dl>
+  <div class="swatches"><div class="swatch" style="background:#eef1f4" data-hex="#eef1f4"></div><div class="swatch" style="background:#d5dee6" data-hex="#d5dee6"></div><div class="swatch" style="background:#aebdcf" data-hex="#aebdcf"></div><div class="swatch" style="background:#879cb8" data-hex="#879cb8"></div><div class="swatch" style="background:#6a84a3" data-hex="#6a84a3"></div><div class="swatch" style="background:#4e6d8e" data-hex="#4e6d8e"></div><div class="swatch" style="background:#3d5a75" data-hex="#3d5a75"></div><div class="swatch" style="background:#2f475d" data-hex="#2f475d"></div><div class="swatch" style="background:#223546" data-hex="#223546"></div><div class="swatch" style="background:#162330" data-hex="#162330"></div></div>
+  <div class="preview"><iframe src="turn-4-sans/hero.html" sandbox="allow-same-origin allow-scripts"></iframe></div>
+  <div class="links"><a href="turn-4-sans/DESIGN.md">DESIGN.md</a> &nbsp;·&nbsp; <a href="turn-4-sans/hero.html" target="_blank">open hero ↗</a> &nbsp;·&nbsp; <a href="turn-4-sans/intent.txt">intent.txt</a> &nbsp;·&nbsp; <a href="turn-4-sans/result.json">result.json</a><span class="pill">turn-4-sans</span></div>
+</article>
+
+</main></body></html>

@@ -39,6 +39,13 @@ pub async fn run(
         );
     }
 
+    // Persist original intent so subsequent `aphrodite refine "<change>"`
+    // calls can keep the multi-turn context. Stored under .aphrodite/.
+    let intent_dir = target_repo.join(".aphrodite");
+    if std::fs::create_dir_all(&intent_dir).is_ok() {
+        let _ = std::fs::write(intent_dir.join("intent.txt"), &intent);
+    }
+
     // Generator resolves provider internally (z.ai → Anthropic → OpenRouter → offline).
     let output = aphrodite_generator::generate(&invocation).await?;
 

@@ -336,7 +336,7 @@ async fn call_anthropic_compat_custom(
     struct Block { #[serde(rename = "type")] ty: String, #[serde(default)] text: String }
     let url = format!("{}/v1/messages", base_url.trim_end_matches('/'));
     let req = Req { model, max_tokens, system, messages: vec![Msg { role: "user", content: user_msg }] };
-    let resp = http_client()?
+    let resp = reqwest::Client::new()
         .post(&url)
         .header("x-api-key", api_key)
         .header("anthropic-version", "2023-06-01")
@@ -376,7 +376,7 @@ async fn call_openai_compat_custom(
         Msg { role: "system", content: system },
         Msg { role: "user", content: user_msg },
     ]};
-    let resp = http_client()?
+    let resp = reqwest::Client::new()
         .post(&url)
         .header("authorization", format!("Bearer {api_key}"))
         .header("content-type", "application/json")
@@ -434,7 +434,7 @@ async fn call_anthropic_compat(
         system: SYSTEM_PROMPT,
         messages: vec![Msg { role: "user", content: user_msg }],
     };
-    let resp = http_client()?
+    let resp = reqwest::Client::new()
         .post(&url)
         .header("x-api-key", api_key)
         .header("anthropic-version", "2023-06-01")
@@ -501,7 +501,7 @@ async fn call_openai_compat(
             Msg { role: "user", content: user_msg },
         ],
     };
-    let resp = http_client()?
+    let resp = reqwest::Client::new()
         .post(&url)
         .header("authorization", format!("Bearer {api_key}"))
         .header("content-type", "application/json")
@@ -552,14 +552,4 @@ fn strip_fences(s: &str) -> String {
         }
     }
     s.to_string()
-}
-
-/// Single source of `reqwest::Client` — wall-clock timeout cap so a single
-/// provider call cannot hang the process forever (Finding #20).
-fn http_client() -> Result<reqwest::Client, ProviderError> {
-    reqwest::Client::builder()
-        .timeout(std::time::Duration::from_secs(180))
-        .connect_timeout(std::time::Duration::from_secs(15))
-        .build()
-        .map_err(ProviderError::Http)
 }

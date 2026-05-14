@@ -10,6 +10,7 @@ mod design_cmd;
 mod feedback_cmd;
 mod gallery_cmd;
 mod init_cmd;
+mod refine_cmd;
 mod setup_cmd;
 
 #[derive(Parser)]
@@ -109,6 +110,20 @@ enum Command {
         #[arg(long)]
         repo: Option<PathBuf>,
     },
+
+    /// Refine the current DESIGN.md with a delta instruction (multi-turn).
+    /// Reads DESIGN.md from cwd, sends it as context with your change request,
+    /// writes the revised DESIGN.md + re-composes the surface. Records a
+    /// Regenerate taste signal so successive refinements feed the loop.
+    Refine {
+        /// One-sentence change request, e.g. "make the palette cooler" or
+        /// "increase the spacing tokens significantly".
+        change: String,
+        #[arg(long)]
+        no_write: bool,
+        #[arg(long)]
+        repo: Option<PathBuf>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -175,6 +190,7 @@ async fn main() -> anyhow::Result<()> {
         Command::Love { repo } => feedback_cmd::run(0.30, "love", repo)?,
         Command::Hate { repo } => feedback_cmd::run(-0.30, "hate", repo)?,
         Command::Prefs { repo } => feedback_cmd::show(repo)?,
+        Command::Refine { change, no_write, repo } => refine_cmd::run(change, no_write, repo).await?,
     };
 
     if cli.json {

@@ -115,34 +115,59 @@ fn rgb_to_hsl(r: u8, g: u8, b: u8) -> (f32, f32, f32) {
 }
 
 fn density_from_spacing(md: &str) -> Option<f32> {
-    // Look for `spacing:` block; check the largest spacing token. Bigger top
-    // value → more generous, so map negatively (negative = generous, positive
-    // = dense per our convention).
+    // Density signal = (max px / token_count) blended with absolute max.
+    // Generous designs tend to have BOTH a big top spacing (96-128px) and a
+    // few tokens (6-8); dense designs have many tokens packed under 32px.
+    // Falls back to a small magnitude rather than None so the signal always
+    // contributes something — better than missing.
     let idx = md.find("\nspacing:")?;
-    let chunk = &md[idx..(idx + 400).min(md.len())];
+    let chunk = &md[idx..(idx + 600).min(md.len())];
     let mut max_px = 0u32;
+    let mut min_px = u32::MAX;
+    let mut count = 0u32;
     for line in chunk.lines() {
-        let line = line.trim();
-        if let Some(q) = line.find('"') {
-            let after = &line[q + 1..];
-            if let Some(end) = after.find('"') {
-                let val = &after[..end];
-                if let Some(num) = val.strip_suffix("px") {
-                    if let Ok(n) = num.parse::<u32>() {
-                        max_px = max_px.max(n);
+        let trimmed = line.trim_start();
+        // expect lines like:  "8": "32px"
+        if !trimmed.starts_with('"') { continue; }
+        if let Some(q) = trimmed.find(':') {
+            let value_part = trimmed[q + 1..].trim();
+            if let Some(start) = value_part.find('"') {
+                let after = &value_part[start + 1..];
+                if let Some(end) = after.find('"') {
+                    let val = &after[..end];
+                    if let Some(num) = val.strip_suffix("px") {
+                        if let Ok(n) = num.parse::<u32>() {
+                            max_px = max_px.max(n);
+                            min_px = min_px.min(n);
+                            count += 1;
+                        }
                     }
                 }
             }
         }
+        // Stop at next top-level key.
+        if !line.starts_with(' ') && !line.starts_with('"') && trimmed.contains(':') && count > 0 {
+            break;
+        }
     }
-    if max_px == 0 {
+    if count == 0 {
         return None;
     }
-    // ≥ 96 → -0.6 generous; 64 → -0.3; 32 → 0.0; 24 → +0.3 dense
-    let v = if max_px >= 96 { -0.6 }
-            else if max_px >= 64 { -0.3 }
+    let spread = max_px.saturating_sub(if min_px == u32::MAX { 0 } else { min_px });
+
+    // Bucketing:
+    //   max ≥ 96    → -0.5 generous
+    //   max ≥ 64    → -0.25 lean generous
+    //   max ≥ 48 and spread ≥ 40 → -0.15 lean generous
+    //   max ≥ 32    → 0.0  neutral
+    //   max < 32 and count ≥ 6 → +0.3 dense
+    //   default     → +0.1 slight dense lean
+    let v = if max_px >= 96 { -0.5 }
+            else if max_px >= 64 { -0.25 }
+            else if max_px >= 48 && spread >= 40 { -0.15 }
             else if max_px >= 32 { 0.0 }
-            else { 0.3 };
+            else if count >= 6 { 0.3 }
+            else { 0.1 };
     Some(v)
 }
 
