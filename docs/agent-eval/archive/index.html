@@ -96,6 +96,12 @@
     <p class="desc">Verifies that `aphrodite refine "<delta>"` behaves as refinement (not redesign): turn 2 changes the hue alone, turn 3 changes spacing alone, turn 4 changes the display family alone. The cool blue from turn 2 persists three turns later; spacing from turn 3 survives the display swap in turn 4. Body font even stayed unchanged in turn 4 because the request didn't mention it — the nuance landed. <strong>Limitation:</strong> deltas were pre-scripted, not reactive — see Pass 7.</p>
   </a>
 
+  <a class="pass" href="2026-05-14-pass9-skillify/">
+    <h2>Pass 9 — skill scaffold loading <span class="tag live">DECISIVE · 0 refines · Pass 7 parity</span></h2>
+    <div class="meta">2026-05-14 · same intent, skill scaffold injected · 4 axes Pass 7 needed 4 reactive turns to find now land on initial design</div>
+    <p class="desc">Closes Findings #27 + #28. <strong>Newsreader is the smoking gun</strong> — the seeded <code>editorial-portfolio</code> skill body lists exactly three recommended display families (Source Serif 4 / Newsreader / Fraunces); generator picked one of them. Spacing scale extended to 224 px (skill's prescription). brand-a #f6f5f2 gallery-white instead of Pass 8's parchment-bias. Body Outfit identical to Pass 7 final. Wall clock 286 s vs Pass 7's 1036 s reactive — 28% of the time, zero caller attention, full architectural parity. Architecture win: skills compress 4 reactive turns into 0 internal refines.</p>
+  </a>
+
   <a class="pass" href="2026-05-14-pass8-autonomous/">
     <h2>Pass 8 — autonomous <code>aphrodite create</code> (no external turns) <span class="tag live">internal loop · 2 runs</span></h2>
     <div class="meta">2026-05-14 · same intent as Pass 7 · harness internalises critic→refine loop · zero caller input</div>

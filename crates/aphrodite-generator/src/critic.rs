@@ -108,6 +108,11 @@ pub enum CriticError {
 }
 
 /// Run one critic pass. The caller controls the loop.
+///
+/// `skill_scaffold` is an optional pre-rendered block of relevant skill bodies
+/// (from `aphrodite_core::skills::build_scaffold_block`). When non-empty, it's
+/// prepended to the system prompt so the critic has concrete checklists for
+/// the intent's domain instead of judging in a vacuum.
 pub async fn critique(
     resolved: &ResolvedProvider,
     intent: &str,
@@ -115,6 +120,7 @@ pub async fn critique(
     composition_html: &str,
     prior_deltas: &[String],
     taste_hint: &str,
+    skill_scaffold: &str,
 ) -> Result<SelfCritique, CriticError> {
     let history_block = if prior_deltas.is_empty() {
         "(no prior refinement turns)".to_string()
@@ -131,6 +137,12 @@ pub async fn critique(
     // can run 1k+ lines and the structural signal is in the first 200ish.
     let composition_excerpt = excerpt(composition_html, 8_000);
 
+    let system_prompt = if skill_scaffold.is_empty() {
+        CRITIC_SYSTEM_PROMPT.to_string()
+    } else {
+        format!("{CRITIC_SYSTEM_PROMPT}\n\n{skill_scaffold}\n\nUse the scaffolded checklists above when picking the weakest axis — a violation of a scaffolded rule outranks an aesthetic instinct.")
+    };
+
     let user = format!(
         "INTENT:\n{intent}\n\n\
          CURRENT DESIGN.md:\n----- BEGIN DESIGN.md -----\n{design_md}\n----- END DESIGN.md -----\n\n\
@@ -140,7 +152,7 @@ pub async fn critique(
          Now emit the JSON verdict per the contract above."
     );
 
-    let raw = provider::call_raw(resolved, CRITIC_SYSTEM_PROMPT, &user, 1024).await?;
+    let raw = provider::call_raw(resolved, &system_prompt, &user, 1024).await?;
     parse_verdict(&raw)
 }
 

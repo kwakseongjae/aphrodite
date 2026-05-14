@@ -57,6 +57,19 @@ pub async fn generate_with(
     invocation: &Invocation,
     resolved: Option<&ResolvedProvider>,
 ) -> Result<GenerationOutput, GenError> {
+    generate_with_user_intent(invocation, resolved, None).await
+}
+
+/// Like `generate_with`, but lets the caller declare the *user-visible* intent
+/// separately from `invocation.intent` (which may include scaffolds, taste
+/// hints, or other prompt augmentation). Out-of-scope warning detection uses
+/// the user intent so scaffold content can't trigger false-positive warnings.
+pub async fn generate_with_user_intent(
+    invocation: &Invocation,
+    resolved: Option<&ResolvedProvider>,
+    user_intent_for_warnings: Option<&str>,
+) -> Result<GenerationOutput, GenError> {
+    let intent_for_warnings = user_intent_for_warnings.unwrap_or(&invocation.intent);
     // Finding #5 / seed acceptance #8: read accumulated taste + preferences
     // before generating so each call reflects what the user has signaled.
     let taste = aphrodite_core::taste_snapshot(&invocation.target_repo);
@@ -77,7 +90,10 @@ pub async fn generate_with(
     let design_doc = parse_design(&design_md)?;
     let variants = resolve_variants(&design_doc);
     let hero_html = hero::render(&design_doc, &variants).map_err(GenError::Hero)?;
-    let warnings = warnings_for(&invocation.intent, &provider_used);
+    // Scan the user-visible intent for v0.1 out-of-scope phrases; scaffold
+    // content (which the caller may inject into invocation.intent) cannot
+    // produce false-positive warnings about images/motion/etc.
+    let warnings = warnings_for(intent_for_warnings, &provider_used);
 
     // Second LLM call — compose the *real* intent-specific surface. Skipped
     // in offline mode (no useful composition is possible without a real

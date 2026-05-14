@@ -372,6 +372,106 @@ pub fn set_state(slug: &str, state: SkillState) -> Result<(), SkillError> {
 }
 
 // ---------------------------------------------------------------------------
+// Bundled seed skills (embedded at compile time)
+// ---------------------------------------------------------------------------
+
+/// Skills shipped with the binary. On first orchestrator run we materialise
+/// these into `~/.aphrodite/skills/` if the slug is absent. Idempotent.
+const BUNDLED_SKILLS: &[(&str, &str)] = &[(
+    "editorial-portfolio",
+    include_str!("../seed-skills/editorial-portfolio/SKILL.md"),
+)];
+
+/// Materialise bundled skills onto disk if they are not already present.
+/// Returns the list of slugs that were newly written this call.
+pub fn seed_bundled_skills() -> Vec<String> {
+    let mut newly_written = Vec::new();
+    for (slug, contents) in BUNDLED_SKILLS {
+        let target = skill_md_path(slug);
+        if target.exists() {
+            continue;
+        }
+        if let Some(parent) = target.parent() {
+            if fs::create_dir_all(parent).is_err() {
+                continue;
+            }
+        }
+        if fs::write(&target, contents).is_ok() {
+            newly_written.push((*slug).to_string());
+        }
+    }
+    newly_written
+}
+
+// ---------------------------------------------------------------------------
+// Intent → tag extraction (cheap heuristic, no LLM)
+// ---------------------------------------------------------------------------
+
+/// Extract tag tokens from a free-form intent string. Conservative:
+/// returns a small set of canonical tags the bundled / user-installed
+/// skills are likely to declare. Empty result is fine — `rank_for_intent`
+/// then still surfaces pinned skills.
+pub fn extract_intent_tags(intent: &str) -> Vec<String> {
+    let lower = intent.to_ascii_lowercase();
+    let mut tags: Vec<String> = Vec::new();
+    let candidates: &[(&[&str], &str)] = &[
+        // surface kind
+        (&["portfolio", "work grid", "selected work", "case studies"], "portfolio"),
+        (&["pricing", "tier", "saas", "subscription"], "pricing"),
+        (&["dashboard", "analytics", "metrics"], "dashboard"),
+        (&["mobile app", "ios app", "android app", "phone app"], "mobile_app"),
+        (&["landing", "marketing site", "hero page"], "landing"),
+        (&["editorial", "magazine", "long-form", "journal"], "editorial"),
+        // domain
+        (&["furniture", "woodwork", "walnut", "oak", "joinery", "cabinet maker"], "furniture"),
+        (&["architecture", "architect", "studio", "atelier"], "architecture"),
+        (&["ceramic", "pottery", "stoneware"], "ceramics"),
+        (&["photograph", "photog"], "photography"),
+        // maker register
+        (&["independent", "solo", "craftsperson", "maker", "artisan"], "solo-maker"),
+        (&["studio practice", "small workshop"], "solo-maker"),
+        // material/photo
+        (&["photo-dominant", "image-led", "photography-led", "image dominant"], "photo-dominant"),
+    ];
+    for (keys, tag) in candidates {
+        if keys.iter().any(|k| lower.contains(k)) {
+            let t = (*tag).to_string();
+            if !tags.contains(&t) {
+                tags.push(t);
+            }
+        }
+    }
+    tags
+}
+
+/// Build a single text block ready to prepend to a system prompt — top-K
+/// scaffolded skills joined as "## Skill: <name>\n<body>" sections. Truncates
+/// per-skill body to keep total length bounded.
+pub fn build_scaffold_block(skills: &[Skill], max_body_chars: usize) -> String {
+    if skills.is_empty() {
+        return String::new();
+    }
+    let mut out = String::from(
+        "## Applicable skills (workflow scaffolds from prior runs — treat as concrete checklists, not suggestions)\n\n",
+    );
+    for s in skills {
+        out.push_str(&format!(
+            "### Skill: {} — {}\n\n",
+            s.frontmatter.name, s.frontmatter.description
+        ));
+        if s.body.len() <= max_body_chars {
+            out.push_str(&s.body);
+        } else {
+            let truncated: String = s.body.chars().take(max_body_chars).collect();
+            out.push_str(&truncated);
+            out.push_str("\n…[skill body truncated]\n");
+        }
+        out.push_str("\n\n---\n\n");
+    }
+    out
+}
+
+// ---------------------------------------------------------------------------
 // Orchestrator-facing scaffolding hooks
 // ---------------------------------------------------------------------------
 
@@ -524,6 +624,55 @@ mod tests {
         assert!(slugs.contains(&"editorial"));
         assert!(slugs.contains(&"pinned-misc"));
         assert!(!slugs.contains(&"pricing"));
+    }
+
+    #[test]
+    fn intent_to_tags_extracts_canonical_tokens() {
+        let tags = extract_intent_tags(
+            "a portfolio site for an independent furniture maker working in solid walnut, based in Seoul",
+        );
+        assert!(tags.contains(&"portfolio".to_string()));
+        assert!(tags.contains(&"furniture".to_string()));
+        assert!(tags.contains(&"solo-maker".to_string()));
+        // Should NOT pick up unrelated buckets:
+        assert!(!tags.contains(&"pricing".to_string()));
+        assert!(!tags.contains(&"dashboard".to_string()));
+    }
+
+    #[test]
+    fn intent_to_tags_empty_for_generic_intent() {
+        let tags = extract_intent_tags("a simple page about the weather");
+        assert!(tags.is_empty(), "got tags: {:?}", tags);
+    }
+
+    #[test]
+    fn seed_bundled_skills_is_idempotent() {
+        let _s = Scratch::new();
+        let first = seed_bundled_skills();
+        assert!(first.contains(&"editorial-portfolio".to_string()));
+        let again = seed_bundled_skills();
+        assert!(again.is_empty(), "should not re-write existing skills, got: {:?}", again);
+        // And it should be loadable.
+        let s = load("editorial-portfolio").expect("load seeded skill");
+        assert_eq!(s.frontmatter.name, "editorial-portfolio");
+        assert!(s.frontmatter.tags.contains(&"portfolio".to_string()));
+    }
+
+    #[test]
+    fn scaffold_block_renders_when_skills_present() {
+        let _s = Scratch::new();
+        save(&fixture_skill("alpha", true)).unwrap();
+        let alpha = load("alpha").unwrap();
+        let block = build_scaffold_block(&[alpha], 1_000);
+        assert!(block.contains("Applicable skills"));
+        assert!(block.contains("alpha"));
+        assert!(block.contains("Step one"));
+    }
+
+    #[test]
+    fn scaffold_block_empty_for_no_skills() {
+        let block = build_scaffold_block(&[], 1_000);
+        assert!(block.is_empty());
     }
 
     #[test]

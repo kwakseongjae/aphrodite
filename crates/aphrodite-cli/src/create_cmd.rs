@@ -13,13 +13,16 @@
 //! can already key off them while the implementations land later.
 
 use aphrodite_core::{
-    parse_design, preferences, record_taste, resolve_variants, validate_design, Caller,
+    parse_design, preferences, record_taste, resolve_variants, skills, validate_design, Caller,
     Invocation, SignalKind, Surface, WriteMode,
 };
 use aphrodite_generator::{critic, refine, surface};
 use serde_json::json;
 use std::path::PathBuf;
 use std::time::Instant;
+
+const MAX_SCAFFOLD_BODY_CHARS: usize = 4_000;
+const SCAFFOLD_TOP_K: usize = 3;
 
 pub async fn run(
     intent: String,
@@ -54,10 +57,61 @@ pub async fn run(
     let started = Instant::now();
     let mut llm_calls = 0u32;
 
+    // ---- Phase 1 (stub) / Phase 2 (taste) / Phase 8a (skill loading) --------
+    // Skill loading is the missing piece Pass 8 surfaced (Finding #27).
+    // We seed bundled skills, rank by intent-derived tags, and prepare a
+    // scaffold block to inject into both the critic's system prompt and the
+    // design call's intent.
+    let newly_seeded = skills::seed_bundled_skills();
+    if !newly_seeded.is_empty() {
+        eprintln!(
+            "● phase 8a / seeded bundled skills: {}",
+            newly_seeded.join(", ")
+        );
+    }
+    let intent_tags = skills::extract_intent_tags(&intent);
+    let intent_tag_refs: Vec<&str> = intent_tags.iter().map(String::as_str).collect();
+    let loaded_skills = skills::rank_for_intent(&intent_tag_refs, SCAFFOLD_TOP_K);
+    let loaded_slugs: Vec<String> = loaded_skills.iter().map(|s| s.slug.clone()).collect();
+    if !loaded_skills.is_empty() {
+        eprintln!(
+            "● phase 1 / loaded skill scaffolds: [{}] for tags [{}]",
+            loaded_slugs.join(", "),
+            intent_tags.join(", ")
+        );
+        for slug in &loaded_slugs {
+            let _ = skills::bump_view(slug);
+        }
+    } else if !intent_tags.is_empty() {
+        eprintln!(
+            "● phase 1 / no installed skills match tags [{}] — judging in vacuum",
+            intent_tags.join(", ")
+        );
+    }
+    let scaffold_block = skills::build_scaffold_block(&loaded_skills, MAX_SCAFFOLD_BODY_CHARS);
+    let intent_for_design = if scaffold_block.is_empty() {
+        intent.clone()
+    } else {
+        format!(
+            "{intent}\n\n{scaffold_block}\nApply the scaffold above as concrete constraints, not suggestions.",
+        )
+    };
+    // Replace the invocation's intent for this run so the generator's
+    // prefs+intent prompt picks up the scaffold automatically.
+    let invocation_for_design = Invocation {
+        intent: intent_for_design,
+        ..invocation.clone()
+    };
+
     // ---- Phase 3: initial design --------------------------------------------
     eprintln!("● phase 3 / design …");
     let phase3_start = Instant::now();
-    let output = aphrodite_generator::generate_with(&invocation, Some(&resolved)).await?;
+    let output = aphrodite_generator::generate_with_user_intent(
+        &invocation_for_design,
+        Some(&resolved),
+        Some(&intent), // scan user's original intent for out-of-scope phrases
+    )
+    .await?;
     llm_calls += 2; // design + surface compose
     let mut design_md = output.design_md;
     let mut composition_html = output.composition_html;
@@ -88,6 +142,7 @@ pub async fn run(
             &composition_html,
             &prior_deltas,
             &pref_hint,
+            &scaffold_block,
         )
         .await;
         llm_calls += 1;
@@ -291,6 +346,43 @@ pub async fn run(
         }),
     );
 
+    // Bump use-counter on every scaffold-loaded skill that survived the run.
+    // A successful run is evidence the skill is useful; curator (future) will
+    // weight by use_count vs view_count.
+    if final_satisfaction >= satisfaction_threshold {
+        for slug in &loaded_slugs {
+            let _ = skills::bump_use(slug);
+        }
+    }
+
+    // ---- Phase 8b: skillify proposal ----------------------------------------
+    // We DO NOT auto-write a new skill. We surface a `proposed_skill` block
+    // in the JSON. The user can manually `aphrodite skill propose <slug>` to
+    // accept (verb to be added later). Avoids auto-creating skill bloat from
+    // shallow trajectories. ADR 0004 §"v0.3 ships skills without curator".
+    let proposed_skill = if prior_deltas.len() >= 3 && final_satisfaction >= satisfaction_threshold
+    {
+        let slug = slugify(&intent, 6);
+        Some(json!({
+            "slug": slug,
+            "rationale": format!(
+                "Trajectory was non-trivial ({} refines, satisfaction {:.2}); workflow worth preserving for future runs.",
+                prior_deltas.len(),
+                final_satisfaction
+            ),
+            "draft_frontmatter": {
+                "name": slug,
+                "description": short(&intent, 100),
+                "version": "1.0.0",
+                "tags": intent_tags,
+                "agent_created": true,
+            },
+            "captured_deltas": prior_deltas,
+        }))
+    } else {
+        None
+    };
+
     let total_s = started.elapsed().as_secs_f32();
     eprintln!(
         "● done: {} turns, satisfaction={:.2}, total={:.1}s, llm_calls={}",
@@ -325,13 +417,22 @@ pub async fn run(
         },
         "phases": {
             "research": "stub",
+            "skill_loading": if loaded_slugs.is_empty() {
+                if intent_tags.is_empty() { "no_intent_tags" } else { "no_matching_skills" }
+            } else { "applied" },
             "taste_application": if pref_hint.is_empty() { "no_prior_signal" } else { "applied" },
             "design": "done",
             "self_critic_refine": "done",
             "asset_create": "stub",
             "asset_manage": "stub",
             "harmonize": "stub",
-            "skillify": "stub",
+            "skillify": if proposed_skill.is_some() { "proposed" } else { "below_threshold" },
+        },
+        "skills": {
+            "intent_tags": intent_tags,
+            "loaded": loaded_slugs,
+            "newly_seeded": newly_seeded,
+            "proposed_new": proposed_skill,
         },
         "telemetry": {
             "llm_calls": llm_calls,
@@ -349,5 +450,26 @@ fn short(s: &str, max: usize) -> String {
         let mut out: String = s.chars().take(max - 1).collect();
         out.push('…');
         out
+    }
+}
+
+/// Cheap slug-from-intent: take the first `word_cap` significant words,
+/// lowercase + hyphenate. Stopwords stripped. Falls back to "agent-created-skill"
+/// if nothing remains.
+fn slugify(intent: &str, word_cap: usize) -> String {
+    const STOP: &[&str] = &[
+        "a", "an", "the", "for", "of", "to", "with", "in", "on", "and", "or", "site", "page",
+    ];
+    let words: Vec<String> = intent
+        .to_ascii_lowercase()
+        .split(|c: char| !c.is_ascii_alphanumeric())
+        .filter(|w| !w.is_empty() && !STOP.contains(w))
+        .take(word_cap)
+        .map(|s| s.to_string())
+        .collect();
+    if words.is_empty() {
+        "agent-created-skill".to_string()
+    } else {
+        words.join("-")
     }
 }
