@@ -85,6 +85,47 @@ pub fn load(slug: &str) -> Result<WikiEntry, WikiError> {
     parse_entry(slug, &text, path)
 }
 
+/// Persist a new (or updated) wiki entry. Overwrites if `slug` already exists.
+pub fn save(entry: &WikiEntry) -> Result<(), WikiError> {
+    let fm = serde_yaml::to_string(&entry.frontmatter)
+        .map_err(|e| WikiError::Format(e.to_string()))?;
+    let text = format!("---\n{fm}---\n\n{}\n", entry.body.trim_end());
+    let path = entry_path(&entry.slug);
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+    fs::write(path, text)?;
+    Ok(())
+}
+
+/// Derive a slug from a URL: lowercase host without TLD/subdomain noise.
+/// `https://www.apartamentomagazine.com/about` → `apartamentomagazine`.
+pub fn slug_from_url(url: &str) -> String {
+    let host = url
+        .split("://")
+        .nth(1)
+        .unwrap_or(url)
+        .split('/')
+        .next()
+        .unwrap_or(url);
+    let host = host.trim_start_matches("www.");
+    // Drop the final label (TLD). For `linear.app` → `linear`,
+    // `apartamentomagazine.com` → `apartamentomagazine`,
+    // `blog.muji.com` → `blog-muji`.
+    let labels: Vec<&str> = host.split('.').collect();
+    let core = if labels.len() >= 2 {
+        labels[..labels.len() - 1].join("-")
+    } else {
+        host.to_string()
+    };
+    core.to_ascii_lowercase()
+        .chars()
+        .map(|c| if c.is_ascii_alphanumeric() || c == '-' { c } else { '-' })
+        .collect::<String>()
+        .trim_matches('-')
+        .to_string()
+}
+
 pub fn list() -> Vec<String> {
     let mut out = Vec::new();
     if let Ok(entries) = fs::read_dir(wiki_root()) {
@@ -228,5 +269,35 @@ mod tests {
     #[test]
     fn empty_block_for_no_results() {
         assert!(render_references_block(&[]).is_empty());
+    }
+
+    #[test]
+    fn slug_from_url_strips_www_and_tld() {
+        assert_eq!(slug_from_url("https://www.apartamentomagazine.com/"), "apartamentomagazine");
+        assert_eq!(slug_from_url("https://linear.app"), "linear");
+        assert_eq!(slug_from_url("https://www.muji.com/store"), "muji");
+        assert_eq!(slug_from_url("https://blog.muji.com/recommend"), "blog-muji");
+    }
+
+    #[test]
+    fn save_round_trip() {
+        let _s = Scratch::new();
+        let entry = WikiEntry {
+            slug: "test-entry".to_string(),
+            frontmatter: WikiFrontmatter {
+                title: "Test entry".into(),
+                url: "https://example.com".into(),
+                tags: vec!["test".into(), "portfolio".into()],
+                signature: "a test fixture".into(),
+                ingested_at: "2026-05-14".into(),
+            },
+            body: "# Test\n\nWhat to absorb: nothing, it's a test.\n".into(),
+            path: entry_path("test-entry"),
+        };
+        save(&entry).unwrap();
+        let loaded = load("test-entry").unwrap();
+        assert_eq!(loaded.frontmatter.title, "Test entry");
+        assert_eq!(loaded.frontmatter.tags, vec!["test", "portfolio"]);
+        assert!(loaded.body.contains("nothing, it's a test"));
     }
 }

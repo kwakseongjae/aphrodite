@@ -13,6 +13,7 @@ mod gallery_cmd;
 mod init_cmd;
 mod refine_cmd;
 mod setup_cmd;
+mod wiki_cmd;
 
 #[derive(Parser)]
 #[command(name = "aphrodite", version, about = "Aphrodite — UI generation harness")]
@@ -152,6 +153,48 @@ enum Command {
     /// List installed personas (bundled + user-installed). Use `--persona <slug>`
     /// on `aphrodite create` to invoke one.
     Personas,
+
+    /// Design-reference wiki (Karpathy LLM-Wiki pattern). Compounding KB of
+    /// well-designed references that `aphrodite create` queries by tag overlap.
+    Wiki {
+        #[command(subcommand)]
+        sub: WikiSub,
+    },
+}
+
+#[derive(Subcommand)]
+enum WikiSub {
+    /// List installed wiki entries (bundled + user-added).
+    List,
+    /// Print one entry's frontmatter + body.
+    Show { slug: String },
+    /// Add a new wiki entry. Body comes from --body, --body-from-file, or
+    /// piped stdin. If none, a stub is written for manual editing.
+    Add {
+        /// URL of the reference site / system / artefact.
+        url: String,
+        /// Override the auto-derived slug.
+        #[arg(long)]
+        slug: Option<String>,
+        /// Human-readable title (defaults to slug-as-words).
+        #[arg(long)]
+        title: Option<String>,
+        /// Comma-separated tags for intent matching.
+        #[arg(long, value_delimiter = ',', num_args = 0..)]
+        tags: Vec<String>,
+        /// One-line stylistic distillation.
+        #[arg(long)]
+        signature: Option<String>,
+        /// Inline body text.
+        #[arg(long)]
+        body: Option<String>,
+        /// Read body from this file path.
+        #[arg(long, value_name = "PATH")]
+        body_from_file: Option<PathBuf>,
+        /// Replace an existing entry with the same slug.
+        #[arg(long)]
+        overwrite: bool,
+    },
 }
 
 #[derive(Subcommand)]
@@ -223,6 +266,13 @@ async fn main() -> anyhow::Result<()> {
             create_cmd::run(intent, max_turns, satisfaction_threshold, persona, no_write, repo).await?
         }
         Command::Personas => personas_list(),
+        Command::Wiki { sub } => match sub {
+            WikiSub::List => wiki_cmd::list(),
+            WikiSub::Show { slug } => wiki_cmd::show(&slug)?,
+            WikiSub::Add { url, slug, title, tags, signature, body, body_from_file, overwrite } => {
+                wiki_cmd::add(url, slug, title, tags, signature, body, body_from_file, overwrite)?
+            }
+        },
     };
 
     if cli.json {
