@@ -138,11 +138,20 @@ enum Command {
         /// Stop when critic's satisfaction estimate reaches this value.
         #[arg(long, default_value_t = 0.85)]
         satisfaction_threshold: f32,
+        /// Invoke a design-authority persona (e.g. `dieter-rams`, `tadao-ando`,
+        /// `rei-kawakubo`, `ettore-sottsass`, `kenya-hara`, `massimo-vignelli`,
+        /// `galileo-galilei`). Persona principles outrank generic skill scaffolds.
+        #[arg(long)]
+        persona: Option<String>,
         #[arg(long)]
         no_write: bool,
         #[arg(long)]
         repo: Option<PathBuf>,
     },
+
+    /// List installed personas (bundled + user-installed). Use `--persona <slug>`
+    /// on `aphrodite create` to invoke one.
+    Personas,
 }
 
 #[derive(Subcommand)]
@@ -210,9 +219,10 @@ async fn main() -> anyhow::Result<()> {
         Command::Hate { repo } => feedback_cmd::run(-0.30, "hate", repo)?,
         Command::Prefs { repo } => feedback_cmd::show(repo)?,
         Command::Refine { change, no_write, repo } => refine_cmd::run(change, no_write, repo).await?,
-        Command::Create { intent, max_turns, satisfaction_threshold, no_write, repo } => {
-            create_cmd::run(intent, max_turns, satisfaction_threshold, no_write, repo).await?
+        Command::Create { intent, max_turns, satisfaction_threshold, persona, no_write, repo } => {
+            create_cmd::run(intent, max_turns, satisfaction_threshold, persona, no_write, repo).await?
         }
+        Command::Personas => personas_list(),
     };
 
     if cli.json {
@@ -544,6 +554,34 @@ fn capabilities() -> serde_json::Value {
     println!("    • OAuth (v0.2)");
     println!();
     cap
+}
+
+fn personas_list() -> serde_json::Value {
+    use console::style;
+    // Seed bundled before listing.
+    let _ = aphrodite_core::personas::seed_bundled_personas();
+    let mut entries = Vec::new();
+    for slug in aphrodite_core::personas::list() {
+        if let Ok(p) = aphrodite_core::personas::load(&slug) {
+            println!(
+                "  {}  {} {}",
+                style(format!("{:18}", slug)).bold().cyan(),
+                p.frontmatter.name,
+                style(format!("({})", p.frontmatter.era)).dim()
+            );
+            if !p.frontmatter.voice.is_empty() {
+                println!("    {}", style(&p.frontmatter.voice).dim());
+            }
+            entries.push(json!({
+                "slug": slug,
+                "name": p.frontmatter.name,
+                "era": p.frontmatter.era,
+                "voice": p.frontmatter.voice,
+                "when_to_invoke": p.frontmatter.when_to_invoke,
+            }));
+        }
+    }
+    json!({ "kind": "personas", "personas": entries })
 }
 
 fn render_pretty(payload: &serde_json::Value) {

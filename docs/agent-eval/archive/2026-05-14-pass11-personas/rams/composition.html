@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>장도현 — Seoul Walnut Furniture</title>
+<style>
+  :root {
+    --colors-primary-50: #f2f7f1;
+    --colors-primary-100: #e4efdf;
+    --colors-primary-200: #c8dfbf;
+    --colors-primary-300: #a6c996;
+    --colors-primary-400: #82b06d;
+    --colors-primary-500: #5a8a45;
+    --colors-primary-600: #487038;
+    --colors-primary-700: #39572d;
+    --colors-primary-800: #2d4525;
+    --colors-primary-900: #1a2a16;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-50: #f7f7f5;
+    --colors-neutral-100: #edede8;
+    --colors-neutral-200: #d6d4cc;
+    --colors-neutral-300: #b5b1a5;
+    --colors-neutral-400: #8f897b;
+    --colors-neutral-500: #716b5e;
+    --colors-neutral-600: #5a5549;
+    --colors-neutral-700: #46423a;
+    --colors-neutral-800: #33302b;
+    --colors-neutral-900: #1e1c19;
+    --colors-neutral-1000: #0a0a08;
+    --colors-background-primary: #f7f7f5;
+    --colors-text-primary: #1e1c19;
+    --colors-text-muted: #716b5e;
+    --typography-display-family: 'Instrument Serif', 'Georgia', serif;
+    --typography-body-family: 'Inter', 'Helvetica Neue', 'Arial', sans-serif;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-24: 96px;
+    --spacing-32: 128px;
+    --spacing-48: 192px;
+    --rounded-sm: 0px;
+    --rounded-md: 2px;
+  }
+
+  [data-variant="dark"] {
+    --colors-background-primary: #1e1c19;
+    --colors-text-primary: #edede8;
+    --colors-text-muted: #b5b1a5;
+  }
+  [data-variant="brand-a"] {
+    --colors-background-primary: #faf9f6;
+    --colors-text-primary: #2d2a24;
+    --colors-text-muted: #716b5e;
+  }
+  [data-variant="brand-b"] {
+    --colors-background-primary: #f4f5f0;
+    --colors-text-primary: #2a2c20;
+    --colors-text-muted: #6b6d60;
+  }
+
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background: var(--colors-background-primary);
+    color: var(--colors-text-primary);
+    font-family: var(--typography-body-family);
+    font-weight: 300;
+    line-height: 1.5;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  /* Variant switcher */
+  .switcher {
+    position: fixed;
+    top: var(--spacing-3);
+    right: var(--spacing-3);
+    z-index: 1000;
+    display: flex;
+    gap: 2px;
+    background: var(--colors-neutral-200);
+    border-radius: var(--rounded-md);
+    padding: 2px;
+  }
+  .switcher button {
+    font-family: var(--typography-body-family);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    padding: 6px 12px;
+    border: none;
+    border-radius: var(--rounded-md);
+    background: transparent;
+    color: var(--colors-text-primary);
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .switcher button:hover {
+    background: var(--colors-neutral-100);
+  }
+  .switcher button[aria-pressed="true"] {
+    background: var(--colors-neutral-0);
+    color: var(--colors-neutral-900);
+  }
+  [data-variant="dark"] .switcher button[aria-pressed="true"] {
+    background: var(--colors-neutral-800);
+    color: var(--colors-neutral-100);
+  }
+  [data-variant="dark"] .switcher {
+    background: var(--colors-neutral-800);
+  }
+
+  /* Navigation */
+  .site-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: var(--spacing-4) var(--spacing-8);
+    background: var(--colors-background-primary);
+    border-bottom: 1px solid var(--colors-neutral-200);
+    transition: background 0.3s ease, border-color 0.3s ease;
+  }
+  [data-variant="dark"] .site-nav {
+    border-bottom-color: var(--colors-neutral-700);
+  }
+  .nav-name {
+    font-family: var(--typography-display-family);
+    font-weight: 400;
+    font-size: 18px;
+    color: var(--colors-text-primary);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+  }
+  .nav-links {
+    display: flex;
+    gap: var(--spacing-6);
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--typography-body-family);
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--colors-text-muted);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .nav-links a:hover {
+    color: var(--colors-primary-500);
+  }
+
+  /* Hero */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: var(--spacing-8);
+    align-items: end;
+    padding-top: calc(var(--spacing-16) + 48px);
+    padding-bottom: var(--spacing-32);
+    max-width: 1280px;
+    margin: 0 auto;
+    padding-left: var(--spacing-8);
+    padding-right: var(--spacing-8);
+  }
+  .hero-text {
+    padding-bottom: var(--spacing-6);
+  }
+  .hero-text h1 {
+    font-family: var(--typography-display-family);
+    font-weight: 400;
+    font-size: clamp(56px, 6vw, 96px);
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-6);
+  }
+  .hero-text p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--colors-text-muted);
+    max-width: 380px;
+  }
+  .hero-image {
+    aspect-ratio: 4 / 5;
+    background: var(--colors-neutral-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-image .placeholder-text {
+    font-size: 13px;
+    color: var(--colors-neutral-400);
+    text-align: center;
+    padding: var(--spacing-4);
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    max-width: 260px;
+  }
+  .hero-image svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.04;
+  }
+
+  /* Section headings */
+  .section-label {
+    font-family: var(--typography-body-family);
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--colors-text-muted);
+    margin-bottom: var(--spacing-12);
+    padding-top: var(--spacing-4);
+    border-top: 1px solid var(--colors-neutral-200);
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--spacing-8);
+    padding-right: var(--spacing-8);
+  }
+  [data-variant="dark"] .section-label {
+    border-top-color: var(--colors-neutral-700);
+  }
+
+  /* Work grid */
+  .work-grid {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding-left: var(--spacing-8);
+    padding-right: var(--spacing-8);
+    padding-bottom: var(--spacing-32);
+  }
+  .work-grid-inner {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-12) var(--spacing-8);
+  }
+  .project-card {
+    cursor: pointer;
+  }
+  .project-card-image {
+    aspect-ratio: 4 / 5;
+    background: var(--colors-neutral-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.2s ease;
+  }
+  .project-card:hover .project-card-image {
+    background: var(--colors-neutral-200);
+  }
+  [data-variant="dark"] .project-card:hover .project-card-image {
+    background: var(--colors-neutral-800);
+  }
+  .project-card-image .placeholder-text {
+    font-size: 12px;
+    color: var(--colors-neutral-400);
+    text-align: center;
+    padding: var(--spacing-4);
+    line-height: 1.5;
+    max-width: 220px;
+  }
+  .project-card-image svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.035;
+  }
+  .project-card-info {
+    padding-top: var(--spacing-3);
+  }
+  .project-card-info h3 {
+    font-family: var(--typography-display-family);
+    font-weight: 400;
+    font-size: 22px;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-1);
+    letter-spacing: -0.01em;
+  }
+  .project-card-meta {
+    display: flex;
+    gap: var(--spacing-3);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .project-card-meta span {
+    font-size: 13px;
+    color: var(--colors-text-muted);
+    letter-spacing: 0.01em;
+  }
+  .meta-dot {
+    width: 3px;
+    height: 3px;
+    background: var(--colors-neutral-400);
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  .project-card-tag {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--colors-primary-600);
+    border: 1px solid var(--colors-primary-200);
+    padding: 2px 8px;
+    border-radius: var(--rounded-md);
+  }
+  [data-variant="dark"] .project-card-tag {
+    color: var(--colors-primary-400);
+    border-color: var(--colors-primary-800);
+  }
+
+  /* About */
+  .about-section {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding-left: var(--spacing-8);
+    padding-right: var(--spacing-8);
+    padding-bottom: var(--spacing-32);
+  }
+  .about-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-16);
+  }
+  .about-text p {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--colors-text-muted);
+    margin-bottom: var(--spacing-4);
+    max-width: 480px;
+  }
+  .about-text p:last-child {
+    margin-bottom: 0;
+  }
+  .about-studio {
+    aspect-ratio: 3 / 2;
+    background: var(--colors-neutral-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .about-studio .placeholder-text {
+    font-size: 13px;
+    color: var(--colors-neutral-400);
+    text-align: center;
+    padding: var(--spacing-4);
+    line-height: 1.5;
+  }
+  .about-studio svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.035;
+  }
+
+  /* Contact */
+  .contact-section {
+    border-top: 1px solid var(--colors-neutral-200);
+    padding: var(--spacing-32) var(--spacing-8);
+    text-align: center;
+    transition: border-color 0.3s ease;
+  }
+  [data-variant="dark"] .contact-section {
+    border-top-color: var(--colors-neutral-700);
+  }
+  .contact-inner {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .contact-inner h2 {
+    font-family: var(--typography-display-family);
+    font-weight: 400;
+    font-size: 32px;
+    color: var(--colors-text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--spacing-6);
+  }
+  .contact-line {
+    font-size: 16px;
+    color: var(--colors-text-muted);
+    line-height: 1.8;
+    display: block;
+  }
+  .contact-line a {
+    color: var(--colors-text-primary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--colors-neutral-300);
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .contact-line a:hover {
+    color: var(--colors-primary-500);
+    border-bottom-color: var(--colors-primary-500);
+  }
+  .contact-availability {
+    display: inline-block;
+    margin-top: var(--spacing-8);
+    padding-top: var(--spacing-4);
+    border-top: 1px solid var(--colors-neutral-200);
+    font-size: 13px;
+    color: var(--colors-primary-600);
+    letter-spacing: 0.02em;
+    width: 100%;
+  }
+  [data-variant="dark"] .contact-availability {
+    color: var(--colors-primary-400);
+    border-top-color: var(--colors-neutral-700);
+  }
+
+  /* Footer */
+  .site-footer {
+    border-top: 1px solid var(--colors-neutral-200);
+    padding: var(--spacing-6) var(--spacing-8);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1280px;
+    margin: 0 auto;
+    transition: border-color 0.3s ease;
+  }
+  [data-variant="dark"] .site-footer {
+    border-top-color: var(--colors-neutral-700);
+  }
+  .footer-left, .footer-right {
+    font-size: 12px;
+    color: var(--colors-neutral-400);
+    letter-spacing: 0.02em;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .hero {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-6);
+      padding-bottom: var(--spacing-16);
+      padding-top: calc(var(--spacing-8) + 52px);
+    }
+    .hero-text h1 {
+      font-size: 48px;
+    }
+    .work-grid-inner {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-8);
+    }
+    .about-inner {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-8);
+    }
+    .section-label {
+      margin-bottom: var(--spacing-8);
+    }
+    .work-grid {
+      padding-bottom: var(--spacing-16);
+    }
+    .about-section {
+      padding-bottom: var(--spacing-16);
+    }
+    .contact-section {
+      padding: var(--spacing-16) var(--spacing-8);
+    }
+    .site-nav {
+      padding: var(--spacing-3) var(--spacing-4);
+    }
+    .hero, .section-label, .work-grid, .about-section {
+      padding-left: var(--spacing-4);
+      padding-right: var(--spacing-4);
+    }
+    .nav-links {
+      gap: var(--spacing-4);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .hero-text h1 {
+      font-size: 40px;
+    }
+    .nav-links a {
+      font-size: 11px;
+    }
+  }
+</style>
+
+<style data-aphrodite-variants>
+[data-variant="brand-a"] {
+  --colors-background-primary: #faf9f6;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #edede8;
+  --colors-neutral-1000: #0a0a08;
+  --colors-neutral-200: #d6d4cc;
+  --colors-neutral-300: #b5b1a5;
+  --colors-neutral-400: #8f897b;
+  --colors-neutral-50: #f7f7f5;
+  --colors-neutral-500: #716b5e;
+  --colors-neutral-600: #5a5549;
+  --colors-neutral-700: #46423a;
+  --colors-neutral-800: #33302b;
+  --colors-neutral-900: #1e1c19;
+  --colors-primary-100: #e4efdf;
+  --colors-primary-200: #c8dfbf;
+  --colors-primary-300: #a6c996;
+  --colors-primary-400: #82b06d;
+  --colors-primary-50: #f2f7f1;
+  --colors-primary-500: #5a8a45;
+  --colors-primary-600: #487038;
+  --colors-primary-700: #39572d;
+  --colors-primary-800: #2d4525;
+  --colors-primary-900: #1a2a16;
+  --colors-text-primary: #2d2a24;
+  --rounded-md: 2px;
+  --rounded-sm: 0px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-48: 192px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 300;
+  --typography-display-family: Instrument Serif;
+  --typography-display-weight: 400;
+  --bg: #faf9f6;
+  --fg: #2d2a24;
+  --muted: #5a8a45;
+}
+[data-variant="brand-b"] {
+  --colors-background-primary: #f4f5f0;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #edede8;
+  --colors-neutral-1000: #0a0a08;
+  --colors-neutral-200: #d6d4cc;
+  --colors-neutral-300: #b5b1a5;
+  --colors-neutral-400: #8f897b;
+  --colors-neutral-50: #f7f7f5;
+  --colors-neutral-500: #716b5e;
+  --colors-neutral-600: #5a5549;
+  --colors-neutral-700: #46423a;
+  --colors-neutral-800: #33302b;
+  --colors-neutral-900: #1e1c19;
+  --colors-primary-100: #e4efdf;
+  --colors-primary-200: #c8dfbf;
+  --colors-primary-300: #a6c996;
+  --colors-primary-400: #82b06d;
+  --colors-primary-50: #f2f7f1;
+  --colors-primary-500: #5a8a45;
+  --colors-primary-600: #487038;
+  --colors-primary-700: #39572d;
+  --colors-primary-800: #2d4525;
+  --colors-primary-900: #1a2a16;
+  --colors-text-primary: #2a2c20;
+  --rounded-md: 2px;
+  --rounded-sm: 0px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-48: 192px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 300;
+  --typography-display-family: Instrument Serif;
+  --typography-display-weight: 400;
+  --bg: #f4f5f0;
+  --fg: #2a2c20;
+  --muted: #5a8a45;
+}
+[data-variant="dark"] {
+  --colors-background-primary: #1e1c19;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #edede8;
+  --colors-neutral-1000: #0a0a08;
+  --colors-neutral-200: #d6d4cc;
+  --colors-neutral-300: #b5b1a5;
+  --colors-neutral-400: #8f897b;
+  --colors-neutral-50: #f7f7f5;
+  --colors-neutral-500: #716b5e;
+  --colors-neutral-600: #5a5549;
+  --colors-neutral-700: #46423a;
+  --colors-neutral-800: #33302b;
+  --colors-neutral-900: #1e1c19;
+  --colors-primary-100: #e4efdf;
+  --colors-primary-200: #c8dfbf;
+  --colors-primary-300: #a6c996;
+  --colors-primary-400: #82b06d;
+  --colors-primary-50: #f2f7f1;
+  --colors-primary-500: #5a8a45;
+  --colors-primary-600: #487038;
+  --colors-primary-700: #39572d;
+  --colors-primary-800: #2d4525;
+  --colors-primary-900: #1a2a16;
+  --colors-text-primary: #edede8;
+  --rounded-md: 2px;
+  --rounded-sm: 0px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-48: 192px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 300;
+  --typography-display-family: Instrument Serif;
+  --typography-display-weight: 400;
+  --bg: #1e1c19;
+  --fg: #edede8;
+  --muted: #5a8a45;
+}
+[data-variant="light"] {
+  --colors-background-primary: #f7f7f5;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #edede8;
+  --colors-neutral-1000: #0a0a08;
+  --colors-neutral-200: #d6d4cc;
+  --colors-neutral-300: #b5b1a5;
+  --colors-neutral-400: #8f897b;
+  --colors-neutral-50: #f7f7f5;
+  --colors-neutral-500: #716b5e;
+  --colors-neutral-600: #5a5549;
+  --colors-neutral-700: #46423a;
+  --colors-neutral-800: #33302b;
+  --colors-neutral-900: #1e1c19;
+  --colors-primary-100: #e4efdf;
+  --colors-primary-200: #c8dfbf;
+  --colors-primary-300: #a6c996;
+  --colors-primary-400: #82b06d;
+  --colors-primary-50: #f2f7f1;
+  --colors-primary-500: #5a8a45;
+  --colors-primary-600: #487038;
+  --colors-primary-700: #39572d;
+  --colors-primary-800: #2d4525;
+  --colors-primary-900: #1a2a16;
+  --colors-text-primary: #1e1c19;
+  --rounded-md: 2px;
+  --rounded-sm: 0px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-48: 192px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 300;
+  --typography-display-family: Instrument Serif;
+  --typography-display-weight: 400;
+  --bg: #f7f7f5;
+  --fg: #1e1c19;
+  --muted: #5a8a45;
+}
+body{background:var(--bg);color:var(--fg);}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap">
+</head>
+<body data-variant="light">
+
+<nav class="switcher" aria-label="Theme variant">
+  <button onclick="setVariant('light')" aria-pressed="true">light</button>
+  <button onclick="setVariant('dark')" aria-pressed="false">dark</button>
+  <button onclick="setVariant('brand-a')" aria-pressed="false">gallery</button>
+  <button onclick="setVariant('brand-b')" aria-pressed="false">sage</button>
+</nav>
+
+<header class="site-nav">
+  <a href="#" class="nav-name">장도현</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-text">
+      <h1>도현<br>장</h1>
+      <p>Solid walnut furniture, made by hand in Seoul. Each piece is cut from a single log, dried for two years, and finished with linseed oil. No veneers. No shortcuts.</p>
+    </div>
+    <div class="hero-image">
+      <svg viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="60" y="100" width="280" height="12" rx="1" fill="currentColor"/>
+        <rect x="60" y="388" width="280" height="12" rx="1" fill="currentColor"/>
+        <rect x="80" y="100" width="10" height="300" rx="1" fill="currentColor"/>
+        <rect x="310" y="100" width="10" height="300" rx="1" fill="currentColor"/>
+        <rect x="95" y="140" width="210" height="4" rx="0.5" fill="currentColor"/>
+        <rect x="95" y="356" width="210" height="4" rx="0.5" fill="currentColor"/>
+        <rect x="192" y="112" width="16" height="276" rx="0.5" fill="currentColor" opacity="0.5"/>
+      </svg>
+      <span class="placeholder-text">Hakwi Dining Table — black walnut, oil finish, 2024. Full-length side view against white gallery wall.</span>
+    </div>
+  </section>
+
+  <div class="section-label" id="work">Selected Work</div>
+
+  <div class="work-grid">
+    <div class="work-grid-inner">
+
+      <article class="project-card">
+        <div class="project-card-image">
+          <svg viewBox="0 0 300 375" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="30" y="40" width="240" height="220" rx="1" fill="currentColor"/>
+            <rect x="50" y="260" width="8" height="100" rx="1" fill="currentColor"/>
+            <rect x="242" y="260" width="8" height="100" rx="1" fill="currentColor"/>
+            <rect x="140" y="260" width="8" height="100" rx="1" fill="currentColor"/>
+          </svg>
+          <span class="placeholder-text">Hakwi Dining Table — black walnut, 1800 × 900 × 750mm, oil finish</span>
+        </div>
+        <div class="project-card-info">
+          <h3>Hakwi Dining Table</h3>
+          <div class="project-card-meta">
+            <span class="project-card-tag">Seating</span>
+            <span class="meta-dot"></span>
+            <span>Black walnut</span>
+            <span class="meta-dot"></span>
+            <span>2024</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="project-card">
+        <div class="project-card-image">
+          <svg viewBox="0 0 300 375" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="60" y="50" width="180" height="180" rx="1" fill="currentColor"/>
+            <rect x="70" y="230" width="6" height="110" rx="1" fill="currentColor"/>
+            <rect x="224" y="230" width="6" height="110" rx="1" fill="currentColor"/>
+            <line x1="90" y1="130" x2="210" y2="130" stroke="currentColor" stroke-width="2"/>
+            <circle cx="150" cy="100" r="20" stroke="currentColor" stroke-width="2" fill="none"/>
+          </svg>
+          <span class="placeholder-text">Gyeon Wall Mirror — walnut frame, brass bracket, 600 × 800mm</span>
+        </div>
+        <div class="project-card-info">
+          <h3>Gyeon Wall Mirror</h3>
+          <div class="project-card-meta">
+            <span class="project-card-tag">Mirror</span>
+            <span class="meta-dot"></span>
+            <span>Walnut, brass</span>
+            <span class="meta-dot"></span>
+            <span>2024</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="project-card">
+        <div class="project-card-image">
+          <svg viewBox="0 0 300 375" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="40" y="200" width="220" height="40" rx="1" fill="currentColor"/>
+            <rect x="40" y="80" width="220" height="120" rx="1" fill="currentColor"/>
+            <rect x="52" y="92" width="90" height="96" rx="1" fill="currentColor" opacity="0.4"/>
+            <rect x="158" y="92" width="90" height="40" rx="1" fill="currentColor" opacity="0.4"/>
+            <rect x="158" y="148" width="90" height="40" rx="1" fill="currentColor" opacity="0.4"/>
+            <rect x="48" y="240" width="6" height="90" rx="1" fill="currentColor"/>
+            <rect x="246" y="240" width="6" height="90" rx="1" fill="currentColor"/>
+          </svg>
+          <span class="placeholder-text">Mokjo Desk — walnut, dovetail drawer, brass pull, 1200 × 600 × 760mm</span>
+        </div>
+        <div class="project-card-info">
+          <h3>Mokjo Desk</h3>
+          <div class="project-card-meta">
+            <span class="project-card-tag">Desk</span>
+            <span class="meta-dot"></span>
+            <span>Walnut, brass</span>
+            <span class="meta-dot"></span>
+            <span>2023</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="project-card">
+        <div class="project-card-image">
+          <svg viewBox="0 0 300 375" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="60" y="80" width="180" height="220" rx="1" fill="currentColor"/>
+            <rect x="68" y="88" width="164" height="4" rx="0.5" fill="currentColor" opacity="0.3"/>
+            <rect x="68" y="104" width="164" height="4" rx="0.5" fill="currentColor" opacity="0.3"/>
+            <rect x="68" y="120" width="164" height="4" rx="0.5" fill="currentColor" opacity="0.3"/>
+            <rect x="68" y="250" width="164" height="4" rx="0.5" fill="currentColor" opacity="0.3"/>
+            <rect x="68" y="266" width="164" height="4" rx="0.5" fill="currentColor" opacity="0.3"/>
+            <rect x="68" y="282" width="164" height="4" rx="0.5" fill="currentColor" opacity="0.3"/>
+            <rect x="145" y="88" width="4" height="192" rx="0.5" fill="currentColor" opacity="0.2"/>
+          </svg>
+          <span class="placeholder-text">Jip Bookshelf — walnut, through-tenon joinery, 900 × 320 × 1800mm</span>
+        </div>
+        <div class="project-card-info">
+          <h3>Jip Bookshelf</h3>
+          <div class="project-card-meta">
+            <span class="project-card-tag">Storage</span>
+            <span class="meta-dot"></span>
+            <span>Walnut</span>
+            <span class="meta-dot"></span>
+            <span>2023</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="project-card">
+        <div class="project-card-image">
+          <svg viewBox="0 0 300 375" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="80" y="60" width="140" height="20" rx="1" fill="currentColor"/>
+            <rect x="80" y="80" width="140" height="10" rx="1" fill="currentColor" opacity="0.6"/>
+            <rect x="85" y="90" width="130" height="4" rx="0.5" fill="currentColor"/>
+            <rect x="135" y="94" width="6" height="120" rx="1" fill="currentColor"/>
+            <rect x="90" y="214" width="60" height="8" rx="1" fill="currentColor"/>
+            <rect x="155" y="214" width="60" height="8" rx="1" fill="currentColor"/>
+            <rect x="90" y="222" width="4" height="80" rx="1" fill="currentColor"/>
+            <rect x="146" y="222" width="4" height="80" rx="1" fill="currentColor"/>
+            <rect x="155" y="222" width="4" height="80" rx="1" fill="currentColor"/>
+            <rect x="211" y="222" width="4" height="80" rx="1" fill="currentColor"/>
+          </svg>
+          <span class="placeholder-text">Saja Pendant Light — walnut shade, braided cord, brass fitting, Ø 280mm</span>
+        </div>
+        <div class="project-card-info">
+          <h3>Saja Pendant Light</h3>
+          <div class="project-card-meta">
+            <span class="project-card-tag">Lighting</span>
+            <span class="meta-dot"></span>
+            <span>Walnut, brass</span>
+            <span class="meta-dot"></span>
+            <span>2023</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="project-card">
+        <div class="project-card-image">
+          <svg viewBox="0 0 300 375" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="60" y="90" width="60" height="260" rx="1" fill="currentColor"/>
+            <rect x="180" y="90" width="60" height="260" rx="1" fill="currentColor"/>
+            <rect x="60" y="90" width="180" height="16" rx="1" fill="currentColor"/>
+            <rect x="60" y="140" width="180" height="8" rx="1" fill="currentColor" opacity="0.5"/>
+            <rect x="60" y="220" width="180" height="8" rx="1" fill="currentColor" opacity="0.5"/>
+          </svg>
+          <span class="placeholder-text">Byeok Hall Bench — walnut, mortise-and-tenon, 1500 × 400 × 460mm</span>
+        </div>
+        <div class="project-card-info">
+          <h3>Byeok Hall Bench</h3>
+          <div class="project-card-meta">
+            <span class="project-card-tag">Seating</span>
+            <span class="meta-dot"></span>
+            <span>Walnut</span>
+            <span class="meta-dot"></span>
+            <span>2022</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+
+  <div class="section-label" id="about">About</div>
+
+  <section class="about-section">
+    <div class="about-inner">
+      <div class="about-text">
+        <p>도현 장 has worked walnut in Seoul since 2018. The workshop sits in an industrial building near 성수동, close enough to the Han River that the humidity stays stable — a practical concern for wood movement.</p>
+        <p>Every log is sourced from the southern provinces, air-dried for eighteen months, then kiln-dried to 8% moisture content. No tropical hardwoods. No imported material that cannot be verified. The walnut is Korean-grown Juglans mandshurica when available, North American black walnut by commission.</p>
+        <p>Joinery is traditional: dovetails for drawers, mortise-and-tenon for frames, through-wedges where the joint should be visible. Surfaces are hand-planed and finished with polymerized linseed oil. No polyurethane. No lacquer. The wood breathes.</p>
+        <p>Lead time for new work is currently four to six months. Commissions begin with a conversation.</p>
+      </div>
+      <div class="about-studio">
+        <svg viewBox="0 0 480 320" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="40" y="180" width="120" height="8" rx="1" fill="currentColor"/>
+          <rect x="55" y="188" width="4" height="80" rx="1" fill="currentColor"/>
+          <rect x="141" y="188" width="4" height="80" rx="1" fill="currentColor"/>
+          <rect x="200" y="100" width="240" height="6" rx="1" fill="currentColor"/>
+          <rect x="200" y="258" width="240" height="6" rx="1" fill="currentColor"/>
+          <rect x="200" y="106" width="6" height="158" rx="1" fill="currentColor"/>
+          <rect x="434" y="106" width="6" height="158" rx="1" fill="currentColor"/>
+          <rect x="310" y="106" width="4" height="152" rx="0.5" fill="currentColor" opacity="0.3"/>
+          <circle cx="80" cy="150" r="14" stroke="currentColor" stroke-width="2" fill="none"/>
+          <rect x="74" y="130" width="12" height="6" rx="1" fill="currentColor" opacity="0.4"/>
+          <rect x="220" y="130" width="60" height="40" rx="1" fill="currentColor" opacity="0.15"/>
+          <rect x="330" y="130" width="60" height="40" rx="1" fill="currentColor" opacity="0.15"/>
+          <rect x="220" y="195" width="80" height="4" rx="0.5" fill="currentColor" opacity="0.15"/>
+          <rect x="340" y="195" width="60" height="4" rx="0.5" fill="currentColor" opacity="0.15"/>
+        </svg>
+        <span class="placeholder-text">Workshop interior — 성수동, Seoul. Bench and wall rack in daily use.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-section" id="contact">
+    <div class="contact-inner">
+      <h2>Contact</h2>
+      <span class="contact-line">
+        <a href="mailto:studio@jangdohyun.kr">studio@jangdohyun.kr</a>
+      </span>
+      <span class="contact-line">
+        <a href="tel:+821012345678">+82 10-1234-5678</a>
+      </span>
+      <span class="contact-line">
+        Workshop 4F, 23 성수이로 14길<br>성동구, 서울, 04793
+      </span>
+      <span class="contact-availability">
+        Currently accepting commissions for 2025 delivery
+      </span>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <span class="footer-left">장도현 — Seoul Walnut Furniture</span>
+  <span class="footer-right">© 2024</span>
+</footer>
+
+<script>
+function setVariant(v) {
+  document.body.dataset.variant = v;
+  document.querySelectorAll('.switcher button').forEach(function(btn) {
+    var pressed = btn.textContent.trim().toLowerCase() === v ||
+      (v === 'brand-a' && btn.textContent.trim().toLowerCase() === 'gallery') ||
+      (v === 'brand-b' && btn.textContent.trim().toLowerCase() === 'sage');
+    btn.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+  });
+}
+</script>
+
+</body>
+</html>

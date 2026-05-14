@@ -13,8 +13,8 @@
 //! can already key off them while the implementations land later.
 
 use aphrodite_core::{
-    parse_design, preferences, record_taste, resolve_variants, skills, validate_design, Caller,
-    Invocation, SignalKind, Surface, WriteMode,
+    parse_design, personas, preferences, record_taste, resolve_variants, skills,
+    validate_design, Caller, Invocation, SignalKind, Surface, WriteMode,
 };
 use aphrodite_generator::{critic, harmonize, refine, surface};
 use serde_json::json;
@@ -28,6 +28,7 @@ pub async fn run(
     intent: String,
     max_turns: u32,
     satisfaction_threshold: f32,
+    persona_slug: Option<String>,
     no_write: bool,
     repo: Option<PathBuf>,
 ) -> anyhow::Result<serde_json::Value> {
@@ -56,6 +57,24 @@ pub async fn run(
 
     let started = Instant::now();
     let mut llm_calls = 0u32;
+
+    // ---- Persona authority (optional, outranks generic skill scaffolds) -----
+    let _ = personas::seed_bundled_personas();
+    let persona_block = if let Some(slug) = persona_slug.as_deref() {
+        match personas::load(slug) {
+            Ok(p) => {
+                eprintln!("● persona / channeling: {} ({})", p.frontmatter.name, slug);
+                personas::as_system_prompt_block(&p)
+            }
+            Err(e) => {
+                anyhow::bail!(
+                    "unknown persona `{slug}`: {e}. Run `aphrodite personas` to list installed personas."
+                );
+            }
+        }
+    } else {
+        String::new()
+    };
 
     // ---- Phase 1 (stub) / Phase 2 (taste) / Phase 8a (skill loading) --------
     // Skill loading is the missing piece Pass 8 surfaced (Finding #27).
@@ -89,13 +108,23 @@ pub async fn run(
         );
     }
     let scaffold_block = skills::build_scaffold_block(&loaded_skills, MAX_SCAFFOLD_BODY_CHARS);
-    let intent_for_design = if scaffold_block.is_empty() {
+    // Combine persona + scaffold. Persona goes FIRST and is framed as the
+    // final authority — generic scaffolds become contextual checklists under it.
+    let augmentation = match (persona_block.is_empty(), scaffold_block.is_empty()) {
+        (true, true) => String::new(),
+        (true, false) => format!(
+            "{scaffold_block}\nApply the scaffold above as concrete constraints, not suggestions."
+        ),
+        (false, true) => persona_block.clone(),
+        (false, false) => format!("{persona_block}\n---\n\n{scaffold_block}"),
+    };
+    let intent_for_design = if augmentation.is_empty() {
         intent.clone()
     } else {
-        format!(
-            "{intent}\n\n{scaffold_block}\nApply the scaffold above as concrete constraints, not suggestions.",
-        )
+        format!("{intent}\n\n{augmentation}")
     };
+    // The critic also sees both: persona as the authority, scaffold as context.
+    let critic_context = augmentation.clone();
     // Replace the invocation's intent for this run so the generator's
     // prefs+intent prompt picks up the scaffold automatically.
     let invocation_for_design = Invocation {
@@ -142,7 +171,7 @@ pub async fn run(
             &composition_html,
             &prior_deltas,
             &pref_hint,
-            &scaffold_block,
+            &critic_context,
         )
         .await;
         llm_calls += 1;
@@ -455,6 +484,7 @@ pub async fn run(
             "newly_seeded": newly_seeded,
             "proposed_new": proposed_skill,
         },
+        "persona": persona_slug,
         "harmonize": {
             "fonts_injected": harmonize_report.fonts_injected,
             "hero_typography_fixed": harmonize_report.hero_typography_fixed,

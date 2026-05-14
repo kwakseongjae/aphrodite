@@ -96,6 +96,12 @@
     <p class="desc">Verifies that `aphrodite refine "<delta>"` behaves as refinement (not redesign): turn 2 changes the hue alone, turn 3 changes spacing alone, turn 4 changes the display family alone. The cool blue from turn 2 persists three turns later; spacing from turn 3 survives the display swap in turn 4. Body font even stayed unchanged in turn 4 because the request didn't mention it — the nuance landed. <strong>Limitation:</strong> deltas were pre-scripted, not reactive — see Pass 7.</p>
   </a>
 
+  <a class="pass" href="2026-05-14-pass11-personas/">
+    <h2>Pass 11 — persona system (Rams vs Sottsass A/B) <span class="tag live">7 personas · palette delta unmistakable</span></h2>
+    <div class="meta">2026-05-14 · seven seeded design authorities · same intent → visibly different work</div>
+    <p class="desc">Aphrodite now ships seven bundled persona authorities — Rams, Vignelli, Ando, Kawakubo, Sottsass, Hara, Galileo. Same Seoul furniture-maker intent run through Rams (modernist restraint) vs Sottsass (Memphis joy). Result: <strong>Sottsass palette landed unmistakably Memphis</strong> — terracotta primary (#c44d12) plus emerald + citron + olive secondaries; Rams stayed monochrome with a single muted forest-green accent. Typography axis lost to scaffold authority — Finding #34 (critic doesn't enforce persona > scaffold priority); fixable by prompt addendum. CLI: <code>aphrodite personas</code> lists installed, <code>aphrodite create --persona &lt;slug&gt;</code> invokes one.</p>
+  </a>
+
   <a class="pass" href="2026-05-14-pass10-harmonize/">
     <h2>Pass 10 — harmonize + asset standards <span class="tag live">Findings #24, #26 closed · default skill loaded</span></h2>
     <div class="meta">2026-05-14 · Phase 7 harmonize live · asset-standards default skill applies to every run</div>
