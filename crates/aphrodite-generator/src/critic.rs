@@ -60,10 +60,37 @@ If the user has accumulated TastePreferences hints, weight your axis pick by tho
 pub struct SelfCritique {
     pub satisfaction: f32,
     /// One of the axis labels listed in the system prompt, or None when satisfied.
+    #[serde(default, deserialize_with = "deserialize_nullable_string")]
     pub weakest_axis: Option<String>,
+    /// One sentence justification. Empty when the model declines to elaborate
+    /// (often the case on a "satisfied" verdict).
+    #[serde(default, deserialize_with = "deserialize_nullable_string_to_empty")]
     pub rationale: String,
     /// The literal delta string to pass to `refine::refine`. None when satisfied.
+    #[serde(default, deserialize_with = "deserialize_nullable_string")]
     pub proposed_delta: Option<String>,
+}
+
+fn deserialize_nullable_string<'de, D>(d: D) -> Result<Option<String>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let v = Option::<String>::deserialize(d)?;
+    Ok(v.and_then(|s| {
+        let t = s.trim();
+        if t.is_empty() || t == "null" || t == "None" {
+            None
+        } else {
+            Some(s)
+        }
+    }))
+}
+
+fn deserialize_nullable_string_to_empty<'de, D>(d: D) -> Result<String, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    Ok(Option::<String>::deserialize(d)?.unwrap_or_default())
 }
 
 impl SelfCritique {
@@ -266,5 +293,20 @@ mod tests {
         let raw = r#"{"satisfaction":0.5,"weakest_axis":"harmony","rationale":"vague","proposed_delta":null}"#;
         let v = parse_verdict(raw).unwrap();
         assert!(v.satisfied());
+    }
+
+    #[test]
+    fn parses_all_null_rationale_and_axis() {
+        // Pass 8 regression: critic emitted {satisfaction:0.88, weakest_axis:null,
+        // rationale:null, proposed_delta:null}. Previously failed because
+        // `rationale` was declared `String`, not `Option<String>`. The semantic
+        // intent — "satisfied, nothing to say" — should parse and stop the loop.
+        let raw = r#"{"satisfaction":0.88,"weakest_axis":null,"rationale":null,"proposed_delta":null}"#;
+        let v = parse_verdict(raw).unwrap();
+        assert!(v.satisfied());
+        assert_eq!(v.weakest_axis, None);
+        assert_eq!(v.proposed_delta, None);
+        assert_eq!(v.rationale, "");
+        assert!(v.satisfaction >= 0.85);
     }
 }

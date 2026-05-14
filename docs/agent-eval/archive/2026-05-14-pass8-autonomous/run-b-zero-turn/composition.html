@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haemin Studio — Solid Walnut Furniture, Seoul</title>
+<style>
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --colors-primary-50: #f4f0eb;
+    --colors-primary-100: #e6ddd3;
+    --colors-primary-200: #cbbfac;
+    --colors-primary-300: #b09e88;
+    --colors-primary-400: #958264;
+    --colors-primary-500: #7a6b53;
+    --colors-primary-600: #655644;
+    --colors-primary-700: #514236;
+    --colors-primary-800: #3e322a;
+    --colors-primary-900: #2c231e;
+
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-50: #f5f4f2;
+    --colors-neutral-100: #e8e6e2;
+    --colors-neutral-200: #d1cdc6;
+    --colors-neutral-300: #b3ac9f;
+    --colors-neutral-400: #958c7e;
+    --colors-neutral-500: #7a7162;
+    --colors-neutral-600: #5e5649;
+    --colors-neutral-700: #433d34;
+    --colors-neutral-800: #2a261f;
+    --colors-neutral-900: #15130f;
+
+    --typography-display-family: 'Instrument Serif', 'Georgia', serif;
+    --typography-body-family: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-24: 96px;
+
+    --rounded-sm: 2px;
+    --rounded-md: 4px;
+    --rounded-lg: 6px;
+
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* ── Variant: light (default) ── */
+  body {
+    --bg-primary: #f5f4f2;
+    --bg-secondary: #eae7e2;
+    --bg-tertiary: #f0ede8;
+    --text-primary: #1c1915;
+    --text-secondary: #5e5649;
+    --text-muted: #8a8175;
+    --border-subtle: #d4cfc7;
+    --border-hover: #7a6b53;
+    --card-bg: #faf9f7;
+    --card-hover-shadow: rgba(44, 35, 30, 0.08);
+    --overlay-bg: rgba(28, 25, 21, 0.5);
+  }
+
+  body[data-variant="dark"] {
+    --bg-primary: #12100e;
+    --bg-secondary: #1e1b17;
+    --bg-tertiary: #171411;
+    --text-primary: #e4dfd6;
+    --text-secondary: #958c7e;
+    --text-muted: #6e665a;
+    --border-subtle: #3a352d;
+    --border-hover: #b09e88;
+    --card-bg: #1a1714;
+    --card-hover-shadow: rgba(0, 0, 0, 0.3);
+    --overlay-bg: rgba(0, 0, 0, 0.6);
+  }
+
+  body[data-variant="brand-a"] {
+    --bg-primary: #e9e4db;
+    --bg-secondary: #d9d2c6;
+    --bg-tertiary: #e2ddd4;
+    --text-primary: #1f1b14;
+    --text-secondary: #5a5344;
+    --text-muted: #7d7464;
+    --border-subtle: #c4bba9;
+    --border-hover: #7a6b53;
+    --card-bg: #efe9df;
+    --card-hover-shadow: rgba(44, 35, 30, 0.1);
+    --overlay-bg: rgba(31, 27, 20, 0.5);
+  }
+
+  body[data-variant="brand-b"] {
+    --bg-primary: #201d19;
+    --bg-secondary: #2c2720;
+    --bg-tertiary: #252119;
+    --text-primary: #d9d3c7;
+    --text-secondary: #8e8576;
+    --text-muted: #635c50;
+    --border-subtle: #3e382e;
+    --border-hover: #cbbfac;
+    --card-bg: #272219;
+    --card-hover-shadow: rgba(0, 0, 0, 0.35);
+    --overlay-bg: rgba(0, 0, 0, 0.55);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--typography-body-family);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.6;
+    transition: background-color 0.3s var(--ease-out), color 0.3s var(--ease-out);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+
+  /* ── Variant Switcher ── */
+  .switcher {
+    position: fixed;
+    top: var(--spacing-4);
+    right: var(--spacing-4);
+    z-index: 1000;
+    display: flex;
+    gap: var(--spacing-1);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-1);
+  }
+  .switcher button {
+    font-family: var(--typography-body-family);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: var(--spacing-1) var(--spacing-3);
+    border: none;
+    border-radius: var(--rounded-md);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    text-transform: uppercase;
+  }
+  .switcher button:hover { color: var(--text-primary); }
+  .switcher button.active {
+    background: var(--text-primary);
+    color: var(--bg-primary);
+  }
+
+  /* ── Container ── */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-8);
+  }
+  @media (max-width: 768px) {
+    .container { padding: 0 var(--spacing-4); }
+  }
+
+  /* ── Header ── */
+  .site-header {
+    padding: var(--spacing-6) 0;
+    border-bottom: 1px solid var(--border-subtle);
+    position: relative;
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: var(--typography-display-family);
+    font-size: 22px;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+  .logo span {
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+  .header-nav {
+    display: flex;
+    gap: var(--spacing-8);
+    align-items: center;
+  }
+  .header-nav a {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    transition: color 0.15s;
+    position: relative;
+  }
+  .header-nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--text-primary);
+    transition: width 0.2s var(--ease-out);
+  }
+  .header-nav a:hover { color: var(--text-primary); }
+  .header-nav a:hover::after { width: 100%; }
+
+  @media (max-width: 768px) {
+    .header-nav { gap: var(--spacing-4); }
+    .header-nav a { font-size: 11px; letter-spacing: 0.06em; }
+  }
+
+  /* ── Hero ── */
+  .hero {
+    padding: var(--spacing-24) 0 var(--spacing-16);
+    text-align: center;
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-6);
+  }
+  .hero h1 {
+    font-family: var(--typography-display-family);
+    font-size: clamp(42px, 6vw, 72px);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--text-primary);
+    max-width: 680px;
+    margin: 0 auto var(--spacing-6);
+    letter-spacing: -0.02em;
+  }
+  .hero-lede {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* ── Divider line ── */
+  .section-divider {
+    width: 48px;
+    height: 1px;
+    background: var(--border-subtle);
+    margin: 0 auto;
+  }
+
+  /* ── Portfolio Grid ── */
+  .portfolio-section {
+    padding: var(--spacing-24) 0;
+  }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-12);
+  }
+  .section-title {
+    font-family: var(--typography-display-family);
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+  .section-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-6);
+  }
+  @media (max-width: 1024px) {
+    .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .portfolio-grid { grid-template-columns: 1fr; gap: var(--spacing-4); }
+  }
+
+  /* ── Project Card ── */
+  .project-card {
+    position: relative;
+    cursor: pointer;
+    group: true;
+  }
+  .project-image {
+    aspect-ratio: 4/3;
+    background-color: var(--bg-secondary);
+    border-radius: 0;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--border-subtle);
+    transition: border-color 0.2s;
+  }
+  .project-card:hover .project-image {
+    border-color: var(--border-hover);
+  }
+  .project-image svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .project-image .grain-overlay {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background: linear-gradient(135deg, rgba(122,107,83,0.06) 0%, transparent 60%);
+    transition: opacity 0.3s;
+  }
+  .project-card:hover .grain-overlay { opacity: 1; }
+
+  .project-info {
+    padding-top: var(--spacing-4);
+  }
+  .project-title {
+    font-family: var(--typography-display-family);
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-1);
+    transition: color 0.15s;
+  }
+  .project-card:hover .project-title {
+    color: var(--colors-primary-500);
+  }
+  .project-details {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+  }
+  .project-category {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    background: var(--bg-secondary);
+    padding: var(--spacing-1) var(--spacing-2);
+    border-radius: var(--rounded-sm);
+  }
+  .project-year {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .project-material {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: var(--spacing-1);
+  }
+
+  /* Bottom accent line on hover */
+  .project-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--colors-primary-500);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s var(--ease-out);
+  }
+  .project-card:hover::after {
+    transform: scaleX(1);
+  }
+
+  /* ── Featured piece (wide card) ── */
+  .project-card.featured {
+    grid-column: span 2;
+  }
+  .project-card.featured .project-image {
+    aspect-ratio: 16/9;
+  }
+  @media (max-width: 640px) {
+    .project-card.featured { grid-column: span 1; }
+    .project-card.featured .project-image { aspect-ratio: 4/3; }
+  }
+
+  /* ── About / Philosophy ── */
+  .about-section {
+    padding: var(--spacing-24) 0;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-16);
+    align-items: start;
+  }
+  @media (max-width: 768px) {
+    .about-grid { grid-template-columns: 1fr; gap: var(--spacing-8); }
+  }
+  .about-left .about-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-4);
+  }
+  .about-left blockquote {
+    font-family: var(--typography-display-family);
+    font-size: clamp(24px, 3vw, 32px);
+    font-weight: 400;
+    line-height: 1.35;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+  .about-right p {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-4);
+  }
+  .about-right p:last-child { margin-bottom: 0; }
+
+  /* ── Materials Band ── */
+  .materials-section {
+    padding: var(--spacing-16) 0;
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--bg-secondary);
+    transition: background-color 0.3s;
+  }
+  .materials-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-8);
+  }
+  .materials-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+  }
+  .materials-text strong {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+  .wood-swatch-row {
+    display: flex;
+    gap: var(--spacing-2);
+    align-items: center;
+  }
+  .wood-swatch {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--rounded-md);
+    border: 1px solid var(--border-subtle);
+    transition: transform 0.15s;
+  }
+  .wood-swatch:hover { transform: scale(1.15); }
+  .swatch-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: var(--spacing-1);
+    text-align: center;
+  }
+
+  /* ── Contact / Footer ── */
+  .contact-section {
+    padding: var(--spacing-24) 0;
+    text-align: center;
+  }
+  .contact-heading {
+    font-family: var(--typography-display-family);
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-4);
+    letter-spacing: -0.01em;
+  }
+  .contact-email {
+    font-size: 15px;
+    color: var(--colors-primary-500);
+    border-bottom: 1px solid var(--colors-primary-300);
+    padding-bottom: 1px;
+    transition: border-color 0.15s;
+    display: inline-block;
+  }
+  .contact-email:hover {
+    border-color: var(--colors-primary-500);
+  }
+  .contact-address {
+    margin-top: var(--spacing-6);
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .site-footer {
+    padding: var(--spacing-8) 0;
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .footer-links {
+    display: flex;
+    gap: var(--spacing-6);
+  }
+  .footer-links a {
+    color: var(--text-muted);
+    transition: color 0.15s;
+  }
+  .footer-links a:hover { color: var(--text-primary); }
+
+  /* ── SVG Illustration helpers ── */
+  .walnut-grain {
+    fill: none;
+    stroke-width: 0.8;
+    opacity: 0.5;
+  }
+
+  /* ── Selection color ── */
+  ::selection {
+    background: var(--colors-primary-200);
+    color: var(--colors-primary-900);
+  }
+</style>
+
+<style data-aphrodite-variants>
+[data-variant="brand-a"] {
+  --colors-background-primary: #e9e4db;
+  --colors-background-secondary: #d9d2c6;
+  --colors-border-subtle: #c4bba9;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #e8e6e2;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d1cdc6;
+  --colors-neutral-300: #b3ac9f;
+  --colors-neutral-400: #958c7e;
+  --colors-neutral-50: #f5f4f2;
+  --colors-neutral-500: #7a7162;
+  --colors-neutral-600: #5e5649;
+  --colors-neutral-700: #433d34;
+  --colors-neutral-800: #2a261f;
+  --colors-neutral-900: #15130f;
+  --colors-primary-100: #e6ddd3;
+  --colors-primary-200: #cbbfac;
+  --colors-primary-300: #b09e88;
+  --colors-primary-400: #958264;
+  --colors-primary-50: #f4f0eb;
+  --colors-primary-500: #7a6b53;
+  --colors-primary-600: #655644;
+  --colors-primary-700: #514236;
+  --colors-primary-800: #3e322a;
+  --colors-primary-900: #2c231e;
+  --colors-text-primary: #1f1b14;
+  --colors-text-secondary: #5a5344;
+  --rounded-lg: 6px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 400;
+  --typography-display-family: Instrument Serif;
+  --typography-display-weight: 400;
+  --bg: #e9e4db;
+  --fg: #1f1b14;
+  --muted: #7a6b53;
+}
+[data-variant="brand-b"] {
+  --colors-background-primary: #201d19;
+  --colors-background-secondary: #2c2720;
+  --colors-border-subtle: #3e382e;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #e8e6e2;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d1cdc6;
+  --colors-neutral-300: #b3ac9f;
+  --colors-neutral-400: #958c7e;
+  --colors-neutral-50: #f5f4f2;
+  --colors-neutral-500: #7a7162;
+  --colors-neutral-600: #5e5649;
+  --colors-neutral-700: #433d34;
+  --colors-neutral-800: #2a261f;
+  --colors-neutral-900: #15130f;
+  --colors-primary-100: #e6ddd3;
+  --colors-primary-200: #cbbfac;
+  --colors-primary-300: #b09e88;
+  --colors-primary-400: #958264;
+  --colors-primary-50: #f4f0eb;
+  --colors-primary-500: #7a6b53;
+  --colors-primary-600: #655644;
+  --colors-primary-700: #514236;
+  --colors-primary-800: #3e322a;
+  --colors-primary-900: #2c231e;
+  --colors-text-primary: #d9d3c7;
+  --colors-text-secondary: #8e8576;
+  --rounded-lg: 6px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 400;
+  --typography-display-family: Instrument Serif;
+  --typography-display-weight: 400;
+  --bg: #201d19;
+  --fg: #d9d3c7;
+  --muted: #7a6b53;
+}
+[data-variant="dark"] {
+  --colors-background-primary: #12100e;
+  --colors-background-secondary: #1e1b17;
+  --colors-border-subtle: #3a352d;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #e8e6e2;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d1cdc6;
+  --colors-neutral-300: #b3ac9f;
+  --colors-neutral-400: #958c7e;
+  --colors-neutral-50: #f5f4f2;
+  --colors-neutral-500: #7a7162;
+  --colors-neutral-600: #5e5649;
+  --colors-neutral-700: #433d34;
+  --colors-neutral-800: #2a261f;
+  --colors-neutral-900: #15130f;
+  --colors-primary-100: #e6ddd3;
+  --colors-primary-200: #cbbfac;
+  --colors-primary-300: #b09e88;
+  --colors-primary-400: #958264;
+  --colors-primary-50: #f4f0eb;
+  --colors-primary-500: #7a6b53;
+  --colors-primary-600: #655644;
+  --colors-primary-700: #514236;
+  --colors-primary-800: #3e322a;
+  --colors-primary-900: #2c231e;
+  --colors-text-primary: #e4dfd6;
+  --colors-text-secondary: #958c7e;
+  --rounded-lg: 6px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 400;
+  --typography-display-family: Instrument Serif;
+  --typography-display-weight: 400;
+  --bg: #12100e;
+  --fg: #e4dfd6;
+  --muted: #7a6b53;
+}
+[data-variant="light"] {
+  --colors-background-primary: #f5f4f2;
+  --colors-background-secondary: #eae7e2;
+  --colors-border-subtle: #d4cfc7;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #e8e6e2;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d1cdc6;
+  --colors-neutral-300: #b3ac9f;
+  --colors-neutral-400: #958c7e;
+  --colors-neutral-50: #f5f4f2;
+  --colors-neutral-500: #7a7162;
+  --colors-neutral-600: #5e5649;
+  --colors-neutral-700: #433d34;
+  --colors-neutral-800: #2a261f;
+  --colors-neutral-900: #15130f;
+  --colors-primary-100: #e6ddd3;
+  --colors-primary-200: #cbbfac;
+  --colors-primary-300: #b09e88;
+  --colors-primary-400: #958264;
+  --colors-primary-50: #f4f0eb;
+  --colors-primary-500: #7a6b53;
+  --colors-primary-600: #655644;
+  --colors-primary-700: #514236;
+  --colors-primary-800: #3e322a;
+  --colors-primary-900: #2c231e;
+  --colors-text-primary: #1c1915;
+  --colors-text-secondary: #5e5649;
+  --rounded-lg: 6px;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 400;
+  --typography-display-family: Instrument Serif;
+  --typography-display-weight: 400;
+  --bg: #f5f4f2;
+  --fg: #1c1915;
+  --muted: #7a6b53;
+}
+body{background:var(--bg);color:var(--fg);}
+</style>
+</head>
+<body>
+
+<!-- Variant Switcher -->
+<nav class="switcher">
+  <button class="active" data-v="light">Light</button>
+  <button data-v="dark">Dark</button>
+  <button data-v="brand-a">Hanok</button>
+  <button data-v="brand-b">Gallery</button>
+</nav>
+
+<!-- Header -->
+<header class="site-header">
+  <div class="container">
+    <div class="header-inner">
+      <div class="logo">Haemin Studio <span>· Seoul</span></div>
+      <nav class="header-nav">
+        <a href="#work">Work</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <p class="hero-eyebrow">Independent Furniture Studio — Since 2018</p>
+    <h1>Furniture shaped by material, not by trend</h1>
+    <p class="hero-lede">
+      Solid walnut furniture designed and handbuilt in a small workshop in Seongbuk-dong, Seoul.
+      Each piece begins with the wood itself — its grain, its weight, its character.
+    </p>
+  </div>
+</section>
+
+<!-- Portfolio Grid -->
+<section class="portfolio-section" id="work">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Selected Work</h2>
+      <span class="section-meta">8 pieces · 2019–2024</span>
+    </div>
+
+    <div class="portfolio-grid">
+
+      <!-- 1 — Featured: Dining Table -->
+      <article class="project-card featured">
+        <div class="project-image">
+          <svg viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg">
+            <rect width="960" height="540" fill="#3e322a"/>
+            <!-- Table top -->
+            <rect x="140" y="160" width="680" height="28" rx="1" fill="#6b5c48"/>
+            <rect x="140" y="160" width="680" height="14" rx="1" fill="#7a6b53" opacity="0.6"/>
+            <!-- Grain lines -->
+            <line x1="180" y1="165" x2="780" y2="167" stroke="#8a7a64" stroke-width="0.5" opacity="0.4"/>
+            <line x1="160" y1="172" x2="800" y2="174" stroke="#5e4f3c" stroke-width="0.7" opacity="0.3"/>
+            <line x1="200" y1="179" x2="760" y2="178" stroke="#8a7a64" stroke-width="0.4" opacity="0.35"/>
+            <!-- Legs -->
+            <rect x="180" y="188" width="14" height="200" rx="1" fill="#514236"/>
+            <rect x="766" y="188" width="14" height="200" rx="1" fill="#514236"/>
+            <rect x="194" y="388" width="80" height="10" rx="1" fill="#514236"/>
+            <rect x="686" y="388" width="80" height="10" rx="1" fill="#514236"/>
+            <!-- Shadow -->
+            <rect x="180" y="398" width="600" height="8" rx="4" fill="#1a1510" opacity="0.25"/>
+            <!-- Light reflection -->
+            <rect x="200" y="163" width="200" height="2" fill="#cbbfac" opacity="0.15"/>
+            <!-- Chairs hint -->
+            <rect x="300" y="240" width="60" height="80" rx="2" fill="#433d34" opacity="0.5"/>
+            <rect x="600" y="240" width="60" height="80" rx="2" fill="#433d34" opacity="0.5"/>
+          </svg>
+          <div class="grain-overlay"></div>
+        </div>
+        <div class="project-info">
+          <h3 class="project-title">Seongbuk Dining Table</h3>
+          <div class="project-details">
+            <span class="project-category">Tables</span>
+            <span class="project-year">2024</span>
+          </div>
+          <p class="project-material">Solid walnut, hand-rubbed oil finish · 2200 × 900 × 750mm</p>
+        </div>
+      </article>
+
+      <!-- 2 — Lounge Chair -->
+      <article class="project-card">
+        <div class="project-image">
+          <svg viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg">
+            <rect width="640" height="480" fill="#2c231e"/>
+            <!-- Chair back -->
+            <rect x="220" y="80" width="200" height="140" rx="4" fill="#655644"/>
+            <rect x="230" y="90" width="180" height="120" rx="2" fill="#7a6b53"/>
+            <!-- Seat -->
+            <rect x="200" y="220" width="240" height="30" rx="2" fill="#6b5c48"/>
+            <!-- Grain -->
+            <line x1="240" y1="95" x2="400" y2="93" stroke="#8a7a64" stroke-width="0.5" opacity="0.4"/>
+            <line x1="235" y1="115" x2="405" y2="117" stroke="#5e4f3c" stroke-width="0.4" opacity="0.3"/>
+            <!-- Legs -->
+            <line x1="210" y1="250" x2="190" y2="400" stroke="#514236" stroke-width="8" stroke-linecap="round"/>
+            <line x1="430" y1="250" x2="450" y2="400" stroke="#514236" stroke-width="8" stroke-linecap="round"/>
+            <!-- Armrest -->
+            <rect x="185" y="180" width="16" height="70" rx="3" fill="#514236"/>
+            <rect x="440" y="180" width="16" height="70" rx="3" fill="#514236"/>
+            <rect x="185" y="175" width="100" height="10" rx="2" fill="#5e4f3c"/>
+            <rect x="355" y="175" width="100" height="10" rx="2" fill="#5e4f3c"/>
+            <!-- Shadow -->
+            <ellipse cx="320" cy="420" rx="160" ry="12" fill="#0e0c0a" opacity="0.3"/>
+          </svg>
+          <div class="grain-overlay"></div>
+        </div>
+        <div class="project-info">
+          <h3 class="project-title">Bukchon Lounge Chair</h3>
+          <div class="project-details">
+            <span class="project-category">Seating</span>
+            <span class="project-year">2024</span>
+          </div>
+          <p class="project-material">Solid walnut, woven Danish cord seat</p>
+        </div>
+      </article>
+
+      <!-- 3 — Shelf System -->
+      <article class="project-card">
+        <div class="project-image">
+          <svg viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg">
+            <rect width="640" height="480" fill="#3e322a"/>
+            <!-- Uprights -->
+            <rect x="160" y="50" width="12" height="380" rx="1" fill="#514236"/>
+            <rect x="468" y="50" width="12" height="380" rx="1" fill="#514236"/>
+            <!-- Shelves -->
+            <rect x="155" y="90" width="330" height="10" rx="1" fill="#7a6b53"/>
+            <rect x="155" y="170" width="330" height="10" rx="1" fill="#7a6b53"/>
+            <rect x="155" y="250" width="330" height="10" rx="1" fill="#7a6b53"/>
+            <rect x="155" y="330" width="330" height="10" rx="1" fill="#7a6b53"/>
+            <rect x="155" y="410" width="330" height="10" rx="1" fill="#7a6b53"/>
+            <!-- Grain on shelves -->
+            <line x1="160" y1="94" x2="480" y2="94" stroke="#8a7a64" stroke-width="0.5" opacity="0.3"/>
+            <line x1="160" y1="174" x2="480" y2="174" stroke="#8a7a64" stroke-width="0.5" opacity="0.3"/>
+            <!-- Objects on shelves -->
+            <!-- Books -->
+            <rect x="200" y="56" width="18" height="34" rx="1" fill="#b09e88"/>
+            <rect x="222" y="60" width="14" height="30" rx="1" fill="#958264"/>
+            <rect x="240" y="54" width="20" height="36" rx="1" fill="#cbbfac"/>
+            <!-- Vase -->
+            <ellipse cx="380" cy="156" rx="18" ry="14" fill="#514236"/>
+            <rect x="370" y="135" width="20" height="21" rx="4" fill="#655644"/>
+            <!-- Small box -->
+            <rect x="250" y="228" width="40" height="22" rx="1" fill="#5e4f3c"/>
+            <!-- Shadow at base -->
+            <rect x="160" y="435" width="320" height="6" rx="3" fill="#1a1510" opacity="0.2"/>
+          </svg>
+          <div class="grain-overlay"></div>
+        </div>
+        <div class="project-info">
+          <h3 class="project-title">Jongno Wall Shelf</h3>
+          <div class="project-details">
+            <span class="project-category">Storage</span>
+            <span class="project-year">2023</span>
+          </div>
+          <p class="project-material">Solid walnut, brass pinned joints · 1800 × 320 × 280mm</p>
+        </div>
+      </article>
+
+      <!-- 4 — Desk -->
+      <article class="project-card">
+        <div class="project-image">
+          <svg viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg">
+            <rect width="640" height="480" fill="#2c231e"/>
+            <!-- Desktop surface -->
+            <rect x="100" y="170" width="440" height="22" rx="1" fill="#7a6b53"/>
+            <rect x="100" y="170" width="440" height="10" fill="#8a7a64" opacity="0.3"/>
+            <!-- Grain -->
+            <line x1="120" y1="175" x2="520" y2="176" stroke="#958264" stroke-width="0.5" opacity="0.3"/>
+            <line x1="110" y1="182" x2="530" y2="183" stroke="#5e4f3c" stroke-width="0.4" opacity="0.25"/>
+            <!-- Legs - A-frame style -->
+            <line x1="160" y1="192" x2="140" y2="400" stroke="#514236" stroke-width="10" stroke-linecap="round"/>
+            <line x1="240" y1="192" x2="220" y2="400" stroke="#514236" stroke-width="10" stroke-linecap="round"/>
+            <line x1="160" y1="310" x2="240" y2="310" stroke="#514236" stroke-width="6"/>
+            <line x1="480" y1="192" x2="500" y2="400" stroke="#514236" stroke-width="10" stroke-linecap="round"/>
+            <line x1="400" y1="192" x2="420" y2="400" stroke="#514236" stroke-width="10" stroke-linecap="round"/>
+            <line x1="400" y1="310" x2="480" y2="310" stroke="#514236" stroke-width="6"/>
+            <!-- Drawer -->
+            <rect x="430" y="192" width="100" height="40" rx="1" fill="#655644"/>
+            <rect x="470" y="208" width="20" height="4" rx="2" fill="#958264"/>
+            <!-- Shadow -->
+            <rect x="140" y="405" width="360" height="6" rx="3" fill="#0e0c0a" opacity="0.25"/>
+          </svg>
+          <div class="grain-overlay"></div>
+        </div>
+        <div class="project-info">
+          <h3 class="project-title">Jeongdok Writing Desk</h3>
+          <div class="project-details">
+            <span class="project-category">Tables</span>
+            <span class="project-year">2023</span>
+          </div>
+          <p class="project-material">Solid walnut, A-frame trestle base · 1400 × 650 × 740mm</p>
+        </div>
+      </article>
+
+      <!-- 5 — Bench -->
+      <article class="project-card">
+        <div class="project-image">
+          <svg viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg">
+            <rect width="640" height="480" fill="#3e322a"/>
+            <!-- Seat top -->
+            <rect x="100" y="200" width="440" height="20" rx="2" fill="#7a6b53"/>
+            <rect x="100" y="200" width="440" height="8" fill="#8a7a64" opacity="0.25"/>
+            <!-- Grain -->
+            <line x1="120" y1="205" x2="520" y2="206" stroke="#958264" stroke-width="0.5" opacity="0.35"/>
+            <line x1="130" y1="212" x2="510" y2="213" stroke="#5e4f3c" stroke-width="0.4" opacity="0.25"/>
+            <!-- Legs - chamfered -->
+            <path d="M150 220 L145 380 L165 380 L160 220 Z" fill="#514236"/>
+            <path d="M480 220 L475 380 L495 380 L490 220 Z" fill="#514236"/>
+            <!-- Stretcher -->
+            <rect x="155" y="310" width="330" height="8" rx="1" fill="#5e4f3c"/>
+            <!-- Through-tenons -->
+            <rect x="155" y="198" width="8" height="6" fill="#958264" opacity="0.5"/>
+            <rect x="477" y="198" width="8" height="6" fill="#958264" opacity="0.5"/>
+            <!-- Shadow -->
+            <ellipse cx="320" cy="395" rx="200" ry="10" fill="#1a1510" opacity="0.2"/>
+          </svg>
+          <div class="grain-overlay"></div>
+        </div>
+        <div class="project-info">
+          <h3 class="project-title">Inwang Entry Bench</h3>
+          <div class="project-details">
+            <span class="project-category">Seating</span>
+            <span class="project-year">2022</span>
+          </div>
+          <p class="project-material">Solid walnut, visible through-tenons · 1500 × 380 × 440mm</p>
+        </div>
+      </article>
+
+      <!-- 6 — Side Table -->
+      <article class="project-card">
+        <div class="project-image">
+          <svg viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg">
+            <rect width="640" height="480" fill="#2c231e"/>
+            <!-- Rounded top -->
+            <ellipse cx="320" cy="180" rx="120" ry="14" fill="#7a6b53"/>
+            <ellipse cx="320" cy="177" rx="120" ry="12

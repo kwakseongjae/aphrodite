@@ -96,6 +96,12 @@
     <p class="desc">Verifies that `aphrodite refine "<delta>"` behaves as refinement (not redesign): turn 2 changes the hue alone, turn 3 changes spacing alone, turn 4 changes the display family alone. The cool blue from turn 2 persists three turns later; spacing from turn 3 survives the display swap in turn 4. Body font even stayed unchanged in turn 4 because the request didn't mention it — the nuance landed. <strong>Limitation:</strong> deltas were pre-scripted, not reactive — see Pass 7.</p>
   </a>
 
+  <a class="pass" href="2026-05-14-pass8-autonomous/">
+    <h2>Pass 8 — autonomous <code>aphrodite create</code> (no external turns) <span class="tag live">internal loop · 2 runs</span></h2>
+    <div class="meta">2026-05-14 · same intent as Pass 7 · harness internalises critic→refine loop · zero caller input</div>
+    <p class="desc">First dogfood of the ADR 0004 Phase 4 prototype. Run A: critic correctly identified register mismatch (Space Grotesk → Cormorant Garamond), then parser bug crashed turn 2 (since fixed with regression test). Run B (post-fix): generator rolled Instrument Serif + Inter on the initial design, critic declared 0.92 satisfaction with 0 refines — but missed the same prose-vs-spacing-token mismatch Pass 7 reactively caught. Strong evidence that <strong>Phase 8 skill-loading is the missing piece</strong>: with the seeded <code>editorial-portfolio</code> skill in the critic prompt as scaffold, the loop would have known to push spacing ≥160 px and to skip Cormorant. Pass 9 dogfoods that hypothesis.</p>
+  </a>
+
   <a class="pass" href="2026-05-14-pass7-reactive/gallery.html">
     <h2>Pass 7 — reactive multi-turn (no script) <span class="tag live">4 turns · agent-driven</span></h2>
     <div class="meta">2026-05-14 · agent looks at each turn's output, forms reaction, writes next delta · intent: independent Seoul furniture maker portfolio</div>
