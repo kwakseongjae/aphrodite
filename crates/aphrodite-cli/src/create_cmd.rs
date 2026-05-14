@@ -13,9 +13,11 @@
 //! can already key off them while the implementations land later.
 
 use aphrodite_core::{
-    parse_design, personas, preferences, record_taste, resolve_variants, skills,
+    parse_design, personas, preferences, record_taste, resolve_variants, skills, wiki,
     validate_design, Caller, Invocation, SignalKind, Surface, WriteMode,
 };
+
+const REFERENCES_TOP_K: usize = 3;
 use aphrodite_generator::{critic, harmonize, refine, surface};
 use serde_json::json;
 use std::path::PathBuf;
@@ -108,15 +110,48 @@ pub async fn run(
         );
     }
     let scaffold_block = skills::build_scaffold_block(&loaded_skills, MAX_SCAFFOLD_BODY_CHARS);
-    // Combine persona + scaffold. Persona goes FIRST and is framed as the
-    // final authority — generic scaffolds become contextual checklists under it.
-    let augmentation = match (persona_block.is_empty(), scaffold_block.is_empty()) {
-        (true, true) => String::new(),
-        (true, false) => format!(
-            "{scaffold_block}\nApply the scaffold above as concrete constraints, not suggestions."
-        ),
-        (false, true) => persona_block.clone(),
-        (false, false) => format!("{persona_block}\n---\n\n{scaffold_block}"),
+
+    // ---- Phase 1: research — Karpathy LLM-Wiki design-reference query ------
+    let newly_seeded_wiki = wiki::seed_bundled_wiki();
+    if !newly_seeded_wiki.is_empty() {
+        eprintln!(
+            "● phase 1 / seeded design wiki: {}",
+            newly_seeded_wiki.join(", ")
+        );
+    }
+    let wiki_entries = wiki::query_by_tags(&intent_tag_refs, REFERENCES_TOP_K);
+    let wiki_slugs: Vec<String> = wiki_entries.iter().map(|e| e.slug.clone()).collect();
+    if !wiki_entries.is_empty() {
+        eprintln!(
+            "● phase 1 / loaded reference materials: [{}]",
+            wiki_slugs.join(", ")
+        );
+    } else if !intent_tag_refs.is_empty() {
+        eprintln!(
+            "● phase 1 / no wiki entries match tags [{}] — generator works without prior art",
+            intent_tags.join(", ")
+        );
+    }
+    let references_block = wiki::render_references_block(&wiki_entries);
+
+    // Combine persona + scaffold + references. Persona first (final authority),
+    // then references (concrete prior art), then scaffold (generic checklists).
+    let augmentation = {
+        let mut parts: Vec<String> = Vec::new();
+        if !persona_block.is_empty() {
+            parts.push(persona_block.clone());
+        }
+        if !references_block.is_empty() {
+            parts.push(references_block.clone());
+        }
+        if !scaffold_block.is_empty() {
+            parts.push(scaffold_block.clone());
+        }
+        if parts.is_empty() {
+            String::new()
+        } else {
+            parts.join("\n---\n\n")
+        }
     };
     let intent_for_design = if augmentation.is_empty() {
         intent.clone()
@@ -470,7 +505,7 @@ pub async fn run(
             "turn_log": turns,
         },
         "phases": {
-            "research": "stub",
+            "research": if wiki_slugs.is_empty() { "no_matching_wiki_entries" } else { "applied" },
             "skill_loading": if loaded_slugs.is_empty() {
                 if intent_tags.is_empty() { "no_intent_tags" } else { "no_matching_skills" }
             } else { "applied" },
@@ -491,6 +526,10 @@ pub async fn run(
             "proposed_new": proposed_skill,
         },
         "persona": persona_slug,
+        "research": {
+            "wiki_entries_loaded": wiki_slugs,
+            "newly_seeded_wiki": newly_seeded_wiki,
+        },
         "harmonize": {
             "fonts_injected": harmonize_report.fonts_injected,
             "hero_typography_fixed": harmonize_report.hero_typography_fixed,

@@ -96,6 +96,12 @@
     <p class="desc">Verifies that `aphrodite refine "<delta>"` behaves as refinement (not redesign): turn 2 changes the hue alone, turn 3 changes spacing alone, turn 4 changes the display family alone. The cool blue from turn 2 persists three turns later; spacing from turn 3 survives the display swap in turn 4. Body font even stayed unchanged in turn 4 because the request didn't mention it — the nuance landed. <strong>Limitation:</strong> deltas were pre-scripted, not reactive — see Pass 7.</p>
   </a>
 
+  <a class="pass" href="2026-05-14-pass16-wiki-references/">
+    <h2>Pass 16 — Karpathy LLM-Wiki for design references <span class="tag live">Phase 1 done · 9/9 ADR phases functional</span></h2>
+    <div class="meta">2026-05-14 · 7 hand-curated wiki entries · tag-overlap retrieval · zero-LLM-cost reference injection</div>
+    <p class="desc">Surveyed existing research skills (Hermes <code>arxiv/blogwatcher/polymarket/llm-wiki/research-paper-writing</code>, Karpathy <code>autoresearch</code>) and picked the strongest fit: <strong>Karpathy's LLM-Wiki pattern</strong> ("compile knowledge once; query at use-time" — better than rediscovery-per-query RAG). 7 hand-curated seed entries: Pretendard, MUJI, Apartamento, Pentagram, Linear, Are.na, Naver/Papago. Pass 16 dogfood: tag-overlap retrieved Apartamento + Are.na + Pentagram for the Seoul furniture portfolio intent. Six of seven Layout-section specifications in the output trace directly to a wiki entry — <code>12-column / 24 px gutter</code> (Pentagram), <code>7-of-12 column content width</code> + <code>4:5 portrait photography</code> (Apartamento), <code>12 px Inter Regular left rail</code> (Are.na). Wall: 251 s (fastest dogfood to date). All 8 numbered ADR 0004 phases now functional.</p>
+  </a>
+
   <a class="pass" href="2026-05-14-pass15-lucide-class-recovery/">
     <h2>Pass 15 — #31 + #32 fully closed <span class="tag live">8/9 ADR phases functional</span></h2>
     <div class="meta">2026-05-14 · critic distinguishes prescriptive vs suggestive scaffold language · Lucide class labels reach the artifact</div>
