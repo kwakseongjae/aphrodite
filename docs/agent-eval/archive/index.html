@@ -96,6 +96,12 @@
     <p class="desc">Verifies that `aphrodite refine "<delta>"` behaves as refinement (not redesign): turn 2 changes the hue alone, turn 3 changes spacing alone, turn 4 changes the display family alone. The cool blue from turn 2 persists three turns later; spacing from turn 3 survives the display swap in turn 4. Body font even stayed unchanged in turn 4 because the request didn't mention it — the nuance landed. <strong>Limitation:</strong> deltas were pre-scripted, not reactive — see Pass 7.</p>
   </a>
 
+  <a class="pass" href="2026-05-14-pass10-harmonize/">
+    <h2>Pass 10 — harmonize + asset standards <span class="tag live">Findings #24, #26 closed · default skill loaded</span></h2>
+    <div class="meta">2026-05-14 · Phase 7 harmonize live · asset-standards default skill applies to every run</div>
+    <p class="desc">Closes #24 (Google Fonts <code>@import</code> auto-injection) and #26 (hero typography token hookup). Adds <code>asset-standards</code> as a <code>default: true</code> skill loaded for every <code>aphrodite create</code> — codifies Lucide icons, Fluent UI emoji, opinionated photography placeholders, AI-slop copy hygiene. Pass 10b dogfood: same Seoul furniture-maker intent landed Source Serif 4 + Inter + #faf9f6 brand-a + auto-injected Google Fonts URL (with opsz axis) + hero typography CSS variables. Critic over-corrected (claimed skill "warns against Fraunces" — it doesn't) but net direction correct. Five of eight ADR 0004 phases functional.</p>
+  </a>
+
   <a class="pass" href="2026-05-14-pass9-skillify/">
     <h2>Pass 9 — skill scaffold loading <span class="tag live">DECISIVE · 0 refines · Pass 7 parity</span></h2>
     <div class="meta">2026-05-14 · same intent, skill scaffold injected · 4 axes Pass 7 needed 4 reactive turns to find now land on initial design</div>

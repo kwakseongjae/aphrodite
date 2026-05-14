@@ -7,8 +7,10 @@ tags:
   - editorial
   - solo-maker
   - photo-dominant
-related_skills: []
+related_skills:
+  - asset-standards
 agent_created: false
+default: false
 ---
 
 # Editorial Portfolio — solo-maker register

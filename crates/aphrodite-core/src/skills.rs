@@ -82,6 +82,11 @@ pub struct SkillFrontmatter {
     /// False ⇒ user-authored or installed. Curator only touches `agent_created: true`.
     #[serde(default)]
     pub agent_created: bool,
+    /// True ⇒ this skill is loaded for EVERY create invocation regardless of
+    /// intent-tag overlap. Reserve for cross-cutting standards (asset sourcing,
+    /// accessibility, AI-slop avoidance). Default false.
+    #[serde(default)]
+    pub default: bool,
 }
 
 fn default_version() -> String {
@@ -377,10 +382,16 @@ pub fn set_state(slug: &str, state: SkillState) -> Result<(), SkillError> {
 
 /// Skills shipped with the binary. On first orchestrator run we materialise
 /// these into `~/.aphrodite/skills/` if the slug is absent. Idempotent.
-const BUNDLED_SKILLS: &[(&str, &str)] = &[(
-    "editorial-portfolio",
-    include_str!("../seed-skills/editorial-portfolio/SKILL.md"),
-)];
+const BUNDLED_SKILLS: &[(&str, &str)] = &[
+    (
+        "asset-standards",
+        include_str!("../seed-skills/asset-standards/SKILL.md"),
+    ),
+    (
+        "editorial-portfolio",
+        include_str!("../seed-skills/editorial-portfolio/SKILL.md"),
+    ),
+];
 
 /// Materialise bundled skills onto disk if they are not already present.
 /// Returns the list of slugs that were newly written this call.
@@ -476,7 +487,9 @@ pub fn build_scaffold_block(skills: &[Skill], max_body_chars: usize) -> String {
 // ---------------------------------------------------------------------------
 
 /// Rank live skills by tag overlap with the incoming intent's tag set.
-/// Pinned skills float to the top regardless of overlap.
+/// Skills marked `default: true` in frontmatter are ALWAYS included (they
+/// encode cross-cutting standards like asset sourcing). Pinned skills float
+/// to the top regardless of overlap. Otherwise tag overlap drives score.
 pub fn rank_for_intent(intent_tags: &[&str], top_k: usize) -> Vec<Skill> {
     let usage = load_usage();
     let mut scored: Vec<(i32, Skill)> = Vec::new();
@@ -496,9 +509,10 @@ pub fn rank_for_intent(intent_tags: &[&str], top_k: usize) -> Vec<Skill> {
             .filter(|t| intent_tags.iter().any(|it| it.eq_ignore_ascii_case(t)))
             .count() as i32;
         let pin_bonus = if rec.pinned { 100 } else { 0 };
+        let default_bonus = if skill.frontmatter.default { 80 } else { 0 };
         let use_bonus = (rec.use_count.min(20) as i32) / 4;
-        let score = overlap * 10 + pin_bonus + use_bonus;
-        if score > 0 || rec.pinned {
+        let score = overlap * 10 + pin_bonus + default_bonus + use_bonus;
+        if score > 0 || rec.pinned || skill.frontmatter.default {
             scored.push((score, skill));
         }
     }
@@ -545,6 +559,7 @@ mod tests {
                 tags: vec!["portfolio".into(), "test".into()],
                 related_skills: vec![],
                 agent_created,
+                default: false,
             },
             body: "# Workflow\n\n1. Step one\n2. Step two\n".to_string(),
             path: skill_md_path(slug),
@@ -600,6 +615,25 @@ mod tests {
         restore("lifecycle").unwrap();
         assert!(list().contains(&"lifecycle".to_string()));
         assert_eq!(get_record("lifecycle").state, SkillState::Active);
+    }
+
+    #[test]
+    fn rank_includes_default_skills_even_with_no_overlap() {
+        let _s = Scratch::new();
+        let mut default_skill = fixture_skill("asset-standards", false);
+        default_skill.frontmatter.tags = vec!["completely-unrelated".into()];
+        default_skill.frontmatter.default = true;
+        save(&default_skill).unwrap();
+
+        let mut domain_skill = fixture_skill("editorial", false);
+        domain_skill.frontmatter.tags = vec!["editorial".into()];
+        save(&domain_skill).unwrap();
+
+        let ranked = rank_for_intent(&["editorial"], 5);
+        let slugs: Vec<&str> = ranked.iter().map(|s| s.slug.as_str()).collect();
+        // default skill must appear despite zero tag overlap
+        assert!(slugs.contains(&"asset-standards"), "got: {:?}", slugs);
+        assert!(slugs.contains(&"editorial"));
     }
 
     #[test]

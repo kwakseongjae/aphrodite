@@ -2,6 +2,7 @@
 
 pub mod critic;
 pub mod extractor;
+pub mod harmonize;
 pub mod hero;
 pub mod offline;
 pub mod provider;

@@ -16,7 +16,7 @@ use aphrodite_core::{
     parse_design, preferences, record_taste, resolve_variants, skills, validate_design, Caller,
     Invocation, SignalKind, Surface, WriteMode,
 };
-use aphrodite_generator::{critic, refine, surface};
+use aphrodite_generator::{critic, harmonize, refine, surface};
 use serde_json::json;
 use std::path::PathBuf;
 use std::time::Instant;
@@ -257,9 +257,28 @@ pub async fn run(
         }
     }
 
-    // ---- Write final artifacts ---------------------------------------------
+    // ---- Phase 7: harmonize -------------------------------------------------
+    // Closes Findings #24 (Google Fonts @import missing) and #26 (hero ignores
+    // typography tokens). Pure post-processing, no LLM call.
     let final_doc = parse_design(&design_md)?;
     let final_variants = resolve_variants(&final_doc);
+    let (composition_html_h, hero_html_h, harmonize_report) =
+        harmonize::harmonize(&composition_html, &hero_html, &design_md, &final_doc);
+    composition_html = composition_html_h;
+    hero_html = hero_html_h;
+    if !harmonize_report.fonts_injected.is_empty() {
+        eprintln!(
+            "● phase 7 / harmonize: injected fonts [{}]{}",
+            harmonize_report.fonts_injected.join(", "),
+            if harmonize_report.hero_typography_fixed {
+                ", hero typography hooked up"
+            } else {
+                ""
+            }
+        );
+    } else if harmonize_report.hero_typography_fixed {
+        eprintln!("● phase 7 / harmonize: hero typography hooked up (no remote fonts needed)");
+    }
     let final_report = validate_design(&final_doc, &final_variants);
 
     let (design_path, hero_path, composition_path) = if no_write {
@@ -425,7 +444,9 @@ pub async fn run(
             "self_critic_refine": "done",
             "asset_create": "stub",
             "asset_manage": "stub",
-            "harmonize": "stub",
+            "harmonize": if harmonize_report.fonts_injected.is_empty() && !harmonize_report.hero_typography_fixed {
+                "noop"
+            } else { "applied" },
             "skillify": if proposed_skill.is_some() { "proposed" } else { "below_threshold" },
         },
         "skills": {
@@ -433,6 +454,11 @@ pub async fn run(
             "loaded": loaded_slugs,
             "newly_seeded": newly_seeded,
             "proposed_new": proposed_skill,
+        },
+        "harmonize": {
+            "fonts_injected": harmonize_report.fonts_injected,
+            "hero_typography_fixed": harmonize_report.hero_typography_fixed,
+            "notes": harmonize_report.notes,
         },
         "telemetry": {
             "llm_calls": llm_calls,
