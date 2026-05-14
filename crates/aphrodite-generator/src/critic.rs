@@ -73,6 +73,17 @@ Example of INVALID override (the failure pattern from prior runs):
 The second is *not allowed* when a persona is present, because the editorial-portfolio scaffold is *under* the persona. Quoting the scaffold over the persona is a tell that you've defaulted to safe-mode rather than honoured the brief.
 
 If you cannot articulate a persona-anchored justification, the persona-driven pick stays. Restraint here is correct.
+
+## Scaffold-language discipline (also applies when NO persona is present)
+
+When reading a skill scaffold, distinguish between **prescriptive** and **suggestive** language:
+
+- Prescriptive (treat as hard rule): "use X", "avoid X", "must be ≥ N px", "REJECTS:", explicit numeric thresholds.
+- Suggestive (treat as guidance, not enforcement): "such as X, Y, Z", "good candidates: X, Y, Z", "for example: X", "consider X".
+
+**Do NOT refine away from a pick simply because it does not appear in a suggestive list.** A scaffold saying *"Source Serif 4, Newsreader, or Fraunces are good candidates"* is naming THREE examples of a category (*contemporary display serif with optical sizing*). A fourth pick that satisfies the same category — Crimson Pro, Tiempos Display, GT Sectra — is equally valid. Refine only if the chosen family violates the category itself (e.g. a tech-geometric grotesque where a contemporary serif was named).
+
+Before proposing a refine that cites a scaffold list, ask yourself: **does the current design violate the underlying category, or merely a specific named option?** Only the former warrants a refine. The latter is over-correction — bump satisfaction by 0.10 instead.
 "###;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

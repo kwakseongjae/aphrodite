@@ -96,6 +96,12 @@
     <p class="desc">Verifies that `aphrodite refine "<delta>"` behaves as refinement (not redesign): turn 2 changes the hue alone, turn 3 changes spacing alone, turn 4 changes the display family alone. The cool blue from turn 2 persists three turns later; spacing from turn 3 survives the display swap in turn 4. Body font even stayed unchanged in turn 4 because the request didn't mention it — the nuance landed. <strong>Limitation:</strong> deltas were pre-scripted, not reactive — see Pass 7.</p>
   </a>
 
+  <a class="pass" href="2026-05-14-pass15-lucide-class-recovery/">
+    <h2>Pass 15 — #31 + #32 fully closed <span class="tag live">8/9 ADR phases functional</span></h2>
+    <div class="meta">2026-05-14 · critic distinguishes prescriptive vs suggestive scaffold language · Lucide class labels reach the artifact</div>
+    <p class="desc">Closes two findings with complementary mechanisms. <strong>#31</strong>: critic prompt now distinguishes prescriptive ("avoid X", "must be ≥ N") from suggestive ("good candidates: X, Y, Z") scaffold language — Cormorant refine is correct (prescriptive ban); Crimson-Pro-style picks would now stay. <strong>#32</strong>: in-prompt directive holds on the LLM side (Run A produced 7 properly-classed Lucide icons in semantic slots — <code>layout-dashboard, users, filter, settings, log-out, triangle-alert, building-…</code>), with <code>harmonize::recover_lucide_classes</code> as a deterministic fingerprint-based backstop for any future label drop-out. ADR 0004 phase 5 moves to done. 8/9 phases functional.</p>
+  </a>
+
   <a class="pass" href="2026-05-14-pass14-assets-retry/">
     <h2>Pass 14 — Lucide path embeddings + provider retry <span class="tag live">#29 closed · #32 partial · path-data byte-perfect</span></h2>
     <div class="meta">2026-05-14 · asset-standards skill body now embeds 10 canonical Lucide SVGs · call_raw retries transient failures</div>

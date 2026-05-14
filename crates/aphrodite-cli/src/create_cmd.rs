@@ -295,18 +295,24 @@ pub async fn run(
         harmonize::harmonize(&composition_html, &hero_html, &design_md, &final_doc);
     composition_html = composition_html_h;
     hero_html = hero_html_h;
+    let mut harmonize_bits: Vec<String> = Vec::new();
     if !harmonize_report.fonts_injected.is_empty() {
-        eprintln!(
-            "● phase 7 / harmonize: injected fonts [{}]{}",
-            harmonize_report.fonts_injected.join(", "),
-            if harmonize_report.hero_typography_fixed {
-                ", hero typography hooked up"
-            } else {
-                ""
-            }
-        );
-    } else if harmonize_report.hero_typography_fixed {
-        eprintln!("● phase 7 / harmonize: hero typography hooked up (no remote fonts needed)");
+        harmonize_bits.push(format!(
+            "injected fonts [{}]",
+            harmonize_report.fonts_injected.join(", ")
+        ));
+    }
+    if harmonize_report.hero_typography_fixed {
+        harmonize_bits.push("hero typography hooked up".to_string());
+    }
+    if !harmonize_report.lucide_labels_recovered.is_empty() {
+        harmonize_bits.push(format!(
+            "recovered Lucide labels [{}]",
+            harmonize_report.lucide_labels_recovered.join(", ")
+        ));
+    }
+    if !harmonize_bits.is_empty() {
+        eprintln!("● phase 7 / harmonize: {}", harmonize_bits.join("; "));
     }
     let final_report = validate_design(&final_doc, &final_variants);
 
@@ -488,6 +494,7 @@ pub async fn run(
         "harmonize": {
             "fonts_injected": harmonize_report.fonts_injected,
             "hero_typography_fixed": harmonize_report.hero_typography_fixed,
+            "lucide_labels_recovered": harmonize_report.lucide_labels_recovered,
             "notes": harmonize_report.notes,
         },
         "telemetry": {
