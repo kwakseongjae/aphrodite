@@ -1,0 +1,1 @@
+an analytics dashboard for a clinical trial monitoring platform showing patient enrollment, dropout rates, and adverse-event time series

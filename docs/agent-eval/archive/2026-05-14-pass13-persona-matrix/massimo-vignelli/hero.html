@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>seoul-investigative — Aphrodite</title>
+<style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Source Han Sans KR", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --aphrodite-typography-display: "Bodoni Moda", "Source Han Sans KR", Georgia, "Times New Roman", serif;
+    --aphrodite-typography-body: "Source Han Sans KR", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant="brand-a"] {
+    --colors-accent: #2d6b50;
+    --colors-background-primary: #f8f5ee;
+    --colors-background-secondary: #efeadf;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #e8e7e4;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #d1cfca;
+    --colors-neutral-300: #b3b0a9;
+    --colors-neutral-400: #8a867e;
+    --colors-neutral-50: #f5f5f3;
+    --colors-neutral-500: #6b6760;
+    --colors-neutral-600: #524e48;
+    --colors-neutral-700: #3d3a36;
+    --colors-neutral-800: #2a2825;
+    --colors-neutral-900: #1a1917;
+    --colors-primary-100: #d4e8de;
+    --colors-primary-200: #a8d1bd;
+    --colors-primary-300: #7cba9c;
+    --colors-primary-400: #509676;
+    --colors-primary-50: #f0f7f4;
+    --colors-primary-500: #2d6b50;
+    --colors-primary-600: #245842;
+    --colors-primary-700: #1b4433;
+    --colors-primary-800: #133125;
+    --colors-primary-900: #0a1f16;
+    --colors-text-primary: #1a1917;
+    --colors-text-secondary: #6b6760;
+    --rounded-md: 4px;
+    --rounded-sm: 2px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-48: 192px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Source Han Sans KR;
+    --typography-body-weight: 400;
+    --typography-display-family: Bodoni Moda;
+    --typography-display-weight: 700;
+    --bg: #f8f5ee;
+    --fg: #1a1917;
+    --accent: #2d6b50;
+    --muted: #7cba9c;
+  }
+  
+  [data-variant="brand-b"] {
+    --colors-accent: #245842;
+    --colors-background-primary: #eef1f4;
+    --colors-background-secondary: #dde2e8;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #e8e7e4;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #d1cfca;
+    --colors-neutral-300: #b3b0a9;
+    --colors-neutral-400: #8a867e;
+    --colors-neutral-50: #f5f5f3;
+    --colors-neutral-500: #6b6760;
+    --colors-neutral-600: #524e48;
+    --colors-neutral-700: #3d3a36;
+    --colors-neutral-800: #2a2825;
+    --colors-neutral-900: #1a1917;
+    --colors-primary-100: #d4e8de;
+    --colors-primary-200: #a8d1bd;
+    --colors-primary-300: #7cba9c;
+    --colors-primary-400: #509676;
+    --colors-primary-50: #f0f7f4;
+    --colors-primary-500: #2d6b50;
+    --colors-primary-600: #245842;
+    --colors-primary-700: #1b4433;
+    --colors-primary-800: #133125;
+    --colors-primary-900: #0a1f16;
+    --colors-text-primary: #111318;
+    --colors-text-secondary: #4a4e56;
+    --rounded-md: 4px;
+    --rounded-sm: 2px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-48: 192px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Source Han Sans KR;
+    --typography-body-weight: 400;
+    --typography-display-family: Bodoni Moda;
+    --typography-display-weight: 700;
+    --bg: #eef1f4;
+    --fg: #111318;
+    --accent: #2d6b50;
+    --muted: #7cba9c;
+  }
+  
+  [data-variant="dark"] {
+    --colors-accent: #7cba9c;
+    --colors-background-primary: #0e0e0c;
+    --colors-background-secondary: #1a1917;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #e8e7e4;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #d1cfca;
+    --colors-neutral-300: #b3b0a9;
+    --colors-neutral-400: #8a867e;
+    --colors-neutral-50: #f5f5f3;
+    --colors-neutral-500: #6b6760;
+    --colors-neutral-600: #524e48;
+    --colors-neutral-700: #3d3a36;
+    --colors-neutral-800: #2a2825;
+    --colors-neutral-900: #1a1917;
+    --colors-primary-100: #d4e8de;
+    --colors-primary-200: #a8d1bd;
+    --colors-primary-300: #7cba9c;
+    --colors-primary-400: #509676;
+    --colors-primary-50: #f0f7f4;
+    --colors-primary-500: #2d6b50;
+    --colors-primary-600: #245842;
+    --colors-primary-700: #1b4433;
+    --colors-primary-800: #133125;
+    --colors-primary-900: #0a1f16;
+    --colors-text-primary: #e8e7e4;
+    --colors-text-secondary: #b3b0a9;
+    --rounded-md: 4px;
+    --rounded-sm: 2px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-48: 192px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Source Han Sans KR;
+    --typography-body-weight: 400;
+    --typography-display-family: Bodoni Moda;
+    --typography-display-weight: 700;
+    --bg: #0e0e0c;
+    --fg: #e8e7e4;
+    --accent: #2d6b50;
+    --muted: #7cba9c;
+  }
+  
+  [data-variant="light"] {
+    --colors-accent: #2d6b50;
+    --colors-background-primary: #ffffff;
+    --colors-background-secondary: #f5f5f3;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #e8e7e4;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #d1cfca;
+    --colors-neutral-300: #b3b0a9;
+    --colors-neutral-400: #8a867e;
+    --colors-neutral-50: #f5f5f3;
+    --colors-neutral-500: #6b6760;
+    --colors-neutral-600: #524e48;
+    --colors-neutral-700: #3d3a36;
+    --colors-neutral-800: #2a2825;
+    --colors-neutral-900: #1a1917;
+    --colors-primary-100: #d4e8de;
+    --colors-primary-200: #a8d1bd;
+    --colors-primary-300: #7cba9c;
+    --colors-primary-400: #509676;
+    --colors-primary-50: #f0f7f4;
+    --colors-primary-500: #2d6b50;
+    --colors-primary-600: #245842;
+    --colors-primary-700: #1b4433;
+    --colors-primary-800: #133125;
+    --colors-primary-900: #0a1f16;
+    --colors-text-primary: #0f0f0e;
+    --colors-text-secondary: #524e48;
+    --rounded-md: 4px;
+    --rounded-sm: 2px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-48: 192px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Source Han Sans KR;
+    --typography-body-weight: 400;
+    --typography-display-family: Bodoni Moda;
+    --typography-display-weight: 700;
+    --bg: #ffffff;
+    --fg: #0f0f0e;
+    --accent: #2d6b50;
+    --muted: #7cba9c;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@300;400;500;600;700&family=Source+Han+Sans+KR:wght@300;400;500;600;700&display=swap">
+</head>
+<body data-variant="light">
+  <nav class="switcher" aria-label="Variant switcher">
+    <button data-set="brand-a" aria-pressed="false">brand-a</button>
+    <button data-set="brand-b" aria-pressed="false">brand-b</button>
+    <button data-set="dark" aria-pressed="false">dark</button>
+    <button data-set="light" aria-pressed="true">light</button>
+    </nav>
+  <main class="wrap">
+    <p class="eyebrow">seoul-investigative</p>
+    <h1>Long-form investigative journalism magazine for Seoul.</h1>
+    <p class="lede">Long-form investigative journalism magazine for Seoul — Bodoni authority, two-color discipline, CJK rigour Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class="cta" href="#" aria-label="Primary call to action">Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

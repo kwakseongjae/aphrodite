@@ -96,6 +96,12 @@
     <p class="desc">Verifies that `aphrodite refine "<delta>"` behaves as refinement (not redesign): turn 2 changes the hue alone, turn 3 changes spacing alone, turn 4 changes the display family alone. The cool blue from turn 2 persists three turns later; spacing from turn 3 survives the display swap in turn 4. Body font even stayed unchanged in turn 4 because the request didn't mention it — the nuance landed. <strong>Limitation:</strong> deltas were pre-scripted, not reactive — see Pass 7.</p>
   </a>
 
+  <a class="pass" href="2026-05-14-pass13-persona-matrix/">
+    <h2>Pass 13 — persona × intent matrix (5 paired runs) <span class="tag live">named-family pick lands 5/5 · critic anchors in persona</span></h2>
+    <div class="meta">2026-05-14 · Vignelli × magazine · Ando × architecture · Kawakubo × lookbook · Galileo × dashboard · Hara × clinic · all in parallel</div>
+    <p class="desc">Each persona paired with an intent its <code>when_to_invoke</code> names. Every single pairing produced an artifact whose typography included a family the persona's <code>prefers</code> or <code>cjk_strategy</code> declared: Bodoni Moda + Source Han Sans (Vignelli), Nanum Myeongjo (Ando), JetBrains Mono + Inter Tight (Galileo), Apple SD Gothic Neo (Hara), Pretendard 900 + Noto mixed (Kawakubo). Spacing density inverts cleanly with persona register (Galileo 96 px data → Kawakubo 256 px deconstruction). Critic now quotes the persona's principles in its rationale (Hara: <em>"contradicts the persona's principle of emptiness"</em>). Two side-effects: parallel-load rate-limit crashed Vignelli's critic (#29 widens); composer can't translate Kawakubo's radical prose into HTML (#36 new).</p>
+  </a>
+
   <a class="pass" href="2026-05-14-pass12-persona-authority/">
     <h2>Pass 12 — persona authority + CJK strategy <span class="tag live">Findings #34, #35 closed · cleanest persona pass yet</span></h2>
     <div class="meta">2026-05-14 · critic now enforces persona > scaffold · each persona declares CJK strategy in own voice</div>

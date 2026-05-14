@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="ko" data-variant="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>장수 — Jangsu Longevity Research</title>
+<style>
+:root {
+  --colors-primary-50: #f7f6f3;
+  --colors-primary-100: #eae8e2;
+  --colors-primary-200: #d5d1c8;
+  --colors-primary-300: #b8b2a5;
+  --colors-primary-400: #9a9284;
+  --colors-primary-500: #7d7568;
+  --colors-primary-600: #645d52;
+  --colors-primary-700: #4a453d;
+  --colors-primary-800: #322e28;
+  --colors-primary-900: #1a1816;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-50: #fafaf8;
+  --colors-neutral-100: #f0efec;
+  --colors-neutral-200: #dddbd6;
+  --colors-neutral-300: #c4c1ba;
+  --colors-neutral-400: #a8a49c;
+  --colors-neutral-500: #8d8880;
+  --colors-neutral-600: #736e66;
+  --colors-neutral-700: #5a564f;
+  --colors-neutral-800: #3d3a35;
+  --colors-neutral-900: #1f1d1a;
+  --colors-neutral-1000: #000000;
+  --typography-display-family: "Source Serif 4", "Georgia", serif;
+  --typography-body-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-24: 96px;
+  --spacing-32: 128px;
+  --spacing-40: 160px;
+  --spacing-48: 192px;
+  --rounded-sm: 2px;
+  --rounded-md: 4px;
+  --colors-background-primary: #fafaf8;
+  --colors-text-primary: #1a1816;
+  --colors-text-muted: #7d7568;
+  --colors-text-caption: #9a9284;
+}
+
+[data-variant="dark"] {
+  --colors-background-primary: #1a1816;
+  --colors-text-primary: #f0efec;
+  --colors-text-muted: #b8b2a5;
+  --colors-text-caption: #9a9284;
+}
+
+[data-variant="brand-a"] {
+  --colors-background-primary: #f0ede6;
+  --colors-text-primary: #1a1816;
+  --colors-text-muted: #7d7568;
+  --colors-text-caption: #9a9284;
+}
+
+[data-variant="brand-b"] {
+  --colors-background-primary: #eef1ee;
+  --colors-text-primary: #1a1816;
+  --colors-text-muted: #7d7568;
+  --colors-text-caption: #9a9284;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--colors-background-primary);
+  color: var(--colors-text-primary);
+  font-family: var(--typography-body-family);
+  font-weight: 300;
+  line-height: 1.75;
+  letter-spacing: 0.02em;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+::selection {
+  background: var(--colors-primary-200);
+  color: var(--colors-primary-900);
+}
+
+/* ── Switcher ── */
+
+.switcher {
+  position: fixed;
+  top: var(--spacing-6);
+  right: var(--spacing-6);
+  z-index: 100;
+  display: flex;
+  gap: var(--spacing-1);
+}
+
+.switcher button {
+  background: transparent;
+  border: 1px solid var(--colors-primary-200);
+  color: var(--colors-text-muted);
+  font-family: var(--typography-body-family);
+  font-size: 11px;
+  font-weight: 300;
+  padding: 6px 12px;
+  border-radius: var(--rounded-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+}
+
+.switcher button:hover {
+  border-color: var(--colors-primary-400);
+  color: var(--colors-text-primary);
+}
+
+.switcher button[aria-pressed="true"] {
+  background: var(--colors-primary-900);
+  color: var(--colors-primary-50);
+  border-color: var(--colors-primary-900);
+}
+
+/* ── Navigation ── */
+
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: var(--spacing-6) 10%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--colors-background-primary);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s ease, background-color 0.4s ease;
+}
+
+.nav.scrolled {
+  border-bottom-color: var(--colors-primary-200);
+}
+
+.nav-name {
+  font-family: var(--typography-display-family);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: var(--colors-text-primary);
+}
+
+.nav-links {
+  display: flex;
+  gap: var(--spacing-8);
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--colors-text-muted);
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: var(--colors-text-primary);
+}
+
+/* ── Hero ── */
+
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: var(--spacing-48) 10% var(--spacing-32);
+}
+
+.hero-eyebrow {
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--colors-text-caption);
+  margin-bottom: var(--spacing-8);
+}
+
+.hero h1 {
+  font-family: var(--typography-display-family);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  color: var(--colors-text-primary);
+  max-width: 560px;
+  margin-bottom: var(--spacing-8);
+}
+
+.hero h1 span {
+  display: block;
+  font-family: var(--typography-body-family);
+  font-weight: 300;
+  font-size: 28px;
+  letter-spacing: 0.04em;
+  margin-top: var(--spacing-2);
+  color: var(--colors-text-muted);
+}
+
+.hero-lede {
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.85;
+  color: var(--colors-text-muted);
+  max-width: 440px;
+  margin-bottom: var(--spacing-12);
+}
+
+.hero-ctas {
+  display: flex;
+  gap: var(--spacing-6);
+  align-items: center;
+}
+
+.btn {
+  display: inline-block;
+  font-family: var(--typography-body-family);
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  padding: 12px 28px;
+  border-radius: var(--rounded-md);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background: var(--colors-primary-900);
+  color: var(--colors-neutral-50);
+  border-color: var(--colors-primary-900);
+}
+
+.btn-primary:hover {
+  background: var(--colors-primary-700);
+  border-color: var(--colors-primary-700);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--colors-text-muted);
+  border-color: var(--colors-primary-200);
+}
+
+.btn-ghost:hover {
+  color: var(--colors-text-primary);
+  border-color: var(--colors-primary-400);
+}
+
+/* ── Divider ── */
+
+.hairline {
+  width: 40px;
+  height: 1px;
+  background: var(--colors-primary-300);
+  border: none;
+  margin: 0 auto;
+}
+
+/* ── Image Section ── */
+
+.photo-section {
+  padding: var(--spacing-32) 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.photo-frame {
+  width: 100%;
+  max-width: 680px;
+  aspect-ratio: 16 / 10;
+  background: var(--colors-primary-100);
+  border-radius: var(--rounded-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.photo-frame svg {
+  width: 48px;
+  height: 48px;
+  opacity: 0.25;
+}
+
+.photo-caption {
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--colors-text-caption);
+  margin-top: var(--spacing-4);
+  letter-spacing: 0.02em;
+}
+
+/* ── Features ── */
+
+.features {
+  padding: var(--spacing-32) 10%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.features-heading {
+  font-family: var(--typography-display-family);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--colors-text-primary);
+  margin-bottom: var(--spacing-16);
+  text-align: center;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-16) var(--spacing-12);
+}
+
+.feature-card {
+  padding: var(--spacing-8) 0;
+  border-top: 1px solid var(--colors-primary-200);
+}
+
+.feature-card .icon {
+  color: var(--colors-primary-400);
+  margin-bottom: var(--spacing-6);
+}
+
+.feature-card .icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.feature-card h3 {
+  font-family: var(--typography-display-family);
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: var(--spacing-3);
+  color: var(--colors-text-primary);
+}
+
+.feature-card p {
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--colors-text-muted);
+}
+
+/* ── Testimonial ── */
+
+.testimonial {
+  padding: var(--spacing-40) 10%;
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.testimonial-quote {
+  font-family: var(--typography-display-family);
+  font-size: 18px;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.8;
+  color: var(--colors-text-primary);
+  margin-bottom: var(--spacing-8);
+}
+
+.testimonial-attr {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--colors-text-caption);
+  letter-spacing: 0.04em;
+}
+
+/* ── Research Abstract ── */
+
+.research {
+  padding: var(--spacing-32) 10%;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.research-block {
+  padding: var(--spacing-8) 0;
+  border-top: 1px solid var(--colors-primary-200);
+}
+
+.research-block + .research-block {
+  margin-top: var(--spacing-6);
+}
+
+.research-title {
+  font-family: var(--typography-display-family);
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--colors-text-primary);
+  margin-bottom: var(--spacing-3);
+}
+
+.research-abstract {
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.8;
+  color: var(--colors-text-muted);
+  margin-bottom: var(--spacing-3);
+}
+
+.research-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: 12px;
+  color: var(--colors-text-caption);
+}
+
+.research-meta svg {
+  width: 14px;
+  height: 14px;
+  opacity: 0.6;
+}
+
+/* ── CTA Band ── */
+
+.cta-band {
+  padding: var(--spacing-40) 10%;
+  text-align: center;
+}
+
+.cta-band h2 {
+  font-family: var(--typography-display-family);
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--colors-text-primary);
+  margin-bottom: var(--spacing-4);
+}
+
+.cta-band p {
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--colors-text-muted);
+  max-width: 400px;
+  margin: 0 auto var(--spacing-8);
+  line-height: 1.75;
+}
+
+/* ── Contact ── */
+
+.contact {
+  padding: var(--spacing-16) 10% var(--spacing-32);
+  max-width: 680px;
+  margin: 0 auto;
+  border-top: 1px solid var(--colors-primary-200);
+}
+
+.contact-heading {
+  font-family: var(--typography-display-family);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--colors-text-primary);
+  margin-bottom: var(--spacing-6);
+}
+
+.contact p {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--colors-text-muted);
+  line-height: 2;
+}
+
+/* ── Footer ── */
+
+.footer {
+  padding: var(--spacing-12) 10%;
+  border-top: 1px solid var(--colors-primary-200);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer p {
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--colors-text-caption);
+  letter-spacing: 0.02em;
+}
+
+/* ── Scroll indicator ── */
+
+.scroll-hint {
+  position: absolute;
+  bottom: var(--spacing-16);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.scroll-hint span {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--colors-text-caption);
+}
+
+.scroll-hint svg {
+  width: 16px;
+  height: 16px;
+  color: var(--colors-primary-300);
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 768px) {
+  .nav {
+    padding: var(--spacing-4) 8%;
+  }
+
+  .nav-links {
+    gap: var(--spacing-6);
+  }
+
+  .nav-links a {
+    font-size: 12px;
+  }
+
+  .hero {
+    padding: var(--spacing-32) 8% var(--spacing-24);
+    min-height: 90vh;
+  }
+
+  .hero h1 {
+    font-size: 28px;
+  }
+
+  .hero h1 span {
+    font-size: 22px;
+  }
+
+  .hero-lede {
+    font-size: 14px;
+  }
+
+  .hero-ctas {
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-8);
+  }
+
+  .photo-section {
+    padding: var(--spacing-16) 8%;
+  }
+
+  .features {
+    padding: var(--spacing-16) 8%;
+  }
+
+  .testimonial {
+    padding: var(--spacing-16) 8%;
+  }
+
+  .research {
+    padding: var(--spacing-16) 8%;
+  }
+
+  .cta-band {
+    padding: var(--spacing-16) 8%;
+  }
+
+  .contact {
+    padding: var(--spacing-8) 8% var(--spacing-16);
+  }
+
+  .footer {
+    padding: var(--spacing-8) 8%;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    text-align: center;
+  }
+
+  .switcher {
+    top: auto;
+    bottom: var(--spacing-3);
+    right: var(--spacing-3);
+  }
+
+  .switcher button {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+
+  .scroll-hint {
+    display: none;
+  }
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid var(--colors-primary-500);
+  outline-offset: 2px;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+</style>
+
+<style data-aphrodite-variants>
+[data-variant="brand-a"] {
+  --colors-background-primary: #f0ede6;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0efec;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #dddbd6;
+  --colors-neutral-300: #c4c1ba;
+  --colors-neutral-400: #a8a49c;
+  --colors-neutral-50: #fafaf8;
+  --colors-neutral-500: #8d8880;
+  --colors-neutral-600: #736e66;
+  --colors-neutral-700: #5a564f;
+  --colors-neutral-800: #3d3a35;
+  --colors-neutral-900: #1f1d1a;
+  --colors-primary-100: #eae8e2;
+  --colors-primary-200: #d5d1c8;
+  --colors-primary-300: #b8b2a5;
+  --colors-primary-400: #9a9284;
+  --colors-primary-50: #f7f6f3;
+  --colors-primary-500: #7d7568;
+  --colors-primary-600: #645d52;
+  --colors-primary-700: #4a453d;
+  --colors-primary-800: #322e28;
+  --colors-primary-900: #1a1816;
+  --colors-text-primary: #1a1816;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-48: 192px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Pretendard;
+  --typography-body-weight: 300;
+  --typography-cjk-family: Apple SD Gothic Neo;
+  --typography-cjk-weight: 300;
+  --typography-display-family: Source Serif 4;
+  --typography-display-weight: 400;
+  --bg: #f0ede6;
+  --fg: #1a1816;
+  --muted: #7d7568;
+}
+[data-variant="brand-b"] {
+  --colors-background-primary: #eef1ee;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0efec;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #dddbd6;
+  --colors-neutral-300: #c4c1ba;
+  --colors-neutral-400: #a8a49c;
+  --colors-neutral-50: #fafaf8;
+  --colors-neutral-500: #8d8880;
+  --colors-neutral-600: #736e66;
+  --colors-neutral-700: #5a564f;
+  --colors-neutral-800: #3d3a35;
+  --colors-neutral-900: #1f1d1a;
+  --colors-primary-100: #eae8e2;
+  --colors-primary-200: #d5d1c8;
+  --colors-primary-300: #b8b2a5;
+  --colors-primary-400: #9a9284;
+  --colors-primary-50: #f7f6f3;
+  --colors-primary-500: #7d7568;
+  --colors-primary-600: #645d52;
+  --colors-primary-700: #4a453d;
+  --colors-primary-800: #322e28;
+  --colors-primary-900: #1a1816;
+  --colors-text-primary: #1a1816;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-48: 192px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Pretendard;
+  --typography-body-weight: 300;
+  --typography-cjk-family: Apple SD Gothic Neo;
+  --typography-cjk-weight: 300;
+  --typography-display-family: Source Serif 4;
+  --typography-display-weight: 400;
+  --bg: #eef1ee;
+  --fg: #1a1816;
+  --muted: #7d7568;
+}
+[data-variant="dark"] {
+  --colors-background-primary: #1a1816;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0efec;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #dddbd6;
+  --colors-neutral-300: #c4c1ba;
+  --colors-neutral-400: #a8a49c;
+  --colors-neutral-50: #fafaf8;
+  --colors-neutral-500: #8d8880;
+  --colors-neutral-600: #736e66;
+  --colors-neutral-700: #5a564f;
+  --colors-neutral-800: #3d3a35;
+  --colors-neutral-900: #1f1d1a;
+  --colors-primary-100: #eae8e2;
+  --colors-primary-200: #d5d1c8;
+  --colors-primary-300: #b8b2a5;
+  --colors-primary-400: #9a9284;
+  --colors-primary-50: #f7f6f3;
+  --colors-primary-500: #7d7568;
+  --colors-primary-600: #645d52;
+  --colors-primary-700: #4a453d;
+  --colors-primary-800: #322e28;
+  --colors-primary-900: #1a1816;
+  --colors-text-primary: #f0efec;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-48: 192px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Pretendard;
+  --typography-body-weight: 300;
+  --typography-cjk-family: Apple SD Gothic Neo;
+  --typography-cjk-weight: 300;
+  --typography-display-family: Source Serif 4;
+  --typography-display-weight: 400;
+  --bg: #1a1816;
+  --fg: #f0efec;
+  --muted: #7d7568;
+}
+[data-variant="light"] {
+  --colors-background-primary: #fafaf8;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0efec;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #dddbd6;
+  --colors-neutral-300: #c4c1ba;
+  --colors-neutral-400: #a8a49c;
+  --colors-neutral-50: #fafaf8;
+  --colors-neutral-500: #8d8880;
+  --colors-neutral-600: #736e66;
+  --colors-neutral-700: #5a564f;
+  --colors-neutral-800: #3d3a35;
+  --colors-neutral-900: #1f1d1a;
+  --colors-primary-100: #eae8e2;
+  --colors-primary-200: #d5d1c8;
+  --colors-primary-300: #b8b2a5;
+  --colors-primary-400: #9a9284;
+  --colors-primary-50: #f7f6f3;
+  --colors-primary-500: #7d7568;
+  --colors-primary-600: #645d52;
+  --colors-primary-700: #4a453d;
+  --colors-primary-800: #322e28;
+  --colors-primary-900: #1a1816;
+  --colors-text-primary: #1a1816;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-48: 192px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Pretendard;
+  --typography-body-weight: 300;
+  --typography-cjk-family: Apple SD Gothic Neo;
+  --typography-cjk-weight: 300;
+  --typography-display-family: Source Serif 4;
+  --typography-display-weight: 400;
+  --bg: #fafaf8;
+  --fg: #1a1816;
+  --muted: #7d7568;
+}
+body{background:var(--bg);color:var(--fg);}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,700&family=Pretendard:wght@300;400;500;600;700&display=swap">
+</head>
+<body>
+
+<!-- Variant Switcher -->
+<nav class="switcher" aria-label="Theme variants">
+  <button data-variant="light" aria-pressed="true">light</button>
+  <button data-variant="dark" aria-pressed="false">dark</button>
+  <button data-variant="brand-a" aria-pressed="false">earthenware</button>
+  <button data-variant="brand-b" aria-pressed="false">bamboo</button>
+</nav>
+
+<!-- Navigation -->
+<nav class="nav" id="nav">
+  <div class="nav-name">장수 Jangsu</div>
+  <ul class="nav-links">
+    <li><a href="#research">연구</a></li>
+    <li><a href="#approach">방법</a></li>
+    <li><a href="#contact">연락</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <p class="hero-eyebrow">Seoul · Est. 2019</p>
+  <h1>
+    Time, given the right conditions,
+    <span>시간이 약입니다</span>
+  </h1>
+  <p class="hero-lede">
+    장수는 서울에 기반을 둔 장수 연구 클리닉입니다. 우리는 노화를
+    치료할 수 있는 질병이 아니라, 이해해야 할 자연스러운 과정으로
+    바라봅니다. 인내심을 가지고 연구합니다.
+  </p>
+  <div class="hero-ctas">
+    <a href="#approach" class="btn btn-primary">연구 접근법</a>
+    <a href="#contact" class="btn btn-ghost">예약 문의</a>
+  </div>
+  <div class="scroll-hint">
+    <span>scroll</span>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+  </div>
+</section>
+
+<!-- Image -->
+<section class="photo-section">
+  <div class="photo-frame" role="img" aria-label="Morning light through rice-paper windows in the Jangsu clinic reception">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="2" y="2" width="20" height="20" rx="1"/>
+      <line x1="2" y1="8" x2="22" y2="8"/>
+      <line x1="8" y1="2" x2="8" y2="8"/>
+      <line x1="16" y1="2" x2="16" y2="8"/>
+      <line x1="12" y1="8" x2="12" y2="22"/>
+    </svg>
+  </div>
+  <p class="photo-caption">이층 연구실 현미경 실습대, 오후의 빛 — Microscope station, second-floor laboratory</p>
+</section>
+
+<!-- Features -->
+<section class="features" id="approach">
+  <h2 class="features-heading">접근법</h2>
+  <div class="features-grid">
+
+    <article class="feature-card">
+      <div class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l3 7-6 11-6-11 3-7z"/><path d="M9 3 12 14"/><path d="M15 3 12 14"/></svg>
+      </div>
+      <h3>세포 수명 연구</h3>
+      <p>텔로미어 단축과 미토콘드리아 기능 저하를 추적합니다. 세포가 시간을 어떻게 기억하는지 이해하는 것이 출발점입니다.</p>
+    </article>
+
+    <article class="feature-card">
+      <div class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+      </div>
+      <h3>역학 데이터 분석</h3>
+      <p>한국인 장수 마을 주민들의 라이프스타일 데이터를 수십 년간 추적합니다. 통계가 아닌 삶의 패턴에서 답을 찾습니다.</p>
+    </article>
+
+    <article class="feature-card">
+      <div class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 2h10l4 4v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4l4-2z"/><path d="M12 10v6"/><path d="M9 13h6"/></svg>
+      </div>
+      <h3>대사 표현형</h3>
+      <p>개인의 대사 프로파일을 지도화합니다. 같은 섭생이 다른 결과를 낳는 이유를 이해하고 맞춤 조건을 설계합니다.</p>
+    </article>
+
+    <article class="feature-card">
+      <div class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22V8"/><path d="m2 10 10-5 10 5"/><path d="M5 10v5"/><path d="M19 10v5"/><path d="M2 22h20"/><path d="M2 18c2-1 3-2.5 3-4"/><path d="M19 18c2-1 3-2.5 3-4"/></svg>
+      </div>
+      <h3>후성유전학</h3>
+      <p>환경과 습관이 유전자 발현에 미치는 영향을 관찰합니다. DNA는 운명이 아니라 출발점입니다.</p>
+    </article>
+
+    <article class="feature-card">
+      <div class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="12" cy="6" r="2"/></svg>
+      </div>
+      <h3>인지 건강</h3>
+      <p>나이가 들면서 뇌가 변화하는 방식을 추적합니다. 인지 기능의 자연스러운 감소와 병적 감소를 구분합니다.</p>
+    </article>
+
+    <article class="feature-card">
+      <div class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>
+      </div>
+      <h3>신체 관성 측정</h3>
+      <p>골밀도, 근육량, 관절 가동범위의 연간 변화를 정밀 추적합니다. 몸이 시간에 어떻게 응답하는지 기록합니다.</p>
+    </article>
+
+  </div>
+</section>
+
+<!-- Testimonial -->
+<section class="testimonial">
+  <hr class="hairline">
+  <blockquote style="margin-top: var(--spacing-32);">
+    <p class="testimonial-quote">
+      "급하게 서두르는 곳이 아니었습니다. 검사 자체가 명상 같았고,
+      의사선생님은 결과를 설명하기보다 제가 스스로 이해할 수 있도록
+      기다려 주셨습니다."
+    </p>
+  </blockquote>
+  <p class="testimonial-attr">박지현 — Park Jihyun, 52세 · 내원 기간 3년</p>
+</section>
+
+<!-- Research Abstracts -->
+<section class="research" id="research">
+  <article class="research-block">
+    <h3 class="research-title">한국인 장수 마을 주민의 후성유전학적 시계 검증</h3>
+    <p class="research-abstract">
+      전라남도 고흥군 장수 마을 주민 340명의 DNA 메틸화 패턴을 5년간 추적한
+      코호트 연구입니다. 생물학적 나이와 달력 나이의 편차가 ±3년 이내인
+      집단에서 공통적으로 나타나는 생활 습관 요인을 분석했습니다.
+    </p>
+    <div class="research-meta">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l3 7-6 11-6-11 3-7z"/><path d="M9 3 12 14"/><path d="M15 3 12 14"/></svg>
+      <span>2024.03 — 진행 중</span>
+    </div>
+  </article>
+
+  <article class="research-block">
+    <h3 class="research-title">미토콘드리아 가변성과 인지 기능의 상관관계</h3>
+    <p class="research-abstract">
+      건강한 성인 120명을 대상으로 미토콘드리아 DNA 복제수와 MMSE-K 점수의
+      연관성을 조사했습니다. 초기 데이터는 미토콘드리아 가변성이 인지
+      저하보다 최대 7년 앞서 변화함을 시사합니다.
+    </p>
+    <div class="research-meta">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l3 7-6 11-6-11 3-7z"/><path d="M9 3 12 14"/><path d="M15 3 12 14"/></svg>
+      <span>2023.11 — 논문 심사 중</span>
+    </div>
+  </article>
+
+  <article class="research-block">
+    <h3 class="research-title">단식 주기와 대사 유연성 지표의 비선형 관계</h3>
+    <p class="research-abstract">
+      간헐적 단식이 장수에 미치는 영향이 단식 기간에 비례하지 않음을
+      보여주는 전임상 연구입니다. 16시간과 20시간 단식군 사이에 유의미한
+      차이가 없었으나, 18시간군에서 대사 유연성 지표가 정점에 도달했습니다.
+    </p>
+    <div class="research-meta">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l3 7-6 11-6-11 3-7z"/><path d="M9 3 12 14"/><path d="M15 3 12 14"/></svg>
+      <span>2024.06 — 결과 분석 중</span>
+    </div>
+  </article>
+</section>
+
+<!-- Final CTA -->
+<section class="cta-band">
+  <hr class="hairline">
+  <h2 style="margin-top: var(--spacing-32);">올바른 조건이 주어지면,<br>시간은 약이 됩니다</h2>
+  <p>첫 상담은 60분입니다. 검사나 처방 없이, 이야기를 나눕니다.</p>
+  <a href="#contact" class="btn btn-primary">상담 예약</a>
+</section>
+
+<!-- Contact -->
+<section class="contact" id="contact">
+  <h3 class="contact-heading">연락처</h3>
+  <p>
+    장수 장수연구클리닉<br>
+    서울특별시 종로구 율곡로 99, 3층<br>
+    tel. 02-733-0192<br>
+    mail@jangsu.clinic<br>
+    <br>
+    진료 시간: 월–금 09:00–18:00, 토 09:00–13:00
+  </p>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <p>© 2024 장수 Jangsu Longevity Research Clinic</p>
+  <p>서울특별시 종로구</p>
+</footer>
+
+<script>
+// Variant switcher
+document.querySelectorAll('.switcher button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.switcher button').forEach(b => b.setAttribute('aria-pressed', 'false'));
+    btn.setAttribute('aria-pressed', 'true');
+    document.body.dataset.variant = btn.dataset.variant;
+  });
+});
+
+// Nav scroll border
+const nav = document.getElementById('nav');
+let ticking = false;
+window.addEventListener('scroll', () => {
+  if (!ticking) {
+    window.requestAnimationFrame(() => {
+      if (window.scrollY > 20) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+      ticking = false;
+    });
+    ticking = true;
+  }
+});
+</script>
+
+</body>
+</html>

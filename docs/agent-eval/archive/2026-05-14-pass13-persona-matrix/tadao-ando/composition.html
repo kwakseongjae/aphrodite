@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>정돈길 건축 — Jongno-gil Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700&display=swap');
+
+  :root {
+    --colors-primary-50: #f5f2ec;
+    --colors-primary-100: #e8e2d6;
+    --colors-primary-200: #d1c7b4;
+    --colors-primary-300: #b5a68c;
+    --colors-primary-400: #968264;
+    --colors-primary-500: #6b5a3e;
+    --colors-primary-600: #554832;
+    --colors-primary-700: #3e3526;
+    --colors-primary-800: #2c2519;
+    --colors-primary-900: #1a1816;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-50: #f8f7f5;
+    --colors-neutral-100: #eeece8;
+    --colors-neutral-200: #dbd8d1;
+    --colors-neutral-300: #c4bfb5;
+    --colors-neutral-400: #a39c8e;
+    --colors-neutral-500: #7d7668;
+    --colors-neutral-600: #5e584c;
+    --colors-neutral-700: #44403a;
+    --colors-neutral-800: #2e2b28;
+    --colors-neutral-900: #1a1816;
+    --typography-display-family: 'Source Serif 4', 'Nanum Myeongjo', serif;
+    --typography-body-family: 'Inter', sans-serif;
+    --typography-cjk-display: 'Nanum Myeongjo', serif;
+    --typography-cjk-body: 'Nanum Myeongjo', serif;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-24: 96px;
+    --spacing-32: 128px;
+    --spacing-40: 160px;
+    --spacing-48: 192px;
+    --spacing-56: 224px;
+    --rounded-none: 0px;
+    --rounded-xs: 2px;
+    --rounded-sm: 4px;
+    --rounded-md: 6px;
+
+    /* Default: light */
+    --colors-background-primary: #ffffff;
+    --colors-background-secondary: #f5f2ec;
+    --colors-text-primary: #1a1816;
+    --colors-text-secondary: #5e584c;
+    --colors-text-muted: #7d7668;
+    --colors-rule: #d1c7b4;
+  }
+
+  /* ─── Variant overrides ─── */
+  body[data-variant="dark"] {
+    --colors-background-primary: #121110;
+    --colors-background-secondary: #1e1c18;
+    --colors-text-primary: #eeece8;
+    --colors-text-secondary: #a39c8e;
+    --colors-text-muted: #7d7678;
+    --colors-rule: #3e3526;
+  }
+  body[data-variant="brand-a"] {
+    --colors-background-primary: #faf9f5;
+    --colors-background-secondary: #f0ede5;
+    --colors-text-primary: #2c2519;
+    --colors-text-secondary: #5e584c;
+    --colors-text-muted: #7d7668;
+    --colors-rule: #d1c7b4;
+  }
+  body[data-variant="brand-b"] {
+    --colors-background-primary: #f2ede3;
+    --colors-background-secondary: #e8e2d6;
+    --colors-text-primary: #1a1816;
+    --colors-text-secondary: #5e584c;
+    --colors-text-muted: #7d7668;
+    --colors-rule: #b5a68c;
+  }
+
+  /* ─── Reset ─── */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background: var(--colors-background-primary);
+    color: var(--colors-text-primary);
+    font-family: var(--typography-body-family);
+    font-weight: 400;
+    line-height: 1.75;
+    font-size: 16px;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+
+  /* ─── Navigation ─── */
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-6) var(--spacing-16);
+    background: transparent;
+    transition: background 0.3s ease;
+  }
+
+  .nav.scrolled {
+    background: var(--colors-background-primary);
+    opacity: 0.97;
+  }
+
+  .nav__studio-name {
+    font-family: var(--typography-cjk-display);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    color: var(--colors-text-primary);
+    text-decoration: none;
+    text-transform: none;
+  }
+
+  .nav__links {
+    display: flex;
+    gap: var(--spacing-8);
+    list-style: none;
+    align-items: center;
+  }
+
+  .nav__links a {
+    font-family: var(--typography-body-family);
+    font-weight: 400;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--colors-text-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .nav__links a:hover,
+  .nav__links a:focus {
+    color: var(--colors-text-primary);
+  }
+
+  .nav__menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--colors-text-primary);
+    cursor: pointer;
+  }
+
+  /* ─── Variant Switcher ─── */
+  .switcher {
+    position: fixed;
+    top: var(--spacing-6);
+    right: var(--spacing-16);
+    z-index: 200;
+    display: flex;
+    gap: var(--spacing-1);
+    background: var(--colors-background-secondary);
+    border: 1px solid var(--colors-rule);
+    border-radius: var(--rounded-xs);
+    padding: 2px;
+  }
+
+  .switcher button {
+    font-family: var(--typography-body-family);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    padding: var(--spacing-1) var(--spacing-3);
+    border: none;
+    background: transparent;
+    color: var(--colors-text-secondary);
+    cursor: pointer;
+    border-radius: var(--rounded-xs);
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .switcher button:hover {
+    color: var(--colors-text-primary);
+  }
+
+  .switcher button.active {
+    background: var(--colors-text-primary);
+    color: var(--colors-background-primary);
+  }
+
+  /* ─── Hero ─── */
+  .hero {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .hero__bg {
+    position: absolute;
+    inset: 0;
+    background: var(--colors-background-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero__svg-frame {
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero__content {
+    position: relative;
+    z-index: 2;
+    padding: var(--spacing-16);
+    padding-bottom: var(--spacing-24);
+    max-width: 860px;
+  }
+
+  .hero__studio-hanja {
+    font-family: var(--typography-cjk-display);
+    font-weight: 400;
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    color: var(--colors-text-muted);
+    margin-bottom: var(--spacing-6);
+  }
+
+  .hero__name {
+    font-family: var(--typography-cjk-display);
+    font-weight: 700;
+    font-size: clamp(40px, 7vw, 72px);
+    line-height: 1.1;
+    color: var(--colors-text-primary);
+    margin-bottom: var(--spacing-2);
+  }
+
+  .hero__name-latin {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: clamp(18px, 2.5vw, 24px);
+    line-height: 1.3;
+    color: var(--colors-text-secondary);
+    letter-spacing: 0.02em;
+    margin-bottom: var(--spacing-8);
+  }
+
+  .hero__tagline {
+    font-family: var(--typography-cjk-display);
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.9;
+    color: var(--colors-text-secondary);
+    max-width: 440px;
+  }
+
+  .hero__rule {
+    width: 48px;
+    height: 1px;
+    background: var(--colors-rule);
+    margin: var(--spacing-8) 0;
+  }
+
+  .hero__scroll-indicator {
+    position: absolute;
+    bottom: var(--spacing-8);
+    right: var(--spacing-16);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+
+  .hero__scroll-indicator span {
+    font-family: var(--typography-body-family);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--colors-text-muted);
+    writing-mode: vertical-rl;
+  }
+
+  /* ─── Section structure ─── */
+  .section-label {
+    font-family: var(--typography-body-family);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--colors-text-muted);
+    margin-bottom: var(--spacing-12);
+  }
+
+  .section-rule {
+    width: 100%;
+    height: 1px;
+    background: var(--colors-rule);
+    margin-bottom: var(--spacing-16);
+  }
+
+  /* ─── Selected Work ─── */
+  .work {
+    padding: var(--spacing-56) var(--spacing-16);
+  }
+
+  .work__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-12) var(--spacing-8);
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .project-card {
+    cursor: pointer;
+  }
+
+  .project-card__image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/5;
+    background: var(--colors-background-secondary);
+    border-radius: var(--rounded-none);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+  }
+
+  .project-card:hover .project-card__image {
+    background: var(--colors-primary-100);
+  }
+
+  .project-card__image svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .project-card__caption {
+    padding-top: var(--spacing-4);
+  }
+
+  .project-card__name-kr {
+    font-family: var(--typography-cjk-display);
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 1.4;
+    color: var(--colors-text-primary);
+  }
+
+  .project-card__name-en {
+    font-family: var(--typography-display-family);
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--colors-text-secondary);
+    margin-top: 2px;
+  }
+
+  .project-card__meta {
+    display: flex;
+    gap: var(--spacing-4);
+    margin-top: var(--spacing-2);
+    flex-wrap: wrap;
+  }
+
+  .project-card__meta-item {
+    font-family: var(--typography-body-family);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--colors-text-muted);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+  }
+
+  .project-card__tag {
+    font-family: var(--typography-body-family);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--colors-text-muted);
+    border: 1px solid var(--colors-rule);
+    padding: 2px 10px;
+    border-radius: var(--rounded-xs);
+  }
+
+  /* ─── About ─── */
+  .about {
+    padding: var(--spacing-56) var(--spacing-16);
+    background: var(--colors-background-secondary);
+    transition: background 0.4s ease;
+  }
+
+  .about__inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-16);
+  }
+
+  .about__text h2 {
+    font-family: var(--typography-cjk-display);
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 1.3;
+    margin-bottom: var(--spacing-6);
+  }
+
+  .about__text p {
+    font-family: var(--typography-cjk-display);
+    font-size: 16px;
+    line-height: 2;
+    color: var(--colors-text-secondary);
+    margin-bottom: var(--spacing-6);
+    max-width: 480px;
+  }
+
+  .about__text p.en {
+    font-family: var(--typography-body-family);
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .about__principle {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-8);
+    padding-top: var(--spacing-4);
+  }
+
+  .principle {
+    display: flex;
+    gap: var(--spacing-4);
+    align-items: flex-start;
+  }
+
+  .principle__line {
+    width: 1px;
+    min-height: 48px;
+    flex-shrink: 0;
+    background: var(--colors-rule);
+    align-self: stretch;
+  }
+
+  .principle__content {
+    font-family: var(--typography-cjk-display);
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--colors-text-secondary);
+  }
+
+  .principle__content strong {
+    display: block;
+    font-weight: 700;
+    color: var(--colors-text-primary);
+    font-size: 16px;
+    margin-bottom: var(--spacing-1);
+  }
+
+  .principle__content em {
+    font-style: normal;
+    font-family: var(--typography-body-family);
+    font-size: 13px;
+    color: var(--colors-text-muted);
+    display: block;
+    margin-top: 4px;
+  }
+
+  /* ─── Contact ─── */
+  .contact {
+    padding: var(--spacing-56) var(--spacing-16);
+  }
+
+  .contact__inner {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .contact__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--spacing-12);
+    margin-top: var(--spacing-16);
+  }
+
+  .contact__block label {
+    display: block;
+    font-family: var(--typography-body-family);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--colors-text-muted);
+    margin-bottom: var(--spacing-2);
+  }
+
+  .contact__block p,
+  .contact__block a {
+    font-family: var(--typography-cjk-display);
+    font-size: 16px;
+    line-height: 1.9;
+    color: var(--colors-text-primary);
+    text-decoration: none;
+  }
+
+  .contact__block a:hover {
+    color: var(--colors-primary-500);
+  }
+
+  /* ─── Footer ─── */
+  .footer {
+    border-top: 1px solid var(--colors-rule);
+    padding: var(--spacing-6) var(--spacing-16);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer__copy {
+    font-family: var(--typography-body-family);
+    font-size: 12px;
+    color: var(--colors-text-muted);
+    letter-spacing: 0.03em;
+  }
+
+  .footer__top {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    color: var(--colors-text-muted);
+    text-decoration: none;
+    font-family: var(--typography-body-family);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    transition: color 0.2s;
+  }
+
+  .footer__top:hover {
+    color: var(--colors-text-primary);
+  }
+
+  /* ─── Mobile overlay nav ─── */
+  .mobile-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    background: var(--colors-background-primary);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-8);
+  }
+
+  .mobile-overlay.open {
+    display: flex;
+  }
+
+  .mobile-overlay a {
+    font-family: var(--typography-cjk-display);
+    font-weight: 700;
+    font-size: 28px;
+    color: var(--colors-text-primary);
+    text-decoration: none;
+    line-height: 1.5;
+  }
+
+  .mobile-overlay__close {
+    position: absolute;
+    top: var(--spacing-6);
+    right: var(--spacing-6);
+    background: none;
+    border: none;
+    color: var(--colors-text-primary);
+    cursor: pointer;
+  }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 768px) {
+    .nav {
+      padding: var(--spacing-4) var(--spacing-6);
+    }
+    .switcher {
+      position: fixed;
+      top: auto;
+      bottom: var(--spacing-4);
+      right: var(--spacing-4);
+      z-index: 200;
+    }
+    .nav__links {
+      display: none;
+    }
+    .nav__menu-btn {
+      display: flex;
+    }
+    .hero__content {
+      padding: var(--spacing-6);
+      padding-bottom: var(--spacing-16);
+    }
+    .hero__scroll-indicator {
+      display: none;
+    }
+    .work {
+      padding: var(--spacing-24) var(--spacing-6);
+    }
+    .work__grid {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-12);
+    }
+    .about {
+      padding: var(--spacing-24) var(--spacing-6);
+    }
+    .about__inner {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-12);
+    }
+    .contact {
+      padding: var(--spacing-24) var(--spacing-6);
+    }
+    .contact__grid {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-8);
+    }
+    .footer {
+      padding: var(--spacing-6);
+    }
+  }
+
+  /* ─── Ma interval between sections is built into padding ─── */
+</style>
+
+<style data-aphrodite-variants>
+[data-variant="brand-a"] {
+  --colors-background-primary: #faf9f5;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #eeece8;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #dbd8d1;
+  --colors-neutral-300: #c4bfb5;
+  --colors-neutral-400: #a39c8e;
+  --colors-neutral-50: #f8f7f5;
+  --colors-neutral-500: #7d7668;
+  --colors-neutral-600: #5e584c;
+  --colors-neutral-700: #44403a;
+  --colors-neutral-800: #2e2b28;
+  --colors-neutral-900: #1a1816;
+  --colors-primary-100: #e8e2d6;
+  --colors-primary-200: #d1c7b4;
+  --colors-primary-300: #b5a68c;
+  --colors-primary-400: #968264;
+  --colors-primary-50: #f5f2ec;
+  --colors-primary-500: #6b5a3e;
+  --colors-primary-600: #554832;
+  --colors-primary-700: #3e3526;
+  --colors-primary-800: #2c2519;
+  --colors-primary-900: #1a1816;
+  --colors-text-primary: #2c2519;
+  --rounded-md: 6px;
+  --rounded-none: 0px;
+  --rounded-sm: 4px;
+  --rounded-xs: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-48: 192px;
+  --spacing-56: 224px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 400;
+  --typography-cjk-body-family: Nanum Myeongjo;
+  --typography-cjk-body-weight: 400;
+  --typography-cjk-display-family: Nanum Myeongjo;
+  --typography-cjk-display-weight: 700;
+  --typography-display-family: Source Serif 4;
+  --typography-display-weight: 700;
+  --bg: #faf9f5;
+  --fg: #2c2519;
+  --muted: #6b5a3e;
+}
+[data-variant="brand-b"] {
+  --colors-background-primary: #f2ede3;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #eeece8;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #dbd8d1;
+  --colors-neutral-300: #c4bfb5;
+  --colors-neutral-400: #a39c8e;
+  --colors-neutral-50: #f8f7f5;
+  --colors-neutral-500: #7d7668;
+  --colors-neutral-600: #5e584c;
+  --colors-neutral-700: #44403a;
+  --colors-neutral-800: #2e2b28;
+  --colors-neutral-900: #1a1816;
+  --colors-primary-100: #e8e2d6;
+  --colors-primary-200: #d1c7b4;
+  --colors-primary-300: #b5a68c;
+  --colors-primary-400: #968264;
+  --colors-primary-50: #f5f2ec;
+  --colors-primary-500: #6b5a3e;
+  --colors-primary-600: #554832;
+  --colors-primary-700: #3e3526;
+  --colors-primary-800: #2c2519;
+  --colors-primary-900: #1a1816;
+  --colors-text-primary: #1a1816;
+  --rounded-md: 6px;
+  --rounded-none: 0px;
+  --rounded-sm: 4px;
+  --rounded-xs: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-48: 192px;
+  --spacing-56: 224px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 400;
+  --typography-cjk-body-family: Nanum Myeongjo;
+  --typography-cjk-body-weight: 400;
+  --typography-cjk-display-family: Nanum Myeongjo;
+  --typography-cjk-display-weight: 700;
+  --typography-display-family: Source Serif 4;
+  --typography-display-weight: 700;
+  --bg: #f2ede3;
+  --fg: #1a1816;
+  --muted: #6b5a3e;
+}
+[data-variant="dark"] {
+  --colors-background-primary: #121110;
+  --colors-background-secondary: #1e1c18;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #eeece8;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #dbd8d1;
+  --colors-neutral-300: #c4bfb5;
+  --colors-neutral-400: #a39c8e;
+  --colors-neutral-50: #f8f7f5;
+  --colors-neutral-500: #7d7668;
+  --colors-neutral-600: #5e584c;
+  --colors-neutral-700: #44403a;
+  --colors-neutral-800: #2e2b28;
+  --colors-neutral-900: #1a1816;
+  --colors-primary-100: #e8e2d6;
+  --colors-primary-200: #d1c7b4;
+  --colors-primary-300: #b5a68c;
+  --colors-primary-400: #968264;
+  --colors-primary-50: #f5f2ec;
+  --colors-primary-500: #6b5a3e;
+  --colors-primary-600: #554832;
+  --colors-primary-700: #3e3526;
+  --colors-primary-800: #2c2519;
+  --colors-primary-900: #1a1816;
+  --colors-text-primary: #eeece8;
+  --colors-text-secondary: #a39c8e;
+  --rounded-md: 6px;
+  --rounded-none: 0px;
+  --rounded-sm: 4px;
+  --rounded-xs: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-48: 192px;
+  --spacing-56: 224px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 400;
+  --typography-cjk-body-family: Nanum Myeongjo;
+  --typography-cjk-body-weight: 400;
+  --typography-cjk-display-family: Nanum Myeongjo;
+  --typography-cjk-display-weight: 700;
+  --typography-display-family: Source Serif 4;
+  --typography-display-weight: 700;
+  --bg: #121110;
+  --fg: #eeece8;
+  --muted: #6b5a3e;
+}
+[data-variant="light"] {
+  --colors-background-primary: #ffffff;
+  --colors-background-secondary: #f5f2ec;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #eeece8;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #dbd8d1;
+  --colors-neutral-300: #c4bfb5;
+  --colors-neutral-400: #a39c8e;
+  --colors-neutral-50: #f8f7f5;
+  --colors-neutral-500: #7d7668;
+  --colors-neutral-600: #5e584c;
+  --colors-neutral-700: #44403a;
+  --colors-neutral-800: #2e2b28;
+  --colors-neutral-900: #1a1816;
+  --colors-primary-100: #e8e2d6;
+  --colors-primary-200: #d1c7b4;
+  --colors-primary-300: #b5a68c;
+  --colors-primary-400: #968264;
+  --colors-primary-50: #f5f2ec;
+  --colors-primary-500: #6b5a3e;
+  --colors-primary-600: #554832;
+  --colors-primary-700: #3e3526;
+  --colors-primary-800: #2c2519;
+  --colors-primary-900: #1a1816;
+  --colors-text-primary: #1a1816;
+  --colors-text-secondary: #5e584c;
+  --rounded-md: 6px;
+  --rounded-none: 0px;
+  --rounded-sm: 4px;
+  --rounded-xs: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-48: 192px;
+  --spacing-56: 224px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 400;
+  --typography-cjk-body-family: Nanum Myeongjo;
+  --typography-cjk-body-weight: 400;
+  --typography-cjk-display-family: Nanum Myeongjo;
+  --typography-cjk-display-weight: 700;
+  --typography-display-family: Source Serif 4;
+  --typography-display-weight: 700;
+  --bg: #ffffff;
+  --fg: #1a1816;
+  --muted: #6b5a3e;
+}
+body{background:var(--bg);color:var(--fg);}
+</style>
+</head>
+<body data-variant="light">
+
+<!-- Variant Switcher -->
+<nav class="switcher" aria-label="Theme variants">
+  <button data-set="light" class="active">light</button>
+  <button data-set="dark">dark</button>
+  <button data-set="brand-a">gallery</button>
+  <button data-set="brand-b">ondol</button>
+</nav>
+
+<!-- Mobile Overlay -->
+<div class="mobile-overlay" id="mobileMenu">
+  <button class="mobile-overlay__close" id="mobileClose" aria-label="Close menu">
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+  </button>
+  <a href="#work" onclick="closeMobile()">작업</a>
+  <a href="#about" onclick="closeMobile()">소개</a>
+  <a href="#contact" onclick="closeMobile()">연락</a>
+</div>
+
+<!-- Navigation -->
+<nav class="nav" id="mainNav">
+  <a href="#" class="nav__studio-name">정돈길</a>
+  <ul class="nav__links">
+    <li><a href="#work">작업</a></li>
+    <li><a href="#about">소개</a></li>
+    <li><a href="#contact">연락</a></li>
+  </ul>
+  <button class="nav__menu-btn" id="menuBtn" aria-label="Open menu">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- HERO -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero__bg">
+    <!-- Architectural SVG: a play on the section through a concrete courtyard -->
+    <svg class="hero__svg-frame" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <!-- Background wall planes -->
+      <rect x="0" y="0" width="1600" height="900" fill="var(--colors-background-secondary)"/>
+      <!-- Left wall -->
+      <rect x="0" y="80" width="540" height="740" fill="var(--colors-background-primary)" opacity="0.5"/>
+      <!-- Right wall -->
+      <rect x="980" y="80" width="620" height="740" fill="var(--colors-background-primary)" opacity="0.35"/>
+      <!-- Floor plane -->
+      <rect x="280" y="580" width="1040" height="240" fill="var(--colors-primary-100)" opacity="0.4"/>
+      <!-- Opening — the void / madang -->
+      <rect x="540" y="80" width="440" height="500" fill="var(--colors-primary-50)" opacity="0.6"/>
+      <!-- Cross of light — reference to the Church of Light motif, adapted -->
+      <rect x="700" y="100" width="60" height="360" fill="var(--colors-primary-300)" opacity="0.25"/>
+      <rect x="620" y="200" width="220" height="60" fill="var(--colors-primary-300)" opacity="0.25"/>
+      <!-- Horizon line -->
+      <line x1="0" y1="580" x2="1600" y2="580" stroke="var(--colors-rule)" stroke-width="1"/>
+      <!-- Vertical structural lines -->
+      <line x1="540" y1="80" x2="540" y2="820" stroke="var(--colors-rule)" stroke-width="0.5"/>
+      <line x1="980" y1="80" x2="980" y2="820" stroke="var(--colors-rule)" stroke-width="0.5"/>
+      <!-- Subtle tree silhouette in courtyard -->
+      <line x1="720" y1="580" x2="720" y2="380" stroke="var(--colors-primary-300)" stroke-width="1" opacity="0.4"/>
+      <circle cx="720" cy="340" r="60" fill="none" stroke="var(--colors-primary-200)" stroke-width="0.8" opacity="0.35"/>
+      <circle cx="720" cy="310" r="40" fill="none" stroke="var(--colors-primary-200)" stroke-width="0.8" opacity="0.25"/>
+    </svg>
+  </div>
+
+  <div class="hero__content">
+    <p class="hero__studio-hanja">정 돈 길 건 축</p>
+    <h1 class="hero__name">정돈길 건축사무소</h1>
+    <p class="hero__name-latin">Jongno-gil Architecture Studio</p>
+    <div class="hero__rule"></div>
+    <p class="hero__tagline">
+      콘크리트와 전통 재료 사이에서 빛이 머무는 자리를 찾습니다.
+      종로의 지붕 아래, 벽과 빛이 만나는 곳에서 건축을 시작합니다.
+    </p>
+  </div>
+
+  <div class="hero__scroll-indicator">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--colors-text-muted)"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SELECTED WORK -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section class="work" id="work">
+  <div style="max-width:1400px;margin:0 auto;">
+    <p class="section-label">Selected Work</p>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="work__grid">
+    <!-- Project 1: 누원 -->
+    <article class="project-card">
+      <div class="project-card__image">
+        <svg viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="400" height="500" fill="var(--colors-background-secondary)"/>
+          <!-- Abstract: a circular courtyard opening, concrete frame -->
+          <rect x="40" y="40" width="320" height="420" fill="none" stroke="var(--colors-primary-300)" stroke-width="1.5"/>
+          <circle cx="200" cy="220" r="100" fill="none" stroke="var(--colors-primary-400)" stroke-width="1"/>
+          <circle cx="200" cy="220" r="60" fill="var(--colors-primary-100)" opacity="0.6"/>
+          <!-- Light ray -->
+          <line x1="200" y1="120" x2="200" y2="60" stroke="var(--colors-primary-300)" stroke-width="0.8" opacity="0.5"/>
+          <!-- Floor grid -->
+          <line x1="100" y1="380" x2="300" y2="380" stroke="var(--colors-rule)" stroke-width="0.5"/>
+          <line x1="80" y1="420" x2="320" y2="420" stroke="var(--colors-rule)" stroke-width="0.5"/>
+          <!-- Column -->
+          <rect x="110" y="100" width="8" height="280" fill="var(--colors-primary-200)" opacity="0.5"/>
+          <rect x="282" y="100" width="8" height="280" fill="var(--colors-primary-200)" opacity="0.5"/>
+          <text x="200" y="468" text-anchor="middle" font-family="var(--typography-body-family)" font-size="10" fill="var(--colors-text-muted)" letter-spacing="0.1em">NOWON RESIDENCE</text>
+        </svg>
+      </div>
+      <div class="project-card__caption">
+        <h3 class="project-card__name-kr">누원 주택</h3>
+        <p class="project-card__name-en">Nowon Residence</p>
+        <div class="project-card__meta">
+          <span class="project-card__meta-item">2023</span>
+          <span class="project-card__meta-item">노원구</span>
+          <span class="project-card__tag">Concrete + Hanok</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- Project 2: 부암현대 -->
+    <article class="project-card">
+      <div class="project-card__image">
+        <svg viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="400" height="500" fill="var(--colors-background-secondary)"/>
+          <!-- Abstract: horizontal layers, ondol warmth -->
+          <rect x="40" y="60" width="320" height="180" fill="var(--colors-primary-100)" opacity="0.5"/>
+          <rect x="40" y="260" width="320" height="120" fill="var(--colors-primary-50)" opacity="0.6"/>
+          <rect x="40" y="400" width="320" height="60" fill="var(--colors-primary-200)" opacity="0.3"/>
+          <!-- Horizontal lines — floor planes -->
+          <line x1="40" y1="240" x2="360" y2="240" stroke="var(--colors-primary-400)" stroke-width="1"/>
+          <line x1="40" y1="380" x2="360" y2="380" stroke="var(--colors-primary-400)" stroke-width="0.8"/>
+          <!-- Window openings -->
+          <rect x="70" y="90" width="80" height="120" fill="var(--colors-background-primary)" opacity="0.8"/>
+          <rect x="250" y="90" width="80" height="120" fill="var(--colors-background-primary)" opacity="0.8"/>
+          <!-- Warm glow -->
+          <rect x="70" y="280" width="260" height="60" rx="2" fill="var(--colors-primary-200)" opacity="0.3"/>
+          <text x="200" y="468" text-anchor="middle" font-family="var(--typography-body-family)" font-size="10" fill="var(--colors-text-muted)" letter-spacing="0.1em">BUAM HANOK EXTENSION</text>
+        </svg>
+      </div>
+      <div class="project-card__caption">
+        <h3 class="project-card__name-kr">부암 한옥 증축</h3>
+        <p class="project-card__name-en">Buam Hanok Extension</p>
+        <div class="project-card__meta">
+          <span class="project-card__meta-item">2022</span>
+          <span class="project-card__meta-item">종로구 부암동</span>
+          <span class="project-card__tag">Timber + Concrete</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- Project 3: 성북 빛의 방 -->
+    <article class="project-card">
+      <div class="project-card__image">
+        <svg viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="400" height="500" fill="var(--colors-background-secondary)"/>
+          <!-- Abstract: a room with a single cross of light -->
+          <rect x="60" y="40" width="280" height="380" fill="none" stroke="var(--colors-primary-300)" stroke-width="1.5"/>
+          <!-- Dark interior -->
+          <rect x="62" y="42" width="276" height="376" fill="var(--colors-primary-800)" opacity="0.15"/>
+          <!-- Cross of light -->
+          <rect x="175" y="80" width="50" height="240" fill="var(--colors-primary-100)" opacity="0.7"/>
+          <rect x="130" y="160" width="140" height="50" fill="var(--colors-primary-100)" opacity="0.7"/>
+          <!-- Floor reflection -->
+          <rect x="130" y="340" width="140" height="60" fill="var(--colors-primary-100)" opacity="0.15"/>
+          <text x="200" y="468" text-anchor="middle" font-family="var(--typography-body-family)" font-size="10" fill="var(--colors-text-muted)" letter-spacing="0.1em">SEONGBUK CHAPEL</text>
+        </svg>
+      </div>
+      <div class="project-card__caption">
+        <h3 class="project-card__name-kr">성북 빛의 방</h3>
+        <p class="project-card__name-en">Seongbuk Light Chapel</p>
+        <div class="project-card__meta">
+          <span class="project-card__meta-item">2021</span>
+          <span class="project-card__meta-item">성북구</span>
+          <span class="project-card__tag">Concrete</span>
+        </div>
+      </div>
+    </article>
+
+    <!-- Project 4: 자하문 -->
+    <article class="project-card">
+      <div class="project-card__image">
+        <svg viewBox="0 0 400 500" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="400" height="500" fill="var(--colors-background-secondary)"/>
+          <!-- Abstract: gallery interior, long perspective -->
+          <rect x="80" y="60" width="240" height="340" fill="var(--colors-background-primary)" opacity="0.6"/>
+          <!-- Interior perspective lines -->
+          <line x1="80" y1="60" x2="140" y2="120" stroke="var(--colors-primary-300)" stroke-width="1"/>
+          <line x1="320" y1="60" x2="260" y2="120" stroke="var(--colors-primary-300)" stroke-width="1"/>
+          <line x1="80" y1="400" x2="140" y2="340" stroke="var(--colors-primary-300)" stroke-width="1"/>
+          <line x1="320" y1="400" x2="260" y2="340
