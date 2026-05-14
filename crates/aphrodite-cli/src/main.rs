@@ -6,6 +6,7 @@ use serde_json::json;
 use std::path::PathBuf;
 
 mod banner;
+mod create_cmd;
 mod design_cmd;
 mod feedback_cmd;
 mod gallery_cmd;
@@ -124,6 +125,24 @@ enum Command {
         #[arg(long)]
         repo: Option<PathBuf>,
     },
+
+    /// Autonomous creation: design → self-critic refine loop → final.
+    /// ADR 0004 Phase 4 prototype. Caller hands over intent; harness
+    /// internalises the multi-turn refinement (no external delta authoring).
+    Create {
+        intent: String,
+        /// Cap on internal critic→refine iterations. Each iteration costs
+        /// ~3 LLM calls (critic + refine + surface re-compose).
+        #[arg(long, default_value_t = 3)]
+        max_turns: u32,
+        /// Stop when critic's satisfaction estimate reaches this value.
+        #[arg(long, default_value_t = 0.85)]
+        satisfaction_threshold: f32,
+        #[arg(long)]
+        no_write: bool,
+        #[arg(long)]
+        repo: Option<PathBuf>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -191,6 +210,9 @@ async fn main() -> anyhow::Result<()> {
         Command::Hate { repo } => feedback_cmd::run(-0.30, "hate", repo)?,
         Command::Prefs { repo } => feedback_cmd::show(repo)?,
         Command::Refine { change, no_write, repo } => refine_cmd::run(change, no_write, repo).await?,
+        Command::Create { intent, max_turns, satisfaction_threshold, no_write, repo } => {
+            create_cmd::run(intent, max_turns, satisfaction_threshold, no_write, repo).await?
+        }
     };
 
     if cli.json {

@@ -1,5 +1,6 @@
 //! aphrodite-generator — orchestrates LLM provider + hero HTML rendering.
 
+pub mod critic;
 pub mod extractor;
 pub mod hero;
 pub mod offline;
