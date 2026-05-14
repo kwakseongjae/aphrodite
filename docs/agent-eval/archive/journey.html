@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aphrodite — 19-pass journey</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0a0a0b;
+    color: #e8e8ea;
+    line-height: 1.5;
+  }
+  header.top {
+    padding: 64px 48px 32px;
+    border-bottom: 1px solid #1f1f23;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  header.top h1 {
+    margin: 0 0 12px;
+    font-size: 44px;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+  header.top .sub {
+    color: #8a8a93;
+    margin: 0 0 6px;
+    font-size: 16px;
+    max-width: 720px;
+  }
+  header.top .meta {
+    color: #57575c;
+    margin: 16px 0 0;
+    font-size: 13px;
+    font-family: ui-monospace, "SF Mono", monospace;
+  }
+  .layout { display: grid; grid-template-columns: 240px 1fr; max-width: 1400px; margin: 0 auto; }
+  nav.rail {
+    position: sticky; top: 0; align-self: start;
+    padding: 32px 16px 32px 48px;
+    height: 100vh; overflow-y: auto;
+    border-right: 1px solid #1f1f23;
+    font-size: 13px;
+  }
+  nav.rail .group { color: #57575c; text-transform: uppercase; letter-spacing: 0.08em; font-size: 11px; margin: 18px 0 6px; }
+  nav.rail a { display: block; color: #b3b3b8; text-decoration: none; padding: 4px 0; border-left: 2px solid transparent; padding-left: 12px; margin-left: -12px; transition: color 120ms; }
+  nav.rail a:hover { color: #f8f8fa; }
+  nav.rail a.major { color: #fcd34d; font-weight: 500; }
+  main { padding: 32px 48px 96px; }
+  .phase-banner {
+    margin: 48px 0 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #1f1f23;
+  }
+  .phase-banner h2 {
+    margin: 0 0 4px;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    color: #fcd34d;
+  }
+  .phase-banner .pdesc { color: #71717a; margin: 0; font-size: 14px; }
+  .pass {
+    margin: 28px 0;
+    background: #131318;
+    border: 1px solid #27272a;
+    border-radius: 18px;
+    overflow: hidden;
+  }
+  .pass-head {
+    padding: 20px 24px 14px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #1f1f23;
+  }
+  .pass-head .num {
+    font-family: ui-monospace, "SF Mono", monospace;
+    color: #a78bfa;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .pass-head h3 { margin: 0; font-size: 18px; letter-spacing: -0.01em; }
+  .pass-head .date { color: #57575c; font-size: 12px; font-family: ui-monospace, monospace; }
+  .pass-head .tag {
+    background: #14532d; color: #86efac;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .pass-head .tag.fix { background: #422006; color: #fcd34d; }
+  .pass-head .tag.research { background: #1e1b4b; color: #a5b4fc; }
+  .pass-head .tag.persona { background: #501c3a; color: #f9a8d4; }
+  .pass-body { padding: 18px 24px 4px; color: #d4d4d8; font-size: 14px; }
+  .pass-body p { margin: 0 0 12px; }
+  .pass-body strong { color: #f8f8fa; }
+  .pass-body code { font-family: ui-monospace, monospace; background: #1f1f23; color: #fde68a; padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+  .preview-frame {
+    margin: 8px 24px 18px;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 480px;
+    position: relative;
+  }
+  .preview-frame iframe { border: 0; width: 250%; height: 250%; transform: scale(0.4); transform-origin: top left; pointer-events: none; }
+  .links {
+    padding: 12px 24px 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 13px;
+    background: #0e0e10;
+    border-top: 1px solid #1f1f23;
+  }
+  .links a { color: #a78bfa; text-decoration: none; }
+  .links a:hover { text-decoration: underline; }
+  .pill { margin-left: auto; color: #57575c; font-family: ui-monospace, monospace; }
+  footer {
+    padding: 48px 48px 96px;
+    color: #57575c;
+    font-size: 13px;
+    max-width: 1400px;
+    margin: 0 auto;
+    border-top: 1px solid #1f1f23;
+  }
+  footer a { color: #a78bfa; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>Aphrodite — 19-pass journey</h1>
+  <p class="sub">From an offline deterministic generator (Pass 1) to a fully autonomous creation harness (Pass 19). Each pass listed below carries the artefact that motivated, validated, or extended the architecture. Scroll, or jump via the left rail.</p>
+  <p class="meta">2026-05-13 → 2026-05-14 · ADR 0004 from "stub" to all 9 phases functional · 17 Findings opened, 14 closed</p>
+</header>
+
+<div class="layout">
+<nav class="rail">
+  <div class="group">Foundations</div>
+  <a href="#p1">Pass 1 — offline</a>
+  <a href="#p2">Pass 2 — first live GLM</a>
+  <a href="#p3">Pass 3 — wide breadth</a>
+  <a href="#p4">Pass 4 — surface composer</a>
+  <a href="#p5">Pass 5 — taste loop A</a>
+  <a href="#p5b">Pass 5b — taste loop B</a>
+  <a href="#p6" class="major">Pass 6 — multi-turn refine</a>
+  <div class="group">Autonomy</div>
+  <a href="#p7" class="major">Pass 7 — reactive baseline</a>
+  <a href="#p8">Pass 8 — autonomous create</a>
+  <a href="#p9" class="major">Pass 9 — skill scaffolds</a>
+  <a href="#p10">Pass 10 — harmonize</a>
+  <div class="group">Personas</div>
+  <a href="#p11">Pass 11 — 7 personas</a>
+  <a href="#p12" class="major">Pass 12 — persona authority</a>
+  <a href="#p13">Pass 13 — persona matrix</a>
+  <div class="group">Polish</div>
+  <a href="#p14">Pass 14 — retry + Lucide</a>
+  <a href="#p15">Pass 15 — class recovery</a>
+  <div class="group">Research</div>
+  <a href="#p16" class="major">Pass 16 — Karpathy wiki</a>
+  <a href="#p17">Pass 17 — wiki CLI</a>
+  <a href="#p18">Pass 18 — auto-fetch</a>
+  <a href="#p19" class="major">Pass 19 — assets manage</a>
+</nav>
+
+<main>
+
+<div class="phase-banner">
+  <h2>Foundations (Pass 1 – Pass 6)</h2>
+  <p class="pdesc">The 8 sections of DESIGN.md, the WCAG-AA gate, the surface composer, the implicit taste loop, and the first multi-turn refinement contract.</p>
+</div>
+
+<article class="pass" id="p1">
+  <div class="pass-head"><span class="num">PASS 01</span><h3>Offline deterministic generator</h3><span class="date">2026-05-13</span><span class="tag">baseline</span></div>
+  <div class="pass-body"><p>FNV-hash → hue rotation → fixed schema fill. 8 runs, no LLM credential at the time. Demonstrates the harness <strong>contract</strong>, not aesthetic capability.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-13-pass1-offline/run-02-jargon/hero.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-13-pass1-offline/gallery.html">gallery ↗</a><span class="pill">offline · 8 runs</span></div>
+</article>
+
+<article class="pass" id="p2">
+  <div class="pass-head"><span class="num">PASS 02</span><h3>z.ai GLM-5.1, first live runs</h3><span class="date">2026-05-13</span><span class="tag">live LLM</span></div>
+  <div class="pass-body"><p>4 representative intents after the keychain bug chain finally ended. The first time Aphrodite produced something I would actually <strong>ship</strong>.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-13-pass2-glm51/r02-jargon/hero.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-13-pass2-glm51/gallery.html">gallery ↗</a><span class="pill">zai/glm-5.1 · 4 runs</span></div>
+</article>
+
+<article class="pass" id="p3">
+  <div class="pass-head"><span class="num">PASS 03</span><h3>Wide breadth — 5 orthogonal axes</h3><span class="date">2026-05-13</span><span class="tag">17 runs · 17/17 valid</span></div>
+  <div class="pass-body"><p>5 aesthetic styles × 2 domain stretches × 2 hard constraints × 3 languages × 5-run convergence series. <strong>17/17 valid</strong> after two same-day parser fixes.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-13-pass3-glm51/E5-convergence/hero.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-13-pass3-glm51/gallery.html">gallery ↗</a><span class="pill">17 runs</span></div>
+</article>
+
+<article class="pass" id="p4">
+  <div class="pass-head"><span class="num">PASS 04</span><h3>Surface composer — output is finally the page asked for</h3><span class="date">2026-05-14</span><span class="tag">two-call · 5/6 valid</span></div>
+  <div class="pass-body"><p>Second LLM call now composes the intent-specific page. Each card carries a real composition — pricing tiers, dashboard cards, mobile frame, magazine article, portfolio grid — instead of the generic Pass 3 hero.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-14-pass4-glm51-surfaces/A1-editorial/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-14-pass4-glm51-surfaces/gallery.html">gallery ↗</a><span class="pill">6 surfaces</span></div>
+</article>
+
+<article class="pass" id="p5">
+  <div class="pass-head"><span class="num">PASS 05</span><h3>Taste-loop efficacy (divergence side)</h3><span class="date">2026-05-14</span><span class="tag">3 valid · directional</span></div>
+  <div class="pass-body"><p>Same intent × 6 with hate/love between. Steps 1→2→3 show the system flipping serif→sans after cumulative anti-serif signal. Steps 4-6 hit z.ai HTTP errors — first manifestation of Finding #20.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-14-pass5-feedback-loop/step-1/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-14-pass5-feedback-loop/">archive ↗</a><span class="pill">divergence verified</span></div>
+</article>
+
+<article class="pass" id="p5b">
+  <div class="pass-head"><span class="num">PASS 5b</span><h3>Taste-loop A/B (controlled)</h3><span class="date">2026-05-14</span><span class="tag">DECISIVE</span></div>
+  <div class="pass-body"><p>Same intent, <strong>opposite pre-loaded preferences</strong>. A: serif+warm → Fraunces + Newsreader + #d4922a. B: sans+cool → DM Sans + DM Sans + #298c80. Three independent flips lined up with prefs on both sides. Sampling variance cannot explain this.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-14-pass5b-controlled/B-sans-cool/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-14-pass5b-controlled/gallery.html">gallery ↗</a><span class="pill">causal effect</span></div>
+</article>
+
+<article class="pass" id="p6">
+  <div class="pass-head"><span class="num">PASS 06</span><h3>Multi-turn refinement (scripted)</h3><span class="date">2026-05-14</span><span class="tag">surgical edits</span></div>
+  <div class="pass-body"><p><code>aphrodite refine "&lt;delta&gt;"</code> ships. 4-turn scripted sequence proves each delta lands on the named axis and earlier turns are preserved (cool blue persists 3 turns later; spacing survives the display swap). <strong>Limitation:</strong> deltas were pre-scripted, not reactive — see Pass 7.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-14-pass6-multiturn/turn-4-sans/hero.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-14-pass6-multiturn/gallery.html">gallery ↗</a><span class="pill">4 turns</span></div>
+</article>
+
+<div class="phase-banner">
+  <h2>Autonomy (Pass 7 – Pass 10)</h2>
+  <p class="pdesc">Reactive critic → internalised loop → skill scaffolds → harmonize. ADR 0004's spine.</p>
+</div>
+
+<article class="pass" id="p7">
+  <div class="pass-head"><span class="num">PASS 07</span><h3>Reactive multi-turn (no script)</h3><span class="date">2026-05-14</span><span class="tag">5/5 · agent-driven</span></div>
+  <div class="pass-body"><p>Agent reads each turn's output and authors the next delta in response. 4 reactive turns: EB Garamond → Source Serif 4 → spacing 96 → 224 px → #f7f3ed → #faf9f6 gallery white. Pass 7 is the benchmark every subsequent pass measures against.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-14-pass7-reactive/turn-1-baseline/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-14-pass7-reactive/gallery.html">gallery ↗</a><span class="pill">1036 s · 4 turns</span></div>
+</article>
+
+<article class="pass" id="p8">
+  <div class="pass-head"><span class="num">PASS 08</span><h3>Autonomous <code>aphrodite create</code></h3><span class="date">2026-05-14</span><span class="tag">internal loop</span></div>
+  <div class="pass-body"><p>Critic loop moves <strong>inside</strong>. Run A's critic correctly identified Space Grotesk register mismatch but refined into Cormorant Garamond (Renaissance — wrong direction). Run B (post parser fix) declared 0.92 satisfaction with zero refines but missed the prose-vs-spacing mismatch. Both surfaced the case for skill scaffolds.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-14-pass8-autonomous/run-b-zero-turn/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-14-pass8-autonomous/">archive ↗</a><span class="pill">internal critic live</span></div>
+</article>
+
+<article class="pass" id="p9">
+  <div class="pass-head"><span class="num">PASS 09</span><h3>Skill scaffold loading</h3><span class="date">2026-05-14</span><span class="tag">DECISIVE</span></div>
+  <div class="pass-body"><p><code>editorial-portfolio</code> skill loaded into the design prompt as concrete checklist. Result: Newsreader display, Outfit body, 224 px max spacing, #f6f5f2 brand-a — all matching Pass 7 <em>final</em> state, <strong>zero refines</strong>. The Newsreader pick is the smoking gun: the skill body lists exactly three candidates; the generator landed on one of them.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-14-pass9-skillify/hero.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-14-pass9-skillify/">archive ↗</a><span class="pill">286 s · 0 refines</span></div>
+</article>
+
+<article class="pass" id="p10">
+  <div class="pass-head"><span class="num">PASS 10</span><h3>Harmonize + asset standards</h3><span class="date">2026-05-14</span><span class="tag fix">#24 + #26 closed</span></div>
+  <div class="pass-body"><p>Phase 7 ships: Google Fonts <code>@import</code> auto-injected (with opsz axis for Source Serif 4 / Newsreader / Fraunces), hero typography hooked up via CSS variables. <code>asset-standards</code> skill becomes <code>default: true</code> — Lucide icons, Fluent emoji, opinionated photography defaults applied to every <code>aphrodite create</code>.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-14-pass10-harmonize/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-14-pass10-harmonize/">archive ↗</a><span class="pill">harmonize live</span></div>
+</article>
+
+<div class="phase-banner">
+  <h2>Personas (Pass 11 – Pass 13)</h2>
+  <p class="pdesc">Seven design authorities — Rams, Vignelli, Ando, Kawakubo, Sottsass, Hara, Galileo. Each speaks in its own voice, rejects in its own register.</p>
+</div>
+
+<article class="pass" id="p11">
+  <div class="pass-head"><span class="num">PASS 11</span><h3>7 personas A/B (Rams vs Sottsass)</h3><span class="date">2026-05-14</span><span class="tag persona">palette delta unmistakable</span></div>
+  <div class="pass-body"><p>Same Seoul furniture intent → two extreme personas. Rams: single muted forest-green primary. Sottsass: <strong>four-color Memphis palette</strong> — terracotta + emerald + citron + olive. Critic over-rode Sottsass's chunky display pick (Finding #34); palette landed anyway.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-14-pass11-personas/rams/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-14-pass11-personas/">archive ↗</a><span class="pill">2 runs</span></div>
+</article>
+
+<article class="pass" id="p12">
+  <div class="pass-head"><span class="num">PASS 12</span><h3>Persona authority + CJK strategy</h3><span class="date">2026-05-14</span><span class="tag fix">#34 + #35 closed</span></div>
+  <div class="pass-body"><p>Critic prompt now forbids overriding persona-driven picks via generic scaffolds. Each persona declares a <code>cjk_strategy</code> field in its own voice. Re-run Sottsass: Druk Wide + <strong>Sandoll Noisuh CJK</strong> (lifted directly from cjk_strategy) survive. Accent palette named verbatim from Sottsass's <code>prefers</code> list: mint, pink, lapis, citron, terracotta.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-14-pass12-persona-authority/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-14-pass12-persona-authority/">archive ↗</a><span class="pill">cleanest persona pass</span></div>
+</article>
+
+<article class="pass" id="p13">
+  <div class="pass-head"><span class="num">PASS 13</span><h3>Persona × intent matrix (5 paired)</h3><span class="date">2026-05-14</span><span class="tag persona">5/5 named-family lands</span></div>
+  <div class="pass-body"><p>Vignelli × magazine, Ando × architecture, Kawakubo × lookbook, Galileo × dashboard, Hara × clinic — all in parallel. Spacing density inverts cleanly with persona register: Galileo 96 → Vignelli/Hara 192 → Ando 224 → Kawakubo 256 px. Critic quotes the persona's principles in its rationale.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-14-pass13-persona-matrix/massimo-vignelli/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-14-pass13-persona-matrix/">archive ↗</a><span class="pill">5 paired runs</span></div>
+</article>
+
+<div class="phase-banner">
+  <h2>Polish (Pass 14 – Pass 15)</h2>
+  <p class="pdesc">Provider retry, Lucide path embeddings, critic prescriptive-vs-suggestive distinction, class-recovery harmonize backstop.</p>
+</div>
+
+<article class="pass" id="p14">
+  <div class="pass-head"><span class="num">PASS 14</span><h3>Provider retry + Lucide path embeddings</h3><span class="date">2026-05-14</span><span class="tag fix">#29 closed · #32 partial</span></div>
+  <div class="pass-body"><p>Bounded retry on 429 / 5xx / connect / timeout (1s/2s/4s back-off). Pass 13's Vignelli crash would have recovered. <code>asset-standards</code> skill body now embeds 10 canonical Lucide SVGs. Dogfood: composer emits semantically-correct Lucide paths (triangle-alert, chart-line, user-plus, layout-dashboard) — class label stripped but path data byte-perfect.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-14-pass14-assets-retry/dashboard-galileo/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-14-pass14-assets-retry/">archive ↗</a><span class="pill">2 runs</span></div>
+</article>
+
+<article class="pass" id="p15">
+  <div class="pass-head"><span class="num">PASS 15</span><h3>Critic discipline + Lucide class recovery</h3><span class="date">2026-05-14</span><span class="tag fix">#31 + #32 closed</span></div>
+  <div class="pass-body"><p>Critic now distinguishes <em>prescriptive</em> ("avoid X") from <em>suggestive</em> ("good candidates: X, Y, Z") scaffold language. <code>harmonize::recover_lucide_classes</code> backstops: walks SVGs and injects <code>class="lucide lucide-..."</code> when first path matches a known fingerprint. 7 properly-classed Lucide icons in the Galileo dashboard run.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-14-pass15-lucide-class-recovery/galileo-dashboard/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-14-pass15-lucide-class-recovery/">archive ↗</a><span class="pill">8/9 ADR phases</span></div>
+</article>
+
+<div class="phase-banner">
+  <h2>Research (Pass 16 – Pass 19)</h2>
+  <p class="pdesc">Karpathy LLM-Wiki adopted, user-curation CLI, URL metadata auto-fetch, asset management. ADR 0004 fully done.</p>
+</div>
+
+<article class="pass" id="p16">
+  <div class="pass-head"><span class="num">PASS 16</span><h3>Karpathy LLM-Wiki for design references</h3><span class="date">2026-05-14</span><span class="tag research">DECISIVE</span></div>
+  <div class="pass-body"><p>Surveyed Hermes / Karpathy research skills; picked LLM-Wiki ("compile knowledge once; query at use-time"). 7 seeded entries: Pretendard, MUJI, Apartamento, Pentagram, Linear, Are.na, Naver. Pass 16 result's Layout section: <code>12-col / 24 px gutter</code> (Pentagram verbatim), <code>4:5 portrait</code> (Apartamento), <code>12 px Inter Regular left rail</code> (Are.na). Six of seven specs trace directly to a wiki entry.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-14-pass16-wiki-references/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-14-pass16-wiki-references/">archive ↗</a><span class="pill">251 s · fastest</span></div>
+</article>
+
+<article class="pass" id="p17">
+  <div class="pass-head"><span class="num">PASS 17</span><h3>Wiki CLI — list / show / add</h3><span class="date">2026-05-14</span><span class="tag research">user-curation</span></div>
+  <div class="pass-body"><p><code>aphrodite wiki list/show/add</code>. User-added entries immediately visible to the next <code>aphrodite create</code>. <code>slug_from_url</code> handles www-strip and TLD-drop. Stub auto-generates three canonical sections (What to absorb / What NOT to copy / Reference fragments) for manual enrichment.</p></div>
+  <div class="links"><span class="pill">CLI verb · no new artifact preview</span></div>
+</article>
+
+<article class="pass" id="p18">
+  <div class="pass-head"><span class="num">PASS 18</span><h3>--auto-fetch — URL metadata extraction</h3><span class="date">2026-05-14</span><span class="tag research">friction halved</span></div>
+  <div class="pass-body"><p>HTTP GET the URL, extract <code>&lt;title&gt;</code>, <code>meta[description]</code>, <code>og:description</code>, <code>og:image</code>, plus hex colour scan from inline HTML (palette hints). On Stripe.com: title, description, OG image, and palette <code>#031323, #4285f4, #34a853, #fbbc04, #ea4335, #000, #171d27, #ff6201</code> — Stripe's signature near-black plus the Google brand swatches embedded in the page's payment-method previews.</p></div>
+  <div class="links"><span class="pill">CLI feature · no new artifact preview</span></div>
+</article>
+
+<article class="pass" id="p19">
+  <div class="pass-head"><span class="num">PASS 19</span><h3>Asset manage — last ADR 0004 stub closed</h3><span class="date">2026-05-14</span><span class="tag fix">9/9 phases done</span></div>
+  <div class="pass-body"><p><code>&lt;project&gt;/.aphrodite/assets/{refs,uploads,icons}/</code>. Content-hash dedupe via FNV-1a-128 16-hex prefix. Create flow materialises wiki entries' og_images into <code>refs/</code>. <code>aphrodite assets list/clean</code> verbs. End-to-end demo: <code>wiki add stripe.com --auto-fetch</code> → <code>aphrodite create "B2B fintech landing"</code> → 305 KB Stripe OG image materialised, deduplicated.</p></div>
+  <div class="links"><span class="pill">ADR 0004 structurally complete</span></div>
+</article>
+
+<footer>
+  <p>Aphrodite v0.3 — 19 dogfood passes recorded 2026-05-13 → 2026-05-14. ADR 0004 numbered phases all functional.</p>
+  <p>Index: <a href="./index.html">archive index ↗</a> · Source: <a href="https://github.com/anthropics/claude-code/issues">github</a></p>
+</footer>
+
+</main>
+</div>
+
+</body>
+</html>
