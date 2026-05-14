@@ -9,6 +9,7 @@ pub mod provider;
 pub mod refine;
 pub mod skill;
 pub mod surface;
+pub mod wiki_fetch;
 
 use aphrodite_core::{parse_design, resolve_variants, DesignDocument, Invocation, Variant};
 use provider::{ProviderId, ResolvedProvider, DEFAULT_PRIORITY};

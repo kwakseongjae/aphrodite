@@ -176,13 +176,15 @@ enum WikiSub {
         /// Override the auto-derived slug.
         #[arg(long)]
         slug: Option<String>,
-        /// Human-readable title (defaults to slug-as-words).
+        /// Human-readable title (defaults to slug-as-words; --auto-fetch
+        /// overrides with the page's <title> when no manual title given).
         #[arg(long)]
         title: Option<String>,
         /// Comma-separated tags for intent matching.
         #[arg(long, value_delimiter = ',', num_args = 0..)]
         tags: Vec<String>,
-        /// One-line stylistic distillation.
+        /// One-line stylistic distillation. --auto-fetch falls back to
+        /// the page's meta description / og:description when omitted.
         #[arg(long)]
         signature: Option<String>,
         /// Inline body text.
@@ -194,6 +196,10 @@ enum WikiSub {
         /// Replace an existing entry with the same slug.
         #[arg(long)]
         overwrite: bool,
+        /// HTTP GET the URL and extract title / meta description / palette
+        /// hints. Failures degrade gracefully — a stub is still written.
+        #[arg(long)]
+        auto_fetch: bool,
     },
 }
 
@@ -269,8 +275,8 @@ async fn main() -> anyhow::Result<()> {
         Command::Wiki { sub } => match sub {
             WikiSub::List => wiki_cmd::list(),
             WikiSub::Show { slug } => wiki_cmd::show(&slug)?,
-            WikiSub::Add { url, slug, title, tags, signature, body, body_from_file, overwrite } => {
-                wiki_cmd::add(url, slug, title, tags, signature, body, body_from_file, overwrite)?
+            WikiSub::Add { url, slug, title, tags, signature, body, body_from_file, overwrite, auto_fetch } => {
+                wiki_cmd::add(url, slug, title, tags, signature, body, body_from_file, overwrite, auto_fetch).await?
             }
         },
     };

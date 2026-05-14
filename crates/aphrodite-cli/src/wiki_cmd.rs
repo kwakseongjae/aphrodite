@@ -65,7 +65,7 @@ pub fn show(slug: &str) -> anyhow::Result<serde_json::Value> {
     }))
 }
 
-pub fn add(
+pub async fn add(
     url: String,
     slug_override: Option<String>,
     title: Option<String>,
@@ -74,7 +74,31 @@ pub fn add(
     body_text: Option<String>,
     body_from_file: Option<std::path::PathBuf>,
     overwrite: bool,
+    auto_fetch: bool,
 ) -> anyhow::Result<serde_json::Value> {
+    // Auto-fetch URL metadata if requested. Failures degrade gracefully —
+    // a network hiccup writes a stub instead of bailing the whole command.
+    let fetched: Option<wiki::UrlMetadata> = if auto_fetch {
+        eprintln!("  → fetching {url} …");
+        match aphrodite_generator::wiki_fetch::fetch_url_metadata(&url).await {
+            Ok(md) => {
+                eprintln!(
+                    "  ✓ title={:?} desc={:?} palette={} hints",
+                    md.title.as_deref(),
+                    md.description.as_deref().map(|s| if s.len() > 60 { format!("{}…", &s[..60]) } else { s.to_string() }),
+                    md.palette_hints.len()
+                );
+                Some(md)
+            }
+            Err(e) => {
+                eprintln!("  ⚠ fetch failed: {e} — falling back to stub");
+                None
+            }
+        }
+    } else {
+        None
+    };
+
     let slug = slug_override.unwrap_or_else(|| wiki::slug_from_url(&url));
     if slug.is_empty() {
         anyhow::bail!("could not derive a slug from URL `{url}` — pass `--slug` explicitly");
@@ -91,23 +115,31 @@ pub fn add(
         (None, Some(p)) => std::fs::read_to_string(&p)
             .map_err(|e| anyhow::anyhow!("could not read --body-from-file {}: {e}", p.display()))?,
         (None, None) => {
-            // Read from stdin if it's piped; otherwise emit a stub.
+            // Read from stdin if it's piped AND non-empty; otherwise emit a
+            // stub (enriched by --auto-fetch's extracted metadata when
+            // present). An empty piped stdin (sub-shell with no input)
+            // should not produce an empty body file.
             use std::io::{IsTerminal, Read};
             let mut stdin = std::io::stdin();
+            let mut buf = String::new();
             if !stdin.is_terminal() {
-                let mut buf = String::new();
                 stdin.read_to_string(&mut buf)?;
-                buf
-            } else {
-                eprintln!("  ⚠ no body provided (no --body / --body-from-file / piped stdin)");
+            }
+            if buf.trim().is_empty() {
                 eprintln!("  → stub body will be written; edit the file manually to enrich");
-                stub_body(&slug, &url, &title, &signature, &tags)
+                enriched_stub_body(&slug, &url, &title, &signature, &tags, fetched.as_ref())
+            } else {
+                buf
             }
         }
     };
 
-    let title = title.unwrap_or_else(|| slug.replace('-', " "));
-    let final_signature = signature.unwrap_or_default();
+    let title = title
+        .or_else(|| fetched.as_ref().and_then(|m| m.title.clone()))
+        .unwrap_or_else(|| slug.replace('-', " "));
+    let final_signature = signature
+        .or_else(|| fetched.as_ref().and_then(|m| m.description.clone()))
+        .unwrap_or_default();
     let entry = aphrodite_core::wiki::WikiEntry {
         slug: slug.clone(),
         frontmatter: aphrodite_core::wiki::WikiFrontmatter {
@@ -137,21 +169,56 @@ pub fn add(
     }))
 }
 
-fn stub_body(
+fn enriched_stub_body(
     slug: &str,
     url: &str,
     title: &Option<String>,
     signature: &Option<String>,
     tags: &[String],
+    fetched: Option<&wiki::UrlMetadata>,
 ) -> String {
-    let title_display = title.as_deref().unwrap_or(slug);
-    let sig_display = signature.as_deref().unwrap_or("(one-line distillation)");
+    let title_display = title
+        .clone()
+        .or_else(|| fetched.and_then(|m| m.title.clone()))
+        .unwrap_or_else(|| slug.replace('-', " "));
+    let sig_display = signature
+        .clone()
+        .or_else(|| fetched.and_then(|m| m.description.clone()))
+        .unwrap_or_else(|| "(one-line distillation)".to_string());
     let tags_display = if tags.is_empty() { "(none)".to_string() } else { tags.join(", ") };
+
+    let fetched_block = if let Some(m) = fetched {
+        let mut s = String::from("\n## Auto-fetched signals (from URL)\n\n");
+        if let Some(t) = &m.title {
+            s.push_str(&format!("- Page title: {t}\n"));
+        }
+        if let Some(d) = &m.description {
+            s.push_str(&format!("- Meta description: {d}\n"));
+        }
+        if let Some(og) = &m.og_image {
+            s.push_str(&format!("- OG image: {og}\n"));
+        }
+        if !m.palette_hints.is_empty() {
+            s.push_str(&format!(
+                "- Palette hints (hex values from HTML): {}\n",
+                m.palette_hints.join(", ")
+            ));
+        }
+        if s.lines().count() <= 2 {
+            String::new()
+        } else {
+            s.push('\n');
+            s
+        }
+    } else {
+        String::new()
+    };
+
     format!(
         r##"# {title_display} — why it matters
 
 (TODO: 2-3 sentences naming what this reference is and the design lesson it carries.)
-
+{fetched_block}
 ## What to absorb
 
 - (concrete pattern 1 — px values / ratios / weights)
