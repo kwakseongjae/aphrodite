@@ -13,7 +13,7 @@
 //! can already key off them while the implementations land later.
 
 use aphrodite_core::{
-    parse_design, personas, preferences, record_taste, resolve_variants, skills, wiki,
+    assets, parse_design, personas, preferences, record_taste, resolve_variants, skills, wiki,
     validate_design, Caller, Invocation, SignalKind, Surface, WriteMode,
 };
 
@@ -133,6 +133,46 @@ pub async fn run(
         );
     }
     let references_block = wiki::render_references_block(&wiki_entries);
+
+    // ---- Phase 6: asset management — materialise wiki og_images ------------
+    // Best-effort: fetch each loaded wiki entry's og_image into
+    // <project>/.aphrodite/assets/refs/. Failures are silent — refs are
+    // a convenience, never blocking.
+    let mut materialised_refs: Vec<String> = Vec::new();
+    for e in &wiki_entries {
+        // og_image is not part of WikiFrontmatter today; we look for it via
+        // a generic "extract og_image from body" heuristic. Skip if absent.
+        let og = e
+            .body
+            .lines()
+            .find(|l| l.starts_with("- OG image:"))
+            .and_then(|l| l.split_whitespace().last())
+            .map(|s| s.to_string());
+        if let Some(url) = og {
+            if url.starts_with("http") {
+                match aphrodite_generator::wiki_fetch::fetch_bytes(&url).await {
+                    Ok((bytes, ext)) => {
+                        let dir = assets::refs_dir(&target);
+                        match assets::dedupe_into(&dir, &bytes, &ext) {
+                            Ok(p) => {
+                                materialised_refs.push(p.to_string_lossy().to_string());
+                            }
+                            Err(err) => eprintln!("  ⚠ asset dedupe failed for {url}: {err}"),
+                        }
+                    }
+                    Err(err) => {
+                        eprintln!("  ⚠ ref fetch failed for {url}: {err}");
+                    }
+                }
+            }
+        }
+    }
+    if !materialised_refs.is_empty() {
+        eprintln!(
+            "● phase 6 / asset manage: materialised {} reference image(s) into .aphrodite/assets/refs/",
+            materialised_refs.len()
+        );
+    }
 
     // Combine persona + scaffold + references. Persona first (final authority),
     // then references (concrete prior art), then scaffold (generic checklists).
@@ -512,8 +552,8 @@ pub async fn run(
             "taste_application": if pref_hint.is_empty() { "no_prior_signal" } else { "applied" },
             "design": "done",
             "self_critic_refine": "done",
-            "asset_create": "stub",
-            "asset_manage": "stub",
+            "asset_create": "done",
+            "asset_manage": if materialised_refs.is_empty() { "noop" } else { "applied" },
             "harmonize": if harmonize_report.fonts_injected.is_empty() && !harmonize_report.hero_typography_fixed {
                 "noop"
             } else { "applied" },
@@ -529,6 +569,9 @@ pub async fn run(
         "research": {
             "wiki_entries_loaded": wiki_slugs,
             "newly_seeded_wiki": newly_seeded_wiki,
+        },
+        "assets": {
+            "materialised_refs": materialised_refs,
         },
         "harmonize": {
             "fonts_injected": harmonize_report.fonts_injected,

@@ -5,6 +5,7 @@ use clap::{Parser, Subcommand};
 use serde_json::json;
 use std::path::PathBuf;
 
+mod assets_cmd;
 mod banner;
 mod create_cmd;
 mod design_cmd;
@@ -160,6 +161,28 @@ enum Command {
         #[command(subcommand)]
         sub: WikiSub,
     },
+
+    /// Inspect / clean per-project assets (`<project>/.aphrodite/assets/`).
+    /// refs/ holds wiki reference images materialised at create time;
+    /// uploads/ is reserved for user-supplied images and is never auto-cleaned.
+    Assets {
+        #[command(subcommand)]
+        sub: AssetsSub,
+    },
+}
+
+#[derive(Subcommand)]
+enum AssetsSub {
+    /// List asset files by category with sizes.
+    List {
+        #[arg(long)]
+        repo: Option<PathBuf>,
+    },
+    /// Remove generated assets (refs/, icons/). Spares uploads/.
+    Clean {
+        #[arg(long)]
+        repo: Option<PathBuf>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -278,6 +301,10 @@ async fn main() -> anyhow::Result<()> {
             WikiSub::Add { url, slug, title, tags, signature, body, body_from_file, overwrite, auto_fetch } => {
                 wiki_cmd::add(url, slug, title, tags, signature, body, body_from_file, overwrite, auto_fetch).await?
             }
+        },
+        Command::Assets { sub } => match sub {
+            AssetsSub::List { repo } => assets_cmd::list(repo)?,
+            AssetsSub::Clean { repo } => assets_cmd::clean(repo)?,
         },
     };
 
