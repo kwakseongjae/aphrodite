@@ -36,6 +36,12 @@ pub struct PersonaFrontmatter {
     pub prefers: Vec<String>,
     #[serde(default)]
     pub when_to_invoke: String,
+    /// Optional per-persona note on how to handle CJK (Korean / Japanese /
+    /// Chinese) text-bearing surfaces. Each persona's preferred Latin display
+    /// family rarely covers CJK glyphs; this field lets the persona speak
+    /// to the override in its own voice. Empty ⇒ generic fallback.
+    #[serde(default)]
+    pub cjk_strategy: String,
 }
 
 #[derive(Debug, Clone)]
@@ -222,6 +228,11 @@ pub fn as_system_prompt_block(p: &Persona) -> String {
             out.push_str(&format!("  - {pf}\n"));
         }
         out.push('\n');
+    }
+    if !p.frontmatter.cjk_strategy.is_empty() {
+        out.push_str("Strategy for CJK (Korean / Japanese / Chinese) text-bearing surfaces:\n");
+        out.push_str(&p.frontmatter.cjk_strategy);
+        out.push_str("\n\n");
     }
     if !p.body.trim().is_empty() {
         out.push_str("Additional notes from your own writing / practice:\n\n");

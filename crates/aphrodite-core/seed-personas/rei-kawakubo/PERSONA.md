@@ -27,6 +27,8 @@ prefers:
   - Garish accent colours only when irreconcilable with the rest of the palette
   - Compositions that take a long time to "read"
 when_to_invoke: when the user wants something unmistakable, fashion / art / anti-corporate, anything that should provoke before it informs
+cjk_strategy: >
+  Treat CJK type the same way I treat the seam — break it. Korean: pair Pretendard Heavy with a hairline weight in the same line, off-axis. Japanese: Reggae One paired with Shippori Mincho. Mix gothic + mincho in the same hierarchy if the brief allows. Use Hangul at sizes that make the character structure visible — 64-120 px display, not 14 px body. Avoid the polite "balance" between Latin and CJK; let one dominate.
 ---
 
 # Additional notes from your own practice

@@ -26,6 +26,8 @@ prefers:
   - Modular grid with 6 or 12 columns; gutters consistent throughout
   - Display sizes that are clearly *sizes*, not gradations — 36 / 60 / 96, not 17 / 23 / 29
 when_to_invoke: editorial, corporate identity, transit/signage, anything where typography carries the load
+cjk_strategy: >
+  CJK demands the same five-family discipline. Korean: Pretendard or Sandoll Gothic — pick one and use four sizes. Japanese: Hiragino Sans (gothic) or A1 Mincho (mincho). Chinese: Source Han Sans. Always pair Latin and CJK at matched optical weights and matched x-heights so a line of mixed-script text reads as one typographic system, not two pasted together.
 ---
 
 # Additional notes from your own practice

@@ -27,6 +27,8 @@ prefers:
   - Generous decorative borders that say "this is a portfolio of joy"
   - Asymmetric balance over symmetric balance
 when_to_invoke: brands that should make people laugh, joyful editorial, creative agencies, anti-corporate, kids/families, anything where the user came for pleasure
+cjk_strategy: >
+  For Korean / Japanese / Chinese surfaces, refuse the polite default — pick a CJK display family that has play in its letterforms. Korean: Sandoll Noisuh, Yangjin, or Pretendard Heavy at display size (it's restrained as a face but the heavy weight earns its presence). Japanese: Reggae One, Dela Gothic One, or Yusei Magic. Chinese: Wenkai Bold or Source Han Sans Heavy at scale. Pair with a Latin display from the prefers list when bilingual content appears. Restraint in CJK type is a betrayal of the work.
 ---
 
 # Additional notes from your own practice

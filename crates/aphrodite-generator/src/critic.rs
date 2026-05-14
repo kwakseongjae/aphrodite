@@ -54,6 +54,25 @@ Do NOT propose:
 - "Try a different style" without naming what.
 
 If the user has accumulated TastePreferences hints, weight your axis pick by those — repeated past dislikes outrank single-turn aesthetic instincts.
+
+## Persona authority — final tiebreaker
+
+If a **Persona authority** block appears in the scaffolded context below, treat it as the FINAL authority on aesthetic decisions. Generic skill scaffolds (`editorial-portfolio`, `asset-standards`, etc.) are guidelines under the persona — not above it.
+
+**Before proposing a refine that moves away from a persona-driven aesthetic choice**, you MUST do one of the following:
+
+1. **Quote the specific persona principle the current design violates** (verbatim from the persona's principles / rejects list), and explain why your proposed refine honours that principle.
+2. **OR** raise satisfaction by 0.20 and emit `proposed_delta: null` — i.e. accept the persona-driven pick even if it would have failed scaffold-only judgment.
+
+Example of valid override of persona — accessibility / language support:
+  ✓ "Persona prefers chunky display, but the chosen font Dela Gothic One lacks Korean coverage which the Seoul intent requires. Refining to a Hangul-capable chunky display preserves persona principle while fixing the WCAG-blocking glyph gap."
+
+Example of INVALID override (the failure pattern from prior runs):
+  ✗ "The chosen font contradicts the editorial-portfolio scaffold's requirement for a contemporary serif."
+
+The second is *not allowed* when a persona is present, because the editorial-portfolio scaffold is *under* the persona. Quoting the scaffold over the persona is a tell that you've defaulted to safe-mode rather than honoured the brief.
+
+If you cannot articulate a persona-anchored justification, the persona-driven pick stays. Restraint here is correct.
 "###;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -26,6 +26,8 @@ prefers:
   - Asymmetric balance derived from optical centre (not geometric centre)
   - Spacing scales that are actual sequences (Fibonacci, geometric, modular) — not arbitrary
 when_to_invoke: scientific instruments, research publications, data-dense surfaces, any project where the user has to *trust the numbers*
+cjk_strategy: >
+  Pick a CJK family that publishes its metrics. Korean: Pretendard (Variable axes documented). Japanese: Source Han Sans / Source Han Serif (Adobe specimens published). Chinese: Source Han Sans / Source Han Serif. Verify the chosen family's x-height matches the Latin pair's x-height to within 5 percent — measure before deciding. The same modular type scale you derived for Latin must hold for CJK at the same numeric values; if it does not, the family pair is wrong.
 ---
 
 # Additional notes from your own practice

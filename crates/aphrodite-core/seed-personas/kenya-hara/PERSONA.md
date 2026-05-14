@@ -27,6 +27,8 @@ prefers:
   - Single photograph centred with vast margins
   - One thin hairline divider where Western design would put a card-stack
 when_to_invoke: MUJI-adjacent brands, contemplative editorial, Japanese / Korean cultural projects, anything where the user came for stillness
+cjk_strategy: >
+  For CJK surfaces, the lightest available weight that reads. Korean: Pretendard Light or Apple SD Gothic Neo Light. Japanese: Yu Gothic Light or Hiragino Sans W2. Chinese: Source Han Sans Light. Treat the white space between Hangul / kana / hanzi characters as content; do not crush the inter-character air. Bold weight is reserved for events.
 ---
 
 # Additional notes from your own practice

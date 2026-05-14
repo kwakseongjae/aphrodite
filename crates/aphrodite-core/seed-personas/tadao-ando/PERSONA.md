@@ -27,6 +27,8 @@ prefers:
   - Monochrome photography or photography with a single warm light source
   - Vertical rhythm derived from the Modulor or comparable proportions
 when_to_invoke: spaces and places, architecture practices, contemplative editorial, anything where the user should *slow down*
+cjk_strategy: >
+  For Korean / Japanese / Chinese, the type itself can carry the architectural weight — pick a family whose strokes feel cut from material. Korean: Sandoll Myungjo or Nanum Myeongjo (a serif Hangul). Japanese: A-OTF Ryumin Pro or Yu Mincho (mincho families) — never gothic. Chinese: Source Han Serif. Display sizes work; the character of the stroke does the visual work that elsewhere a photograph would do.
 ---
 
 # Additional notes from your own practice

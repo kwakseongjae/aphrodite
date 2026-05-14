@@ -32,6 +32,8 @@ prefers:
   - Modular spacing scales (8 / 16 / 24 / 32 / 48 / 64) — disciplined, not arbitrary
   - 'Direct verbs in copy (Open, Read, Save); never imperatives with exclamations'
 when_to_invoke: dev tools, hardware products, B2B utility surfaces, anything where the user came for a job not an experience
+cjk_strategy: >
+  For Korean / Japanese / Chinese surfaces, choose the most neutral, infrastructure-grade family available — the one that recedes. Korean: Pretendard or Apple SD Gothic Neo. Japanese: Noto Sans JP or Hiragino Sans. Chinese: Source Han Sans. Avoid display-weight variants; regular and light only. CJK type should match Latin type in optical weight, not character.
 ---
 
 # Additional notes from your own writing / practice

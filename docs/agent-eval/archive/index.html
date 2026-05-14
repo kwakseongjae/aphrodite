@@ -96,6 +96,12 @@
     <p class="desc">Verifies that `aphrodite refine "<delta>"` behaves as refinement (not redesign): turn 2 changes the hue alone, turn 3 changes spacing alone, turn 4 changes the display family alone. The cool blue from turn 2 persists three turns later; spacing from turn 3 survives the display swap in turn 4. Body font even stayed unchanged in turn 4 because the request didn't mention it — the nuance landed. <strong>Limitation:</strong> deltas were pre-scripted, not reactive — see Pass 7.</p>
   </a>
 
+  <a class="pass" href="2026-05-14-pass12-persona-authority/">
+    <h2>Pass 12 — persona authority + CJK strategy <span class="tag live">Findings #34, #35 closed · cleanest persona pass yet</span></h2>
+    <div class="meta">2026-05-14 · critic now enforces persona > scaffold · each persona declares CJK strategy in own voice</div>
+    <p class="desc">Closes the two bugs Pass 11 surfaced. Critic prompt now explicitly forbids overriding a persona-driven pick by citing a generic scaffold ("quoting scaffold over persona is a tell that you defaulted to safe-mode"). Each of 7 personas declares a <code>cjk_strategy</code> field in its own voice. Re-run Sottsass: <strong>Druk Wide display + Sandoll Noisuh CJK</strong> (both lifted directly from Sottsass's own field) survived the critic. Palette emits <code>mint / pink / lapis / citron / terracotta</code> as named accent colors — verbatim from Sottsass's <code>prefers:</code> list. 309 s wall (vs Pass 11's 594 s — one over-correction refine eliminated). 0 refines, 0.88 satisfaction.</p>
+  </a>
+
   <a class="pass" href="2026-05-14-pass11-personas/">
     <h2>Pass 11 — persona system (Rams vs Sottsass A/B) <span class="tag live">7 personas · palette delta unmistakable</span></h2>
     <div class="meta">2026-05-14 · seven seeded design authorities · same intent → visibly different work</div>
