@@ -91,9 +91,15 @@
   </a>
 
   <a class="pass" href="2026-05-14-pass6-multiturn/gallery.html">
-    <h2>Pass 6 — multi-turn refinement <span class="tag live">4 turns · surgical edits</span></h2>
+    <h2>Pass 6 — multi-turn refinement (scripted) <span class="tag live">4 turns · surgical edits</span></h2>
     <div class="meta">2026-05-14 · 1 design + 3 refine · each turn targets a different axis · other axes preserved</div>
-    <p class="desc">Verifies that `aphrodite refine "<delta>"` behaves as refinement (not redesign): turn 2 changes the hue alone, turn 3 changes spacing alone, turn 4 changes the display family alone. The cool blue from turn 2 persists three turns later; spacing from turn 3 survives the display swap in turn 4. Body font even stayed unchanged in turn 4 because the request didn't mention it — the nuance landed.</p>
+    <p class="desc">Verifies that `aphrodite refine "<delta>"` behaves as refinement (not redesign): turn 2 changes the hue alone, turn 3 changes spacing alone, turn 4 changes the display family alone. The cool blue from turn 2 persists three turns later; spacing from turn 3 survives the display swap in turn 4. Body font even stayed unchanged in turn 4 because the request didn't mention it — the nuance landed. <strong>Limitation:</strong> deltas were pre-scripted, not reactive — see Pass 7.</p>
+  </a>
+
+  <a class="pass" href="2026-05-14-pass7-reactive/gallery.html">
+    <h2>Pass 7 — reactive multi-turn (no script) <span class="tag live">4 turns · agent-driven</span></h2>
+    <div class="meta">2026-05-14 · agent looks at each turn's output, forms reaction, writes next delta · intent: independent Seoul furniture maker portfolio</div>
+    <p class="desc">Closes the gap left by Pass 6. Agent committed pre-stated taste hypotheses, then for each turn actually read DESIGN.md prose + composition.html structure before authoring the next delta. Turn 2 swapped EB Garamond → Source Serif 4 (Renaissance register mismatch). Turn 3 pushed spacing max 96 → 224 px (prose promised breathing, tokens didn't deliver). Turn 4 lightened brand-a #f7f3ed → #faf9f6 (parchment cast competed with walnut photography). Side effect: prose body was auto-rewritten to maintain self-consistency with new font. Surfaced Findings #24 (missing Google Fonts import), #25 (composition regenerated every refine), #26 (hero ignores typography tokens).</p>
   </a>
 
   <hr>

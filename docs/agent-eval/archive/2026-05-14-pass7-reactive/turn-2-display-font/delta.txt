@@ -1,0 +1,4 @@
+REACTIVE delta (after looking at turn 1):
+"the display font 'EB Garamond' reads too Renaissance / literary — wrong register for a Seoul craftsperson workshop. Replace with a more contemporary, slightly industrial serif... Source Serif 4, Newsreader, or Fraunces (display optical) are good candidates. Keep palette, spacing, body font, and all other tokens exactly as they are."
+
+Why I reacted: pre-stated taste said "fancy olde-style would be rejected"; EB Garamond hit that nerve.

@@ -1,0 +1,4 @@
+REACTIVE delta (after looking at turn 2):
+"the spacing scale tops out at 96px which doesn't deliver the 'pages breathe, gallery-wall pacing' you promised in the prose. push the upper tokens harder — I want at least one token at 160px and another at 200px+ for full-bleed editorial pacing between portfolio entries. keep the lower-end tokens (4-24px) intact, only extend the upper end. do not touch fonts, colors, or radius."
+
+Why I reacted: design prose was making a promise the token scale wasn't keeping.

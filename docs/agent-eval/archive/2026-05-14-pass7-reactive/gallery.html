@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>2026-05-14-pass7-reactive</title><style>
+* { box-sizing: border-box; }
+body { margin: 0; font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0e0e10; color: #e8e8ea; padding: 24px; }
+header { margin-bottom: 32px; max-width: 1200px; }
+h1 { margin: 0 0 8px; letter-spacing: -0.01em; }
+.sub { color: #8a8a93; margin: 0 0 6px; line-height: 1.5; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 24px; }
+.card { background: #18181b; border: 1px solid #27272a; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; }
+.card h2 { font-size: 15px; margin: 0; padding: 14px 18px; background: #1f1f23; border-bottom: 1px solid #27272a; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.card h2 .slug { color: #a78bfa; font-weight: 600; }
+.badge { font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 500; letter-spacing: 0.02em; background: #14532d; color: #86efac; }
+.delta { padding: 14px 18px; font-size: 13px; line-height: 1.55; color: #d4d4d8; border-bottom: 1px solid #27272a; white-space: pre-wrap; word-break: break-word; }
+.delta::before { content: attr(data-label); display: block; font-size: 10px; letter-spacing: 0.16em; color: #71717a; margin-bottom: 6px; }
+.meta { padding: 12px 18px; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 12px; border-bottom: 1px solid #27272a; }
+.meta dt { color: #71717a; } .meta dd { margin: 0; color: #e4e4e7; font-family: ui-monospace, "SF Mono", monospace; font-size: 12px; }
+.meta .changed { color: #fcd34d; }
+.swatches { display: flex; gap: 2px; flex-wrap: wrap; padding: 12px 18px 28px; border-bottom: 1px solid #27272a; }
+.swatch { width: 36px; height: 36px; border-radius: 6px; position: relative; }
+.swatch::after { content: attr(data-hex); position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 10px; font-family: ui-monospace, monospace; white-space: nowrap; color: #71717a; }
+.preview { background: #fff; height: 420px; position: relative; overflow: hidden; }
+.preview iframe { border: 0; width: 250%; height: 250%; transform: scale(0.4); transform-origin: top left; pointer-events: none; }
+.links { padding: 10px 18px; display: flex; gap: 12px; font-size: 12px; background: #18181b; align-items: center; flex-wrap: wrap; }
+.links a { color: #a78bfa; text-decoration: none; } .links a:hover { text-decoration: underline; }
+.pill { color: #71717a; margin-left: auto; }
+.legend { background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; max-width: 1200px; font-size: 13px; line-height: 1.6; color: #d4d4d8; }
+.legend strong { color: #fcd34d; }
+</style></head><body>
+<header>
+<h1>2026-05-14-pass7-reactive</h1>
+<p class="sub">4 turns · reactive multi-turn · agent looked at each turn's output and authored the next delta in response · this is NOT a pre-scripted sequence like Pass 6</p>
+</header>
+<div class="legend">
+<strong>Read across the table:</strong> exactly one cell changes per turn — every other cell preserved.
+Turn 2 swaps display font (EB Garamond → Source Serif 4) because the agent felt it was "too Renaissance" after reading turn 1.
+Turn 3 extends spacing scale (max 96 → 224 px) because the prose promised breathing room the tokens didn't deliver.
+Turn 4 brightens brand-a background (#f7f3ed → #faf9f6) because the parchment cast competed with walnut photography.
+Body (Outfit) and primary-500 (#9a7550 walnut) survive all four turns untouched.
+</div>
+<main class="grid">
+
+<article class="card">
+  <h2><span class="slug">turn-1-baseline</span><span class="badge">valid</span></h2>
+  <div class="delta" data-label="INTENT (initial design)">a portfolio site for an independent furniture maker working in solid walnut, based in Seoul</div>
+  <dl class="meta">
+    <dt>display</dt><dd>EB Garamond</dd>
+    <dt>body</dt><dd>Outfit</dd>
+    <dt>max spacing</dt><dd>96px</dd>
+    <dt>brand-a bg</dt><dd>#f7f3ed</dd>
+    <dt>primary 500</dt><dd>#9a7550</dd>
+    <dt>duration</dt><dd>254s</dd>
+  </dl>
+  <div class="swatches"><div class="swatch" style="background:#f7f3ed" data-hex="50"></div><div class="swatch" style="background:#ebe3d5" data-hex="100"></div><div class="swatch" style="background:#d9c9b0" data-hex="200"></div><div class="swatch" style="background:#c4aa85" data-hex="300"></div><div class="swatch" style="background:#b29062" data-hex="400"></div><div class="swatch" style="background:#9a7550" data-hex="500"></div><div class="swatch" style="background:#7d5d3f" data-hex="600"></div><div class="swatch" style="background:#614932" data-hex="700"></div><div class="swatch" style="background:#4d3a2a" data-hex="800"></div><div class="swatch" style="background:#3d2e22" data-hex="900"></div></div>
+  <div class="preview"><iframe src="turn-1-baseline/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="turn-1-baseline/DESIGN.md">DESIGN.md</a> · <a href="turn-1-baseline/composition.html" target="_blank">composition ↗</a> · <a href="turn-1-baseline/hero.html" target="_blank">hero ↗</a> · <a href="turn-1-baseline/delta.txt">delta.txt</a><span class="pill">turn 1</span></div>
+</article>
+
+<article class="card">
+  <h2><span class="slug">turn-2-display-font</span><span class="badge">valid</span></h2>
+  <div class="delta" data-label="REACTIVE DELTA (after looking at turn 1)">EB Garamond reads too Renaissance / literary — wrong register for a Seoul craftsperson workshop. Replace with a more contemporary, slightly industrial serif. Source Serif 4 / Newsreader / Fraunces are good candidates. Keep palette, spacing, body font intact.</div>
+  <dl class="meta">
+    <dt>display</dt><dd class="changed">Source Serif 4 ✦</dd>
+    <dt>body</dt><dd>Outfit</dd>
+    <dt>max spacing</dt><dd>96px</dd>
+    <dt>brand-a bg</dt><dd>#f7f3ed</dd>
+    <dt>primary 500</dt><dd>#9a7550</dd>
+    <dt>duration</dt><dd>194s</dd>
+  </dl>
+  <div class="swatches"><div class="swatch" style="background:#f7f3ed" data-hex="50"></div><div class="swatch" style="background:#ebe3d5" data-hex="100"></div><div class="swatch" style="background:#d9c9b0" data-hex="200"></div><div class="swatch" style="background:#c4aa85" data-hex="300"></div><div class="swatch" style="background:#b29062" data-hex="400"></div><div class="swatch" style="background:#9a7550" data-hex="500"></div><div class="swatch" style="background:#7d5d3f" data-hex="600"></div><div class="swatch" style="background:#614932" data-hex="700"></div><div class="swatch" style="background:#4d3a2a" data-hex="800"></div><div class="swatch" style="background:#3d2e22" data-hex="900"></div></div>
+  <div class="preview"><iframe src="turn-2-display-font/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="turn-2-display-font/DESIGN.md">DESIGN.md</a> · <a href="turn-2-display-font/composition.html" target="_blank">composition ↗</a> · <a href="turn-2-display-font/hero.html" target="_blank">hero ↗</a> · <a href="turn-2-display-font/delta.txt">delta.txt</a><span class="pill">turn 2</span></div>
+</article>
+
+<article class="card">
+  <h2><span class="slug">turn-3-spacing</span><span class="badge">valid</span></h2>
+  <div class="delta" data-label="REACTIVE DELTA (after looking at turn 2)">spacing tops out at 96px which doesn't deliver the 'pages breathe, gallery-wall pacing' you promised in the prose. Push upper tokens to 160 / 200+. Keep lower-end (4-24) intact. Do not touch fonts, colors, radius.</div>
+  <dl class="meta">
+    <dt>display</dt><dd>Source Serif 4</dd>
+    <dt>body</dt><dd>Outfit</dd>
+    <dt>max spacing</dt><dd class="changed">224px ✦</dd>
+    <dt>brand-a bg</dt><dd>#f7f3ed</dd>
+    <dt>primary 500</dt><dd>#9a7550</dd>
+    <dt>duration</dt><dd>197s</dd>
+  </dl>
+  <div class="swatches"><div class="swatch" style="background:#f7f3ed" data-hex="50"></div><div class="swatch" style="background:#ebe3d5" data-hex="100"></div><div class="swatch" style="background:#d9c9b0" data-hex="200"></div><div class="swatch" style="background:#c4aa85" data-hex="300"></div><div class="swatch" style="background:#b29062" data-hex="400"></div><div class="swatch" style="background:#9a7550" data-hex="500"></div><div class="swatch" style="background:#7d5d3f" data-hex="600"></div><div class="swatch" style="background:#614932" data-hex="700"></div><div class="swatch" style="background:#4d3a2a" data-hex="800"></div><div class="swatch" style="background:#3d2e22" data-hex="900"></div></div>
+  <div class="preview"><iframe src="turn-3-spacing/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="turn-3-spacing/DESIGN.md">DESIGN.md</a> · <a href="turn-3-spacing/composition.html" target="_blank">composition ↗</a> · <a href="turn-3-spacing/hero.html" target="_blank">hero ↗</a> · <a href="turn-3-spacing/delta.txt">delta.txt</a><span class="pill">turn 3</span></div>
+</article>
+
+<article class="card">
+  <h2><span class="slug">turn-4-bg-tint</span><span class="badge">valid</span></h2>
+  <div class="delta" data-label="REACTIVE DELTA (after looking at turn 3)">brand-a #f7f3ed has a yellow cast that competes with walnut photography. Shift to gallery-white (#faf9f6 or #fbfaf7). Only touch brand-a variant; leave light/dark/brand-b and all palette tokens alone.</div>
+  <dl class="meta">
+    <dt>display</dt><dd>Source Serif 4</dd>
+    <dt>body</dt><dd>Outfit</dd>
+    <dt>max spacing</dt><dd>224px</dd>
+    <dt>brand-a bg</dt><dd class="changed">#faf9f6 ✦</dd>
+    <dt>primary 500</dt><dd>#9a7550</dd>
+    <dt>duration</dt><dd>191s</dd>
+  </dl>
+  <div class="swatches"><div class="swatch" style="background:#f7f3ed" data-hex="50"></div><div class="swatch" style="background:#ebe3d5" data-hex="100"></div><div class="swatch" style="background:#d9c9b0" data-hex="200"></div><div class="swatch" style="background:#c4aa85" data-hex="300"></div><div class="swatch" style="background:#b29062" data-hex="400"></div><div class="swatch" style="background:#9a7550" data-hex="500"></div><div class="swatch" style="background:#7d5d3f" data-hex="600"></div><div class="swatch" style="background:#614932" data-hex="700"></div><div class="swatch" style="background:#4d3a2a" data-hex="800"></div><div class="swatch" style="background:#3d2e22" data-hex="900"></div></div>
+  <div class="preview"><iframe src="turn-4-bg-tint/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="turn-4-bg-tint/DESIGN.md">DESIGN.md</a> · <a href="turn-4-bg-tint/composition.html" target="_blank">composition ↗</a> · <a href="turn-4-bg-tint/hero.html" target="_blank">hero ↗</a> · <a href="turn-4-bg-tint/delta.txt">delta.txt</a><span class="pill">turn 4 — accepted</span></div>
+</article>
+
+</main></body></html>
