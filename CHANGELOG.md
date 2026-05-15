@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.3.5 — 2026-05-15 (late)
+
+### Added — Per-call model override (closes Finding #37)
+- **`[providers.<name>] composer_model` + `critic_model`** in `~/.aphrodite/config.toml`. Lets users send composer / critic calls to a faster z.ai tier (e.g. `glm-4.5-air`) while keeping the design call on the quality model (`glm-5.1`).
+- `ResolvedProvider::with_model(m)` — clone the resolved provider with a different model.
+- `aphrodite_generator::composer_model_override()` / `critic_model_override()` — config lookup helpers.
+- Orchestrator logs `● using composer model override: <model>` and `● using critic model override: <model>` when active.
+
+### Changed — Composer hardening
+- `surface::trim_design_for_composer(design_md)` — pre-composer trim that keeps frontmatter + Components + Do/Don't, drops Overview/Colors/Typography/Layout prose. Reduces composer input by ~50% on heavy DESIGN.md outputs.
+- Composer system + user prompt now end with an "Emit-immediately" directive forbidding pre-marker reasoning narration.
+- `max_tokens` 12288 → 16384 (both composer attempts).
+
+### Fixed — Finding #37 CLOSED
+- Pass 37 dogfood: same clinical-dashboard × Galileo intent that hit empty composition in Passes 27/33/34/36 now produces a 43,761-byte composition.html with `composer_model = "glm-4.5-air"` configured. Critic moves from "composition.html is empty" complaints to content-level critique (missing status strip etc.).
+
+### Findings open (after 0.3.5)
+- **#13** brand-name palette recall
+- **#25** composition regenerates every refine (architectural)
+
+### Catalog (after 0.3.5)
+- 13 personas + 13 wiki entries + 6 skills + 9 MCP tools + 11 CLI verbs
+- 18 closed Findings, 2 carry
+
 ## 0.3.4 — 2026-05-15 (evening)
 
 ### Added
