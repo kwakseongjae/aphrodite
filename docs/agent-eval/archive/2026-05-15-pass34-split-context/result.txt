@@ -1,0 +1,36 @@
+Pass 34 — clinical-dashboard with design/critic context split active
+
+Same intent as Pass 27/33. Hypothesis: design call's massive context
+(persona body + skill bodies + wiki bodies = ~25 KB) was the source of
+the 15-min design phase. Split implementation: design call gets light
+versions (titles + tags + principles), critic call gets full bodies.
+
+Result: design phase 874 s (Pass 33 was 882 s). NEGLIGIBLE speed gain
+on this intent. Hypothesis WRONG — the bottleneck is not augmentation
+size.
+
+Likely actual bottleneck: z.ai's intent-specific inference behaviour
+on dashboard-shape DESIGN.md content. The Galileo persona's
+"measurable principles" + asset-standards + clinical-dashboard skill
+all push the LLM toward extensive token-by-token rationale before
+emitting frontmatter, which adds wall-clock independent of input size.
+
+Net Pass 34 outcome
+- Split refactor SHIPPED cleanly (architecture is now correctly
+  divided: design gets pick-shaping context, critic gets enforcement
+  context). 4 tests still pass.
+- Speed mitigation FAILED for clinical-dashboard specifically.
+- composer's second call STILL returned empty under the same load —
+  the split is a context optimization, not a model-throughput one.
+
+Refined hypothesis for Pass 35+
+- Speed ceiling is at z.ai's intent-class level, not at our prompt
+  size. Fast-model fallback (glm-4.5-air or similar) for clinical-
+  shape intents is the next experiment.
+- Composer's DESIGN.md input is the ACTUAL heavy input, not the
+  augmentation. Truncating DESIGN.md sections for composer would test
+  this — keep frontmatter + Components + Do-Don't only, drop prose.
+
+The Pass 34 refactor itself is the right architecture (and lower
+total context cost helps everywhere except this specific worst-case
+intent). Findings #37 remains carry.
