@@ -391,6 +391,10 @@ const BUNDLED_SKILLS: &[(&str, &str)] = &[
         "editorial-portfolio",
         include_str!("../seed-skills/editorial-portfolio/SKILL.md"),
     ),
+    (
+        "corporate-identity-systems",
+        include_str!("../seed-skills/corporate-identity-systems/SKILL.md"),
+    ),
 ];
 
 /// Materialise bundled skills onto disk if they are not already present.
