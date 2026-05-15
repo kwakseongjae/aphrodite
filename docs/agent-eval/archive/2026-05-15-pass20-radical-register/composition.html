@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>윤김 — 2025 봄 · 여름</title>
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+  :root{
+    --colors-primary-50:#e6f2ed;--colors-primary-100:#b3d9cc;--colors-primary-200:#80bfaa;
+    --colors-primary-300:#4da689;--colors-primary-400:#269970;--colors-primary-500:#008c57;
+    --colors-primary-600:#007a4c;--colors-primary-700:#00603b;--colors-primary-800:#00462a;
+    --colors-primary-900:#003020;
+    --colors-neutral-0:#ffffff;--colors-neutral-50:#f0eeeb;--colors-neutral-100:#d4d0cb;
+    --colors-neutral-200:#a8a098;--colors-neutral-300:#7d7268;--colors-neutral-400:#5a4f44;
+    --colors-neutral-500:#3a302a;--colors-neutral-600:#2a2220;--colors-neutral-700:#1e1918;
+    --colors-neutral-800:#140f0e;--colors-neutral-900:#0a0808;--colors-neutral-1000:#000000;
+    --colors-background-primary:#0a0808;
+    --colors-text-primary:#f0eeeb;
+    --colors-text-muted:#7d7268;
+    --typography-display-family:'Pretendard',system-ui,-apple-system,sans-serif;
+    --typography-body-family:'Pretendard',system-ui,-apple-system,sans-serif;
+    --spacing-1:4px;--spacing-2:8px;--spacing-3:12px;--spacing-4:16px;
+    --spacing-6:24px;--spacing-8:32px;--spacing-12:48px;--spacing-16:64px;
+    --spacing-20:80px;--spacing-24:96px;--spacing-32:128px;--spacing-40:160px;
+    --rounded-sm:0px;--rounded-md:0px;--rounded-lg:0px;
+    --mono-family:ui-monospace,'Cascadia Code','Source Code Pro',Menlo,Consolas,monospace;
+  }
+
+  html{
+    font-size:16px;
+    scroll-behavior:smooth;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+
+  body{
+    font-family:var(--typography-body-family);
+    font-weight:300;
+    line-height:1.6;
+    color:var(--colors-text-primary);
+    background-color:var(--colors-background-primary);
+    overflow-x:hidden;
+    transition:background-color .5s ease, color .5s ease;
+  }
+
+  body[data-variant="light"]{
+    --colors-background-primary:#f0eeeb;
+    --colors-text-primary:#1e1918;
+    --colors-text-muted:#5a4f44;
+  }
+  body[data-variant="dark"]{
+    --colors-background-primary:#0a0808;
+    --colors-text-primary:#f0eeeb;
+    --colors-text-muted:#7d7268;
+  }
+  body[data-variant="brand-a"]{
+    --colors-background-primary:#e6dfcf;
+    --colors-text-primary:#1a1816;
+    --colors-text-muted:#5a4f44;
+  }
+  body[data-variant="brand-b"]{
+    --colors-background-primary:#141210;
+    --colors-text-primary:#e6f2ed;
+    --colors-text-muted:#5a7d68;
+  }
+
+  body{
+    color:var(--colors-text-primary);
+    background-color:var(--colors-background-primary);
+  }
+
+  /* Switcher */
+  .switcher{
+    position:fixed;top:var(--spacing-4);right:var(--spacing-4);
+    display:flex;gap:var(--spacing-1);z-index:1000;
+  }
+  .switcher button{
+    font-family:var(--mono-family);font-size:11px;letter-spacing:.05em;
+    text-transform:uppercase;padding:var(--spacing-1) var(--spacing-3);
+    background:transparent;border:1px solid var(--colors-text-muted);
+    color:var(--colors-text-muted);cursor:pointer;
+    border-radius:var(--rounded-sm);
+    transition:color .2s,border-color .2s,background .2s;
+  }
+  .switcher button:hover,.switcher button[aria-pressed="true"]{
+    color:var(--colors-background-primary);
+    background:var(--colors-text-primary);
+    border-color:var(--colors-text-primary);
+  }
+  .switcher button:focus-visible{
+    outline:1px solid var(--colors-primary-400);
+    outline-offset:2px;
+  }
+
+  /* Designer name — top left, permanent */
+  .brand{
+    position:fixed;top:var(--spacing-4);left:var(--spacing-4);
+    font-family:var(--typography-display-family);
+    font-size:24px;font-weight:900;
+    z-index:1000;letter-spacing:-.02em;
+    color:var(--colors-text-primary);
+    text-decoration:none;
+  }
+  .brand .weight-hairline{font-weight:100}
+
+  /* Season nav */
+  .season-nav{
+    position:fixed;top:var(--spacing-4);left:50%;transform:translateX(-50%);
+    display:flex;gap:var(--spacing-6);
+    font-family:var(--typography-body-family);font-weight:300;font-size:14px;
+    z-index:1000;
+  }
+  .season-nav span{color:var(--colors-text-muted);cursor:default;transition:color .2s}
+  .season-nav span.active{color:var(--colors-primary-500)}
+
+  /* Main layout — asymmetric columns */
+  main{padding-top:var(--spacing-24)}
+
+  .spread{
+    position:relative;
+    min-height:100vh;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0;
+    align-items:center;
+  }
+
+  .spread-odd .photo-col{order:0;padding-right:var(--spacing-8)}
+  .spread-odd .text-col{order:1;padding-left:var(--spacing-6)}
+  .spread-even .photo-col{order:1;padding-left:var(--spacing-8)}
+  .spread-even .text-col{order:0;padding-right:var(--spacing-6);justify-self:end}
+
+  .photo-col{position:relative}
+  .text-col{max-width:400px}
+
+  /* Photo placeholder — inline SVG */
+  .garment{
+    width:100%;
+    aspect-ratio:3/4;
+    border:1px solid var(--colors-neutral-700);
+    display:block;
+    position:relative;
+    overflow:hidden;
+  }
+
+  /* Hero spread — single image, off-center */
+  .hero-spread{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    align-items:flex-end;
+    padding:0 var(--spacing-16) var(--spacing-20);
+  }
+  .hero-title{
+    position:absolute;
+    bottom:var(--spacing-20);
+    left:8%;
+    z-index:2;
+  }
+
+  /* Weight-tear display type */
+  .tear{font-family:var(--typography-display-family);line-height:.85;letter-spacing:-.04em}
+  .tear .heavy{font-weight:900}
+  .tear .thin{font-weight:100}
+
+  .tear-hero{font-size:clamp(56px,10vw,120px)}
+  .tear-season{font-size:clamp(36px,5vw,64px)}
+  .tear-project{font-size:clamp(28px,3.5vw,48px)}
+
+  .caption{
+    font-family:var(--typography-body-family);font-weight:300;font-size:14px;
+    color:var(--colors-text-muted);margin-top:var(--spacing-3);
+    max-width:320px;
+  }
+  .caption.offset{transform:translateX(-12px)}
+
+  .season-code{
+    font-family:var(--mono-family);font-size:12px;letter-spacing:.08em;
+    color:var(--colors-primary-500);margin-top:var(--spacing-2);
+  }
+
+  /* Designer statement */
+  .statement-section{
+    min-height:90vh;
+    display:flex;
+    align-items:center;
+    padding:var(--spacing-40) 8%;
+  }
+  .statement-inner{
+    max-width:480px;
+    position:relative;
+  }
+  .statement-text{
+    font-family:var(--typography-body-family);font-weight:300;font-size:18px;
+    line-height:1.8;
+    color:var(--colors-text-primary);
+    opacity:.85;
+  }
+  .statement-name{
+    margin-top:var(--spacing-12);
+    font-family:var(--typography-display-family);
+    font-size:48px;line-height:1;letter-spacing:-.03em;
+  }
+
+  /* Project grid */
+  .projects-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:var(--spacing-2);
+    padding:var(--spacing-40) 8%;
+  }
+  .projects-grid .project-card:nth-child(odd){
+    margin-top:0;margin-bottom:var(--spacing-16);
+  }
+  .projects-grid .project-card:nth-child(even){
+    margin-top:var(--spacing-16);margin-bottom:0;
+  }
+
+  .project-card{
+    position:relative;
+    border:1px solid var(--colors-neutral-700);
+    overflow:hidden;
+    cursor:pointer;
+    transition:transform .2s ease;
+  }
+  .project-card:hover{
+    transform:translateX(4px);
+  }
+  .project-card .card-image{
+    width:100%;aspect-ratio:3/4;display:block;
+  }
+  .project-card .card-info{
+    padding:var(--spacing-3) var(--spacing-4);
+    display:flex;justify-content:space-between;align-items:baseline;
+    border-top:1px solid var(--colors-neutral-700);
+  }
+  .project-card .card-name{
+    font-family:var(--typography-display-family);font-weight:900;font-size:16px;
+    letter-spacing:-.01em;
+  }
+  .project-card .card-tag{
+    font-family:var(--mono-family);font-size:11px;letter-spacing:.06em;
+    color:var(--colors-text-muted);
+  }
+  .project-card .card-year{
+    font-family:var(--mono-family);font-size:11px;
+    color:var(--colors-primary-500);
+  }
+
+  /* Separator rule */
+  .rule-jade{
+    border:none;
+    height:1px;
+    background:var(--colors-primary-500);
+    margin:0;
+    opacity:.6;
+  }
+  .rule-neutral{
+    border:none;
+    height:1px;
+    background:var(--colors-neutral-300);
+    margin:0;
+    opacity:.3;
+  }
+
+  /* Footer / Contact */
+  .contact-section{
+    padding:var(--spacing-32) 8% var(--spacing-16);
+  }
+  .contact-block{
+    font-family:var(--typography-body-family);font-weight:300;font-size:14px;
+    line-height:2;
+    color:var(--colors-text-muted);
+    max-width:400px;
+  }
+  .contact-block a{
+    color:var(--colors-text-muted);
+    text-decoration:none;
+    border-bottom:1px solid transparent;
+    transition:border-color .2s;
+  }
+  .contact-block a:hover{
+    border-bottom-color:var(--colors-primary-500);
+  }
+  .copyright{
+    margin-top:var(--spacing-8);
+    font-family:var(--typography-body-family);font-weight:300;font-size:12px;
+    color:var(--colors-neutral-400);
+  }
+
+  /* Cropped title — breaks viewport edge */
+  .cropped-title{
+    position:relative;
+    overflow:visible;
+    white-space:nowrap;
+    margin-right:-20vw;
+  }
+
+  /* Single character spread */
+  .character-spread{
+    min-height:70vh;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    padding-left:30%;
+  }
+  .lone-char{
+    font-family:var(--typography-display-family);
+    font-size:clamp(120px,20vw,200px);
+    font-weight:900;
+    line-height:1;
+    color:var(--colors-text-primary);
+    opacity:.12;
+    user-select:none;
+  }
+
+  /* Scroll indicator */
+  .scroll-hint{
+    position:absolute;bottom:var(--spacing-8);left:50%;
+    transform:translateX(-50%);
+    display:flex;flex-direction:column;align-items:center;gap:var(--spacing-2);
+    color:var(--colors-text-muted);
+    font-family:var(--mono-family);font-size:10px;letter-spacing:.1em;
+    text-transform:uppercase;
+    animation:pulse-down 2s ease-in-out infinite;
+  }
+  @keyframes pulse-down{
+    0%,100%{opacity:.4;transform:translateX(-50%) translateY(0)}
+    50%{opacity:.8;transform:translateX(-50%) translateY(6px)}
+  }
+
+  /* Responsive */
+  @media(max-width:768px){
+    .spread{grid-template-columns:1fr;min-height:auto;padding:var(--spacing-16) var(--spacing-4)}
+    .spread-odd .photo-col,.spread-even .photo-col{order:0;padding:0}
+    .spread-odd .text-col,.spread-even .text-col{order:1;padding:var(--spacing-4) 0;justify-self:start}
+    .hero-spread{padding:var(--spacing-16) var(--spacing-4) var(--spacing-12)}
+    .hero-title{left:var(--spacing-4);bottom:var(--spacing-12)}
+    .projects-grid{grid-template-columns:1fr;padding:var(--spacing-16) var(--spacing-4)}
+    .projects-grid .project-card:nth-child(even){margin-top:0}
+    .statement-section{padding:var(--spacing-20) var(--spacing-4)}
+    .season-nav{display:none}
+    .contact-section{padding:var(--spacing-16) var(--spacing-4)}
+    .character-spread{padding-left:20%}
+  }
+</style>
+
+<style data-aphrodite-variants>
+[data-variant="brand-a"] {
+  --colors-background-primary: #e6dfcf;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #d4d0cb;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #a8a098;
+  --colors-neutral-300: #7d7268;
+  --colors-neutral-400: #5a4f44;
+  --colors-neutral-50: #f0eeeb;
+  --colors-neutral-500: #3a302a;
+  --colors-neutral-600: #2a2220;
+  --colors-neutral-700: #1e1918;
+  --colors-neutral-800: #140f0e;
+  --colors-neutral-900: #0a0808;
+  --colors-primary-100: #b3d9cc;
+  --colors-primary-200: #80bfaa;
+  --colors-primary-300: #4da689;
+  --colors-primary-400: #269970;
+  --colors-primary-50: #e6f2ed;
+  --colors-primary-500: #008c57;
+  --colors-primary-600: #007a4c;
+  --colors-primary-700: #00603b;
+  --colors-primary-800: #00462a;
+  --colors-primary-900: #003020;
+  --colors-text-primary: #1a1816;
+  --rounded-lg: 0px;
+  --rounded-md: 0px;
+  --rounded-sm: 0px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Pretendard;
+  --typography-body-weight: 300;
+  --typography-display-family: Pretendard;
+  --typography-display-weight: 900/100;
+  --bg: #e6dfcf;
+  --fg: #1a1816;
+  --muted: #008c57;
+}
+[data-variant="brand-b"] {
+  --colors-background-primary: #141210;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #d4d0cb;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #a8a098;
+  --colors-neutral-300: #7d7268;
+  --colors-neutral-400: #5a4f44;
+  --colors-neutral-50: #f0eeeb;
+  --colors-neutral-500: #3a302a;
+  --colors-neutral-600: #2a2220;
+  --colors-neutral-700: #1e1918;
+  --colors-neutral-800: #140f0e;
+  --colors-neutral-900: #0a0808;
+  --colors-primary-100: #b3d9cc;
+  --colors-primary-200: #80bfaa;
+  --colors-primary-300: #4da689;
+  --colors-primary-400: #269970;
+  --colors-primary-50: #e6f2ed;
+  --colors-primary-500: #008c57;
+  --colors-primary-600: #007a4c;
+  --colors-primary-700: #00603b;
+  --colors-primary-800: #00462a;
+  --colors-primary-900: #003020;
+  --colors-text-primary: #e6f2ed;
+  --rounded-lg: 0px;
+  --rounded-md: 0px;
+  --rounded-sm: 0px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Pretendard;
+  --typography-body-weight: 300;
+  --typography-display-family: Pretendard;
+  --typography-display-weight: 900/100;
+  --bg: #141210;
+  --fg: #e6f2ed;
+  --muted: #008c57;
+}
+[data-variant="dark"] {
+  --colors-background-primary: #0a0808;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #d4d0cb;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #a8a098;
+  --colors-neutral-300: #7d7268;
+  --colors-neutral-400: #5a4f44;
+  --colors-neutral-50: #f0eeeb;
+  --colors-neutral-500: #3a302a;
+  --colors-neutral-600: #2a2220;
+  --colors-neutral-700: #1e1918;
+  --colors-neutral-800: #140f0e;
+  --colors-neutral-900: #0a0808;
+  --colors-primary-100: #b3d9cc;
+  --colors-primary-200: #80bfaa;
+  --colors-primary-300: #4da689;
+  --colors-primary-400: #269970;
+  --colors-primary-50: #e6f2ed;
+  --colors-primary-500: #008c57;
+  --colors-primary-600: #007a4c;
+  --colors-primary-700: #00603b;
+  --colors-primary-800: #00462a;
+  --colors-primary-900: #003020;
+  --colors-text-primary: #f0eeeb;
+  --rounded-lg: 0px;
+  --rounded-md: 0px;
+  --rounded-sm: 0px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Pretendard;
+  --typography-body-weight: 300;
+  --typography-display-family: Pretendard;
+  --typography-display-weight: 900/100;
+  --bg: #0a0808;
+  --fg: #f0eeeb;
+  --muted: #008c57;
+}
+[data-variant="light"] {
+  --colors-background-primary: #f0eeeb;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #d4d0cb;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #a8a098;
+  --colors-neutral-300: #7d7268;
+  --colors-neutral-400: #5a4f44;
+  --colors-neutral-50: #f0eeeb;
+  --colors-neutral-500: #3a302a;
+  --colors-neutral-600: #2a2220;
+  --colors-neutral-700: #1e1918;
+  --colors-neutral-800: #140f0e;
+  --colors-neutral-900: #0a0808;
+  --colors-primary-100: #b3d9cc;
+  --colors-primary-200: #80bfaa;
+  --colors-primary-300: #4da689;
+  --colors-primary-400: #269970;
+  --colors-primary-50: #e6f2ed;
+  --colors-primary-500: #008c57;
+  --colors-primary-600: #007a4c;
+  --colors-primary-700: #00603b;
+  --colors-primary-800: #00462a;
+  --colors-primary-900: #003020;
+  --colors-text-primary: #1e1918;
+  --rounded-lg: 0px;
+  --rounded-md: 0px;
+  --rounded-sm: 0px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Pretendard;
+  --typography-body-weight: 300;
+  --typography-display-family: Pretendard;
+  --typography-display-weight: 900/100;
+  --bg: #f0eeeb;
+  --fg: #1e1918;
+  --muted: #008c57;
+}
+body{background:var(--bg);color:var(--fg);}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap">
+</head>
+<body>
+
+<!-- Switcher -->
+<nav class="switcher" aria-label="Theme variant">
+  <button data-variant="light" aria-pressed="false">light</button>
+  <button data-variant="dark" aria-pressed="true">dark</button>
+  <button data-variant="brand-a" aria-pressed="false">raw fibre</button>
+  <button data-variant="brand-b" aria-pressed="false">seoul night</button>
+</nav>
+
+<!-- Brand — top left -->
+<a href="#" class="brand" aria-label="Yoon Kim — Home">
+  윤<span class="weight-hairline">김</span>
+</a>
+
+<!-- Season nav -->
+<nav class="season-nav" aria-label="Collections">
+  <span>24AW</span>
+  <span>25SS</span>
+  <span class="active">25AW</span>
+  <span>26SS</span>
+</nav>
+
+<main>
+
+  <!-- Hero Spread -->
+  <section class="hero-spread" aria-label="Current collection hero">
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+      <!-- Hero garment SVG — deconstructed silhouette -->
+      <svg viewBox="0 0 450 600" style="width:52%;max-width:520px;height:auto;opacity:.92" aria-hidden="true">
+        <rect x="0" y="0" width="450" height="600" fill="none"/>
+        <!-- Abstract deconstructed garment form -->
+        <path d="M180 80 L170 82 L155 95 L140 120 L125 160 L120 200 L118 240 L115 280 L112 320 L108 360 L105 400 L100 440 L98 470 L96 500 L110 505 L130 510 L150 508 L170 502 L180 495 L180 460 L182 420 L185 380 L190 340 L195 300 L200 260 L208 220 L215 180 L225 150 L240 130 L260 120 L275 125 L285 140 L290 165 L292 200 L290 240 L288 280 L286 320 L284 360 L282 400 L280 440 L278 475 L276 505 L290 510 L310 515 L330 512 L350 506 L360 498 L355 460 L350 420 L345 380 L340 340 L335 300 L330 260 L325 220 L320 180 L310 145 L295 115 L275 95 L250 85 L225 80 Z" fill="var(--colors-text-primary)" opacity=".06" stroke="var(--colors-text-primary)" stroke-width=".5" stroke-opacity=".15"/>
+        <!-- Seam lines -->
+        <line x1="180" y1="80" x2="180" y2="495" stroke="var(--colors-text-primary)" stroke-width=".3" opacity=".12"/>
+        <line x1="270" y1="120" x2="276" y2="505" stroke="var(--colors-text-primary)" stroke-width=".3" opacity=".12"/>
+        <!-- Off-centre dart -->
+        <line x1="200" y1="180" x2="165" y2="250" stroke="var(--colors-primary-500)" stroke-width=".5" opacity=".35"/>
+        <line x1="165" y1="250" x2="195" y2="310" stroke="var(--colors-primary-500)" stroke-width=".5" opacity=".35"/>
+        <!-- Raw edge accent -->
+        <path d="M100 440 L110 505 L130 510 L150 508" stroke="var(--colors-text-primary)" stroke-width="1" fill="none" opacity=".2"/>
+        <path d="M280 440 L290 510 L310 515 L330 512" stroke="var(--colors-text-primary)" stroke-width="1" fill="none" opacity=".2"/>
+      </svg>
+    </div>
+
+    <div class="hero-title">
+      <div class="tear tear-hero">
+        <span class="heavy">파</span><span class="thin">열</span><span class="heavy">된</span><span class="thin"> 실</span>
+      </div>
+      <div class="caption offset" style="margin-top:var(--spacing-4)">
+        2025 봄·여름 컬렉션 — 모든 이음매는 드러나야 한다
+      </div>
+      <div class="season-code">25SS-RIpped-SEAM</div>
+    </div>
+
+    <div class="scroll-hint" aria-hidden="true">
+      <span>scroll</span>
+      <svg width="12" height="18" viewBox="0 0 12 18" fill="none"><path d="M6 2 L6 14 M2 10 L6 15 L10 10" stroke="currentColor" stroke-width="1"/></svg>
+    </div>
+  </section>
+
+  <hr class="rule-jade" style="margin:0 8%"/>
+
+  <!-- Designer Statement -->
+  <section class="statement-section" aria-label="Designer statement">
+    <div class="statement-inner">
+      <p class="statement-text">
+        옷의 대칭은 거짓이다. 인체는 대칭이 아니며, 바느질의 선은 항상 한쪽으로 치우쳐 있다.
+        나는 천을 자르고, 그 단면을 숨기지 않는다. 이음매가 보여야 한다.
+        이음매가 보일 때, 입는 사람은 비로소 옷이 만들어지는 과정을 마주한다.
+        서울 성수동의 작업실에서, 나는 매 시즌 직물의 구조를 해체하고 다시 조립한다.
+        결과물은 옷이라기보다 질문에 가깝다.
+      </p>
+      <div class="statement-name tear">
+        <span class="heavy">윤</span><span class="thin">김</span>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule-neutral" style="margin:0 8%"/>
+
+  <!-- Project Grid — 6 collections -->
+  <section aria-label="Collections archive" style="padding:var(--spacing-32) 0">
+    <div style="padding:0 8%;margin-bottom:var(--spacing-12)">
+      <h2 class="tear tear-season">
+        <span class="heavy">컬</span><span class="thin">렉</span><span class="heavy">션</span>
+      </h2>
+      <p class="caption" style="margin-top:var(--spacing-3)">2018—2025 모든 시즌</p>
+    </div>
+
+    <div class="projects-grid">
+
+      <!-- Card 1 -->
+      <article class="project-card">
+        <div class="card-image">
+          <svg viewBox="0 0 400 533" style="width:100%;height:100%;display:block" aria-hidden="true">
+            <rect width="400" height="533" fill="var(--colors-neutral-800)" opacity=".15"/>
+            <path d="M160 70 L150 90 L140 130 L130 180 L125 230 L120 280 L118 330 L115 380 L112 420 L110 460 L108 490 L130 495 L155 492 L160 480 L162 440 L165 400 L170 360 L175 320 L180 280 L190 240 L200 210 L215 190 L230 185 L240 195 L245 215 L246 250 L244 290 L242 330 L240 370 L238 410 L236 450 L234 485 L255 490 L280 494 L295 488 L290 450 L286 410 L282 370 L278 330 L274 290 L270 250 L265 210 L255 175 L240 145 L220 120 L200 105 L180 95 L170 80 Z" fill="var(--colors-text-primary)" opacity=".05"/>
+            <line x1="160" y1="70" x2="160" y2="480" stroke="var(--colors-text-primary)" stroke-width=".4" opacity=".1"/>
+            <line x1="235" y1="190" x2="234" y2="485" stroke="var(--colors-text-primary)" stroke-width=".3" opacity=".08"/>
+          </svg>
+        </div>
+        <div class="card-info">
+          <div>
+            <div class="card-name">드러난 이음</div>
+            <div class="card-tag">DECONSTRUCTION</div>
+          </div>
+          <div class="card-year">2025</div>
+        </div>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="project-card">
+        <div class="card-image">
+          <svg viewBox="0 0 400 533" style="width:100%;height:100%;display:block" aria-hidden="true">
+            <rect width="400" height="533" fill="var(--colors-neutral-800)" opacity=".15"/>
+            <path d="M170 90 C170 90 130 110 120 150 C110 190 115 240 110 290 C105 340 100 390 95 440 L120 445 C120 445 125 400 130 360 C135 320 140 280 150 240 C160 200 170 170 190 150 C210 130 230 140 240 160 C250 180 248 220 245 260 C242 300 238 340 235 380 C232 420 230 450 230 470 L260 475 C260 475 262 440 265 400 C268 360 270 320 272 280 C274 240 275 200 268 165 C260 130 240 110 220 100 C200 90 185 88 170 90 Z" fill="var(--colors-text-primary)" opacity=".05"/>
+            <path d="M155 220 L140 280" stroke="var(--colors-primary-500)" stroke-width=".5" opacity=".25"/>
+          </svg>
+        </div>
+        <div class="card-info">
+          <div>
+            <div class="card-name">접힌 시간</div>
+            <div class="card-tag">PLEATS · VOLUME</div>
+          </div>
+          <div class="card-year">2024</div>
+        </div>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="project-card">
+        <div class="card-image">
+          <svg viewBox="0 0 400 533" style="width:100%;height:100%;display:block" aria-hidden="true">
+            <rect width="400" height="533" fill="var(--colors-neutral-800)" opacity=".15"/>
+            <path d="M150 100 L140 130 L130 180 L128 230 L130 280 L135 330 L140 370 L148 410 L155 440 L160 460 L180 465 L200 460 L210 440 L218 400 L225 360 L230 320 L235 280 L240 240 L248 200 L260 170 L275 160 L285 175 L288 200 L286 240 L282 280 L278 320 L275 350 L272 380 L270 410 L268 440 L265 470 L280 475 L300 472 L310 462 L305 430 L300 400 L296 370 L292 340 L288 310 L284 280 L280 250 L276 220 L270 190 L260 160 L245 140 L225 130 L205 128 L185 130 L170 140 L160 150 L155 160 Z" fill="var(--colors-text-primary)" opacity=".05"/>
+            <path d="M200 100 L200 460" stroke="var(--colors-text-primary)" stroke-width=".3" opacity=".06" stroke-dasharray="4,8"/>
+          </svg>
+        </div>
+        <div class="card-info">
+          <div>
+            <div class="card-name">단면</div>
+            <div class="card-tag">RAW EDGE</div>
+          </div>
+          <div class="card-year">2023</div>
+        </div>
+      </article>
+
+      <!-- Card 4 -->
+      <article class="project-card">
+        <div class="card-image">
+          <svg viewBox="0 0 400 533" style="width:100%;height:100%;display:block" aria-hidden="true">
+            <rect width="400" height="533" fill="var(--colors-neutral-800)" opacity=".15"/>
+            <!-- Jacket silhouette — off-centre closure -->
+            <path d="M140 80 L120 100 L105 140 L95 190 L90 240 L88 290 L87 340 L86 390 L85 430 L84 460 L100 465 L120 468 L140 465 L150 458 L152 420 L155 380 L158 340 L162 300 L168 260 L175 225 L185 200 L200 195 L215 205 L225 230 L230 265 L232 300 L234 340 L236 380 L238 420 L240 455 L255 460 L275 462 L295 458 L305 450 L302 420 L298 380 L294 340 L290 300 L286 260 L280 220 L270 180 L255 145 L235 115 L210 95 L185 85 L160 80 Z" fill="var(--colors-text-primary)" opacity=".05"/>
+            <!-- Off-centre button line -->
+            <circle cx="168" cy="220" r="3" fill="none" stroke="var(--colors-primary-500)" stroke-width=".5" opacity=".4"/>
+            <circle cx="165" cy="280" r="3" fill="none" stroke="var(--colors-primary-500)" stroke-width=".5" opacity=".4"/>
+            <circle cx="162" cy="340" r="3" fill="none" stroke="var(--colors-primary-500)" stroke-width=".5" opacity=".4"/>
+            <line x1="168" y1="220" x2="165" y2="280" stroke="var(--colors-primary-500)" stroke-width=".3" opacity=".15"/>
+            <line x1="165" y1="280" x2="162" y2="340" stroke="var(--colors-primary-500)" stroke-width=".3" opacity=".15"/>
+          </svg>
+        </div>
+        <div class="card-info">
+          <div>
+            <div class="card-name">비대칭 외투</div>
+            <div class="card-tag">ASYMMETRIC COAT</div>
+          </div>
+          <div class="card-year">2022</div>
+        </div>
+      </article>
+
+      <!-- Card 5 -->
+      <article class="project-card">
+        <div class="card-image">
+          <svg viewBox="0 0 400 533" style="width:100%;height:100%;display:block" aria-hidden="true">
+            <rect width="400" height="533" fill="var(--colors-neutral-800)" opacity=".15"/>
+            <!-- Layered dress — multiple overlapping forms -->
+            <path d="M175 85 L160 110 L145 150 L138 200 L135 260 L134 320 L133 380 L132 430 L131 470 L160 475 L190 470 L195 430 L198 380 L200 330 L202 280 L206 240 L212 210 L220 190 L230 185 L235 200 L236 230 L234 270 L232 310 L230 350 L228 390 L226 430 L225 465 L255 470 L285 468 L295 460 L290 420 L285 380 L280 340 L276 300 L272 260 L268 220 L262 185 L252 150 L238 120 L220 100 L200 90 Z" fill="var(--colors-text-primary)" opacity=".04"/>
+            <path d="M165 95 L150 130 L142 175 L140 225 L140 275 L140 325 L140 375 L140 425 L180 430 L190 390 L195 350 L198 310 L200 270 L204 235 L210 205 L220 195 L225 210 L224 245 L222 285 L220 325 L218 365 L216 405 L215 440 L250 445 L275 440 L270 400 L266 360 L262 320 L258 280 L254 240 L248 200 L240 165 L228 135 L212 110 L195 95 Z" fill="var(--colors-text-primary)" opacity=".04"/>
+          </svg>
+        </div>
+        <div class="card-info">
+          <div>
+            <div class="card-name">겹침</div>
+            <div class="card-tag">LAYERED FORM</div>
+          </div>
+          <div class="card-year">2020</div>
+        </div>
+      </article>
+
+      <!-- Card 6 -->
+      <article class="project-card">
+        <div class="card-image">
+          <svg viewBox="0 0 400 533" style="width:100%;height:100%;display:block" aria-hidden="true">
+            <rect width="400" height="533" fill="var(--colors-neutral-800)" opacity=".15"/>
+            <!-- Minimal wide form -->
+            <path d="M100 120 L80 160 L70 210 L68 270 L70 330 L75 380 L82 420 L90 450 L130 458 L180 462 L230 460 L280 455 L320 448 L325 420 L328 380 L330 340 L332 300 L334 260 L335 220 L330 180 L318 150 L300 130 L275 120 L250 115 L220 112 L190 110 L160 112 L130 118 Z" fill="var(--colors-text-primary)" opacity=".04"/>
+            <path d="M195 112 L195 460" stroke="var(--colors-text-primary)" stroke-width=".4" opacity=".08"/>
+            <path d="M100 120 L130 118 L160 112 L190 110" stroke="var(--colors-text-primary)" stroke-width=".8" opacity=".12"/>
+          </svg>
+        </div>
+        <div class="card-info">
+          <div>
+            <div class="card-name">첫 자르기</div>
+            <div class="card-tag">INAUGURAL</div>
+          </div>
+          <div class="card-year">2018</div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Single character spread -->
+  <section class="character-spread" aria-label="Visual interlude">
+    <div class="lone-char" aria-hidden="true">재</div>
+  </section>
+
+  <hr class="rule-jade" style="margin:0 8%"/>
+
+  <!-- Contact Footer -->
+  <footer class="contact-section">
+    <div class="contact-block">
+      <address style="font-style:normal">
+        서울특별시 성동구 성수이로7길 28<br>
+        성수동, 세운빌딩 3층<br>
+        <a href="tel:+82212345678">+82 2 1234 5678</a><br>
+        <a href="mailto:studio@yoonkim.kr">studio@yoonkim.kr</a>
+      </address>
+    </div>
+    <div class="copyright" style="margin-top:var(--spacing-16)">
+      <span>© 2025 윤김</span>
+    </div>
+  </footer>
+
+</main>
+
+<!-- Variant switcher logic -->
+<script>
+  document.querySelectorAll('.switcher button').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var v = this.dataset.variant;
+      document.body.dataset.variant = v;
+      document.querySelectorAll('.switcher button').forEach(function(b){
+        b.setAttribute('aria-pressed', b.dataset.variant === v ? 'true' : 'false');
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

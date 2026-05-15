@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>silhouette-break — Aphrodite</title>
+<style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Pretendard", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --aphrodite-typography-display: "Pretendard", "Pretendard", Georgia, "Times New Roman", serif;
+    --aphrodite-typography-body: "Pretendard", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant="brand-a"] {
+    --colors-background-primary: #e6dfcf;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #d4d0cb;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #a8a098;
+    --colors-neutral-300: #7d7268;
+    --colors-neutral-400: #5a4f44;
+    --colors-neutral-50: #f0eeeb;
+    --colors-neutral-500: #3a302a;
+    --colors-neutral-600: #2a2220;
+    --colors-neutral-700: #1e1918;
+    --colors-neutral-800: #140f0e;
+    --colors-neutral-900: #0a0808;
+    --colors-primary-100: #b3d9cc;
+    --colors-primary-200: #80bfaa;
+    --colors-primary-300: #4da689;
+    --colors-primary-400: #269970;
+    --colors-primary-50: #e6f2ed;
+    --colors-primary-500: #008c57;
+    --colors-primary-600: #007a4c;
+    --colors-primary-700: #00603b;
+    --colors-primary-800: #00462a;
+    --colors-primary-900: #003020;
+    --colors-text-primary: #1a1816;
+    --rounded-lg: 0px;
+    --rounded-md: 0px;
+    --rounded-sm: 0px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-40: 160px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Pretendard;
+    --typography-body-weight: 300;
+    --typography-display-family: Pretendard;
+    --typography-display-weight: 900/100;
+    --bg: #e6dfcf;
+    --fg: #1a1816;
+    --accent: #008c57;
+    --muted: #4da689;
+  }
+  
+  [data-variant="brand-b"] {
+    --colors-background-primary: #141210;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #d4d0cb;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #a8a098;
+    --colors-neutral-300: #7d7268;
+    --colors-neutral-400: #5a4f44;
+    --colors-neutral-50: #f0eeeb;
+    --colors-neutral-500: #3a302a;
+    --colors-neutral-600: #2a2220;
+    --colors-neutral-700: #1e1918;
+    --colors-neutral-800: #140f0e;
+    --colors-neutral-900: #0a0808;
+    --colors-primary-100: #b3d9cc;
+    --colors-primary-200: #80bfaa;
+    --colors-primary-300: #4da689;
+    --colors-primary-400: #269970;
+    --colors-primary-50: #e6f2ed;
+    --colors-primary-500: #008c57;
+    --colors-primary-600: #007a4c;
+    --colors-primary-700: #00603b;
+    --colors-primary-800: #00462a;
+    --colors-primary-900: #003020;
+    --colors-text-primary: #e6f2ed;
+    --rounded-lg: 0px;
+    --rounded-md: 0px;
+    --rounded-sm: 0px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-40: 160px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Pretendard;
+    --typography-body-weight: 300;
+    --typography-display-family: Pretendard;
+    --typography-display-weight: 900/100;
+    --bg: #141210;
+    --fg: #e6f2ed;
+    --accent: #008c57;
+    --muted: #4da689;
+  }
+  
+  [data-variant="dark"] {
+    --colors-background-primary: #0a0808;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #d4d0cb;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #a8a098;
+    --colors-neutral-300: #7d7268;
+    --colors-neutral-400: #5a4f44;
+    --colors-neutral-50: #f0eeeb;
+    --colors-neutral-500: #3a302a;
+    --colors-neutral-600: #2a2220;
+    --colors-neutral-700: #1e1918;
+    --colors-neutral-800: #140f0e;
+    --colors-neutral-900: #0a0808;
+    --colors-primary-100: #b3d9cc;
+    --colors-primary-200: #80bfaa;
+    --colors-primary-300: #4da689;
+    --colors-primary-400: #269970;
+    --colors-primary-50: #e6f2ed;
+    --colors-primary-500: #008c57;
+    --colors-primary-600: #007a4c;
+    --colors-primary-700: #00603b;
+    --colors-primary-800: #00462a;
+    --colors-primary-900: #003020;
+    --colors-text-primary: #f0eeeb;
+    --rounded-lg: 0px;
+    --rounded-md: 0px;
+    --rounded-sm: 0px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-40: 160px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Pretendard;
+    --typography-body-weight: 300;
+    --typography-display-family: Pretendard;
+    --typography-display-weight: 900/100;
+    --bg: #0a0808;
+    --fg: #f0eeeb;
+    --accent: #008c57;
+    --muted: #4da689;
+  }
+  
+  [data-variant="light"] {
+    --colors-background-primary: #f0eeeb;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #d4d0cb;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #a8a098;
+    --colors-neutral-300: #7d7268;
+    --colors-neutral-400: #5a4f44;
+    --colors-neutral-50: #f0eeeb;
+    --colors-neutral-500: #3a302a;
+    --colors-neutral-600: #2a2220;
+    --colors-neutral-700: #1e1918;
+    --colors-neutral-800: #140f0e;
+    --colors-neutral-900: #0a0808;
+    --colors-primary-100: #b3d9cc;
+    --colors-primary-200: #80bfaa;
+    --colors-primary-300: #4da689;
+    --colors-primary-400: #269970;
+    --colors-primary-50: #e6f2ed;
+    --colors-primary-500: #008c57;
+    --colors-primary-600: #007a4c;
+    --colors-primary-700: #00603b;
+    --colors-primary-800: #00462a;
+    --colors-primary-900: #003020;
+    --colors-text-primary: #1e1918;
+    --rounded-lg: 0px;
+    --rounded-md: 0px;
+    --rounded-sm: 0px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-40: 160px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Pretendard;
+    --typography-body-weight: 300;
+    --typography-display-family: Pretendard;
+    --typography-display-weight: 900/100;
+    --bg: #f0eeeb;
+    --fg: #1e1918;
+    --accent: #008c57;
+    --muted: #4da689;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap">
+</head>
+<body data-variant="light">
+  <nav class="switcher" aria-label="Variant switcher">
+    <button data-set="brand-a" aria-pressed="false">brand-a</button>
+    <button data-set="brand-b" aria-pressed="false">brand-b</button>
+    <button data-set="dark" aria-pressed="false">dark</button>
+    <button data-set="light" aria-pressed="true">light</button>
+    </nav>
+  <main class="wrap">
+    <p class="eyebrow">silhouette-break</p>
+    <h1>Lookbook for a Seoul deconstructive fashion house.</h1>
+    <p class="lede">Lookbook for a Seoul deconstructive fashion house — anti-symmetry, off-black, Hangul-dominant, intra-line weight-tear typography Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class="cta" href="#" aria-label="Primary call to action">Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

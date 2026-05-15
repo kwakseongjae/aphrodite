@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>緒方無線 — Cord Radio</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --colors-primary-50:#f7f3ed;
+  --colors-primary-100:#e8dfd3;
+  --colors-primary-200:#d4c7ac;
+  --colors-primary-300:#c0ad85;
+  --colors-primary-400:#ab935e;
+  --colors-primary-500:#8d7545;
+  --colors-primary-600:#7a6437;
+  --colors-primary-700:#67522d;
+  --colors-primary-800:#544123;
+  --colors-primary-900:#3d2f18;
+  --colors-neutral-0:#ffffff;
+  --colors-neutral-50:#fafaf8;
+  --colors-neutral-100:#f3f2ef;
+  --colors-neutral-200:#e6e5e0;
+  --colors-neutral-300:#d0cec7;
+  --colors-neutral-400:#a8a59c;
+  --colors-neutral-500:#7d7a70;
+  --colors-neutral-600:#5c5950;
+  --colors-neutral-700:#3e3b35;
+  --colors-neutral-800:#2a2824;
+  --colors-neutral-900:#1a1816;
+  --colors-neutral-1000:#0e0d0b;
+  --colors-surface-warm-white:#faf8f4;
+  --colors-surface-parchment:#f3efe8;
+  --colors-surface-clay:#e4d9c8;
+  --colors-surface-stone:#bfb5a3;
+  --colors-surface-bark:#6b6255;
+  --colors-surface-carbon:#262420;
+  --colors-surface-lamp-black:#141310;
+  --typography-display-family:'Inter',system-ui,-apple-system,sans-serif;
+  --typography-body-family:'Inter',system-ui,-apple-system,sans-serif;
+  --spacing-0-5:2px;
+  --spacing-1:4px;
+  --spacing-2:8px;
+  --spacing-3:12px;
+  --spacing-4:16px;
+  --spacing-6:24px;
+  --spacing-8:32px;
+  --spacing-12:48px;
+  --spacing-16:64px;
+  --spacing-24:96px;
+  --spacing-32:128px;
+  --rounded-none:0;
+  --rounded-xs:2px;
+  --rounded-sm:4px;
+  --rounded-md:8px;
+
+  --bg-primary:var(--colors-surface-warm-white);
+  --bg-secondary:var(--colors-surface-parchment);
+  --text-primary:var(--colors-neutral-900);
+  --text-secondary:var(--colors-surface-bark);
+  --text-muted:var(--colors-neutral-400);
+  --border-color:var(--colors-neutral-200);
+  --button-bg:var(--colors-neutral-800);
+  --button-text:var(--colors-surface-warm-white);
+}
+
+body[data-variant="dark"]{
+  --bg-primary:var(--colors-surface-lamp-black);
+  --bg-secondary:var(--colors-surface-carbon);
+  --text-primary:var(--colors-neutral-200);
+  --text-secondary:var(--colors-neutral-400);
+  --text-muted:var(--colors-neutral-500);
+  --border-color:var(--colors-neutral-700);
+  --button-bg:var(--colors-neutral-100);
+  --button-text:var(--colors-neutral-900);
+}
+
+body[data-variant="brand-a"]{
+  --bg-primary:var(--colors-surface-parchment);
+  --bg-secondary:var(--colors-surface-clay);
+  --text-primary:var(--colors-surface-carbon);
+  --text-secondary:var(--colors-neutral-600);
+  --text-muted:var(--colors-neutral-500);
+  --border-color:var(--colors-neutral-300);
+  --button-bg:var(--colors-surface-carbon);
+  --button-text:var(--colors-surface-warm-white);
+}
+
+body[data-variant="brand-b"]{
+  --bg-primary:var(--colors-primary-50);
+  --bg-secondary:var(--colors-primary-100);
+  --text-primary:var(--colors-neutral-800);
+  --text-secondary:var(--colors-primary-700);
+  --text-muted:var(--colors-primary-500);
+  --border-color:var(--colors-primary-200);
+  --button-bg:var(--colors-primary-800);
+  --button-text:var(--colors-primary-50);
+}
+
+html{
+  font-size:16px;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+body{
+  font-family:var(--typography-body-family);
+  font-weight:300;
+  font-size:14px;
+  line-height:1.65;
+  color:var(--text-primary);
+  background-color:var(--bg-primary);
+  transition:background-color 0.4s ease,color 0.4s ease;
+  overflow-x:hidden;
+}
+
+::selection{
+  background:var(--colors-primary-200);
+  color:var(--colors-neutral-900);
+}
+
+/* ---- Variant Switcher ---- */
+nav.switcher{
+  position:fixed;
+  top:var(--spacing-3);
+  right:var(--spacing-4);
+  z-index:100;
+  display:flex;
+  gap:var(--spacing-1);
+  background:var(--bg-primary);
+  border:1px solid var(--border-color);
+  padding:var(--spacing-0-5);
+  border-radius:var(--rounded-sm);
+  opacity:0.7;
+  transition:opacity 0.2s ease;
+}
+nav.switcher:hover{opacity:1}
+nav.switcher button{
+  font-family:var(--typography-body-family);
+  font-weight:300;
+  font-size:11px;
+  letter-spacing:0.03em;
+  padding:var(--spacing-1) var(--spacing-2);
+  border:none;
+  background:transparent;
+  color:var(--text-secondary);
+  cursor:pointer;
+  border-radius:var(--rounded-xs);
+  transition:background 0.15s ease,color 0.15s ease;
+  text-transform:capitalize;
+}
+nav.switcher button:hover,
+nav.switcher button.active{
+  background:var(--bg-secondary);
+  color:var(--text-primary);
+}
+
+/* ---- Navigation ---- */
+.site-nav{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:90;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:var(--spacing-4) var(--spacing-6);
+  background:color-mix(in srgb,var(--bg-primary) 85%,transparent);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid transparent;
+  transition:border-color 0.3s ease,background 0.4s ease;
+}
+.site-nav.scrolled{border-bottom-color:var(--border-color)}
+.site-nav .studio-name{
+  font-weight:400;
+  font-size:15px;
+  letter-spacing:0.02em;
+  color:var(--text-primary);
+  text-decoration:none;
+}
+.site-nav .nav-links{
+  display:flex;
+  gap:var(--spacing-6);
+  list-style:none;
+}
+.site-nav .nav-links a{
+  font-weight:300;
+  font-size:13px;
+  color:var(--text-muted);
+  text-decoration:none;
+  transition:color 0.2s ease;
+}
+.site-nav .nav-links a:hover{color:var(--text-secondary)}
+.site-nav .nav-links a.active{color:var(--text-secondary)}
+
+/* ---- Layout ---- */
+.content-column{
+  max-width:600px;
+  margin:0 auto;
+  padding-left:var(--spacing-6);
+  padding-right:var(--spacing-6);
+}
+
+section{
+  padding-top:var(--spacing-24);
+  padding-bottom:var(--spacing-24);
+}
+
+/* ---- Hero ---- */
+.hero{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding-top:var(--spacing-32);
+  padding-bottom:var(--spacing-16);
+}
+
+.hero-image-wrapper{
+  width:100%;
+  max-width:480px;
+  margin-bottom:var(--spacing-12);
+  position:relative;
+}
+
+.hero-image-wrapper svg{
+  width:100%;
+  height:auto;
+  display:block;
+}
+
+.hero-text{
+  font-weight:400;
+  font-size:20px;
+  letter-spacing:0.01em;
+  color:var(--text-primary);
+}
+
+/* ---- Cord Divider ---- */
+.cord-divider{
+  display:flex;
+  justify-content:center;
+  padding:var(--spacing-8) 0;
+}
+.cord-divider svg{
+  width:60px;
+  height:auto;
+}
+
+/* ---- Details ---- */
+.detail-photo{
+  width:100%;
+  margin-bottom:var(--spacing-2);
+  border-radius:var(--rounded-xs);
+  overflow:hidden;
+}
+.detail-photo svg{
+  width:100%;
+  display:block;
+}
+
+.caption{
+  font-size:12px;
+  color:var(--text-muted);
+  margin-bottom:var(--spacing-12);
+  font-style:normal;
+}
+
+.detail-paragraph{
+  margin-top:var(--spacing-8);
+  margin-bottom:var(--spacing-12);
+  max-width:520px;
+  color:var(--text-secondary);
+}
+
+/* ---- Specs ---- */
+.specs-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:var(--spacing-6) var(--spacing-8);
+  padding:var(--spacing-8) 0;
+  border-top:1px solid var(--border-color);
+  margin-top:var(--spacing-12);
+  margin-bottom:var(--spacing-16);
+}
+.spec-item{
+  display:flex;
+  flex-direction:column;
+  gap:var(--spacing-0-5);
+}
+.spec-label{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  color:var(--text-muted);
+}
+.spec-value{
+  font-size:13px;
+  color:var(--text-secondary);
+}
+
+/* ---- Order Button ---- */
+.order-button{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:var(--spacing-2);
+  width:100%;
+  padding:var(--spacing-4) var(--spacing-6);
+  min-height:44px;
+  background:var(--button-bg);
+  color:var(--button-text);
+  border:none;
+  border-radius:var(--rounded-sm);
+  font-family:var(--typography-body-family);
+  font-weight:300;
+  font-size:14px;
+  letter-spacing:0.02em;
+  cursor:pointer;
+  transition:opacity 0.2s ease;
+  text-decoration:none;
+}
+.order-button:hover{opacity:0.85}
+.order-button svg{
+  width:16px;
+  height:16px;
+  stroke:currentColor;
+  stroke-width:1.5;
+  fill:none;
+}
+
+/* ---- Features / Philosophy ---- */
+.feature-row{
+  display:flex;
+  align-items:flex-start;
+  gap:var(--spacing-6);
+  margin-bottom:var(--spacing-12);
+}
+.feature-number{
+  font-size:11px;
+  color:var(--text-muted);
+  min-width:24px;
+  padding-top:2px;
+}
+.feature-content h3{
+  font-weight:400;
+  font-size:16px;
+  margin-bottom:var(--spacing-2);
+  color:var(--text-primary);
+}
+.feature-content p{
+  color:var(--text-secondary);
+}
+
+/* ---- Testimonial ---- */
+.testimonial{
+  border-left:1px solid var(--border-color);
+  padding-left:var(--spacing-6);
+  margin:var(--spacing-16) 0;
+}
+.testimonial blockquote{
+  font-size:16px;
+  line-height:1.6;
+  color:var(--text-primary);
+  font-weight:400;
+  margin-bottom:var(--spacing-3);
+}
+.testimonial cite{
+  font-style:normal;
+  font-size:12px;
+  color:var(--text-muted);
+}
+
+/* ---- Studio Section ---- */
+.studio-section{
+  border-top:1px solid var(--border-color);
+  padding-top:var(--spacing-16);
+  padding-bottom:var(--spacing-16);
+}
+.studio-section h2{
+  font-weight:400;
+  font-size:18px;
+  margin-bottom:var(--spacing-4);
+  color:var(--text-primary);
+}
+.studio-section p{
+  color:var(--text-secondary);
+  margin-bottom:var(--spacing-4);
+}
+
+/* ---- Footer ---- */
+footer{
+  text-align:center;
+  padding:var(--spacing-16) var(--spacing-6) var(--spacing-8);
+  border-top:1px solid var(--border-color);
+}
+footer .footer-name{
+  font-weight:400;
+  font-size:14px;
+  color:var(--text-primary);
+  margin-bottom:var(--spacing-2);
+}
+footer .footer-address{
+  font-size:12px;
+  color:var(--text-muted);
+  margin-bottom:var(--spacing-4);
+  line-height:1.5;
+}
+footer .footer-links{
+  display:flex;
+  justify-content:center;
+  gap:var(--spacing-4);
+}
+footer .footer-links a{
+  color:var(--text-muted);
+  transition:color 0.2s ease;
+}
+footer .footer-links a:hover{color:var(--text-secondary)}
+footer .footer-links svg{
+  width:16px;
+  height:16px;
+  stroke:currentColor;
+  stroke-width:1.5;
+  fill:none;
+}
+
+/* ---- Mobile ---- */
+@media(max-width:640px){
+  .site-nav{
+    padding:var(--spacing-3) var(--spacing-4);
+  }
+  .site-nav .nav-links{
+    gap:var(--spacing-4);
+  }
+  .content-column{
+    padding-left:var(--spacing-4);
+    padding-right:var(--spacing-4);
+  }
+  section{
+    padding-top:var(--spacing-16);
+    padding-bottom:var(--spacing-16);
+  }
+  .hero{
+    padding-top:var(--spacing-24);
+    min-height:90vh;
+  }
+  .hero-text{
+    font-size:18px;
+  }
+  .specs-row{
+    flex-direction:column;
+    gap:var(--spacing-4);
+  }
+  nav.switcher{
+    top:auto;
+    bottom:var(--spacing-3);
+    right:var(--spacing-3);
+  }
+}
+</style>
+
+<style data-aphrodite-variants>
+[data-variant="brand-a"] {
+  --colors-background-primary: #f3efe8;
+  --colors-background-secondary: #e4d9c8;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f3f2ef;
+  --colors-neutral-1000: #0e0d0b;
+  --colors-neutral-200: #e6e5e0;
+  --colors-neutral-300: #d0cec7;
+  --colors-neutral-400: #a8a59c;
+  --colors-neutral-50: #fafaf8;
+  --colors-neutral-500: #7d7a70;
+  --colors-neutral-600: #5c5950;
+  --colors-neutral-700: #3e3b35;
+  --colors-neutral-800: #2a2824;
+  --colors-neutral-900: #1a1816;
+  --colors-primary-100: #e8dfd3;
+  --colors-primary-200: #d4c7ac;
+  --colors-primary-300: #c0ad85;
+  --colors-primary-400: #ab935e;
+  --colors-primary-50: #f7f3ed;
+  --colors-primary-500: #8d7545;
+  --colors-primary-600: #7a6437;
+  --colors-primary-700: #67522d;
+  --colors-primary-800: #544123;
+  --colors-primary-900: #3d2f18;
+  --colors-surface-bark: #6b6255;
+  --colors-surface-carbon: #262420;
+  --colors-surface-clay: #e4d9c8;
+  --colors-surface-lamp-black: #141310;
+  --colors-surface-parchment: #f3efe8;
+  --colors-surface-stone: #bfb5a3;
+  --colors-surface-warm-white: #faf8f4;
+  --colors-text-primary: #262420;
+  --colors-text-secondary: #5c5950;
+  --rounded-md: 8px;
+  --rounded-none: 0;
+  --rounded-sm: 4px;
+  --rounded-xs: 2px;
+  --spacing-0-5: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 300;
+  --typography-caption-family: Inter;
+  --typography-caption-weight: 300;
+  --typography-display-family: Inter;
+  --typography-display-weight: 400;
+  --bg: #f3efe8;
+  --fg: #262420;
+  --muted: #8d7545;
+}
+[data-variant="brand-b"] {
+  --colors-background-primary: #f7f3ed;
+  --colors-background-secondary: #e8dfd3;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f3f2ef;
+  --colors-neutral-1000: #0e0d0b;
+  --colors-neutral-200: #e6e5e0;
+  --colors-neutral-300: #d0cec7;
+  --colors-neutral-400: #a8a59c;
+  --colors-neutral-50: #fafaf8;
+  --colors-neutral-500: #7d7a70;
+  --colors-neutral-600: #5c5950;
+  --colors-neutral-700: #3e3b35;
+  --colors-neutral-800: #2a2824;
+  --colors-neutral-900: #1a1816;
+  --colors-primary-100: #e8dfd3;
+  --colors-primary-200: #d4c7ac;
+  --colors-primary-300: #c0ad85;
+  --colors-primary-400: #ab935e;
+  --colors-primary-50: #f7f3ed;
+  --colors-primary-500: #8d7545;
+  --colors-primary-600: #7a6437;
+  --colors-primary-700: #67522d;
+  --colors-primary-800: #544123;
+  --colors-primary-900: #3d2f18;
+  --colors-surface-bark: #6b6255;
+  --colors-surface-carbon: #262420;
+  --colors-surface-clay: #e4d9c8;
+  --colors-surface-lamp-black: #141310;
+  --colors-surface-parchment: #f3efe8;
+  --colors-surface-stone: #bfb5a3;
+  --colors-surface-warm-white: #faf8f4;
+  --colors-text-primary: #2a2824;
+  --colors-text-secondary: #67522d;
+  --rounded-md: 8px;
+  --rounded-none: 0;
+  --rounded-sm: 4px;
+  --rounded-xs: 2px;
+  --spacing-0-5: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 300;
+  --typography-caption-family: Inter;
+  --typography-caption-weight: 300;
+  --typography-display-family: Inter;
+  --typography-display-weight: 400;
+  --bg: #f7f3ed;
+  --fg: #2a2824;
+  --muted: #8d7545;
+}
+[data-variant="dark"] {
+  --colors-background-primary: #141310;
+  --colors-background-secondary: #262420;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f3f2ef;
+  --colors-neutral-1000: #0e0d0b;
+  --colors-neutral-200: #e6e5e0;
+  --colors-neutral-300: #d0cec7;
+  --colors-neutral-400: #a8a59c;
+  --colors-neutral-50: #fafaf8;
+  --colors-neutral-500: #7d7a70;
+  --colors-neutral-600: #5c5950;
+  --colors-neutral-700: #3e3b35;
+  --colors-neutral-800: #2a2824;
+  --colors-neutral-900: #1a1816;
+  --colors-primary-100: #e8dfd3;
+  --colors-primary-200: #d4c7ac;
+  --colors-primary-300: #c0ad85;
+  --colors-primary-400: #ab935e;
+  --colors-primary-50: #f7f3ed;
+  --colors-primary-500: #8d7545;
+  --colors-primary-600: #7a6437;
+  --colors-primary-700: #67522d;
+  --colors-primary-800: #544123;
+  --colors-primary-900: #3d2f18;
+  --colors-surface-bark: #6b6255;
+  --colors-surface-carbon: #262420;
+  --colors-surface-clay: #e4d9c8;
+  --colors-surface-lamp-black: #141310;
+  --colors-surface-parchment: #f3efe8;
+  --colors-surface-stone: #bfb5a3;
+  --colors-surface-warm-white: #faf8f4;
+  --colors-text-primary: #e6e5e0;
+  --colors-text-secondary: #a8a59c;
+  --rounded-md: 8px;
+  --rounded-none: 0;
+  --rounded-sm: 4px;
+  --rounded-xs: 2px;
+  --spacing-0-5: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 300;
+  --typography-caption-family: Inter;
+  --typography-caption-weight: 300;
+  --typography-display-family: Inter;
+  --typography-display-weight: 400;
+  --bg: #141310;
+  --fg: #e6e5e0;
+  --muted: #8d7545;
+}
+[data-variant="light"] {
+  --colors-background-primary: #faf8f4;
+  --colors-background-secondary: #f3efe8;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f3f2ef;
+  --colors-neutral-1000: #0e0d0b;
+  --colors-neutral-200: #e6e5e0;
+  --colors-neutral-300: #d0cec7;
+  --colors-neutral-400: #a8a59c;
+  --colors-neutral-50: #fafaf8;
+  --colors-neutral-500: #7d7a70;
+  --colors-neutral-600: #5c5950;
+  --colors-neutral-700: #3e3b35;
+  --colors-neutral-800: #2a2824;
+  --colors-neutral-900: #1a1816;
+  --colors-primary-100: #e8dfd3;
+  --colors-primary-200: #d4c7ac;
+  --colors-primary-300: #c0ad85;
+  --colors-primary-400: #ab935e;
+  --colors-primary-50: #f7f3ed;
+  --colors-primary-500: #8d7545;
+  --colors-primary-600: #7a6437;
+  --colors-primary-700: #67522d;
+  --colors-primary-800: #544123;
+  --colors-primary-900: #3d2f18;
+  --colors-surface-bark: #6b6255;
+  --colors-surface-carbon: #262420;
+  --colors-surface-clay: #e4d9c8;
+  --colors-surface-lamp-black: #141310;
+  --colors-surface-parchment: #f3efe8;
+  --colors-surface-stone: #bfb5a3;
+  --colors-surface-warm-white: #faf8f4;
+  --colors-text-primary: #1a1816;
+  --colors-text-secondary: #6b6255;
+  --rounded-md: 8px;
+  --rounded-none: 0;
+  --rounded-sm: 4px;
+  --rounded-xs: 2px;
+  --spacing-0-5: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 300;
+  --typography-caption-family: Inter;
+  --typography-caption-weight: 300;
+  --typography-display-family: Inter;
+  --typography-display-weight: 400;
+  --bg: #faf8f4;
+  --fg: #1a1816;
+  --muted: #8d7545;
+}
+body{background:var(--bg);color:var(--fg);}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+</head>
+<body data-variant="light">
+
+<!-- Variant Switcher -->
+<nav class="switcher">
+  <button data-variant="light" class="active">light</button>
+  <button data-variant="dark">dark</button>
+  <button data-variant="brand-a">warm</button>
+  <button data-variant="brand-b">gallery</button>
+</nav>
+
+<!-- Site Navigation -->
+<nav class="site-nav" id="siteNav">
+  <a href="#" class="studio-name">緒方無線</a>
+  <ul class="nav-links">
+    <li><a href="#radio" class="active">Radio</a></li>
+    <li><a href="#studio">Studio</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="radio">
+  <div class="content-column" style="display:flex;flex-direction:column;align-items:center;">
+    <div class="hero-image-wrapper">
+      <!-- Radio on wall illustration — morning light, cord at rest -->
+      <svg viewBox="0 0 480 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Wall background -->
+        <rect width="480" height="360" fill="var(--bg-secondary)"/>
+        <!-- Subtle wall texture lines -->
+        <line x1="0" y1="60" x2="480" y2="62" stroke="var(--border-color)" stroke-width="0.5" opacity="0.4"/>
+        <line x1="0" y1="140" x2="480" y2="141" stroke="var(--border-color)" stroke-width="0.5" opacity="0.3"/>
+        <line x1="0" y1="230" x2="480" y2="228" stroke="var(--border-color)" stroke-width="0.5" opacity="0.3"/>
+        <!-- Light gradient from upper left -->
+        <defs>
+          <radialGradient id="morningLight" cx="0.2" cy="0.2" r="0.8">
+            <stop offset="0%" stop-color="var(--colors-primary-100)" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="var(--bg-secondary)" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <rect width="480" height="360" fill="url(#morningLight)"/>
+        <!-- Radio body -->
+        <rect x="140" y="100" width="200" height="110" rx="2" fill="var(--colors-neutral-700)" stroke="var(--colors-neutral-800)" stroke-width="1"/>
+        <!-- Speaker grille pattern -->
+        <g opacity="0.5">
+          <line x1="160" y1="115" x2="220" y2="115" stroke="var(--colors-neutral-500)" stroke-width="0.7"/>
+          <line x1="160" y1="122" x2="220" y2="122" stroke="var(--colors-neutral-500)" stroke-width="0.7"/>
+          <line x1="160" y1="129" x2="220" y2="129" stroke="var(--colors-neutral-500)" stroke-width="0.7"/>
+          <line x1="160" y1="136" x2="220" y2="136" stroke="var(--colors-neutral-500)" stroke-width="0.7"/>
+          <line x1="160" y1="143" x2="220" y2="143" stroke="var(--colors-neutral-500)" stroke-width="0.7"/>
+          <line x1="160" y1="150" x2="220" y2="150" stroke="var(--colors-neutral-500)" stroke-width="0.7"/>
+          <line x1="160" y1="157" x2="220" y2="157" stroke="var(--colors-neutral-500)" stroke-width="0.7"/>
+          <line x1="160" y1="164" x2="220" y2="164" stroke="var(--colors-neutral-500)" stroke-width="0.7"/>
+          <line x1="160" y1="171" x2="220" y2="171" stroke="var(--colors-neutral-500)" stroke-width="0.7"/>
+          <line x1="160" y1="178" x2="220" y2="178" stroke="var(--colors-neutral-500)" stroke-width="0.7"/>
+          <line x1="160" y1="185" x2="220" y2="185" stroke="var(--colors-neutral-500)" stroke-width="0.7"/>
+          <line x1="160" y1="192" x2="220" y2="192" stroke="var(--colors-neutral-500)" stroke-width="0.7"/>
+        </g>
+        <!-- Tuning dial area -->
+        <rect x="240" y="120" width="80" height="70" rx="1" fill="var(--colors-neutral-800)"/>
+        <!-- Frequency marks -->
+        <g opacity="0.4">
+          <line x1="250" y1="140" x2="310" y2="140" stroke="var(--colors-neutral-400)" stroke-width="0.5"/>
+          <line x1="250" y1="152" x2="310" y2="152" stroke="var(--colors-neutral-400)" stroke-width="0.5"/>
+          <line x1="250" y1="164" x2="310" y2="164" stroke="var(--colors-neutral-400)" stroke-width="0.5"/>
+          <line x1="250" y1="176" x2="310" y2="176" stroke="var(--colors-neutral-400)" stroke-width="0.5"/>
+        </g>
+        <!-- Tuning indicator line -->
+        <line x1="278" y1="135" x2="278" y2="180" stroke="var(--colors-primary-400)" stroke-width="1"/>
+        <!-- Dial knob -->
+        <circle cx="275" cy="175" r="6" fill="var(--colors-neutral-600)" stroke="var(--colors-neutral-500)" stroke-width="0.5"/>
+        <!-- Volume knob -->
+        <circle cx="315" cy="175" r="4" fill="var(--colors-neutral-600)" stroke="var(--colors-neutral-500)" stroke-width="0.5"/>
+        <!-- Small LED indicator -->
+        <circle cx="155" cy="195" r="2" fill="var(--colors-primary-400)" opacity="0.6"/>
+        <!-- Mounting bracket shadow -->
+        <rect x="160" y="210" width="30" height="4" rx="1" fill="var(--colors-neutral-800)" opacity="0.3"/>
+        <rect x="290" y="210" width="30" height="4" rx="1" fill="var(--colors-neutral-800)" opacity="0.3"/>
+        <!-- Pull cord hanging down -->
+        <path d="M 240 210 Q 240 260, 238 310" stroke="var(--colors-primary-500)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- Cord end / tassel -->
+        <circle cx="238" cy="314" r="4" fill="var(--colors-primary-500)"/>
+        <line x1="238" y1="318" x2="236" y2="328" stroke="var(--colors-primary-500)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="238" y1="318" x2="240" y2="327" stroke="var(--colors-primary-500)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="238" y1="318" x2="238" y2="330" stroke="var(--colors-primary-500)" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- Shadow below radio -->
+        <ellipse cx="240" cy="215" rx="90" ry="3" fill="var(--colors-neutral-800)" opacity="0.08"/>
+      </svg>
+    </div>
+    <p class="hero-text">Pull to listen.</p>
+  </div>
+</section>
+
+<!-- Cord Divider -->
+<div class="cord-divider">
+  <svg viewBox="0 0 60 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 10 5 Q 30 35, 50 5" stroke="var(--colors-neutral-300)" stroke-width="1" fill="none"/>
+  </svg>
+</div>
+
+<!-- Details — Kitchen Context -->
+<section style="padding-top:0;">
+  <div class="content-column">
+    <div class="detail-photo">
+      <!-- Kitchen wall scene -->
+      <svg viewBox="0 0 600 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="600" height="380" fill="var(--bg-secondary)"/>
+        <!-- Counter edge -->
+        <rect x="0" y="280" width="600" height="100" fill="var(--bg-primary)"/>
+        <line x1="0" y1="280" x2="600" y2="280" stroke="var(--border-color)" stroke-width="1"/>
+        <!-- Window light -->
+        <rect x="380" y="30" width="160" height="200" rx="2" fill="var(--colors-primary-50)" opacity="0.4" stroke="var(--border-color)" stroke-width="0.5"/>
+        <line x1="460" y1="30" x2="460" y2="230" stroke="var(--border-color)" stroke-width="0.5"/>
+        <line x1="380" y1="130" x2="540" y2="130" stroke="var(--border-color)" stroke-width="0.5"/>
+        <!-- Radio on wall -->
+        <rect x="80" y="100" width="180" height="100" rx="2" fill="var(--colors-neutral-700)" stroke="var(--colors-neutral-800)" stroke-width="1"/>
+        <!-- Speaker lines -->
+        <g opacity="0.4">
+          <line x1="95" y1="115" x2="150" y2="115" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="95" y1="122" x2="150" y2="122" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="95" y1="129" x2="150" y2="129" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="95" y1="136" x2="150" y2="136" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="95" y1="143" x2="150" y2="143" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="95" y1="150" x2="150" y2="150" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="95" y1="157" x2="150" y2="157" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="95" y1="164" x2="150" y2="164" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="95" y1="171" x2="150" y2="171" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+        </g>
+        <!-- Dial -->
+        <rect x="165" y="115" width="75" height="60" rx="1" fill="var(--colors-neutral-800)"/>
+        <line x1="200" y1="130" x2="200" y2="168" stroke="var(--colors-primary-400)" stroke-width="0.8"/>
+        <circle cx="198" cy="162" r="5" fill="var(--colors-neutral-600)" stroke="var(--colors-neutral-500)" stroke-width="0.5"/>
+        <!-- LED on -->
+        <circle cx="92" cy="183" r="2" fill="var(--colors-primary-400)" opacity="0.8"/>
+        <!-- Cord pulled aside -->
+        <path d="M 170 200 Q 175 250, 160 280" stroke="var(--colors-primary-500)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle cx="160" cy="283" r="3.5" fill="var(--colors-primary-500)"/>
+        <!-- Cup on counter -->
+        <rect x="320" y="252" width="28" height="28" rx="2" fill="var(--colors-neutral-400)" opacity="0.3"/>
+        <path d="M 348 258 Q 360 265, 348 275" stroke="var(--colors-neutral-400)" stroke-width="1" fill="none" opacity="0.3"/>
+        <!-- Steam from cup -->
+        <path d="M 330 248 Q 332 240, 328 235" stroke="var(--text-muted)" stroke-width="0.8" fill="none" opacity="0.3"/>
+        <path d="M 336 246 Q 338 237, 334 232" stroke="var(--text-muted)" stroke-width="0.8" fill="none" opacity="0.3"/>
+      </svg>
+    </div>
+    <p class="caption">Morning — cord pulled, power on.</p>
+
+    <p class="detail-paragraph">The radio is housed in a single piece of warm-toned ABS resin, matte-finished, with no visible seams. The speaker grille is a series of horizontal slots cut directly into the face — no cloth, no mesh, no additional part. Sound passes through the same surface you see. The tuning dial turns with a soft detent at each marked frequency. The volume ring surrounds it, concentric, so that one finger adjusts volume while another tunes. The pull cord is sheathed in woven cotton, the same material used in Japanese noren curtains. It ages. It softens. The tassel at its end is knotted by hand in our workshop.</p>
+
+    <!-- Bedroom context -->
+    <div class="detail-photo">
+      <svg viewBox="0 0 600 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="600" height="340" fill="var(--bg-secondary)"/>
+        <!-- Dimmer, evening light -->
+        <defs>
+          <radialGradient id="eveningGlow" cx="0.3" cy="0.4" r="0.6">
+            <stop offset="0%" stop-color="var(--colors-primary-100)" stop-opacity="0.2"/>
+            <stop offset="100%" stop-color="var(--bg-secondary)" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <rect width="600" height="340" fill="url(#eveningGlow)"/>
+        <!-- Headboard hint -->
+        <rect x="0" y="100" width="260" height="240" fill="var(--colors-neutral-800)" opacity="0.06" rx="2"/>
+        <!-- Radio on wall near bed -->
+        <rect x="300" y="80" width="160" height="88" rx="2" fill="var(--colors-neutral-700)" stroke="var(--colors-neutral-800)" stroke-width="1"/>
+        <g opacity="0.4">
+          <line x1="312" y1="94" x2="362" y2="94" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="312" y1="101" x2="362" y2="101" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="312" y1="108" x2="362" y2="108" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="312" y1="115" x2="362" y2="115" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="312" y1="122" x2="362" y2="122" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="312" y1="129" x2="362" y2="129" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="312" y1="136" x2="362" y2="136" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="312" y1="143" x2="362" y2="143" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="312" y1="150" x2="362" y2="150" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+        </g>
+        <rect x="375" y="95" width="65" height="52" rx="1" fill="var(--colors-neutral-800)"/>
+        <line x1="405" y1="108" x2="405" y2="140" stroke="var(--colors-primary-400)" stroke-width="0.8"/>
+        <circle cx="403" cy="136" r="4.5" fill="var(--colors-neutral-600)" stroke="var(--colors-neutral-500)" stroke-width="0.5"/>
+        <!-- LED dim / off -->
+        <circle cx="310" cy="153" r="1.5" fill="var(--colors-neutral-500)" opacity="0.4"/>
+        <!-- Cord at rest -->
+        <path d="M 380 168 Q 380 210, 379 250" stroke="var(--colors-primary-500)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle cx="379" cy="253" r="3.5" fill="var(--colors-primary-500)"/>
+        <line x1="379" y1="256" x2="377" y2="264" stroke="var(--colors-primary-500)" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="379" y1="256" x2="380" y2="265" stroke="var(--colors-primary-500)" stroke-width="1.2" stroke-linecap="round"/>
+        <!-- Bed pillow hint -->
+        <ellipse cx="130" cy="200" rx="90" ry="25" fill="var(--colors-neutral-200)" opacity="0.15"/>
+      </svg>
+    </div>
+    <p class="caption">Night — cord at rest, power off.</p>
+
+    <p class="detail-paragraph">The radio receives FM and AM. It receives nothing else. There is no Bluetooth, no streaming, no clock display, no preset buttons. The frequencies you hear are the ones in the air around you. This is a choice, not a limitation. A radio that receives everything would be a computer. This is not a computer. It is a tool for listening to the radio, and the radio is still good.</p>
+
+    <!-- Entryway context -->
+    <div class="detail-photo">
+      <svg viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="600" height="400" fill="var(--bg-secondary)"/>
+        <!-- Floor -->
+        <rect x="0" y="320" width="600" height="80" fill="var(--bg-primary)" opacity="0.5"/>
+        <line x1="0" y1="320" x2="600" y2="320" stroke="var(--border-color)" stroke-width="0.5"/>
+        <!-- Door frame hint -->
+        <rect x="400" y="40" width="140" height="280" rx="1" fill="none" stroke="var(--border-color)" stroke-width="1"/>
+        <rect x="405" y="45" width="130" height="270" fill="var(--bg-primary)" opacity="0.3"/>
+        <!-- Hook on wall -->
+        <circle cx="150" cy="80" r="3" fill="var(--colors-neutral-400)" opacity="0.4"/>
+        <!-- Radio on wall -->
+        <rect x="100" y="120" width="170" height="95" rx="2" fill="var(--colors-neutral-700)" stroke="var(--colors-neutral-800)" stroke-width="1"/>
+        <g opacity="0.4">
+          <line x1="115" y1="134" x2="165" y2="134" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="115" y1="141" x2="165" y2="141" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="115" y1="148" x2="165" y2="148" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="115" y1="155" x2="165" y2="155" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="115" y1="162" x2="165" y2="162" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="115" y1="169" x2="165" y2="169" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line x1="115" y1="176" x2="165" y2="176" stroke="var(--colors-neutral-500)" stroke-width="0.6"/>
+          <line
