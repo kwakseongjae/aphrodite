@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en" data-variant="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aesculapius - Phase-3 Clinical Trial Dashboard</title>
+  <style>
+    :root {
+      /* Colors */
+      --colors-primary-50: #f0fdf4;
+      --colors-primary-100: #dcfce7;
+      --colors-primary-200: #a7d8be;
+      --colors-primary-300: #6ab58e;
+      --colors-primary-400: #3d8f66;
+      --colors-primary-500: #1a6b42;
+      --colors-primary-600: #145936;
+      --colors-primary-700: #0e4429;
+      --colors-primary-800: #093020;
+      --colors-primary-900: #051f15;
+      --colors-neutral-0: #ffffff;
+      --colors-neutral-50: #f8f8f5;
+      --colors-neutral-100: #eeeee8;
+      --colors-neutral-200: #d5d5cc;
+      --colors-neutral-300: #a8a89e;
+      --colors-neutral-400: #7a7a6e;
+      --colors-neutral-500: #525248;
+      --colors-neutral-600: #3a3a32;
+      --colors-neutral-700: #2a2a24;
+      --colors-neutral-800: #1a1a16;
+      --colors-neutral-900: #0e0e0c;
+      --colors-neutral-1000: #000000;
+      --colors-severity-info: #2563eb;
+      --colors-severity-caution: #b45309;
+      --colors-severity-critical: #b91c1c;
+      --colors-severity-nominal: #1a6b42;
+      
+      /* Typography */
+      --typography-display-family: "Source Sans 3", sans-serif;
+      --typography-body-family: "Source Sans 3", sans-serif;
+      --typography-mono-family: "IBM Plex Mono", monospace;
+      --typography-cjk-display-family: "Source Han Sans", sans-serif;
+      --typography-cjk-body-family: "Source Han Sans", sans-serif;
+      
+      /* Spacing */
+      --spacing-1: 4px;
+      --spacing-2: 8px;
+      --spacing-3: 12px;
+      --spacing-4: 16px;
+      --spacing-6: 24px;
+      --spacing-8: 32px;
+      --spacing-12: 48px;
+      --spacing-16: 64px;
+      --spacing-20: 80px;
+      
+      /* Rounded */
+      --rounded-none: 0px;
+      --rounded-sm: 2px;
+      --rounded-md: 4px;
+      --rounded-lg: 6px;
+      
+      /* Backgrounds */
+      --colors-background-primary: var(--colors-neutral-0);
+      --colors-background-secondary: var(--colors-neutral-50);
+      --colors-background-tertiary: var(--colors-neutral-100);
+      
+      /* Text */
+      --colors-text-primary: var(--colors-neutral-900);
+      --colors-text-secondary: var(--colors-neutral-500);
+      --colors-text-tertiary: var(--colors-neutral-400);
+      
+      /* Borders */
+      --colors-border-primary: var(--colors-neutral-200);
+      --colors-border-secondary: var(--colors-neutral-100);
+      
+      /* Elevation */
+      --colors-elevation-1: rgba(0, 0, 0, 0.04);
+      --colors-elevation-2: rgba(0, 0, 0, 0.08);
+      --colors-elevation-3: rgba(0, 0, 0, 0.12);
+    }
+    
+    /* Dark mode */
+    [data-variant="dark"] {
+      --colors-background-primary: var(--colors-neutral-900);
+      --colors-background-secondary: var(--colors-neutral-800);
+      --colors-background-tertiary: var(--colors-neutral-700);
+      --colors-text-primary: var(--colors-neutral-100);
+      --colors-text-secondary: var(--colors-neutral-300);
+      --colors-text-tertiary: var(--colors-neutral-400);
+      --colors-border-primary: var(--colors-neutral-600);
+      --colors-border-secondary: var(--colors-neutral-700);
+      --colors-elevation-1: rgba(255, 255, 255, 0.04);
+      --colors-elevation-2: rgba(255, 255, 255, 0.08);
+      --colors-elevation-3: rgba(255, 255, 255, 0.12);
+    }
+    
+    /* Brand-a variant */
+    [data-variant="brand-a"] {
+      --colors-background-primary: #faf8f2;
+      --colors-background-secondary: #f0ede4;
+      --colors-background-tertiary: #e4e0d4;
+      --colors-text-primary: #1c1a14;
+      --colors-text-secondary: #5c5848;
+      --colors-text-tertiary: #8a8470;
+      --colors-border-primary: #d4cfbf;
+      --colors-border-secondary: #e4e0d4;
+      --colors-elevation-1: rgba(0, 0, 0, 0.03);
+      --colors-elevation-2: rgba(0, 0, 0, 0.06);
+      --colors-elevation-3: rgba(0, 0, 0, 0.10);
+    }
+    
+    /* Brand-b variant */
+    [data-variant="brand-b"] {
+      --colors-background-primary: #f4f6f8;
+      --colors-background-secondary: #e8ecf0;
+      --colors-background-tertiary: #d4dae0;
+      --colors-text-primary: #141820;
+      --colors-text-secondary: #485060;
+      --colors-text-tertiary: #788494;
+      --colors-border-primary: #c0c8d2;
+      --colors-border-secondary: #d4dae0;
+      --colors-elevation-1: rgba(0, 0, 0, 0.04);
+      --colors-elevation-2: rgba(0, 0, 0, 0.07);
+      --colors-elevation-3: rgba(0, 0, 0, 0.11);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: var(--typography-body-family);
+      font-weight: 400;
+      color: var(--colors-text-primary);
+      background-color: var(--colors-background-primary);
+      line-height: 1.5;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--typography-display-family);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    
+    .mono {
+      font-family: var(--typography-mono-family);
+    }
+    
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-4);
+    }
+    
+    .grid {
+      display: grid;
+      gap: var(--spacing-4);
+    }
+    
+    .grid-12 {
+      grid-template-columns: repeat(12, 1fr);
+    }
+    
+    .grid-1 { grid-column: span 1; }
+    .grid-2 { grid-column: span 2; }
+    .grid-3 { grid-column: span 3; }
+    .grid-4 { grid-column: span 4; }
+    .grid-5 { grid-column: span 5; }
+    .grid-6 { grid-column: span 6; }
+    .grid-7 { grid-column: span 7; }
+    .grid-8 { grid-column: span 8; }
+    .grid-9 { grid-column: span 9; }
+    .grid-10 { grid-column: span 10; }
+    .grid-11 { grid-column: span 11; }
+    .grid-12 { grid-column: span 12; }
+    
+    .card {
+      background-color: var(--colors-background-secondary);
+      border: 1px solid var(--colors-border-primary);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-4);
+      box-shadow: var(--colors-elevation-1);
+    }
+    
+    .metric-tile {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+    
+    .metric-label {
+      font-size: 11px;
+      color: var(--colors-text-tertiary);
+      margin-bottom: var(--spacing-2);
+    }
+    
+    .metric-value {
+      font-size: 31.7px;
+      font-family: var(--typography-mono-family);
+      font-weight: 700;
+      color: var(--colors-text-primary);
+      line-height: 1;
+      margin-bottom: var(--spacing-2);
+    }
+    
+    .metric-trend {
+      font-size: 13px;
+      color: var(--colors-text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);
+    }
+    
+    .trend-up {
+      color: var(--colors-severity-caution);
+    }
+    
+    .trend-down {
+      color: var(--colors-severity-nominal);
+    }
+    
+    .chart-container {
+      height: 280px;
+      margin-top: var(--spacing-4);
+    }
+    
+    .chart-title {
+      font-size: 16.25px;
+      color: var(--colors-text-primary);
+      margin-bottom: var(--spacing-2);
+    }
+    
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: var(--spacing-6);
+      font-size: 13px;
+    }
+    
+    .data-table th {
+      text-align: left;
+      padding: var(--spacing-3) var(--spacing-4);
+      font-weight: 700;
+      color: var(--colors-text-secondary);
+      border-bottom: 1px solid var(--colors-border-primary);
+      font-family: var(--typography-body-family);
+    }
+    
+    .data-table td {
+      padding: var(--spacing-3) var(--spacing-4);
+      border-bottom: 1px solid var(--colors-border-secondary);
+    }
+    
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .severity-badge {
+      display: inline-block;
+      padding: var(--spacing-1) var(--spacing-3);
+      border-radius: var(--rounded-sm);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    
+    .severity-nominal {
+      background-color: var(--colors-severity-nominal);
+      color: var(--colors-neutral-0);
+    }
+    
+    .severity-caution {
+      background-color: var(--colors-severity-caution);
+      color: var(--colors-neutral-0);
+    }
+    
+    .severity-critical {
+      background-color: var(--colors-severity-critical);
+      color: var(--colors-neutral-0);
+    }
+    
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 220px;
+      height: 100vh;
+      background-color: var(--colors-background-secondary);
+      border-right: 1px solid var(--colors-border-primary);
+      padding: var(--spacing-4) 0;
+      overflow-y: auto;
+    }
+    
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      padding: var(--spacing-3) var(--spacing-4);
+      color: var(--colors-text-secondary);
+      text-decoration: none;
+      transition: color 0.1s;
+      border-left: 3px solid transparent;
+    }
+    
+    .sidebar-item:hover {
+      color: var(--colors-text-primary);
+    }
+    
+    .sidebar-item.active {
+      color: var(--colors-primary-500);
+      border-left-color: var(--colors-primary-500);
+    }
+    
+    .sidebar-icon {
+      width: 14px;
+      height: 14px;
+      margin-right: var(--spacing-3);
+    }
+    
+    .main-content {
+      margin-left: 220px;
+      min-height: 100vh;
+      padding-bottom: 32px;
+    }
+    
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--spacing-4) var(--spacing-8);
+      border-bottom: 1px solid var(--colors-border-primary);
+      position: sticky;
+      top: 0;
+      background-color: var(--colors-background-primary);
+      z-index: 10;
+    }
+    
+    .trial-info {
+      font-size: 16.25px;
+      font-weight: 700;
+    }
+    
+    .filter-chips {
+      display: flex;
+      gap: var(--spacing-2);
+    }
+    
+    .filter-chip {
+      padding: var(--spacing-1) var(--spacing-3);
+      background-color: var(--colors-background-tertiary);
+      border: 1px solid var(--colors-border-primary);
+      border-radius: var(--rounded-sm);
+      font-size: 13px;
+      color: var(--colors-text-secondary);
+      cursor: pointer;
+    }
+    
+    .filter-chip:hover {
+      background-color: var(--colors-border-primary);
+    }
+    
+    .filter-chip.active {
+      background-color: var(--colors-primary-500);
+      color: var(--colors-neutral-0);
+      border-color: var(--colors-primary-500);
+    }
+    
+    .status-strip {
+      position: fixed;
+      bottom: 0;
+      left: 220px;
+      right: 0;
+      height: 32px;
+      background-color: var(--colors-background-secondary);
+      border-top: 1px solid var(--colors-border-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 var(--spacing-8);
+      box-shadow: var(--colors-elevation-1);
+      font-family: var(--typography-mono-family);
+      font-size: 13px;
+      z-index: 10;
+    }
+    
+    .connection-status {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);
+      color: var(--colors-text-secondary);
+    }
+    
+    .connection-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--colors-severity-nominal);
+    }
+    
+    .last-update {
+      color: var(--colors-text-tertiary);
+    }
+    
+    .section-title {
+      font-size: 20.3px;
+      margin-bottom: var(--spacing-4);
+    }
+    
+    .switcher {
+      position: fixed;
+      top: var(--spacing-4);
+      right: var(--spacing-4);
+      display: flex;
+      gap: var(--spacing-2);
+      z-index: 100;
+    }
+    
+    .switcher button {
+      padding: var(--spacing-1) var(--spacing-3);
+      background-color: var(--colors-background-primary);
+      border: 1px solid var(--colors-border-primary);
+      border-radius: var(--rounded-sm);
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--colors-text-primary);
+    }
+    
+    .switcher button:hover {
+      background-color: var(--colors-background-tertiary);
+    }
+    
+    .switcher button.active {
+      background-color: var(--colors-primary-500);
+      color: var(--colors-neutral-0);
+      border-color: var(--colors-primary-500);
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+      
+      .status-strip {
+        left: 0;
+      }
+      
+      .grid-4 {
+        grid-column: span 6;
+      }
+      
+      .grid-7 {
+        grid-column: span 12;
+      }
+      
+      .grid-5 {
+        grid-column: span 12;
+      }
+    }
+  </style>
+
+<style data-aphrodite-variants>
+[data-variant="brand-a"] {
+  --colors-background-primary: #faf8f2;
+  --colors-background-secondary: #f0ede4;
+  --colors-background-tertiary: #e4e0d4;
+  --colors-border-primary: #d4cfbf;
+  --colors-border-secondary: #e4e0d4;
+  --colors-elevation-1: rgba(0,0,0,0.03);
+  --colors-elevation-2: rgba(0,0,0,0.06);
+  --colors-elevation-3: rgba(0,0,0,0.10);
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #eeeee8;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d5d5cc;
+  --colors-neutral-300: #a8a89e;
+  --colors-neutral-400: #7a7a6e;
+  --colors-neutral-50: #f8f8f5;
+  --colors-neutral-500: #525248;
+  --colors-neutral-600: #3a3a32;
+  --colors-neutral-700: #2a2a24;
+  --colors-neutral-800: #1a1a16;
+  --colors-neutral-900: #0e0e0c;
+  --colors-primary-100: #dcfce7;
+  --colors-primary-200: #a7d8be;
+  --colors-primary-300: #6ab58e;
+  --colors-primary-400: #3d8f66;
+  --colors-primary-50: #f0fdf4;
+  --colors-primary-500: #1a6b42;
+  --colors-primary-600: #145936;
+  --colors-primary-700: #0e4429;
+  --colors-primary-800: #093020;
+  --colors-primary-900: #051f15;
+  --colors-severity-caution: #b45309;
+  --colors-severity-critical: #b91c1c;
+  --colors-severity-info: #2563eb;
+  --colors-severity-nominal: #1a6b42;
+  --colors-text-primary: #1c1a14;
+  --colors-text-secondary: #5c5848;
+  --colors-text-tertiary: #8a8470;
+  --rounded-lg: 6px;
+  --rounded-md: 4px;
+  --rounded-none: 0px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Source Sans 3;
+  --typography-body-weight: 400;
+  --typography-cjk-body-family: Source Han Sans;
+  --typography-cjk-body-weight: 400;
+  --typography-cjk-display-family: Source Han Sans;
+  --typography-cjk-display-weight: 700;
+  --typography-display-family: Source Sans 3;
+  --typography-display-weight: 700;
+  --typography-mono-family: IBM Plex Mono;
+  --typography-mono-weight: 400;
+  --bg: #faf8f2;
+  --fg: #1c1a14;
+  --muted: #1a6b42;
+}
+[data-variant="brand-b"] {
+  --colors-background-primary: #f4f6f8;
+  --colors-background-secondary: #e8ecf0;
+  --colors-background-tertiary: #d4dae0;
+  --colors-border-primary: #c0c8d2;
+  --colors-border-secondary: #d4dae0;
+  --colors-elevation-1: rgba(0,0,0,0.04);
+  --colors-elevation-2: rgba(0,0,0,0.07);
+  --colors-elevation-3: rgba(0,0,0,0.11);
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #eeeee8;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d5d5cc;
+  --colors-neutral-300: #a8a89e;
+  --colors-neutral-400: #7a7a6e;
+  --colors-neutral-50: #f8f8f5;
+  --colors-neutral-500: #525248;
+  --colors-neutral-600: #3a3a32;
+  --colors-neutral-700: #2a2a24;
+  --colors-neutral-800: #1a1a16;
+  --colors-neutral-900: #0e0e0c;
+  --colors-primary-100: #dcfce7;
+  --colors-primary-200: #a7d8be;
+  --colors-primary-300: #6ab58e;
+  --colors-primary-400: #3d8f66;
+  --colors-primary-50: #f0fdf4;
+  --colors-primary-500: #1a6b42;
+  --colors-primary-600: #145936;
+  --colors-primary-700: #0e4429;
+  --colors-primary-800: #093020;
+  --colors-primary-900: #051f15;
+  --colors-severity-caution: #b45309;
+  --colors-severity-critical: #b91c1c;
+  --colors-severity-info: #2563eb;
+  --colors-severity-nominal: #1a6b42;
+  --colors-text-primary: #141820;
+  --colors-text-secondary: #485060;
+  --colors-text-tertiary: #788494;
+  --rounded-lg: 6px;
+  --rounded-md: 4px;
+  --rounded-none: 0px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Source Sans 3;
+  --typography-body-weight: 400;
+  --typography-cjk-body-family: Source Han Sans;
+  --typography-cjk-body-weight: 400;
+  --typography-cjk-display-family: Source Han Sans;
+  --typography-cjk-display-weight: 700;
+  --typography-display-family: Source Sans 3;
+  --typography-display-weight: 700;
+  --typography-mono-family: IBM Plex Mono;
+  --typography-mono-weight: 400;
+  --bg: #f4f6f8;
+  --fg: #141820;
+  --muted: #1a6b42;
+}
+[data-variant="dark"] {
+  --colors-background-primary: #0e0e0c;
+  --colors-background-secondary: #1a1a16;
+  --colors-background-tertiary: #2a2a24;
+  --colors-border-primary: #3a3a32;
+  --colors-border-secondary: #2a2a24;
+  --colors-elevation-1: rgba(255,255,255,0.04);
+  --colors-elevation-2: rgba(255,255,255,0.08);
+  --colors-elevation-3: rgba(255,255,255,0.12);
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #eeeee8;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d5d5cc;
+  --colors-neutral-300: #a8a89e;
+  --colors-neutral-400: #7a7a6e;
+  --colors-neutral-50: #f8f8f5;
+  --colors-neutral-500: #525248;
+  --colors-neutral-600: #3a3a32;
+  --colors-neutral-700: #2a2a24;
+  --colors-neutral-800: #1a1a16;
+  --colors-neutral-900: #0e0e0c;
+  --colors-primary-100: #dcfce7;
+  --colors-primary-200: #a7d8be;
+  --colors-primary-300: #6ab58e;
+  --colors-primary-400: #3d8f66;
+  --colors-primary-50: #f0fdf4;
+  --colors-primary-500: #1a6b42;
+  --colors-primary-600: #145936;
+  --colors-primary-700: #0e4429;
+  --colors-primary-800: #093020;
+  --colors-primary-900: #051f15;
+  --colors-severity-caution: #b45309;
+  --colors-severity-critical: #b91c1c;
+  --colors-severity-info: #2563eb;
+  --colors-severity-nominal: #1a6b42;
+  --colors-text-primary: #eeeee8;
+  --colors-text-secondary: #a8a89e;
+  --colors-text-tertiary: #7a7a6e;
+  --rounded-lg: 6px;
+  --rounded-md: 4px;
+  --rounded-none: 0px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Source Sans 3;
+  --typography-body-weight: 400;
+  --typography-cjk-body-family: Source Han Sans;
+  --typography-cjk-body-weight: 400;
+  --typography-cjk-display-family: Source Han Sans;
+  --typography-cjk-display-weight: 700;
+  --typography-display-family: Source Sans 3;
+  --typography-display-weight: 700;
+  --typography-mono-family: IBM Plex Mono;
+  --typography-mono-weight: 400;
+  --bg: #0e0e0c;
+  --fg: #eeeee8;
+  --muted: #1a6b42;
+}
+[data-variant="light"] {
+  --colors-background-primary: #ffffff;
+  --colors-background-secondary: #f8f8f5;
+  --colors-background-tertiary: #eeeee8;
+  --colors-border-primary: #d5d5cc;
+  --colors-border-secondary: #eeeee8;
+  --colors-elevation-1: rgba(0,0,0,0.04);
+  --colors-elevation-2: rgba(0,0,0,0.08);
+  --colors-elevation-3: rgba(0,0,0,0.12);
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #eeeee8;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #d5d5cc;
+  --colors-neutral-300: #a8a89e;
+  --colors-neutral-400: #7a7a6e;
+  --colors-neutral-50: #f8f8f5;
+  --colors-neutral-500: #525248;
+  --colors-neutral-600: #3a3a32;
+  --colors-neutral-700: #2a2a24;
+  --colors-neutral-800: #1a1a16;
+  --colors-neutral-900: #0e0e0c;
+  --colors-primary-100: #dcfce7;
+  --colors-primary-200: #a7d8be;
+  --colors-primary-300: #6ab58e;
+  --colors-primary-400: #3d8f66;
+  --colors-primary-50: #f0fdf4;
+  --colors-primary-500: #1a6b42;
+  --colors-primary-600: #145936;
+  --colors-primary-700: #0e4429;
+  --colors-primary-800: #093020;
+  --colors-primary-900: #051f15;
+  --colors-severity-caution: #b45309;
+  --colors-severity-critical: #b91c1c;
+  --colors-severity-info: #2563eb;
+  --colors-severity-nominal: #1a6b42;
+  --colors-text-primary: #1a1a16;
+  --colors-text-secondary: #525248;
+  --colors-text-tertiary: #7a7a6e;
+  --rounded-lg: 6px;
+  --rounded-md: 4px;
+  --rounded-none: 0px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Source Sans 3;
+  --typography-body-weight: 400;
+  --typography-cjk-body-family: Source Han Sans;
+  --typography-cjk-body-weight: 400;
+  --typography-cjk-display-family: Source Han Sans;
+  --typography-cjk-display-weight: 700;
+  --typography-display-family: Source Sans 3;
+  --typography-display-weight: 700;
+  --typography-mono-family: IBM Plex Mono;
+  --typography-mono-weight: 400;
+  --bg: #ffffff;
+  --fg: #1a1a16;
+  --muted: #1a6b42;
+}
+body{background:var(--bg);color:var(--fg);}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&display=swap">
+</head>
+<body>
+  <div class="switcher">
+    <button class="active" onclick="setVariant('light')">light</button>
+    <button onclick="setVariant('dark')">dark</button>
+    <button onclick="setVariant('brand-a')">brand-a</button>
+    <button onclick="setVariant('brand-b')">brand-b</button>
+  </div>
+  
+  <nav class="sidebar">
+    <div style="padding: 0 var(--spacing-4) var(--spacing-8);">
+      <h2 style="font-size: 20.3px; color: var(--colors-primary-500);">Aesculapius</h2>
+    </div>
+    
+    <a href="#" class="sidebar-item active">
+      <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+      </svg>
+      Dashboard
+    </a>
+    
+    <a href="#" class="sidebar-item">
+      <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"></path>
+        <rect x="9" y="3" width="6" height="4"></rect>
+        <line x1="9" y1="9" x2="15" y2="9"></line>
+        <line x1="9" y1="13" x2="15" y2="13"></line>
+        <line x1="9" y1="17" x2="13" y2="17"></line>
+      </svg>
+      Enrollments
+    </a>
+    
+    <a href="#" class="sidebar-item">
+      <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14.121 14.121L19 19M17 10h2a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2h2m8 0V7a4 4 0 00-8 0v3m-4 6a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H5a2 2 0 01-2-2v-2z"></path>
+      </svg>
+      Adverse Events
+    </a>
+    
+    <a href="#" class="sidebar-item">
+      <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"></path>
+      </svg>
+      Sites
+    </a>
+    
+    <a href="#" class="sidebar-item">
+      <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+      </svg>
+      Reports
+    </a>
+    
+    <a href="#" class="sidebar-item">
+      <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+      </svg>
+      Settings
+    </a>
+  </nav>
+  
+  <div class="main-content">
+    <div class="top-bar">
+      <div class="trial-info">TRIAL-2023-PHASE3-ONC-001</div>
+      
+      <div class="filter-chips">
+        <button class="filter-chip active">All Cohorts</button>
+        <button class="filter-chip">A</button>
+        <button class="filter-chip">B</button>
+        <button class="filter-chip">C</button>
+        <button class="filter-chip">90 Days</button>
+        <button class="filter-chip">1 Year</button>
+      </div>
+    </div>
+    
+    <div class="container">
+      <div class="grid grid-12" style="margin-top: var(--spacing-6);">
+        <!-- Metric Tiles -->
+        <div class="grid grid-12">
+          <div class="grid-4">
+            <div class="card">
+              <div class="metric-tile">
+                <div>
+                  <div class="metric-label">Total Enrolled</div>
+                  <div class="metric-value">1,847</div>
+                </div>
+                <div class="metric-trend trend-up">
+                  ↑ 12% vs last week
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="grid-4">
+            <div class="card">
+              <div class="metric-tile">
+                <div>
+                  <div class="metric-label">Enrollment Rate</div>
+                  <div class="metric-value">127/week</div>
+                </div>
+                <div class="metric-trend trend-down">
+                  ↓ 8% vs target
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="grid-4">
+            <div class="card">
+              <div class="metric-tile">
+                <div>
+                  <div class="metric-label">Active Sites</div>
+                  <div class="metric-value">32</div>
+                </div>
+                <div class="metric-trend trend-nominal">
+                  → No change
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="grid-4">
+            <div class="card">
+              <div class="metric-tile">
+                <div>
+                  <div class="metric-label">Retention Rate</div>
+                  <div class="metric-value">84.7%</div>
+                </div>
+                <div class="metric-trend trend-up">
+                  ↑ 2.1% vs last month
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="grid-4">
+            <div class="card">
+              <div class="metric-tile">
+                <div>
+                  <div class="metric-label">Open Adverse Events</div>
+                  <div class="metric-value">24</div>
+                </div>
+                <div class="metric-trend trend-up">
+                  ↑ 3 new this week
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="grid-4">
+            <div class="card">
+              <div class="metric-tile">
+                <div>
+                  <div class="metric-label">Days to Database Lock</div>
+                  <div class="metric-value">92</div>
+                </div>
+                <div class="metric-trend trend-down">
+                  ↓ 3 days ahead of schedule
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Charts -->
+        <div class="grid grid-12" style="margin-top: var(--spacing-8);">
+          <div class="grid-7">
+            <div class="card">
+              <h3 class="chart-title">Enrollment Rates by Site</h3>
+              <div class="chart-container">
+                <svg viewBox="0 0 615 280" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Grid lines -->
+                  <line x1="60" y1="240" x2="560" y2="240" stroke="var(--colors-border-primary)" stroke-width="1"></line>
+                  <line x1="60" y1="200" x2="560" y2="200" stroke="var(--colors-border-secondary)" stroke-width="1"></line>
+                  <line x1="60" y1="160" x2="560" y2="160" stroke="var(--colors-border-secondary)" stroke-width="1"></line>
+                  <line x1="60" y1="120" x2="560" y2="120" stroke="var(--colors-border-secondary)" stroke-width="1"></line>
+                  <line x1="60" y1="80" x2="560" y2="80" stroke="var(--colors-border-secondary)" stroke-width="1"></line>
+                  <line x1="60" y1="40" x2="560" y2="40" stroke="var(--colors-border-secondary)" stroke-width="1"></line>
+                  
+                  <!-- Y-axis labels -->
+                  <text x="50" y="245" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="end" class="mono">0</text>
+                  <text x="50" y="205" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="end" class="mono">20</text>
+                  <text x="50" y="165" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="end" class="mono">40</text>
+                  <text x="50" y="125" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="end" class="mono">60</text>
+                  <text x="50" y="85" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="end" class="mono">80</text>
+                  <text x="50" y="45" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="end" class="mono">100</text>
+                  
+                  <!-- X-axis labels -->
+                  <text x="60" y="255" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="middle" class="mono">Jan</text>
+                  <text x="160" y="255" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="middle" class="mono">Feb</text>
+                  <text x="260" y="255" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="middle" class="mono">Mar</text>
+                  <text x="360" y="255" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="middle" class="mono">Apr</text>
+                  <text x="460" y="255" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="middle" class="mono">May</text>
+                  <text x="560" y="255" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="middle" class="mono">Jun</text>
+                  
+                  <!-- Site 1 line -->
+                  <polyline points="60,200 160,180 260,160 360,140 460,120 560,100" 
+                            fill="none" stroke="var(--colors-neutral-300)" stroke-width="2"></polyline>
+                  
+                  <!-- Site 2 line -->
+                  <polyline points="60,210 160,195 260,180 360,165 460,150 560,135" 
+                            fill="none" stroke="var(--colors-neutral-300)" stroke-width="2"></polyline>
+                  
+                  <!-- Site 3 line -->
+                  <polyline points="60,220 160,210 260,195 360,180 460,165 560,150" 
+                            fill="none" stroke="var(--colors-neutral-300)" stroke-width="2"></polyline>
+                  
+                  <!-- Site 4 line (selected) -->
+                  <polyline points="60,190 160,170 260,145 360,115 460,85 560,60" 
+                            fill="none" stroke="var(--colors-primary-500)" stroke-width="3"></polyline>
+                  
+                  <!-- Site 5 line -->
+                  <polyline points="60,230 160,225 260,210 360,195 460,180 560,165" 
+                            fill="none" stroke="var(--colors-neutral-300)" stroke-width="2"></polyline>
+                  
+                  <!-- Data points for Site 4 -->
+                  <circle cx="60" cy="190" r="4" fill="var(--colors-primary-500)"></circle>
+                  <circle cx="160" cy="170" r="4" fill="var(--colors-primary-500)"></circle>
+                  <circle cx="260" cy="145" r="4" fill="var(--colors-primary-500)"></circle>
+                  <circle cx="360" cy="115" r="4" fill="var(--colors-primary-500)"></circle>
+                  <circle cx="460" cy="85" r="4" fill="var(--colors-primary-500)"></circle>
+                  <circle cx="560" cy="60" r="4" fill="var(--colors-primary-500)"></circle>
+                </svg>
+              </div>
+            </div>
+          </div>
+          
+          <div class="grid-5">
+            <div class="card">
+              <h3 class="chart-title">Dropout Kaplan-Meier Curve</h3>
+              <div class="chart-container">
+                <svg viewBox="0 0 429 280" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Grid lines -->
+                  <line x1="40" y1="240" x2="380" y2="240" stroke="var(--colors-border-primary)" stroke-width="1"></line>
+                  <line x1="40" y1="200" x2="380" y2="200" stroke="var(--colors-border-secondary)" stroke-width="1"></line>
+                  <line x1="40" y1="160" x2="380" y2="160" stroke="var(--colors-border-secondary)" stroke-width="1"></line>
+                  <line x1="40" y1="120" x2="380" y2="120" stroke="var(--colors-border-secondary)" stroke-width="1"></line>
+                  <line x1="40" y1="80" x2="380" y2="80" stroke="var(--colors-border-secondary)" stroke-width="1"></line>
+                  <line x1="40" y1="40" x2="380" y2="40" stroke="var(--colors-border-secondary)" stroke-width="1"></line>
+                  
+                  <!-- Y-axis labels -->
+                  <text x="30" y="245" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="end" class="mono">0</text>
+                  <text x="30" y="205" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="end" class="mono">20</text>
+                  <text x="30" y="165" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="end" class="mono">40</text>
+                  <text x="30" y="125" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="end" class="mono">60</text>
+                  <text x="30" y="85" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="end" class="mono">80</text>
+                  <text x="30" y="45" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="end" class="mono">100</text>
+                  
+                  <!-- X-axis labels -->
+                  <text x="40" y="255" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="middle" class="mono">0</text>
+                  <text x="115" y="255" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="middle" class="mono">30</text>
+                  <text x="190" y="255" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="middle" class="mono">60</text>
+                  <text x="265" y="255" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="middle" class="mono">90</text>
+                  <text x="340" y="255" font-size="11" fill="var(--colors-text-tertiary)" text-anchor="middle" class="mono">120</text>
+                  
+                  <!-- Confidence band -->
+                  <path d="M40,40 C115,45 190,65 265,90 C340,115 380,140 380,160 L380,240 L40,240 Z" 
+                        fill="var(--colors-primary-200)" opacity="0.3"></path>
+                  
+                  <!-- Main curve -->
+                  <path d="M40,40 C115,45 190,65 265,90 C340,115 380,140 380,160" 
+                        fill="none" stroke="var(--colors-primary-500)" stroke-width="2"></path>
+                  
+                  <!-- Data points -->
+                  <circle cx="40" cy="40" r="3" fill="var(--colors-primary-500)"></circle>
+                  <circle cx="115" cy="45" r="3" fill="var(--colors-primary-500)"></circle>
+                  <circle cx="190" cy="65" r="3" fill="var(--colors-primary-500)"></circle>
+                  <circle cx="265" cy="90" r="3" fill="var(--colors-primary-500)"></circle>
+                  <circle cx="340" cy="115" r="3" fill="var(--colors-primary-500)"></circle>
+                  <circle cx="380" cy="140" r="3" fill="var(--colors-primary-500)"></circle>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Recent Activity Table -->
+        <div class="card" style="margin-top: var(--spacing-8);">
+          <h3 class="section-title">Recent Adverse Events</h3>
+          
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 120px;">Timestamp</th>
+                <th style="width: 100px;">Site</th>
+                <th style="width: 100px;">Participant ID</th>
+                <th>Event Term</th>
+                <th style="width: 80px;">Severity</th>
+                <th style="width: 100px;">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono">2023-05-15 14:32</td>
+                <td class="mono">A-04</td>
+                <td class="mono">P-03284</td>
+                <td>Hypertension</td>
+                <td><span class="severity-badge severity-caution">Caution</span></td>
+                <td>Under Review</td>
+              </tr>
+              <tr>
+                <td class="mono">2023-05-15 10:45</td>
+                <td class="mono">B-12</td>
+                <td class="mono">P-02876</td>
+                <td>Headache</td>
+                <td><span class="severity-badge severity-nominal">Nominal</span></td>
+                <td>Resolved</td>
+              </tr>
+              <tr>
+                <td class="mono">2023-05-14 16:21</td>
+                <td class="mono">C-07</td>
+                <td class="mono">P-03129</td>
+                <td>Neutropenia</td>
+                <td><span class="severity-badge severity-critical">Critical</span></td>
+                <td>Escalated</td>
+              </tr>
+              <tr>
+                <td class="mono">2023-05-14 09:15</td>
+                <td class="mono">A-09</td>
+                <td class="mono">P-02945</td>
+                <td>Nausea</td>
+                <td><span class="severity-badge severity-nominal">Nominal</span></td>
+                <td>Resolved</td>
+              </tr>
+              <tr>
+                <td class="mono">2023-05-13 11:30</td>
+                <td class="mono">B-02</td>
+                <td class="mono">P-03312</td>
+                <td>Arrhythmia</td>
+                <td><span class="severity-badge severity-critical">Critical</span></td>
+                <td>Escalated</td>
+              </tr>
+              <tr>
+                <td class="mono">2023-05-13 08:45</td>
+                <td class="mono">A-01</td>
+                <td class="mono">P-03011</td>
+                <td>Edema</td>
+                <td><span class="severity-badge severity-caution">Caution</span></td>
+                <td>Under Review</td>
+              </tr>
+              <tr>
+                <td class="mono">2023-05-12 15:22</td>
+                <td class="mono">C-11</td>
+                <td class="mono">P-02783</td>
+                <td>Fatigue</td>
+                <td><span class="severity-badge severity-nominal">Nominal</span></td>
+                <td>Resolved</td>
+              </tr>
+              <tr>
+                <td class="mono">2023-05-12 13:10</td>
+                <td class="mono">B-05</td>
+                <td class="mono">P-03291</td>
+                <td>Rash</td>
+                <td><span class="severity-badge severity-caution">Caution</span></td>
+                <td>Under Review</td>
+              </tr>
+              <tr>
+                <td class="mono">2023-05-11 16:45</td>
+                <td class="mono">A-08</td>
+                <td class="mono">P-02907</td>
+                <td>Anemia</td>
+                <td><span class="severity-badge severity-nominal">Nominal</span></td>
+                <td>Resolved</td>
+              </tr>
+              <tr>
+                <td class="mono">2023-05-11 10:30</td>
+                <td class="mono">C-03</td>
+                <td class="mono">P-03158</td>
+                <td>Leukopenia</td>
+                <td><span class="severity-badge severity-caution">Caution</span></td>
+                <td>Under Review</td>
+              </tr>
+              <tr>
+                <td class="mono">2023-05-10 14:20</td>
+                <td class="mono">B-14</td>
+                <td class="mono">P-02835</td>
+                <td>Diarrhea</td>
+                <td><span class="severity-badge severity-nominal">Nominal</span></td>
+                <td>Resolved</td>
+              </tr>
+              <tr>
+                <td class="mono">2023-05-10 09:15</td>
+                <td class="mono">A-06</td>
+                <td class="mono">P-03074</td>
+                <td>Vomiting</td>
+                <td><span class="severity-badge severity-nominal">Nominal</span></td>
+                <td>Resolved</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="status-strip">
+    <div class="connection-status">
+      <div class="connection-dot"></div>
+      <span>Connected</span>
+    </div>
+    <div class="last-update">Last update: 4s ago</div>
+  </div>
+  
+  <script>
+    function setVariant(variant) {
+      document.body.dataset.variant = variant;
+      
+      // Update active state in switcher
+      document.querySelectorAll('.switcher button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+    }
+    
+    // Simulate live updates
+    setInterval(() => {
+      // Update last update time
+      const lastUpdate = document.querySelector('.last-update');
+      const currentSeconds = parseInt(lastUpdate.textContent.match(/\d+/)[0]);
+      const newSeconds = currentSeconds === 300 ? 4 : currentSeconds + 1;
+      lastUpdate.textContent = `Last update: ${newSeconds}s ago`;
+      
+      // Randomly update a metric tile
+      if (Math.random() > 0.7) {
+        const metricValues = document.querySelectorAll('.metric-value');
+        const randomIndex = Math.floor(Math.random() * metricValues.length);
+        const currentValue = metricValues[randomIndex].textContent;
+        
+        // Parse and update with small random change
+        if (currentValue.includes(',')) {
+          const numericValue = parseInt(currentValue.replace(',', ''));
+          const change = Math.floor(Math.random() * 10) - 5;
+          metricValues[randomIndex].textContent = (numericValue + change).toLocaleString();
+        } else if (currentValue.includes('%')) {
+          const numericValue = parseFloat(currentValue.replace('%', ''));
+          const change = (Math.random() * 2 - 1).toFixed(1);
+          metricValues[randomIndex].textContent = `${(parseFloat(change) + numericValue).toFixed(1)}%`;
+        } else if (currentValue.includes('/week')) {
+          const numericValue = parseInt(currentValue.split('/')[0]);
+          const change = Math.floor(Math.random() * 5) - 2;
+          metricValues[randomIndex].textContent = `${Math.max(0, numericValue + change)}/week`;
+        } else {
+          const numericValue = parseInt(currentValue);
+          const change = Math.floor(Math.random() * 3) - 1;
+          metricValues[randomIndex].textContent = Math.max(0, numericValue + change);
+        }
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
