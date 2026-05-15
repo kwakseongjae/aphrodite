@@ -1,0 +1,21 @@
+Pass 27 — clinical-dashboard skill × Galileo persona × clinical-trial intent
+
+Attempt 1: z.ai 400 with body code:500 ("Operation failed") — not retried
+           (only 429/5xx retried at the time).
+Attempt 2 (after provider::is_transient fix): 180 s timeout on the actual
+           request to api.z.ai/api/anthropic/v1/messages. Retry exhausted.
+
+Finding #37 opened
+Context-window pressure when ALL three layers are loaded at maximum:
+  - clinical-dashboard skill body (270 lines)
+  - galileo-galilei persona body + cjk_strategy (long, math-heavy)
+  - wiki refs (linear-app, naver-papago, both substantial)
+  - asset-standards skill body (default, also long)
+Plus the existing design system prompt + intent + Google Labs schema
+shape. z.ai may be timing out on inference rather than returning quickly.
+
+Mitigation ideas (deferred to a later iteration):
+  - Per-call max char budget across persona + skills + wiki, with
+    truncation rather than concatenation when over budget.
+  - Run with --max-turns 0 (design-only) for very-long contexts.
+  - Optional model fallback to glm-4.5-turbo (faster, smaller context).
