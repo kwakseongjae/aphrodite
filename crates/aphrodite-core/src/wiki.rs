@@ -288,14 +288,28 @@ const BUNDLED_WIKI: &[(&str, &str)] = &[
         "teenage-engineering",
         include_str!("../seed-wiki/teenage-engineering.md"),
     ),
+    ("figma-site", include_str!("../seed-wiki/figma-site.md")),
+    (
+        "aesop-website",
+        include_str!("../seed-wiki/aesop-website.md"),
+    ),
 ];
 
 pub fn seed_bundled_wiki() -> Vec<String> {
     let mut newly = Vec::new();
     for (slug, contents) in BUNDLED_WIKI {
         let target = entry_path(slug);
+        // Same self-healing pattern as personas — overwrite an on-disk entry
+        // only if it fails to parse. User edits to a parseable entry are
+        // preserved.
         if target.exists() {
-            continue;
+            if let Ok(text) = fs::read_to_string(&target) {
+                if parse_entry(slug, &text, target.clone()).is_ok() {
+                    continue;
+                }
+            } else {
+                continue;
+            }
         }
         if let Some(parent) = target.parent() {
             if fs::create_dir_all(parent).is_err() {

@@ -178,14 +178,37 @@ const BUNDLED_PERSONAS: &[(&str, &str)] = &[
         "naoto-fukasawa",
         include_str!("../seed-personas/naoto-fukasawa/PERSONA.md"),
     ),
+    (
+        "stefan-sagmeister",
+        include_str!("../seed-personas/stefan-sagmeister/PERSONA.md"),
+    ),
+    (
+        "christoph-niemann",
+        include_str!("../seed-personas/christoph-niemann/PERSONA.md"),
+    ),
+    (
+        "aldo-bakker",
+        include_str!("../seed-personas/aldo-bakker/PERSONA.md"),
+    ),
 ];
 
 pub fn seed_bundled_personas() -> Vec<String> {
     let mut newly = Vec::new();
     for (slug, contents) in BUNDLED_PERSONAS {
         let target = persona_md_path(slug);
+        // If the on-disk file exists AND parses cleanly, leave it alone (user
+        // edits are preserved). If it parses BUT is older than the bundled
+        // copy, leave it alone (deliberate user mod). If it FAILS to parse,
+        // overwrite — a previous broken bundle shouldn't shadow a fix.
         if target.exists() {
-            continue;
+            if let Ok(text) = fs::read_to_string(&target) {
+                if parse_persona(slug, &text, target.clone()).is_ok() {
+                    continue;
+                }
+                // Parse failed — fall through to overwrite.
+            } else {
+                continue;
+            }
         }
         if let Some(parent) = target.parent() {
             if fs::create_dir_all(parent).is_err() {
@@ -275,11 +298,12 @@ mod tests {
     fn seed_bundled_personas_materialises_seven() {
         let _s = Scratch::new();
         let newly = seed_bundled_personas();
-        assert_eq!(newly.len(), 10, "expected 10 seeded personas, got {newly:?}");
+        assert_eq!(newly.len(), 13, "expected 13 seeded personas, got {newly:?}");
         for slug in &[
             "dieter-rams", "massimo-vignelli", "tadao-ando",
             "rei-kawakubo", "ettore-sottsass", "kenya-hara", "galileo-galilei",
             "paul-rand", "charlotte-perriand", "naoto-fukasawa",
+            "stefan-sagmeister", "christoph-niemann", "aldo-bakker",
         ] {
             let p = load(slug).unwrap_or_else(|e| panic!("load {slug}: {e}"));
             assert!(!p.frontmatter.name.is_empty(), "{slug} missing name");

@@ -171,11 +171,23 @@ pub async fn compose(
     );
 
     let raw = provider::call_raw(resolved, SURFACE_SYSTEM_PROMPT, &user, 8192).await?;
-    parse_response(&raw, doc).ok_or_else(|| {
+    let parsed = parse_response(&raw, doc).ok_or_else(|| {
         ProviderError::Malformed(
             "surface response missing SURFACE: marker or <!DOCTYPE html>".into(),
         )
-    })
+    })?;
+    // Finding #37 ceiling: under heavy context the composer occasionally
+    // returns a SURFACE-marker-prefixed but structurally-empty page (the
+    // model ran out of generation tokens before reaching content).
+    // Treat any composition < 1 KB as malformed so the caller can fall back
+    // to the hero template rather than write an empty composition.html.
+    if parsed.html.trim().len() < 1_024 {
+        return Err(ProviderError::Malformed(format!(
+            "surface response parsed but body is suspiciously short ({} chars) — likely composer ran out of generation tokens under heavy context",
+            parsed.html.trim().len()
+        )));
+    }
+    Ok(parsed)
 }
 
 fn parse_response(raw: &str, _doc: &DesignDocument) -> Option<SurfaceOutput> {
