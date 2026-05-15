@@ -1,0 +1,1 @@
+a B2B SaaS landing page for a serverless edge-function platform for Next.js teams

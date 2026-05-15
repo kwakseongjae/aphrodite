@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>edgefn — Aphrodite</title>
+<style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --aphrodite-typography-display: "Space Grotesk", "IBM Plex Sans", Georgia, "Times New Roman", serif;
+    --aphrodite-typography-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant="brand-a"] {
+    --colors-background-primary: #f9f5ee;
+    --colors-background-secondary: #efe9de;
+    --colors-border-primary: rgba(44,37,24,0.12);
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0f0f0;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #d4d4d4;
+    --colors-neutral-300: #a3a3a3;
+    --colors-neutral-400: #737373;
+    --colors-neutral-50: #fafafa;
+    --colors-neutral-500: #525252;
+    --colors-neutral-600: #3a3a3a;
+    --colors-neutral-700: #2a2a2a;
+    --colors-neutral-800: #1a1a1a;
+    --colors-neutral-900: #0e0e10;
+    --colors-neutral-950: #08080a;
+    --colors-primary-100: #dcfce7;
+    --colors-primary-200: #bbf7d0;
+    --colors-primary-300: #86efac;
+    --colors-primary-400: #34d399;
+    --colors-primary-50: #f0fdf4;
+    --colors-primary-500: #10b981;
+    --colors-primary-600: #059669;
+    --colors-primary-700: #047857;
+    --colors-primary-800: #065f46;
+    --colors-primary-900: #064e3b;
+    --colors-surface-raised: #161618;
+    --colors-surface-sunken: #0a0a0c;
+    --colors-text-primary: #2c2518;
+    --colors-text-secondary: #6b5d48;
+    --rounded-lg: 12px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-40: 160px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: IBM Plex Sans;
+    --typography-body-weight: 400;
+    --typography-display-family: Space Grotesk;
+    --typography-display-weight: 700;
+    --typography-mono-family: JetBrains Mono;
+    --typography-mono-weight: 400;
+    --bg: #f9f5ee;
+    --fg: #2c2518;
+    --accent: #10b981;
+    --muted: #86efac;
+  }
+  
+  [data-variant="brand-b"] {
+    --colors-background-primary: #f0f2f5;
+    --colors-background-secondary: #e2e5ea;
+    --colors-border-primary: rgba(28,32,40,0.10);
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0f0f0;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #d4d4d4;
+    --colors-neutral-300: #a3a3a3;
+    --colors-neutral-400: #737373;
+    --colors-neutral-50: #fafafa;
+    --colors-neutral-500: #525252;
+    --colors-neutral-600: #3a3a3a;
+    --colors-neutral-700: #2a2a2a;
+    --colors-neutral-800: #1a1a1a;
+    --colors-neutral-900: #0e0e10;
+    --colors-neutral-950: #08080a;
+    --colors-primary-100: #dcfce7;
+    --colors-primary-200: #bbf7d0;
+    --colors-primary-300: #86efac;
+    --colors-primary-400: #34d399;
+    --colors-primary-50: #f0fdf4;
+    --colors-primary-500: #10b981;
+    --colors-primary-600: #059669;
+    --colors-primary-700: #047857;
+    --colors-primary-800: #065f46;
+    --colors-primary-900: #064e3b;
+    --colors-surface-raised: #161618;
+    --colors-surface-sunken: #0a0a0c;
+    --colors-text-primary: #1c2028;
+    --colors-text-secondary: #5a6170;
+    --rounded-lg: 12px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-40: 160px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: IBM Plex Sans;
+    --typography-body-weight: 400;
+    --typography-display-family: Space Grotesk;
+    --typography-display-weight: 700;
+    --typography-mono-family: JetBrains Mono;
+    --typography-mono-weight: 400;
+    --bg: #f0f2f5;
+    --fg: #1c2028;
+    --accent: #10b981;
+    --muted: #86efac;
+  }
+  
+  [data-variant="dark"] {
+    --colors-background-primary: #08080a;
+    --colors-background-secondary: #161618;
+    --colors-border-primary: rgba(255,255,255,0.08);
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0f0f0;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #d4d4d4;
+    --colors-neutral-300: #a3a3a3;
+    --colors-neutral-400: #737373;
+    --colors-neutral-50: #fafafa;
+    --colors-neutral-500: #525252;
+    --colors-neutral-600: #3a3a3a;
+    --colors-neutral-700: #2a2a2a;
+    --colors-neutral-800: #1a1a1a;
+    --colors-neutral-900: #0e0e10;
+    --colors-neutral-950: #08080a;
+    --colors-primary-100: #dcfce7;
+    --colors-primary-200: #bbf7d0;
+    --colors-primary-300: #86efac;
+    --colors-primary-400: #34d399;
+    --colors-primary-50: #f0fdf4;
+    --colors-primary-500: #10b981;
+    --colors-primary-600: #059669;
+    --colors-primary-700: #047857;
+    --colors-primary-800: #065f46;
+    --colors-primary-900: #064e3b;
+    --colors-surface-raised: #161618;
+    --colors-surface-sunken: #0a0a0c;
+    --colors-text-primary: #e8e8ec;
+    --colors-text-secondary: #8b8b96;
+    --rounded-lg: 12px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-40: 160px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: IBM Plex Sans;
+    --typography-body-weight: 400;
+    --typography-display-family: Space Grotesk;
+    --typography-display-weight: 700;
+    --typography-mono-family: JetBrains Mono;
+    --typography-mono-weight: 400;
+    --bg: #08080a;
+    --fg: #e8e8ec;
+    --accent: #10b981;
+    --muted: #86efac;
+  }
+  
+  [data-variant="light"] {
+    --colors-background-primary: #ffffff;
+    --colors-background-secondary: #f5f5f5;
+    --colors-border-primary: rgba(0,0,0,0.10);
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0f0f0;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #d4d4d4;
+    --colors-neutral-300: #a3a3a3;
+    --colors-neutral-400: #737373;
+    --colors-neutral-50: #fafafa;
+    --colors-neutral-500: #525252;
+    --colors-neutral-600: #3a3a3a;
+    --colors-neutral-700: #2a2a2a;
+    --colors-neutral-800: #1a1a1a;
+    --colors-neutral-900: #0e0e10;
+    --colors-neutral-950: #08080a;
+    --colors-primary-100: #dcfce7;
+    --colors-primary-200: #bbf7d0;
+    --colors-primary-300: #86efac;
+    --colors-primary-400: #34d399;
+    --colors-primary-50: #f0fdf4;
+    --colors-primary-500: #10b981;
+    --colors-primary-600: #059669;
+    --colors-primary-700: #047857;
+    --colors-primary-800: #065f46;
+    --colors-primary-900: #064e3b;
+    --colors-surface-raised: #161618;
+    --colors-surface-sunken: #0a0a0c;
+    --colors-text-primary: #1a1a1a;
+    --colors-text-secondary: #525252;
+    --rounded-lg: 12px;
+    --rounded-md: 8px;
+    --rounded-sm: 4px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-40: 160px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: IBM Plex Sans;
+    --typography-body-weight: 400;
+    --typography-display-family: Space Grotesk;
+    --typography-display-weight: 700;
+    --typography-mono-family: JetBrains Mono;
+    --typography-mono-weight: 400;
+    --bg: #ffffff;
+    --fg: #1a1a1a;
+    --accent: #10b981;
+    --muted: #86efac;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap">
+</head>
+<body data-variant="light">
+  <nav class="switcher" aria-label="Variant switcher">
+    <button data-set="brand-a" aria-pressed="false">brand-a</button>
+    <button data-set="brand-b" aria-pressed="false">brand-b</button>
+    <button data-set="dark" aria-pressed="false">dark</button>
+    <button data-set="light" aria-pressed="true">light</button>
+    </nav>
+  <main class="wrap">
+    <p class="eyebrow">edgefn</p>
+    <h1>Meet edgefn.</h1>
+    <p class="lede">B2B SaaS landing page for a serverless edge-function platform built for Next.js teams Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class="cta" href="#" aria-label="Primary call to action">Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

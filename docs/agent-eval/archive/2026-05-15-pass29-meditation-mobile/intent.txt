@@ -1,0 +1,1 @@
+a mobile app screen for a single-purpose meditation timer with a swipe-up gesture to start a session

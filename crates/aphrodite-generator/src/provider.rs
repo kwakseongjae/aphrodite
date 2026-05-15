@@ -297,7 +297,20 @@ fn is_transient(e: &ProviderError) -> bool {
             // Unknown reqwest failure — treat as transient (likely network)
             true
         }
-        ProviderError::Api { status, .. } => *status == 429 || *status >= 500,
+        ProviderError::Api { status, body } => {
+            if *status == 429 || *status >= 500 {
+                return true;
+            }
+            // z.ai sometimes wraps a 5xx server failure in a 400 HTTP status
+            // with `{"error":{"code":"5xx"}}` inside the body. Detect and treat
+            // as transient.
+            if *status == 400 {
+                if body.contains("\"code\":\"5") || body.contains("Operation failed") {
+                    return true;
+                }
+            }
+            false
+        }
         ProviderError::Malformed(_) => false,
     }
 }
