@@ -1,0 +1,27 @@
+Pass 33 — clinical-dashboard × Galileo with composer retry v2 active
+
+Intent: same as Pass 27. Goal: validate composer retry mitigation closes the
+clinical-dashboard ceiling that opened Finding #37.
+
+Result: design phase still slow (≥15 min wall clock). Aborted before refine.
+The clinical-dashboard intent's combined context (clinical-dashboard skill +
+asset-standards default + Galileo persona + linear-app + naver-papago wiki +
+design system prompt + Google Labs schema) is at the edge of z.ai's
+inference-speed envelope even with caps applied.
+
+Observation: Pass 32 (Niemann × children's-book) successfully landed under the
+same mitigations. The difference: Niemann/Bakker bodies are autobiographical
+prose (concrete, narrative-heavy); Galileo's body is dense with math/measurement
+references that the model may take longer to "settle on."
+
+Realistic mitigation for clinical-dashboard specifically:
+  - Drop the clinical-dashboard scaffold from the design call (still apply at
+    critic time) → keep design call lean
+  - Use a fast-model for the DESIGN phase, not just the composer (current code
+    uses the resolved provider for everything)
+  - Or: accept the cost. Long-context design calls take 10-15 min; for
+    operator-facing dashboards that's tolerable.
+
+Finding #37 carries as "partial close" — Pass 32 validates the composer
+retry path works for editorial-leaning intents; Pass 33's slow design call
+is a different ceiling that hasn't been addressed.

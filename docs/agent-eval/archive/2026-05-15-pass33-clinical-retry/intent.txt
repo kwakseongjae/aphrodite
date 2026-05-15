@@ -1,0 +1,1 @@
+a real-time monitoring dashboard for a phase-3 clinical trial showing enrollment rates per site, dropout curves, and live adverse-event detection
