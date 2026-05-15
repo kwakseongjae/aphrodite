@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.3.3 — 2026-05-15 (afternoon)
+
+### Added
+- **3 new bundled personas** (now 13): `stefan-sagmeister` (provocative autobiographical brand identity), `christoph-niemann` (conceptual illustration), `aldo-bakker` (austere artisan objects). All with `cjk_strategy` field.
+- **2 new wiki entries** (now 13): `figma-site` (design-tool light-default), `aesop-website` (retail with editorial register).
+- **`aphrodite curator`** — Hermes-pattern skill lifecycle review. `--dry-run`, `--stale-after-days`, `--archive-after-days` flags. Only touches `agent_created: true` skills. Active → Stale after 30 days; Active or Stale → Archived after 90 days. Writes `~/.aphrodite/curator/last-run.md`.
+- **CHANGELOG.md** in `Keep a Changelog` format.
+
+### Changed
+- **Self-healing seeders** — `seed_bundled_personas` and `seed_bundled_wiki` now overwrite an on-disk entry only if it fails to parse. User edits to a parseable entry are preserved.
+- **Composer retry v2** (Finding #37 mitigation) — when first composer call returns parsed-but-short, retries with `strip_augmentation(intent)` removing persona/skill/wiki blocks (they're already encoded in DESIGN.md). max_tokens bumped 8192 → 12288 on both attempts.
+- **Persona + scaffold context caps** — `MAX_SCAFFOLD_BODY_CHARS` 4000 → 2500; new `MAX_PERSONA_BLOCK_CHARS` 4000 (with truncation marker).
+- **Provider retry for z.ai wrapped-5xx** — `is_transient` matches `400` status with body containing `"code":"5"` or "Operation failed".
+
+### Fixed
+- **#37 partial close** — Pass 32 (Niemann × children's book) validates the composer retry path: critic now complains about CONTENT (dark variant green undertone), not empty composition. Pass 33 (clinical-dashboard × Galileo) reveals a separate slow-DESIGN-call ceiling that carries as partial.
+
+### Open
+- **#13** brand-name palette recall
+- **#25** composition regenerates every refine
+- **#37 partial** — clinical-dashboard-shape intents still hit slow-DESIGN-call ceiling even with caps. Mitigation ideas: drop the clinical-dashboard scaffold from the design call (apply at critic time only); fast-model for the design call; or accept the cost.
+
+### Catalog (after 0.3.3)
+- 13 personas + 13 wiki entries + 6 skills + 9 MCP tools
+- 9/9 ADR 0004 phases functional
+
 ## 0.3.2 — 2026-05-15
 
 ### Added
