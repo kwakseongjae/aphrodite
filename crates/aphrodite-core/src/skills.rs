@@ -433,6 +433,8 @@ pub fn extract_intent_tags(intent: &str) -> Vec<String> {
         (&["mobile app", "ios app", "android app", "phone app"], "mobile_app"),
         (&["landing", "marketing site", "hero page"], "landing"),
         (&["editorial", "magazine", "long-form", "journal"], "editorial"),
+        (&["identity", "corporate identity", "brand presentation", "wordmark", "logo system"], "identity-system"),
+        (&["consultancy", "agency", "studio practice"], "consultancy"),
         // domain
         (&["furniture", "woodwork", "walnut", "oak", "joinery", "cabinet maker"], "furniture"),
         // "studio" alone is too generic (design studio / music studio / etc.) —

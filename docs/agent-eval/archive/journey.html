@@ -135,9 +135,9 @@
 <body>
 
 <header class="top">
-  <h1>Aphrodite — 19-pass journey</h1>
-  <p class="sub">From an offline deterministic generator (Pass 1) to a fully autonomous creation harness (Pass 19). Each pass listed below carries the artefact that motivated, validated, or extended the architecture. Scroll, or jump via the left rail.</p>
-  <p class="meta">2026-05-13 → 2026-05-14 · ADR 0004 from "stub" to all 9 phases functional · 17 Findings opened, 14 closed</p>
+  <h1>Aphrodite — 25-pass journey</h1>
+  <p class="sub">From an offline deterministic generator (Pass 1) to a fully autonomous creation harness with MCP surface (Pass 23) and a curated design canon (Pass 25). Each pass listed below carries the artefact that motivated, validated, or extended the architecture. Scroll, or jump via the left rail.</p>
+  <p class="meta">2026-05-13 → 2026-05-15 · ADR 0004 from "stub" to all 9 phases functional · 19 Findings opened, 16 closed · 10 personas + 11 wiki entries bundled</p>
 </header>
 
 <div class="layout">
@@ -167,6 +167,12 @@
   <a href="#p17">Pass 17 — wiki CLI</a>
   <a href="#p18">Pass 18 — auto-fetch</a>
   <a href="#p19" class="major">Pass 19 — assets manage</a>
+  <div class="group">Expansion</div>
+  <a href="#p20" class="major">Pass 20 — composer radical</a>
+  <a href="#p22">Pass 22 — Naoto debut</a>
+  <a href="#p23" class="major">Pass 23 — MCP surface</a>
+  <a href="#p24">Pass 24 — Paul Rand</a>
+  <a href="#p25">Pass 25 — Perriand</a>
 </nav>
 
 <main>
@@ -331,6 +337,46 @@
   <div class="pass-head"><span class="num">PASS 19</span><h3>Asset manage — last ADR 0004 stub closed</h3><span class="date">2026-05-14</span><span class="tag fix">9/9 phases done</span></div>
   <div class="pass-body"><p><code>&lt;project&gt;/.aphrodite/assets/{refs,uploads,icons}/</code>. Content-hash dedupe via FNV-1a-128 16-hex prefix. Create flow materialises wiki entries' og_images into <code>refs/</code>. <code>aphrodite assets list/clean</code> verbs. End-to-end demo: <code>wiki add stripe.com --auto-fetch</code> → <code>aphrodite create "B2B fintech landing"</code> → 305 KB Stripe OG image materialised, deduplicated.</p></div>
   <div class="links"><span class="pill">ADR 0004 structurally complete</span></div>
+</article>
+
+<div class="phase-banner">
+  <h2>Expansion (Pass 20 – Pass 25)</h2>
+  <p class="pdesc">Composer radical-register exception (closes #36), 3 new personas (Rand / Perriand / Naoto), 4 new wiki entries, MCP create surface, cost-estimate dry-run.</p>
+</div>
+
+<article class="pass" id="p20">
+  <div class="pass-head"><span class="num">PASS 20</span><h3>Composer radical-register (closes #36)</h3><span class="date">2026-05-15</span><span class="tag fix">composer 30 KB</span></div>
+  <div class="pass-body"><p>Kawakubo × deconstructive lookbook re-run after surface composer prompt gained explicit "radical-register exception" section. Composition.html: <strong>30,686 bytes</strong> (vs Pass 13's empty composition.html for the same intent). Critic correctly cited persona principle: <em>"Noto Serif KR violates the persona's rejection of 'pleasant-looking typography' and fails to deliver the register-mixing violence the brief requires."</em></p></div>
+  <div class="preview-frame"><iframe src="2026-05-15-pass20-radical-register/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-15-pass20-radical-register/">archive ↗</a><span class="pill">489 s · 1 refine</span></div>
+</article>
+
+<article class="pass" id="p22">
+  <div class="pass-head"><span class="num">PASS 22</span><h3>Naoto Fukasawa persona debut</h3><span class="date">2026-05-15</span><span class="tag persona">new persona</span></div>
+  <div class="pass-body"><p>Wall-mounted radio with pull-cord intent — Naoto's wall-mounted-CD-player gesture vocabulary applied. Critic quoted persona principle verbatim: <em>"type that 'recedes' — Fukasawa champions Avenir Light, Inter Regular, Helvetica Light; a 16th-century literary serif announces itself where the design should disappear into use."</em> Initial EB Garamond → refined to Inter. Composition 33.3 KB.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-15-pass22-naoto-debut/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-15-pass22-naoto-debut/">archive ↗</a><span class="pill">452 s · 1 refine</span></div>
+</article>
+
+<article class="pass" id="p23">
+  <div class="pass-head"><span class="num">PASS 23</span><h3>MCP create surface — end-to-end smoke</h3><span class="date">2026-05-15</span><span class="tag fix">5 MCP tools live</span></div>
+  <div class="pass-body"><p>Stdin-fed JSON-RPC sequence (initialize → notifications/initialized → tools/call create) against <code>aphrodite-mcp</code>. Same Naoto × wall-mounted-radio intent as Pass 22, this time via the MCP surface. Wall 444 s. Returned full structuredContent with loop turn log, harmonize report, phases map. <strong>Claude Code / Codex / Hermes hosts can now call <code>create</code> directly with the same shape the CLI uses.</strong></p></div>
+  <div class="preview-frame"><iframe src="2026-05-15-pass23-mcp-create/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-15-pass23-mcp-create/">archive ↗</a><span class="pill">MCP surface validated</span></div>
+</article>
+
+<article class="pass" id="p24">
+  <div class="pass-head"><span class="num">PASS 24</span><h3>Paul Rand × mid-century consultancy</h3><span class="date">2026-05-15</span><span class="tag persona">critic learns font-license</span></div>
+  <div class="pass-body"><p>Paul Rand persona debut. Critic surfaced a NEW capability — <strong>font-availability reasoning</strong>: <em>"Graphik is a proprietary commercial font unavailable via Google Fonts or free CDNs, meaning the HTML will fall back to Helvetica Neue/Arial — undermining the claimed typographic authority."</em> Refined to Playfair Display + Inter. This is the critic reasoning about *downstream rendering*, not just register fit.</p></div>
+  <div class="preview-frame"><iframe src="2026-05-15-pass24-corporate-id/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-15-pass24-corporate-id/">archive ↗</a><span class="pill">587 s · 1 refine</span></div>
+</article>
+
+<article class="pass" id="p25">
+  <div class="pass-head"><span class="num">PASS 25</span><h3>Charlotte Perriand × Korean studio</h3><span class="date">2026-05-15</span><span class="tag persona">cleanest debut</span></div>
+  <div class="pass-body"><p>Charlotte Perriand persona debut. intent_tags = [portfolio, furniture, architecture] all fired cleanly. Wiki refs apartamento + pentagram. <strong>0 refines, 0.88 satisfaction in 248 s</strong> — cleanest first-time-dogfood for a new persona. harmonize injected Nanum Myeongjo + Pretendard for CJK — lifted directly from Perriand's <code>cjk_strategy: "Korean: Pretendard Light for body, Nanum Myeongjo Regular for display — never bold weights."</code></p></div>
+  <div class="preview-frame"><iframe src="2026-05-15-pass25-arch-studio/composition.html" sandbox="allow-same-origin"></iframe></div>
+  <div class="links"><a href="2026-05-15-pass25-arch-studio/">archive ↗</a><span class="pill">248 s · 0 refines</span></div>
 </article>
 
 <footer>
