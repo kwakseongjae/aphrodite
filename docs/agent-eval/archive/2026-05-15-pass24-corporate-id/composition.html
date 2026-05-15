@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forma Industrial — Design Consultancy</title>
+<style>
+  :root {
+    --colors-primary-50: #fef5ee;
+    --colors-primary-100: #fce0c9;
+    --colors-primary-200: #f5b88e;
+    --colors-primary-300: #e88a52;
+    --colors-primary-400: #d66428;
+    --colors-primary-500: #c8521a;
+    --colors-primary-600: #a83f12;
+    --colors-primary-700: #822e0d;
+    --colors-primary-800: #5f210e;
+    --colors-primary-900: #3d160a;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-50: #faf9f7;
+    --colors-neutral-100: #f0eeea;
+    --colors-neutral-200: #e0ddd6;
+    --colors-neutral-300: #c9c4ba;
+    --colors-neutral-400: #9e9890;
+    --colors-neutral-500: #73706a;
+    --colors-neutral-600: #524f4b;
+    --colors-neutral-700: #3d3a37;
+    --colors-neutral-800: #2a2826;
+    --colors-neutral-900: #1a1918;
+    --colors-neutral-1000: #000000;
+    --colors-accent-50: #eef6f3;
+    --colors-accent-100: #c8e8dc;
+    --colors-accent-200: #8dd4ba;
+    --colors-accent-300: #53be98;
+    --colors-accent-400: #2d9d76;
+    --colors-accent-500: #1a7a5a;
+    --colors-accent-600: #145f45;
+    --colors-accent-700: #104836;
+    --colors-accent-800: #0c3327;
+    --colors-accent-900: #081f18;
+    --typography-display-family: 'Playfair Display', Georgia, serif;
+    --typography-body-family: 'Inter', -apple-system, Helvetica, Arial, sans-serif;
+    --typography-mono-family: 'IBM Plex Mono', 'Courier New', monospace;
+    --spacing-1: 4px;
+    --spacing-2: 8px;
+    --spacing-3: 12px;
+    --spacing-4: 16px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --rounded-none: 0px;
+    --rounded-sm: 2px;
+    --rounded-md: 4px;
+    --rounded-lg: 8px;
+    --bg-primary: var(--colors-neutral-50);
+    --text-primary: var(--colors-neutral-900);
+    --text-muted: var(--colors-neutral-500);
+    --surface-raised: var(--colors-neutral-0);
+    --surface-recessed: var(--colors-neutral-100);
+    --border-structural: var(--colors-neutral-300);
+  }
+
+  [data-variant="dark"] {
+    --bg-primary: var(--colors-neutral-900);
+    --text-primary: var(--colors-neutral-100);
+    --text-muted: var(--colors-neutral-400);
+    --surface-raised: var(--colors-neutral-800);
+    --surface-recessed: var(--colors-neutral-1000);
+    --border-structural: var(--colors-neutral-600);
+  }
+
+  [data-variant="brand-a"] {
+    --bg-primary: var(--colors-accent-50);
+    --text-primary: var(--colors-accent-800);
+    --text-muted: var(--colors-accent-600);
+    --surface-raised: var(--colors-neutral-0);
+    --surface-recessed: var(--colors-accent-100);
+    --border-structural: var(--colors-accent-200);
+  }
+
+  [data-variant="brand-b"] {
+    --bg-primary: var(--colors-neutral-200);
+    --text-primary: var(--colors-neutral-800);
+    --text-muted: var(--colors-neutral-600);
+    --surface-raised: var(--colors-neutral-100);
+    --surface-recessed: var(--colors-neutral-300);
+    --border-structural: var(--colors-neutral-400);
+  }
+
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--typography-body-family);
+    font-weight: 400;
+    line-height: 1.55;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    overflow-x: hidden;
+  }
+
+  /* Switcher */
+  .switcher {
+    position: fixed;
+    top: var(--spacing-4);
+    right: var(--spacing-4);
+    z-index: 1000;
+    display: flex;
+    gap: var(--spacing-1);
+    background: var(--surface-raised);
+    border: 1px solid var(--border-structural);
+    padding: var(--spacing-1);
+    border-radius: var(--rounded-md);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .switcher button {
+    font-family: var(--typography-body-family);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: var(--spacing-1) var(--spacing-3);
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: var(--rounded-sm);
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .switcher button:hover {
+    color: var(--text-primary);
+    background: var(--surface-recessed);
+  }
+
+  .switcher button.active {
+    background: var(--colors-primary-500);
+    color: var(--colors-neutral-0);
+  }
+
+  /* Navigation header */
+  .site-nav {
+    padding: var(--spacing-6) var(--spacing-16);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-structural);
+  }
+
+  .site-logo {
+    font-family: var(--typography-mono-family);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+
+  .site-logo span {
+    color: var(--colors-primary-500);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: var(--spacing-8);
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--typography-body-family);
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover {
+    color: var(--colors-primary-500);
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    padding: calc(var(--spacing-16) * 2.5) var(--spacing-16) var(--spacing-16);
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero-word {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: clamp(64px, 10vw, 96px);
+    line-height: 1;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+  }
+
+  .hero-subline {
+    margin-top: var(--spacing-6);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    max-width: 480px;
+    line-height: 1.6;
+  }
+
+  .hero-description {
+    margin-top: var(--spacing-8);
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 520px;
+    line-height: 1.6;
+  }
+
+  /* Off-grid geometric: the sienna square */
+  .geo-square {
+    position: absolute;
+    top: 15%;
+    right: 8%;
+    width: 120px;
+    height: 120px;
+    background-color: var(--colors-primary-500);
+    opacity: 0.9;
+  }
+
+  /* Rule */
+  .section-rule {
+    width: 100%;
+    height: 1px;
+    background-color: var(--colors-primary-500);
+    border: none;
+    margin: 0;
+  }
+
+  /* Projects section */
+  .projects-section {
+    padding: var(--spacing-16);
+  }
+
+  .section-header {
+    margin-bottom: var(--spacing-12);
+  }
+
+  .section-label {
+    font-family: var(--typography-mono-family);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--colors-primary-500);
+    margin-bottom: var(--spacing-3);
+  }
+
+  .section-title {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 64px;
+    line-height: 1.1;
+    color: var(--text-primary);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-8);
+  }
+
+  .project-card {
+    position: relative;
+    border: 1px solid var(--border-structural);
+    background: var(--surface-raised);
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+  }
+
+  .project-card:hover {
+    border-color: var(--colors-primary-500);
+  }
+
+  .project-card:hover .project-thumbnail {
+    transform: scale(1.02);
+  }
+
+  .project-card:hover .project-link {
+    color: var(--colors-primary-500);
+  }
+
+  .project-thumbnail {
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: var(--surface-recessed);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: transform 0.4s ease;
+  }
+
+  .project-thumbnail svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.6;
+  }
+
+  .project-info {
+    padding: var(--spacing-6);
+  }
+
+  .project-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    margin-bottom: var(--spacing-3);
+  }
+
+  .project-tag {
+    font-family: var(--typography-mono-family);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .project-year {
+    font-family: var(--typography-mono-family);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .meta-separator {
+    width: 4px;
+    height: 1px;
+    background: var(--border-structural);
+  }
+
+  .project-name {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-2);
+  }
+
+  .project-desc {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: var(--spacing-4);
+  }
+
+  .project-link {
+    font-family: var(--typography-body-family);
+    font-size: 14px;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .project-link::after {
+    content: ' →';
+  }
+
+  /* Philosophy section */
+  .philosophy-section {
+    padding: calc(var(--spacing-16) * 1.5) var(--spacing-16);
+    border-top: 1px solid var(--border-structural);
+    position: relative;
+  }
+
+  .philosophy-content {
+    max-width: 680px;
+  }
+
+  .philosophy-text {
+    font-size: 18px;
+    line-height: 1.7;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-6);
+  }
+
+  .philosophy-text strong {
+    color: var(--text-primary);
+    font-weight: 400;
+  }
+
+  /* Drop cap */
+  .drop-cap::first-letter {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 64px;
+    float: left;
+    line-height: 0.8;
+    margin-right: var(--spacing-2);
+    margin-top: var(--spacing-1);
+    color: var(--colors-primary-500);
+  }
+
+  /* Methodology list */
+  .method-list {
+    list-style: none;
+    margin-top: var(--spacing-8);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-4) var(--spacing-8);
+  }
+
+  .method-list li {
+    font-size: 15px;
+    color: var(--text-muted);
+    padding-left: var(--spacing-4);
+    border-left: 2px solid var(--colors-primary-500);
+  }
+
+  /* Contact / Footer */
+  .contact-section {
+    padding: var(--spacing-16);
+    border-top: 1px solid var(--border-structural);
+  }
+
+  .contact-text {
+    font-family: var(--typography-display-family);
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 1.3;
+    color: var(--text-primary);
+    max-width: 640px;
+    margin-bottom: var(--spacing-8);
+  }
+
+  .contact-email {
+    color: var(--colors-primary-500);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+
+  .contact-email:hover {
+    border-bottom-color: var(--colors-primary-500);
+  }
+
+  .contact-address {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-3);
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 320px;
+  }
+
+  .contact-address svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: var(--text-muted);
+  }
+
+  .site-footer {
+    padding: var(--spacing-6) var(--spacing-16);
+    border-top: 1px solid var(--border-structural);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-legal {
+    font-family: var(--typography-mono-family);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .footer-variant-label {
+    font-family: var(--typography-mono-family);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .site-nav {
+      padding: var(--spacing-4) var(--spacing-6);
+    }
+
+    .nav-links {
+      display: none;
+    }
+
+    .hero {
+      padding: calc(var(--spacing-16) * 1.5) var(--spacing-6) var(--spacing-12);
+      min-height: 70vh;
+    }
+
+    .geo-square {
+      width: 80px;
+      height: 80px;
+      top: 8%;
+      right: -20px;
+    }
+
+    .projects-section {
+      padding: var(--spacing-12) var(--spacing-6);
+    }
+
+    .section-title {
+      font-size: 40px;
+    }
+
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .philosophy-section {
+      padding: var(--spacing-12) var(--spacing-6);
+    }
+
+    .method-list {
+      grid-template-columns: 1fr;
+    }
+
+    .contact-section {
+      padding: var(--spacing-12) var(--spacing-6);
+    }
+
+    .contact-text {
+      font-size: 28px;
+    }
+
+    .site-footer {
+      padding: var(--spacing-6);
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--spacing-3);
+    }
+  }
+</style>
+
+<style data-aphrodite-variants>
+[data-variant="brand-a"] {
+  --colors-accent-100: #c8e8dc;
+  --colors-accent-200: #8dd4ba;
+  --colors-accent-300: #53be98;
+  --colors-accent-400: #2d9d76;
+  --colors-accent-50: #eef6f3;
+  --colors-accent-500: #1a7a5a;
+  --colors-accent-600: #145f45;
+  --colors-accent-700: #104836;
+  --colors-accent-800: #0c3327;
+  --colors-accent-900: #081f18;
+  --colors-background-primary: #eef6f3;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0eeea;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #e0ddd6;
+  --colors-neutral-300: #c9c4ba;
+  --colors-neutral-400: #9e9890;
+  --colors-neutral-50: #faf9f7;
+  --colors-neutral-500: #73706a;
+  --colors-neutral-600: #524f4b;
+  --colors-neutral-700: #3d3a37;
+  --colors-neutral-800: #2a2826;
+  --colors-neutral-900: #1a1918;
+  --colors-primary-100: #fce0c9;
+  --colors-primary-200: #f5b88e;
+  --colors-primary-300: #e88a52;
+  --colors-primary-400: #d66428;
+  --colors-primary-50: #fef5ee;
+  --colors-primary-500: #c8521a;
+  --colors-primary-600: #a83f12;
+  --colors-primary-700: #822e0d;
+  --colors-primary-800: #5f210e;
+  --colors-primary-900: #3d160a;
+  --colors-text-primary: #0c3327;
+  --rounded-lg: 8px;
+  --rounded-md: 4px;
+  --rounded-none: 0px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 400;
+  --typography-display-family: Playfair Display;
+  --typography-display-weight: 700;
+  --typography-mono-family: IBM Plex Mono;
+  --typography-mono-weight: 400;
+  --bg: #eef6f3;
+  --fg: #0c3327;
+  --muted: #c8521a;
+}
+[data-variant="brand-b"] {
+  --colors-accent-100: #c8e8dc;
+  --colors-accent-200: #8dd4ba;
+  --colors-accent-300: #53be98;
+  --colors-accent-400: #2d9d76;
+  --colors-accent-50: #eef6f3;
+  --colors-accent-500: #1a7a5a;
+  --colors-accent-600: #145f45;
+  --colors-accent-700: #104836;
+  --colors-accent-800: #0c3327;
+  --colors-accent-900: #081f18;
+  --colors-background-primary: #e0ddd6;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0eeea;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #e0ddd6;
+  --colors-neutral-300: #c9c4ba;
+  --colors-neutral-400: #9e9890;
+  --colors-neutral-50: #faf9f7;
+  --colors-neutral-500: #73706a;
+  --colors-neutral-600: #524f4b;
+  --colors-neutral-700: #3d3a37;
+  --colors-neutral-800: #2a2826;
+  --colors-neutral-900: #1a1918;
+  --colors-primary-100: #fce0c9;
+  --colors-primary-200: #f5b88e;
+  --colors-primary-300: #e88a52;
+  --colors-primary-400: #d66428;
+  --colors-primary-50: #fef5ee;
+  --colors-primary-500: #c8521a;
+  --colors-primary-600: #a83f12;
+  --colors-primary-700: #822e0d;
+  --colors-primary-800: #5f210e;
+  --colors-primary-900: #3d160a;
+  --colors-text-primary: #2a2826;
+  --rounded-lg: 8px;
+  --rounded-md: 4px;
+  --rounded-none: 0px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 400;
+  --typography-display-family: Playfair Display;
+  --typography-display-weight: 700;
+  --typography-mono-family: IBM Plex Mono;
+  --typography-mono-weight: 400;
+  --bg: #e0ddd6;
+  --fg: #2a2826;
+  --muted: #c8521a;
+}
+[data-variant="dark"] {
+  --colors-accent-100: #c8e8dc;
+  --colors-accent-200: #8dd4ba;
+  --colors-accent-300: #53be98;
+  --colors-accent-400: #2d9d76;
+  --colors-accent-50: #eef6f3;
+  --colors-accent-500: #1a7a5a;
+  --colors-accent-600: #145f45;
+  --colors-accent-700: #104836;
+  --colors-accent-800: #0c3327;
+  --colors-accent-900: #081f18;
+  --colors-background-primary: #1a1918;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0eeea;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #e0ddd6;
+  --colors-neutral-300: #c9c4ba;
+  --colors-neutral-400: #9e9890;
+  --colors-neutral-50: #faf9f7;
+  --colors-neutral-500: #73706a;
+  --colors-neutral-600: #524f4b;
+  --colors-neutral-700: #3d3a37;
+  --colors-neutral-800: #2a2826;
+  --colors-neutral-900: #1a1918;
+  --colors-primary-100: #fce0c9;
+  --colors-primary-200: #f5b88e;
+  --colors-primary-300: #e88a52;
+  --colors-primary-400: #d66428;
+  --colors-primary-50: #fef5ee;
+  --colors-primary-500: #c8521a;
+  --colors-primary-600: #a83f12;
+  --colors-primary-700: #822e0d;
+  --colors-primary-800: #5f210e;
+  --colors-primary-900: #3d160a;
+  --colors-text-primary: #f0eeea;
+  --rounded-lg: 8px;
+  --rounded-md: 4px;
+  --rounded-none: 0px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 400;
+  --typography-display-family: Playfair Display;
+  --typography-display-weight: 700;
+  --typography-mono-family: IBM Plex Mono;
+  --typography-mono-weight: 400;
+  --bg: #1a1918;
+  --fg: #f0eeea;
+  --muted: #c8521a;
+}
+[data-variant="light"] {
+  --colors-accent-100: #c8e8dc;
+  --colors-accent-200: #8dd4ba;
+  --colors-accent-300: #53be98;
+  --colors-accent-400: #2d9d76;
+  --colors-accent-50: #eef6f3;
+  --colors-accent-500: #1a7a5a;
+  --colors-accent-600: #145f45;
+  --colors-accent-700: #104836;
+  --colors-accent-800: #0c3327;
+  --colors-accent-900: #081f18;
+  --colors-background-primary: #faf9f7;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0eeea;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #e0ddd6;
+  --colors-neutral-300: #c9c4ba;
+  --colors-neutral-400: #9e9890;
+  --colors-neutral-50: #faf9f7;
+  --colors-neutral-500: #73706a;
+  --colors-neutral-600: #524f4b;
+  --colors-neutral-700: #3d3a37;
+  --colors-neutral-800: #2a2826;
+  --colors-neutral-900: #1a1918;
+  --colors-primary-100: #fce0c9;
+  --colors-primary-200: #f5b88e;
+  --colors-primary-300: #e88a52;
+  --colors-primary-400: #d66428;
+  --colors-primary-50: #fef5ee;
+  --colors-primary-500: #c8521a;
+  --colors-primary-600: #a83f12;
+  --colors-primary-700: #822e0d;
+  --colors-primary-800: #5f210e;
+  --colors-primary-900: #3d160a;
+  --colors-text-primary: #1a1918;
+  --rounded-lg: 8px;
+  --rounded-md: 4px;
+  --rounded-none: 0px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Inter;
+  --typography-body-weight: 400;
+  --typography-display-family: Playfair Display;
+  --typography-display-weight: 700;
+  --typography-mono-family: IBM Plex Mono;
+  --typography-mono-weight: 400;
+  --bg: #faf9f7;
+  --fg: #1a1918;
+  --muted: #c8521a;
+}
+body{background:var(--bg);color:var(--fg);}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap">
+</head>
+<body data-variant="light">
+
+<nav class="switcher">
+  <button class="active" data-variant="light">Light</button>
+  <button data-variant="dark">Dark</button>
+  <button data-variant="brand-a">Patina</button>
+  <button data-variant="brand-b">Steel</button>
+</nav>
+
+<header class="site-nav">
+  <a href="#" class="site-logo">Forma<span>.</span>Industrial</a>
+  <ul class="nav-links">
+    <li><a href="#projects">Work</a></li>
+    <li><a href="#philosophy">Philosophy</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</header>
+
+<section class="hero">
+  <div class="geo-square" aria-hidden="true"></div>
+  <div class="hero-word">Form</div>
+  <p class="hero-subline">Forma designs objects for manufacture — furniture, lighting, hardware, and industrial systems for the built environment.</p>
+  <p class="hero-description">Founded in 1961, the consultancy has maintained a continuous practice in mid-century industrial design principles: material honesty, structural clarity, and the moral obligation of designed objects.</p>
+</section>
+
+<hr class="section-rule">
+
+<section class="projects-section" id="projects">
+  <div class="section-header">
+    <p class="section-label">Selected Work</p>
+    <h2 class="section-title">Projects</h2>
+  </div>
+
+  <div class="projects-grid">
+
+    <article class="project-card">
+      <div class="project-thumbnail">
+        <svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="40" width="80" height="4" rx="1" fill="currentColor" opacity="0.5"/>
+          <rect x="25" y="44" width="4" height="36" rx="1" fill="currentColor" opacity="0.4"/>
+          <rect x="91" y="44" width="4" height="36" rx="1" fill="currentColor" opacity="0.4"/>
+          <rect x="35" y="30" width="50" height="10" rx="2" fill="currentColor" opacity="0.3"/>
+          <rect x="40" y="20" width="40" height="10" rx="2" fill="currentColor" opacity="0.2"/>
+        </svg>
+      </div>
+      <div class="project-info">
+        <div class="project-meta">
+          <span class="project-tag">Furniture</span>
+          <span class="meta-separator"></span>
+          <span class="project-year">2024</span>
+        </div>
+        <h3 class="project-name">Cantilever Desk</h3>
+        <p class="project-desc">A hot-rolled steel writing desk with a continuous cantilever frame — no drawers, no compromise. Powder-coated in three matte finishes.</p>
+        <a href="#" class="project-link">View project</a>
+      </div>
+    </article>
+
+    <article class="project-card">
+      <div class="project-thumbnail">
+        <svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="60" cy="35" r="20" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+          <circle cx="60" cy="35" r="8" fill="currentColor" opacity="0.2"/>
+          <line x1="60" y1="55" x2="60" y2="80" stroke="currentColor" stroke-width="3" opacity="0.4"/>
+          <line x1="45" y1="80" x2="75" y2="80" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+          <path d="M48 60 Q60 65 72 60" stroke="currentColor" stroke-width="1.5" opacity="0.2" fill="none"/>
+        </svg>
+      </div>
+      <div class="project-info">
+        <div class="project-meta">
+          <span class="project-tag">Lighting</span>
+          <span class="meta-separator"></span>
+          <span class="project-year">2023</span>
+        </div>
+        <h3 class="project-name">Arc Floor Lamp</h3>
+        <p class="project-desc">Spun aluminium shade on a bent oak stem. The weight is in the base; the lightness is in the arc. Dimmable tungsten filament.</p>
+        <a href="#" class="project-link">View project</a>
+      </div>
+    </article>
+
+    <article class="project-card">
+      <div class="project-thumbnail">
+        <svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="25" y="25" width="70" height="45" rx="2" fill="currentColor" opacity="0.1"/>
+          <rect x="30" y="30" width="60" height="35" rx="1" fill="currentColor" opacity="0.15"/>
+          <circle cx="50" cy="47" r="8" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+          <rect x="65" y="38" width="18" height="3" rx="1" fill="currentColor" opacity="0.25"/>
+          <rect x="65" y="44" width="18" height="3" rx="1" fill="currentColor" opacity="0.2"/>
+          <rect x="65" y="50" width="12" height="3" rx="1" fill="currentColor" opacity="0.15"/>
+          <circle cx="95" cy="50" r="10" stroke="currentColor" stroke-width="1.5" opacity="0.2"/>
+          <line x1="30" y1="70" x2="90" y2="70" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+        </svg>
+      </div>
+      <div class="project-info">
+        <div class="project-meta">
+          <span class="project-tag">Hardware</span>
+          <span class="meta-separator"></span>
+          <span class="project-year">2023</span>
+        </div>
+        <h3 class="project-name">Cabin Pull Series</h3>
+        <p class="project-desc">Solid brass cabinet hardware in five profiles — wire, bar, knob, cup, and finger pull. Unlacquered, destined to patina.</p>
+        <a href="#" class="project-link">View project</a>
+      </div>
+    </article>
+
+    <article class="project-card">
+      <div class="project-thumbnail">
+        <svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M25 70 L60 25 L95 70 Z" stroke="currentColor" stroke-width="2" fill="currentColor" opacity="0.08"/>
+          <line x1="40" y1="50" x2="80" y2="50" stroke="currentColor" stroke-width="1.5" opacity="0.2"/>
+          <line x1="33" y1="60" x2="87" y2="60" stroke="currentColor" stroke-width="1.5" opacity="0.15"/>
+          <line x1="60" y1="25" x2="60" y2="70" stroke="currentColor" stroke-width="1" opacity="0.1"/>
+        </svg>
+      </div>
+      <div class="project-info">
+        <div class="project-meta">
+          <span class="project-tag">Furniture</span>
+          <span class="meta-separator"></span>
+          <span class="project-year">2022</span>
+        </div>
+        <h3 class="project-name">Trestle Bench</h3>
+        <p class="project-desc">A communal seating bench in white ash with cast-iron trestle legs. Sixteen configurations from two components.</p>
+        <a href="#" class="project-link">View project</a>
+      </div>
+    </article>
+
+    <article class="project-card">
+      <div class="project-thumbnail">
+        <svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="15" width="60" height="70" rx="3" stroke="currentColor" stroke-width="2" opacity="0.3" fill="currentColor" fill-opacity="0.05"/>
+          <rect x="38" y="24" width="44" height="3" rx="1" fill="currentColor" opacity="0.25"/>
+          <rect x="38" y="32" width="36" height="3" rx="1" fill="currentColor" opacity="0.2"/>
+          <rect x="38" y="40" width="40" height="3" rx="1" fill="currentColor" opacity="0.15"/>
+          <rect x="38" y="52" width="44" height="20" rx="2" fill="currentColor" opacity="0.08"/>
+          <rect x="42" y="56" width="36" height="3" rx="1" fill="currentColor" opacity="0.15"/>
+          <rect x="42" y="62" width="28" height="3" rx="1" fill="currentColor" opacity="0.1"/>
+        </svg>
+      </div>
+      <div class="project-info">
+        <div class="project-meta">
+          <span class="project-tag">Lighting</span>
+          <span class="meta-separator"></span>
+          <span class="project-year">2022</span>
+        </div>
+        <h3 class="project-name">Envelope Sconce</h3>
+        <p class="project-desc">A wall-mounted luminaire in perforated steel. Light escapes through patterned apertures, projecting geometry onto the wall surface.</p>
+        <a href="#" class="project-link">View project</a>
+      </div>
+    </article>
+
+    <article class="project-card">
+      <div class="project-thumbnail">
+        <svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="55" width="80" height="8" rx="1" fill="currentColor" opacity="0.2"/>
+          <rect x="20" y="38" width="80" height="8" rx="1" fill="currentColor" opacity="0.15"/>
+          <rect x="20" y="21" width="80" height="8" rx="1" fill="currentColor" opacity="0.1"/>
+          <rect x="25" y="63" width="3" height="15" rx="1" fill="currentColor" opacity="0.25"/>
+          <rect x="92" y="63" width="3" height="15" rx="1" fill="currentColor" opacity="0.25"/>
+          <rect x="25" y="46" width="3" height="9" rx="1" fill="currentColor" opacity="0.2"/>
+          <rect x="92" y="46" width="3" height="9" rx="1" fill="currentColor" opacity="0.2"/>
+          <rect x="25" y="29" width="3" height="9" rx="1" fill="currentColor" opacity="0.15"/>
+          <rect x="92" y="29" width="3" height="9" rx="1" fill="currentColor" opacity="0.15"/>
+        </svg>
+      </div>
+      <div class="project-info">
+        <div class="project-meta">
+          <span class="project-tag">Industrial</span>
+          <span class="meta-separator"></span>
+          <span class="project-year">2021</span>
+        </div>
+        <h3 class="project-name">Meridian Rack System</h3>
+        <p class="project-desc">A modular display and storage system in cold-rolled steel. Three rail heights, seven shelf configurations, infinite arrangements.</p>
+        <a href="#" class="project-link">View project</a>
+      </div>
+    </article>
+
+    <article class="project-card">
+      <div class="project-thumbnail">
+        <svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="25" y="20" width="70" height="50" rx="2" stroke="currentColor" stroke-width="2" fill="currentColor" fill-opacity="0.04" opacity="0.25"/>
+          <path d="M25 70 L60 20" stroke="currentColor" stroke-width="1" opacity="0.1"/>
+          <path d="M95 70 L60 20" stroke="currentColor" stroke-width="1" opacity="0.1"/>
+          <circle cx="60" cy="45" r="12" stroke="currentColor" stroke-width="1.5" opacity="0.2"/>
+          <line x1="60" y1="33" x2="60" y2="57" stroke="currentColor" stroke-width="1" opacity="0.15"/>
+          <line x1="48" y1="45" x2="72" y2="45" stroke="currentColor" stroke-width="1" opacity="0.15"/>
+        </svg>
+      </div>
+      <div class="project-info">
+        <div class="project-meta">
+          <span class="project-tag">Architecture</span>
+          <span class="meta-separator"></span>
+          <span class="project-year">2021</span>
+        </div>
+        <h3 class="project-name">Index Wall Clock</h3>
+        <p class="project-desc">Anodized aluminium dial, powder-coated steel hands. No numerals — only indices at the quarters. Silent sweep movement.</p>
+        <a href="#" class="project-link">View project</a>
+      </div>
+    </article>
+
+    <article class="project-card">
+      <div class="project-thumbnail">
+        <svg viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="35" y="30" width="50" height="40" rx="24" stroke="currentColor" stroke-width="2" opacity="0.25"/>
+          <path d="M35 50 Q60 35 85 50" stroke="currentColor" stroke-width="1.5" opacity="0.15" fill="none"/>
+          <line x1="60" y1="30" x2="60" y2="70" stroke="currentColor" stroke-width="1" opacity="0.1"/>
+          <rect x="55" y="68" width="10" height="6" rx="1" fill="currentColor" opacity="0.2"/>
+        </svg>
+      </div>
+      <div class="project-info">
+        <div class="project-meta">
+          <span class="project-tag">Furniture</span>
+          <span class="meta-separator"></span>
+          <span class="project-year">2020</span>
+        </div>
+        <h3 class="project-name">Vessel Lounge Chair</h3>
+        <p class="project-desc">Moulded plywood shell on a blackened steel swivel base. The curvature follows the spine — anthropometric data from the Forma archive, 1963.</p>
+        <a href="#" class="project-link">View project</a>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section class="philosophy-section" id="philosophy">
+  <div class="philosophy-content">
+    <p class="section-label">Approach</p>
+    <h2 class="section-title" style="margin-bottom: var(--spacing-8);">Philosophy</h2>
+    <p class="philosophy-text drop-cap">
+      Designed objects carry moral weight. A chair that cannot be repaired is a chair designed against the future. A lamp that obscures its own mechanism is a lamp designed against the hand that must maintain it. Forma's practice begins with these convictions and works outward toward form.
+    </p>
+    <p class="philosophy-text">
+      The studio maintains an archive of over <strong>2,400 manufactured objects</strong> spanning six decades. Each project enters this lineage — not as nostalgia, but as accumulated structural knowledge. We know how a joint fails, how a finish wears, how a handle meets the palm after ten thousand grips.
+    </p>
+    <p class="philosophy-text">
+      Every Forma output is specified for <strong>manufacture</strong>. We do not produce concepts, mood boards, or design-direction documents. The deliverable is a production drawing set, a material specification, and a first-article inspection report. The object must exist.
+    </p>
+    <ul class="method-list">
+      <li>Material-first specification</li>
+      <li>Structural honesty in assembly</li>
+      <li>Repairability as a design parameter</li>
+      <li>Anthropometric verification</li>
+      <li>Production drawing deliverables</li>
+      <li>First-article inspection protocol</li>
+    </ul>
+  </div>
+</section>
+
+<section class="contact-section" id="contact">
+  <p class="section-label">Enquiries</p>
+  <p class="contact-text">
+    Write to us at<br>
+    <a href="mailto:studio@forma.industrial" class="contact-email">studio@forma.industrial</a>
+  </p>
+  <div class="contact-address">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin">
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+      <circle cx="12" cy="10" r="3"/>
+    </svg>
+    <span>Forma Industrial Design<br>
+    247 West 35th Street, 12th Floor<br>
+    New York, NY 10001</span>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <span class="footer-legal">&copy; 2024 Forma Industrial Design Consultancy</span>
+  <span class="footer-variant-label" id="variantLabel">Variant: Light</span>
+</footer>
+
+<script>
+  const switcher = document.querySelector('.switcher');
+  const buttons = switcher.querySelectorAll('button');
+  const variantLabel = document.getElementById('variantLabel');
+
+  const variantNames = {
+    'light': 'Light',
+    'dark': 'Dark',
+    'brand-a': 'Patina',
+    'brand-b': 'Steel'
+  };
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const v = btn.dataset.variant;
+      document.body.dataset.variant = v;
+      variantLabel.textContent = 'Variant: ' + (variantNames[v] || v);
+    });
+  });
+</script>
+
+</body>
+</html>
