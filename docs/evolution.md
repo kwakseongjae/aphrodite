@@ -117,14 +117,36 @@ aphrodite create "<intent>" [--persona <slug>] [--max-turns N]
 5. **Prompt-level fixes before code-level fixes.** Findings #27, #28, #31, #34, #35 were all closed with system-prompt edits. Only #29 (transient errors), #32 (label recovery), #36 (composer registers) needed actual Rust code.
 6. **Pure functions in core, HTTP at the edge.** `aphrodite-core` has no async, no reqwest. Fetching lives in `aphrodite-generator`. This kept tests fast (the core test suite runs in <50ms total).
 
-## Where this goes next
+## v0.3.1 expansion (Pass 20-25, 2026-05-15)
 
-- **MCP surface** (ADR 0002 still names two surfaces; only the CLI ships today). `aphrodite-mcp` needs to expose `create` as an MCP tool so Claude Code / Codex can hand off intents directly.
-- **Wiki growth.** Seven seeded entries cover the basics; the real value is when the wiki has 50-100 entries that the user has personally curated. The auto-fetch path makes this realistic.
-- **Persona expansion.** Seven is enough to demonstrate the system; the design canon has more (Paul Rand, Naoto Fukasawa, Charlotte Perriand, Aldo Bakker, Stefan Sagmeister) worth bundling.
-- **Finding #36 — radical-register composer.** Kawakubo's Pass 13 result had exceptional DESIGN.md prose ("crop characters at viewport edges; it refuses to accommodate you") but the surface composer didn't translate to HTML. The composer's prompt biases toward conventional editorial templates.
-- **Cost transparency.** `aphrodite create --estimate` should preview LLM call count + wall clock before incurring cost.
-- **Public release prep.** The system is now structurally complete enough to merit a README rewrite, a CHANGELOG, and a public examples gallery.
+After Pass 19 closed the last ADR 0004 stub, the next iteration focused on *depth*: closing carry-over findings and broadening the bundled canon.
+
+- **Pass 20** closed Finding #36 (surface composer can't render radical layouts) with a "radical-register exception" section in `SURFACE_SYSTEM_PROMPT`. Re-run Kawakubo × deconstructive lookbook: composition.html 30,686 bytes (was empty in Pass 13). The composer now explicitly handles "anti-fashion / refuses to accommodate / crop characters at viewport edges" briefs.
+- **Pass 22/24/25** validated three new personas:
+  - Naoto Fukasawa (Pass 22) — wall-mounted radio intent; critic quoted "type that recedes" verbatim; refined EB Garamond → Inter.
+  - Paul Rand (Pass 24) — mid-century consultancy intent; critic surfaced a *new* capability — *font-availability reasoning*: it caught that "Graphik is proprietary commercial; the HTML will fall back to Helvetica Neue/Arial" and refined to a free alternative. This is the critic now reasoning about downstream rendering, not just register fit.
+  - Charlotte Perriand (Pass 25) — Korean architecture-furniture studio; cleanest first-time persona dogfood (0 refines, 0.88 sat, 248 s); harmonize lifted Nanum Myeongjo + Pretendard directly from her `cjk_strategy` field.
+- **Pass 23** validated the MCP surface end-to-end. JSON-RPC `tools/call create` returns the same structured payload the CLI emits. Both ADR 0002 surfaces now expose the autonomous create flow.
+- **Orchestrator extraction.** `create_cmd::run` (620 lines, CLI-only) was lifted into `aphrodite_generator::orchestrator::run` so CLI and MCP share one execution path. CLI shrunk to a 26-line delegation.
+- **`--estimate` dry-run.** Previews phase 1 retrieval + LLM call budget (optimistic / pessimistic / typical) + wall-clock estimate without a single provider call. Lets the caller adjust persona / max_turns before paying.
+- **Cross-module test mutex.** The skills / personas / wiki tests each had a local `TEST_LOCK` that protected within-module but raced cross-module on HOME. Single shared `aphrodite_core::test_lock::GLOBAL` fixed 36/36 tests under default cargo parallelism.
+- **Wiki + persona expansion.** 4 new wiki entries (Vercel, NYT Magazine, Pitchfork, Teenage Engineering). 3 new personas (Paul Rand, Charlotte Perriand, Naoto Fukasawa). Tag extractor refined: bare "studio" no longer triggers `architecture`; new categories `consumer-electronics`, `product-design`, `identity-system`, `consultancy`.
+- **README v0.3 rewrite.** Now documents the autonomous create flow as the headline verb, all 9 ADR 0004 phases, the persona-driven design demo (Rams vs Sottsass), the compounding wiki workflow, the full verb table, the MCP 5-tool surface, attribution to Hermes + Karpathy.
+
+By Pass 25:
+- 10 bundled personas, 11 wiki entries, 2 default skills, with both expansion paths well-trafficked.
+- 9/9 ADR 0004 phases functional; Findings #20–35 + #36 closed except for the three carried (#13 brand-name palette recall, #25 composition regen, #36 itself just closed).
+- Both CLI and MCP surfaces validated end-to-end.
+- Single 25-pass journey gallery (`docs/agent-eval/archive/journey.html`) with embedded previews of every pass that has visible artifacts.
+
+## Where this goes next (Pass 26+)
+
+- **Identity-system wiki entries.** Pass 24 exposed that no wiki entry was tagged `identity-system`. Bundling a Pentagram-style identity-systems wiki entry (different from the existing `pentagram` portfolio entry) would close that gap.
+- **Domain-specific skill bundles.** Today there are 2 skills (`asset-standards` default + `editorial-portfolio` tag-matched). A `dev-tool-saas-landing` skill would unlock Linear/Vercel-class output; a `clinical-dashboard` skill would unlock the Galileo register; a `corporate-identity` skill would back the Paul Rand pattern.
+- **Wiki ingest growth.** Auto-fetch already halves the friction; a CSV import would let users seed 50-100 entries in one pass.
+- **Curator** (skill lifecycle management — Hermes pattern). Today there's no auto-stale / auto-archive. With 10 personas + N skills + N wiki, a periodic curator pass would keep the KB pruned.
+- **Public release prep.** CHANGELOG, examples gallery on GitHub Pages, integration-test suite that runs `aphrodite create --estimate` across a fixed intent matrix.
+- **MCP tool extension.** Add `refine`, `wiki_list/show/add`, `personas_list`, `assets_list` to MCP — currently only `create / design / redesign / validate / auth_status` are exposed.
 
 ## How to read this archive
 
