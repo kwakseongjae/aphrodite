@@ -13,6 +13,7 @@ mod design_cmd;
 mod feedback_cmd;
 mod gallery_cmd;
 mod init_cmd;
+mod log_cmd;
 mod refine_cmd;
 mod setup_cmd;
 mod wiki_cmd;
@@ -188,6 +189,28 @@ enum Command {
         #[arg(long)]
         archive_after_days: Option<u32>,
     },
+
+    /// Show recent Aphrodite create/refine/design commits in the target repo.
+    /// Each line is colour-coded by kind and dated by relative time.
+    Log {
+        #[arg(long, default_value_t = 10)]
+        n: usize,
+        #[arg(long)]
+        repo: Option<PathBuf>,
+    },
+
+    /// Roll back the last N Aphrodite auto-commits. Dry-run by default —
+    /// pass --yes to actually `git reset --hard`. Refuses to drop any
+    /// non-Aphrodite commits in the range so user work is never lost.
+    /// `git reflog` recovers the prior HEAD if needed.
+    Undo {
+        #[arg(long, default_value_t = 1)]
+        n: usize,
+        #[arg(long)]
+        yes: bool,
+        #[arg(long)]
+        repo: Option<PathBuf>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -332,6 +355,8 @@ async fn main() -> anyhow::Result<()> {
         Command::Curator { dry_run, stale_after_days, archive_after_days } => {
             curator_cmd::run(dry_run, stale_after_days, archive_after_days)?
         }
+        Command::Log { n, repo } => log_cmd::show_log(repo, n)?,
+        Command::Undo { n, yes, repo } => log_cmd::undo(repo, n, yes)?,
     };
 
     if cli.json {
