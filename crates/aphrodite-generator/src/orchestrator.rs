@@ -193,40 +193,9 @@ pub async fn run(
         );
     }
 
-    // v0.3.4 SPLIT — design call gets LIGHT context (titles/sigs/principles
-    // only), critic call gets FULL context (bodies). The split addresses the
-    // single biggest user-pain (speed): on Pass 33's clinical-dashboard
-    // intent the design call's input dropped from ~25 KB → ~8 KB, cutting
-    // inference time by an order of magnitude in the empirical worst case.
-    // Persona principles/rejects/prefers still ship to design (they shape
-    // the picks); the long autobiographical body goes to critic only.
-
-    // Design-call augmentation (light)
-    let design_persona = if let Some(slug) = persona_slug.as_deref() {
-        match personas::load(slug) {
-            Ok(p) => personas::as_design_prompt_block(&p),
-            Err(_) => String::new(),
-        }
-    } else {
-        String::new()
-    };
-    let design_scaffold = skills::build_design_scaffold_block(&loaded_skills);
-    let design_refs = wiki::render_design_references_block(&wiki_entries);
-    let design_aug = {
-        let mut parts: Vec<String> = Vec::new();
-        if !design_persona.is_empty() { parts.push(design_persona); }
-        if !design_refs.is_empty() { parts.push(design_refs); }
-        if !design_scaffold.is_empty() { parts.push(design_scaffold); }
-        if parts.is_empty() { String::new() } else { parts.join("\n---\n\n") }
-    };
-    let intent_for_design = if design_aug.is_empty() {
-        intent.clone()
-    } else {
-        format!("{intent}\n\n{design_aug}")
-    };
-
-    // Critic-call context (full — bodies included)
-    let critic_context = {
+    // Combine persona + scaffold + references. Persona first (final authority),
+    // then references (concrete prior art), then scaffold (generic checklists).
+    let augmentation = {
         let mut parts: Vec<String> = Vec::new();
         if !persona_block.is_empty() {
             parts.push(persona_block.clone());
@@ -237,8 +206,19 @@ pub async fn run(
         if !scaffold_block.is_empty() {
             parts.push(scaffold_block.clone());
         }
-        if parts.is_empty() { String::new() } else { parts.join("\n---\n\n") }
+        if parts.is_empty() {
+            String::new()
+        } else {
+            parts.join("\n---\n\n")
+        }
     };
+    let intent_for_design = if augmentation.is_empty() {
+        intent.clone()
+    } else {
+        format!("{intent}\n\n{augmentation}")
+    };
+    // The critic also sees both: persona as the authority, scaffold as context.
+    let critic_context = augmentation.clone();
     // Replace the invocation's intent for this run so the generator's
     // prefs+intent prompt picks up the scaffold automatically.
     let invocation_for_design = Invocation {
