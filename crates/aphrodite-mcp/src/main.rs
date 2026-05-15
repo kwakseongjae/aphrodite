@@ -140,6 +140,37 @@ fn tools_list() -> Vec<Value> {
             "description": "List configured providers (no key material returned).",
             "inputSchema": { "type": "object", "properties": {} }
         }),
+        json!({
+            "name": "personas_list",
+            "description": "List installed personas (bundled + user-installed). Each entry includes slug / name / era / voice / when_to_invoke.",
+            "inputSchema": { "type": "object", "properties": {} }
+        }),
+        json!({
+            "name": "wiki_list",
+            "description": "List installed wiki entries (Karpathy LLM-Wiki pattern). Each entry includes slug / title / url / tags / signature.",
+            "inputSchema": { "type": "object", "properties": {} }
+        }),
+        json!({
+            "name": "wiki_show",
+            "description": "Print a single wiki entry's frontmatter + body. Use to inspect what a reference contributes before letting `create` lift fragments from it.",
+            "inputSchema": {
+                "type": "object",
+                "required": ["slug"],
+                "properties": {
+                    "slug": { "type": "string" }
+                }
+            }
+        }),
+        json!({
+            "name": "assets_list",
+            "description": "Inspect a project's <project>/.aphrodite/assets/{refs,uploads,icons}/ directory — files, sizes, totals.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "target_repo": { "type": "string", "description": "Absolute path. Defaults to MCP server cwd." }
+                }
+            }
+        }),
     ]
 }
 
@@ -156,6 +187,10 @@ async fn tools_call(params: &Value) -> Result<Value, (i32, String)> {
         "redesign" => do_design(args, true).await,
         "validate" => do_validate(args),
         "auth_status" => Ok(do_auth_status()),
+        "personas_list" => Ok(do_personas_list()),
+        "wiki_list" => Ok(do_wiki_list()),
+        "wiki_show" => do_wiki_show(args),
+        "assets_list" => do_assets_list(args),
         other => return Err((-32602, format!("unknown tool: {other}"))),
     };
 
@@ -396,6 +431,83 @@ fn do_validate(args: Value) -> anyhow::Result<Value> {
         "ok": report.is_ok(),
         "violations": report.violations,
         "variants": variants.iter().map(|v| v.kind.label()).collect::<Vec<_>>(),
+    }))
+}
+
+fn do_personas_list() -> Value {
+    let _ = aphrodite_core::personas::seed_bundled_personas();
+    let entries: Vec<Value> = aphrodite_core::personas::list()
+        .into_iter()
+        .filter_map(|slug| {
+            aphrodite_core::personas::load(&slug).ok().map(|p| {
+                json!({
+                    "slug": slug,
+                    "name": p.frontmatter.name,
+                    "era": p.frontmatter.era,
+                    "voice": p.frontmatter.voice,
+                    "when_to_invoke": p.frontmatter.when_to_invoke,
+                })
+            })
+        })
+        .collect();
+    json!({ "personas": entries })
+}
+
+fn do_wiki_list() -> Value {
+    let _ = aphrodite_core::wiki::seed_bundled_wiki();
+    let entries: Vec<Value> = aphrodite_core::wiki::list()
+        .into_iter()
+        .filter_map(|slug| {
+            aphrodite_core::wiki::load(&slug).ok().map(|e| {
+                json!({
+                    "slug": slug,
+                    "title": e.frontmatter.title,
+                    "url": e.frontmatter.url,
+                    "tags": e.frontmatter.tags,
+                    "signature": e.frontmatter.signature,
+                })
+            })
+        })
+        .collect();
+    json!({ "entries": entries })
+}
+
+fn do_wiki_show(args: Value) -> anyhow::Result<Value> {
+    let slug = args
+        .get("slug")
+        .and_then(|v| v.as_str())
+        .ok_or_else(|| anyhow::anyhow!("missing `slug`"))?;
+    let _ = aphrodite_core::wiki::seed_bundled_wiki();
+    let e = aphrodite_core::wiki::load(slug)
+        .map_err(|err| anyhow::anyhow!("could not load wiki entry `{slug}`: {err}"))?;
+    Ok(json!({
+        "slug": e.slug,
+        "frontmatter": {
+            "title": e.frontmatter.title,
+            "url": e.frontmatter.url,
+            "tags": e.frontmatter.tags,
+            "signature": e.frontmatter.signature,
+            "ingested_at": e.frontmatter.ingested_at,
+        },
+        "body": e.body,
+    }))
+}
+
+fn do_assets_list(args: Value) -> anyhow::Result<Value> {
+    let repo: PathBuf = args
+        .get("target_repo")
+        .and_then(|v| v.as_str())
+        .map(PathBuf::from)
+        .unwrap_or_else(|| std::env::current_dir().unwrap_or_else(|_| PathBuf::from(".")));
+    if !repo.is_dir() {
+        anyhow::bail!("target_repo is not a directory: {}", repo.display());
+    }
+    let assets = aphrodite_core::assets::list(&repo);
+    let total = aphrodite_core::assets::total_bytes(&repo);
+    Ok(json!({
+        "project": repo.to_string_lossy(),
+        "total_bytes": total,
+        "assets": assets,
     }))
 }
 

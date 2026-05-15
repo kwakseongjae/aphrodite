@@ -395,6 +395,18 @@ const BUNDLED_SKILLS: &[(&str, &str)] = &[
         "corporate-identity-systems",
         include_str!("../seed-skills/corporate-identity-systems/SKILL.md"),
     ),
+    (
+        "dev-tool-saas-landing",
+        include_str!("../seed-skills/dev-tool-saas-landing/SKILL.md"),
+    ),
+    (
+        "clinical-dashboard",
+        include_str!("../seed-skills/clinical-dashboard/SKILL.md"),
+    ),
+    (
+        "mobile-app-screen",
+        include_str!("../seed-skills/mobile-app-screen/SKILL.md"),
+    ),
 ];
 
 /// Materialise bundled skills onto disk if they are not already present.
