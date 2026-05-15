@@ -277,6 +277,52 @@ pub fn as_system_prompt_block(p: &Persona) -> String {
     out
 }
 
+/// Lightweight persona block for the *design* call.
+///
+/// Keeps the frontmatter that *shapes picks* (principles, rejects, prefers,
+/// cjk_strategy) but drops the long "Additional notes from your own writing"
+/// body — that prose is for *critic anchoring*, not for the design call.
+/// Typically ~10-25% of `as_system_prompt_block`'s size; on the Niemann /
+/// Bakker personas that drops 4-6 KB of inference-input.
+pub fn as_design_prompt_block(p: &Persona) -> String {
+    let mut out = String::new();
+    out.push_str("## Persona authority\n\n");
+    out.push_str(&format!(
+        "Design as **{}** would design ({}). Voice: {}\n\n",
+        p.frontmatter.name,
+        if p.frontmatter.era.is_empty() { "—" } else { &p.frontmatter.era },
+        if p.frontmatter.voice.is_empty() { "—" } else { &p.frontmatter.voice }
+    ));
+    if !p.frontmatter.principles.is_empty() {
+        out.push_str("Principles:\n");
+        for pr in &p.frontmatter.principles {
+            out.push_str(&format!("  - {pr}\n"));
+        }
+        out.push('\n');
+    }
+    if !p.frontmatter.rejects.is_empty() {
+        out.push_str("Refuses to produce:\n");
+        for r in &p.frontmatter.rejects {
+            out.push_str(&format!("  - {r}\n"));
+        }
+        out.push('\n');
+    }
+    if !p.frontmatter.prefers.is_empty() {
+        out.push_str("Champions:\n");
+        for pf in &p.frontmatter.prefers {
+            out.push_str(&format!("  - {pf}\n"));
+        }
+        out.push('\n');
+    }
+    if !p.frontmatter.cjk_strategy.is_empty() {
+        out.push_str("CJK strategy: ");
+        out.push_str(&p.frontmatter.cjk_strategy);
+        out.push_str("\n\n");
+    }
+    out.push_str("Apply as hard constraints.\n");
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

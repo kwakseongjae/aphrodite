@@ -508,6 +508,34 @@ pub fn build_scaffold_block(skills: &[Skill], max_body_chars: usize) -> String {
     out
 }
 
+/// Lightweight scaffold block for the *design* call — title + description +
+/// tags only. The full body (Workflow / Do-Don't / Reference fragments) is
+/// reserved for the critic call where the LLM has time to read carefully.
+/// On the design call this trims ~10-20 KB of context per request.
+pub fn build_design_scaffold_block(skills: &[Skill]) -> String {
+    if skills.is_empty() {
+        return String::new();
+    }
+    let mut out =
+        String::from("## Applicable skills (titles + tags only — full body applies at critic time)\n\n");
+    for s in skills {
+        out.push_str(&format!(
+            "- **{}** ({}). tags: {}\n",
+            s.frontmatter.name,
+            s.frontmatter.description,
+            if s.frontmatter.tags.is_empty() {
+                "—".to_string()
+            } else {
+                s.frontmatter.tags.join(", ")
+            }
+        ));
+    }
+    out.push_str(
+        "\nObey the named skills' canonical guarantees (the names above signal what to absorb). Full skill bodies are loaded into the critic prompt and will be enforced there.\n",
+    );
+    out
+}
+
 // ---------------------------------------------------------------------------
 // Orchestrator-facing scaffolding hooks
 // ---------------------------------------------------------------------------

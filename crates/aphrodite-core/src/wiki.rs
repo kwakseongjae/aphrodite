@@ -346,6 +346,30 @@ pub fn query_by_tags(intent_tags: &[&str], top_k: usize) -> Vec<WikiEntry> {
     scored.into_iter().take(top_k).map(|(_, e)| e).collect()
 }
 
+/// Lightweight wiki references for the *design* call — title + signature
+/// only, no body. The full body (What to absorb / NOT to copy / Reference
+/// fragments) goes to the critic call. On the design call this trims
+/// ~1.5 KB per entry × top-3 = ~4.5 KB.
+pub fn render_design_references_block(entries: &[WikiEntry]) -> String {
+    if entries.is_empty() {
+        return String::new();
+    }
+    let mut out = String::from(
+        "## Reference materials (signatures only — full bodies apply at critic time)\n\n",
+    );
+    for e in entries {
+        out.push_str(&format!(
+            "- **{}** — {}\n",
+            e.frontmatter.title, e.frontmatter.signature
+        ));
+        if !e.frontmatter.url.is_empty() {
+            out.push_str(&format!("  ({})\n", e.frontmatter.url));
+        }
+    }
+    out.push_str("\nPull compositional moves from these references in spirit; do not copy any brand verbatim.\n");
+    out
+}
+
 /// Render a set of wiki entries as a single text block for prompt injection.
 pub fn render_references_block(entries: &[WikiEntry]) -> String {
     if entries.is_empty() {
