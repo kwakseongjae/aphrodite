@@ -4,76 +4,168 @@
 
 Aphrodite is an **open, model-agnostic UI generation harness**. It is not a Claude Code plugin. It is a standalone runtime that any human or AI agent can call to get authentic, production-grade, *beautiful* user interfaces — by orchestrating today's UI tooling under a single **DESIGN.md**-grounded design contract.
 
-![quickstart](docs/demos/quickstart.svg)
+## What works today (v0.3)
 
-## What works today (v0.1-dev)
-
-A single command lands a complete, multi-mode design system into the caller's repo:
+A single command runs the autonomous creation harness — research → taste → skill scaffolds → persona authority → design → self-critic refine → harmonize → asset management → optional skillify proposal — and writes the finished artifacts to your repo:
 
 ```bash
-$ aphrodite design "A calm editorial landing page for a longevity clinic"
-  Provider     : zai            # → glm-4.7, or anthropic/openrouter/offline
-  Written      :
-    • ./DESIGN.md               # Google-Labs alpha schema, 4 variants
-    • ./hero.html               # self-contained, no external network at render
-  Committed    : yes            # straight into the caller's git tree
-  Validation   : PASS           # schema + WCAG-AA across every variant
+$ aphrodite create "a portfolio site for an independent Seoul furniture maker working in solid walnut"
+● phase 1 / loaded skill scaffolds: [asset-standards, editorial-portfolio] for tags [portfolio, furniture, solo-maker]
+● phase 1 / loaded reference materials: [apartamento, are-na, pentagram]
+● phase 3 / design …
+  ✓ design in 251s (provider=zai, model=glm-5.1)
+● phase 4 / self-critic refinement (max_turns=3, threshold=0.85)
+  → turn 1 / critique …
+    satisfaction=0.88  axis=—  rationale=""
+● phase 7 / harmonize: injected fonts [Newsreader, Outfit]; hero typography hooked up
+● done: 0 turns, satisfaction=0.88, total=251s, llm_calls=3
 ```
 
-Both surfaces are live:
-- `aphrodite` — CLI for humans (and sub-shelling agents).
-- `aphrodite-mcp` — JSON-RPC 2.0 over stdio, the **primary** Aphrodite surface under the agent-first contract.
+Output: `DESIGN.md` (Google Labs alpha schema with 4 variants — light / dark / brand-a / brand-b, all WCAG-AA), `composition.html` (intent-specific real surface), `hero.html` (4-variant showcase). Auto-commits to the calling repo's git tree by default.
 
-`aphrodite design` produces four variants in one DESIGN.md: **light, dark, brand-a, brand-b**. Open `docs/demos/variants.html` for a side-by-side render.
+## Surfaces
 
-## Hand it to your agent
+| Surface | Binary | Purpose |
+|---|---|---|
+| CLI | `aphrodite` | Human-driven; also sub-shell-callable |
+| MCP | `aphrodite-mcp` | JSON-RPC 2.0 over stdio — for Claude Code / Codex / Hermes / OpenCode hosts |
 
-Aphrodite is designed to be invoked *by* coding agents (Claude Code, Codex CLI, OpenCode, Hermes, Cursor). Each host's `.mcp.json` snippet is in [`docs/hosts.md`](docs/hosts.md). Short version: register `aphrodite-mcp` as a stdio server, share the keychain credential across hosts, and the host model gets four tools (`design` / `redesign` / `validate` / `auth_status`). Errors come back as structured `isError:true` envelopes with `hint` fields so the agent can recover without escalating to the human.
+The MCP server exposes 5 tools: `create` (autonomous), `design` (one-shot), `redesign` (with regenerate signal), `validate`, `auth_status`. Register it in your host's `.mcp.json` and the host's model gets the same execution path the CLI uses.
 
-## Install (from source, for now)
+## Verbs
+
+### Creation
+- `aphrodite create "<intent>" [--persona <slug>] [--max-turns N]` — autonomous create harness
+- `aphrodite design "<intent>"` — one-shot DESIGN.md + hero (no refine loop)
+- `aphrodite refine "<delta>"` — apply a single named delta to the current DESIGN.md
+- `aphrodite redesign "<intent>"` — `design` with implicit Regenerate signal
+
+### Curation
+- `aphrodite personas` — list 10 bundled design authorities (Rams, Vignelli, Ando, Kawakubo, Sottsass, Hara, Galileo, Paul Rand, Charlotte Perriand, Naoto Fukasawa)
+- `aphrodite wiki list / show <slug> / add <url> [--auto-fetch]` — design-reference wiki (Karpathy LLM-Wiki pattern, 11 seeded entries)
+- `aphrodite assets list / clean` — inspect / clean `<project>/.aphrodite/assets/`
+- `aphrodite love` / `aphrodite hate` — record explicit taste signal on the most recent run
+- `aphrodite prefs` — show accumulated taste preferences
+
+### Operations
+- `aphrodite init` — guided first-run wizard
+- `aphrodite auth set <provider>` — store API key in OS keychain
+- `aphrodite doctor` — health-check config + keychain + env
+- `aphrodite gallery <dir>` — build gallery.html for a directory of runs
+
+## Persona-driven design
+
+Same intent, different persona — visibly different work:
+
+```bash
+$ aphrodite create "a portfolio site for a furniture maker working in walnut" --persona dieter-rams
+  → Instrument Serif + Inter + single muted forest-green accent (#5a8a45)
+  → 192 px max spacing, rectilinear, no decoration
+
+$ aphrodite create "a portfolio site for a furniture maker working in walnut" --persona ettore-sottsass
+  → Druk Wide + Sandoll Noisuh CJK + 5-color Memphis palette
+    (terracotta + emerald + citron + lapis + mint)
+  → 224 px max spacing, asymmetric layouts, terrazzo patterns
+```
+
+The persona body declares principles, rejects, prefers, and a CJK strategy in its own voice. The critic respects persona > scaffold authority — refining away from a persona-driven pick requires quoting the specific principle being violated.
+
+## Compounding design-reference wiki
+
+Curate once, query at every `create` call:
+
+```bash
+$ aphrodite wiki add https://stripe.com --tags "saas,landing,payments" --auto-fetch
+  → fetching https://stripe.com …
+  ✓ title=Stripe | Financial Infrastructure to Grow Your Revenue
+  ✓ desc=Stripe is a financial services platform…
+  ✓ og image=stripeassets.com/...Stripe.jpg
+  ✓ palette hints=#031323, #4285f4, #34a853, #fbbc04, #ea4335, #000
+
+$ aphrodite create "a landing page for a small B2B payments fintech"
+  ● phase 1 / loaded reference materials: [linear-app, stripe]
+  ● phase 6 / asset manage: materialised 1 reference image(s) into .aphrodite/assets/refs/
+```
+
+The next `aphrodite create` that matches the wiki entry's tags lifts pattern fragments directly into the design — Stripe's `#000` near-black, Apartamento's `4:5 portrait photography ratio`, Pentagram's `12-column / 24 px gutter`. Six of seven specifications in a typical output trace to a wiki entry; the LLM doesn't *imagine* references, it absorbs them from concrete prior art.
+
+## Architecture
+
+ADR 0004 (`docs/adr/0004-autonomous-creation-harness.md`) reframes Aphrodite as an autonomous creation harness with 9 numbered phases, all functional in v0.3:
+
+```
+aphrodite create
+│
+├─ phase 1   research          ~/.aphrodite/wiki/  (Karpathy LLM-Wiki)
+├─ phase 1a  skill loading     ~/.aphrodite/skills/
+├─ phase 1b  persona loading   ~/.aphrodite/personas/ (with --persona)
+├─ phase 2   taste application ~/.aphrodite/taste/preferences.toml
+├─ phase 3   design            LLM call with augmented intent
+├─ phase 4   self-critic loop  while sat < threshold && turn < max
+├─ phase 5   asset create      composer emits Lucide path data + classes
+├─ phase 6   asset manage      <project>/.aphrodite/assets/refs/ dedupe
+├─ phase 7   harmonize         @import injection + hero token hookup +
+│                                Lucide class recovery by path fingerprint
+└─ phase 8   skillify proposal new skill draft if trajectory non-trivial
+```
+
+Each phase has a separate testimony in `docs/agent-eval/`. The 19-pass journey is at `docs/agent-eval/archive/journey.html` (every pass with embedded composition preview). See `docs/evolution.md` for the methodology + how feedback shaped each decision.
+
+## Install (from source)
 
 ```bash
 git clone <repo> && cd aphrodite
-cargo install --path crates/aphrodite-cli  # gives you `aphrodite`
-cargo install --path crates/aphrodite-mcp  # gives you `aphrodite-mcp`
+cargo install --path crates/aphrodite-cli   # gives you `aphrodite`
+cargo install --path crates/aphrodite-mcp   # gives you `aphrodite-mcp`
 ```
 
 ## Pick your provider (priority: z.ai → Anthropic → OpenRouter → offline)
 
 ```bash
 # z.ai GLM Coding Plan (recommended for now — cheapest, Anthropic-compatible)
-aphrodite auth set zai          # paste key; stored in OS keychain
-# or, headless:
-APHRODITE_ZAI_API_KEY=... aphrodite design "..."
+aphrodite auth set zai
+# or headless:
+APHRODITE_ZAI_API_KEY=... aphrodite create "…"
 
 # Direct Anthropic:
 aphrodite auth set anthropic
 
 # OpenRouter (covers everything else):
 aphrodite auth set openrouter
-
-# No key? `aphrodite design` still works — falls back to a deterministic
-# offline generator that emits a valid 4-variant DESIGN.md. Useful for CI.
 ```
 
-Future (v0.2): OAuth flows for OpenAI / Moonshot-Kimi / Gemini. The credential
-abstraction in `aphrodite-keyring` already reserves OAuth slots.
+No key? `aphrodite design` still works — falls back to a deterministic offline generator that emits a valid 4-variant DESIGN.md. Useful for CI.
+
+## Hand it to your agent
+
+Register `aphrodite-mcp` in your MCP-capable host's `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "aphrodite": { "command": "aphrodite-mcp" }
+  }
+}
+```
+
+The host's model now sees 5 tools. The headline one — `create` — takes `{ intent, persona?, max_turns?, satisfaction_threshold?, target_repo?, write_mode? }` and returns the same structured JSON the CLI emits.
+
+Errors come back as structured `isError:true` envelopes with `kind` (auth_failed / rate_limited / provider_outage / target_repo_invalid / …) and `hint` fields so the agent can recover without escalating.
 
 ## Pillars
 
 1. **Authentic agency.** Full-trust harness — a calling agent (or human) gets end-to-end authority to plan, design, and ship UI work. Default = direct commit to the caller's repo; `--no-write` emits to `.aphrodite/out/` instead. Deny-list policy gates only the catastrophic moves.
-2. **Agent-first.** On any UX conflict, the JSON/MCP shape wins; the human CLI is a thin pretty layer over it. (See [seed](.ouroboros/seeds/seed_20260513T073417Z.yaml).)
+2. **Agent-first.** On any UX conflict, the JSON/MCP shape wins; the human CLI is a thin pretty layer over it.
 3. **DESIGN.md as the contract.** Every project carries a Google-Labs-compatible `DESIGN.md` — the single source of truth shared across code, Figma, and 3D.
 4. **Multi-mode from day one.** Every emitted DESIGN.md carries light + dark + ≥2 brand variants, all WCAG-AA-validated independently.
-5. **Adaptive taste.** v0.1 records implicit aesthetic signals (regenerate, edit diffs) into a global ⊕ project taste store; v0.2 will surface an explicit jury layer on top.
-6. **Open source.** Apache-2.0. Inspired in form by `oh-my-openagent`, `OpenHarness/Ohmo`, `opencode`, but scoped narrowly to *UI beauty*.
+5. **Adaptive taste + compounding knowledge.** Three layers: TastePreferences (declarative facts that decay), Skills (procedural workflows that get patched), Wiki (curated references that compound). Personas sit above as opinionated authorities.
+6. **Open source.** Apache-2.0. Inspired in form by Hermes Agent (memory / skills / curator patterns) and Karpathy's LLM-Wiki gist. Scoped narrowly to *UI beauty*.
 
 ## Non-goals
 
 - Not a general coding agent. (Use OpenCode / Claude Code / Codex for that — Aphrodite can be invoked *by* them over MCP.)
 - Not a Claude Code skill or plugin.
 - Not a hosted SaaS. Local-first.
-- No Stitch integration (Stitch has no programmatic API; the Playwright-bridge path was explicitly rejected).
 
 ## Project layout
 
@@ -82,22 +174,33 @@ aphrodite/
 ├── DESIGN.md                          # Aphrodite's own visual identity (dogfood)
 ├── Cargo.toml                         # Rust workspace
 ├── crates/
-│   ├── aphrodite-core/                # DESIGN.md model, validator, taste, policy, seed reader
+│   ├── aphrodite-core/                # DESIGN.md model, validator, taste,
+│   │                                    skills, personas, wiki, assets
+│   │   ├── seed-personas/             # 10 bundled PERSONA.md authorities
+│   │   ├── seed-skills/               # bundled SKILL.md scaffolds
+│   │   ├── seed-wiki/                 # 11 bundled design-reference entries
+│   │   └── src/
 │   ├── aphrodite-cli/                 # `aphrodite` binary
 │   ├── aphrodite-mcp/                 # `aphrodite-mcp` JSON-RPC stdio server
-│   ├── aphrodite-generator/           # provider router + hero renderer
-│   └── aphrodite-keyring/             # OS keychain abstraction (the one secret-touching code path)
-├── skills/                            # markdown skill packs (Anthropic SKILL.md shape)
-│   └── editorial/
+│   ├── aphrodite-generator/           # orchestrator + provider router + critic +
+│   │                                    refine + surface composer + harmonize +
+│   │                                    wiki_fetch
+│   └── aphrodite-keyring/             # OS keychain abstraction
 ├── docs/
-│   ├── vision.md / architecture.md
-│   ├── adr/0001..0003                 # ADRs (revised post-seed)
-│   ├── research/competitor-harnesses.md
-│   └── demos/
-│       ├── quickstart.svg             # animated terminal session
-│       └── variants.html              # 4-variant hero showcase
+│   ├── adr/0001..0004                 # architectural decisions
+│   ├── agent-eval/                    # 19-pass testimony archive
+│   │   └── archive/journey.html       # single-page visual narrative
+│   ├── evolution.md                   # how feedback shaped each decision
+│   └── vision.md / architecture.md
 └── .ouroboros/seeds/                  # immutable Ouroboros seed (v0.1 contract)
 ```
+
+## Attribution
+
+- **Skill + persona substrate** (markdown on disk + usage tracking) — patterns borrowed from [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) (`agent/curator.py`, `tools/skill_usage.py`, `agent/prompt_builder.py`)
+- **Design-reference wiki** — Karpathy's [LLM Wiki gist](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f), packaged as Hermes' `llm-wiki` skill
+- **Icons** — [Lucide](https://lucide.dev/icons) (MIT)
+- **Emoji** — Microsoft [Fluent UI Emoji](https://fluentemoji.com) (MIT)
 
 ## License
 

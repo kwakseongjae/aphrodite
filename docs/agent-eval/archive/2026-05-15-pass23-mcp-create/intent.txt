@@ -1,0 +1,3 @@
+a portfolio site for a Tokyo studio designing a single wall-mounted radio with a pull-cord power switch
+
+Invoked via MCP tools/call(create) with persona=naoto-fukasawa, max_turns=1.
