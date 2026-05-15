@@ -23,8 +23,17 @@ use serde_json::json;
 use std::path::PathBuf;
 use std::time::Instant;
 
-const MAX_SCAFFOLD_BODY_CHARS: usize = 4_000;
+// Finding #37 mitigation: per-skill scaffold cap reduced from 4000 → 2500.
+// At top_k=3 this caps the scaffold section at ~7500 chars total. Reduces
+// inference time on long-context inputs without losing "What to absorb /
+// What NOT to copy" structure.
+const MAX_SCAFFOLD_BODY_CHARS: usize = 2_500;
 const SCAFFOLD_TOP_K: usize = 3;
+/// Cap on the full persona system-prompt block. Frontmatter principles/
+/// rejects/prefers/cjk_strategy always survive (they render first); the
+/// trailing "Additional notes from your own writing" gets truncated when
+/// the block exceeds this cap.
+const MAX_PERSONA_BLOCK_CHARS: usize = 4_000;
 
 pub async fn run(
     intent: String,
@@ -66,7 +75,17 @@ pub async fn run(
         match personas::load(slug) {
             Ok(p) => {
                 eprintln!("● persona / channeling: {} ({})", p.frontmatter.name, slug);
-                personas::as_system_prompt_block(&p)
+                let full = personas::as_system_prompt_block(&p);
+                if full.len() <= MAX_PERSONA_BLOCK_CHARS {
+                    full
+                } else {
+                    let mut truncated: String =
+                        full.chars().take(MAX_PERSONA_BLOCK_CHARS).collect();
+                    truncated.push_str(
+                        "\n…[persona body truncated to fit context window; principles + cjk_strategy preserved above]\n",
+                    );
+                    truncated
+                }
             }
             Err(e) => {
                 anyhow::bail!(
