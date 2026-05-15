@@ -83,6 +83,22 @@ async fn handle(method: &str, params: &Value) -> Result<Value, (i32, String)> {
 fn tools_list() -> Vec<Value> {
     vec![
         json!({
+            "name": "create",
+            "description": "Autonomous creation harness — design + self-critic refine loop + harmonize + skillify proposal. Returns final DESIGN.md / hero.html / composition.html paths plus structured turn-by-turn report. ADR 0004 reference entry point.",
+            "inputSchema": {
+                "type": "object",
+                "required": ["intent"],
+                "properties": {
+                    "intent": { "type": "string" },
+                    "persona": { "type": "string", "description": "Persona slug. Run `aphrodite personas` to list installed personas." },
+                    "max_turns": { "type": "integer", "default": 3, "description": "Cap on internal critic→refine iterations. Each ~3 LLM calls." },
+                    "satisfaction_threshold": { "type": "number", "default": 0.85, "description": "Stop when critic's satisfaction estimate reaches this value." },
+                    "target_repo": { "type": "string", "description": "Absolute path. Defaults to MCP server cwd." },
+                    "write_mode": { "type": "string", "enum": ["commit", "artifact_only"], "default": "commit" }
+                }
+            }
+        }),
+        json!({
             "name": "design",
             "description": "Generate a DESIGN.md and hero HTML from an intent string. Writes to the target repo (commit by default).",
             "inputSchema": {
@@ -135,6 +151,7 @@ async fn tools_call(params: &Value) -> Result<Value, (i32, String)> {
     // callers (Claude Code / Codex / Hermes) get actionable info instead of a
     // raw JSON-RPC -32000.
     let run = match name {
+        "create" => do_create(args).await,
         "design" => do_design(args, false).await,
         "redesign" => do_design(args, true).await,
         "validate" => do_validate(args),
@@ -217,6 +234,52 @@ fn hint_for(kind: &str, status: Option<u16>) -> &'static str {
         ("invalid_input", _) => "Re-read the tool's inputSchema and supply the required fields.",
         _ => "See `error.message`. If this looks like an Aphrodite bug, please report at https://github.com/aphrodite-ui/aphrodite/issues.",
     }
+}
+
+async fn do_create(args: Value) -> anyhow::Result<Value> {
+    let intent = args
+        .get("intent")
+        .and_then(|v| v.as_str())
+        .ok_or_else(|| anyhow::anyhow!("missing `intent`"))?
+        .to_string();
+    let max_turns = args.get("max_turns").and_then(|v| v.as_u64()).unwrap_or(3) as u32;
+    let threshold = args
+        .get("satisfaction_threshold")
+        .and_then(|v| v.as_f64())
+        .unwrap_or(0.85) as f32;
+    let persona = args.get("persona").and_then(|v| v.as_str()).map(String::from);
+    let repo: PathBuf = args
+        .get("target_repo")
+        .and_then(|v| v.as_str())
+        .map(PathBuf::from)
+        .unwrap_or_else(|| std::env::current_dir().unwrap_or_else(|_| PathBuf::from(".")));
+    let no_write = matches!(
+        args.get("write_mode").and_then(|v| v.as_str()),
+        Some("artifact_only")
+    );
+
+    if !repo.exists() {
+        anyhow::bail!("target_repo does not exist: {}", repo.display());
+    }
+    if !repo.is_dir() {
+        anyhow::bail!("target_repo is not a directory: {}", repo.display());
+    }
+    if !no_write && !repo.join(".git").exists() {
+        anyhow::bail!(
+            "target_repo is not a git repo (no .git): {}. Pass write_mode=artifact_only to skip git.",
+            repo.display()
+        );
+    }
+
+    aphrodite_generator::orchestrator::run(
+        intent,
+        max_turns,
+        threshold,
+        persona,
+        no_write,
+        Some(repo),
+    )
+    .await
 }
 
 async fn do_design(args: Value, is_redesign: bool) -> anyhow::Result<Value> {

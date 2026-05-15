@@ -5,6 +5,7 @@ pub mod extractor;
 pub mod harmonize;
 pub mod hero;
 pub mod offline;
+pub mod orchestrator;
 pub mod provider;
 pub mod refine;
 pub mod skill;
