@@ -170,24 +170,60 @@ pub async fn compose(
          Now classify the intent and build the surface. Output the SURFACE: marker on line 1, then the full <!DOCTYPE html>."
     );
 
-    let raw = provider::call_raw(resolved, SURFACE_SYSTEM_PROMPT, &user, 8192).await?;
-    let parsed = parse_response(&raw, doc).ok_or_else(|| {
+    let raw = provider::call_raw(resolved, SURFACE_SYSTEM_PROMPT, &user, 12288).await?;
+    let parsed_or_short = match parse_response(&raw, doc) {
+        Some(p) if p.html.trim().len() >= 1_024 => Some(Ok(p)),
+        Some(_) => None, // parsed but too short — fall through to retry
+        None => None,    // didn't parse — also retry
+    };
+    if let Some(result) = parsed_or_short {
+        return result;
+    }
+
+    // Finding #37 mitigation: retry with a stripped-down user message
+    // (intent + DESIGN.md only, no scaffold/persona augmentation passthrough
+    // baked into the design call's intent). Helps when the composer ran out
+    // of generation tokens under heavy context.
+    tracing::warn!("surface composer returned empty/short on first attempt — retrying with stripped intent");
+    let stripped_intent = strip_augmentation(intent);
+    let retry_user = format!(
+        "Original user intent:\n{stripped_intent}\n\n\
+         The DESIGN.md you (or a peer) just generated for this intent:\n\
+         ----- BEGIN DESIGN.md -----\n{design_md}\n----- END DESIGN.md -----\n\n\
+         Now classify the intent and build the surface. Output the SURFACE: marker on line 1, then the full <!DOCTYPE html>."
+    );
+    let retry_raw = provider::call_raw(resolved, SURFACE_SYSTEM_PROMPT, &retry_user, 12288).await?;
+    let retry_parsed = parse_response(&retry_raw, doc).ok_or_else(|| {
         ProviderError::Malformed(
-            "surface response missing SURFACE: marker or <!DOCTYPE html>".into(),
+            "surface response missing SURFACE: marker or <!DOCTYPE html> on retry".into(),
         )
     })?;
-    // Finding #37 ceiling: under heavy context the composer occasionally
-    // returns a SURFACE-marker-prefixed but structurally-empty page (the
-    // model ran out of generation tokens before reaching content).
-    // Treat any composition < 1 KB as malformed so the caller can fall back
-    // to the hero template rather than write an empty composition.html.
-    if parsed.html.trim().len() < 1_024 {
+    if retry_parsed.html.trim().len() < 1_024 {
         return Err(ProviderError::Malformed(format!(
-            "surface response parsed but body is suspiciously short ({} chars) — likely composer ran out of generation tokens under heavy context",
-            parsed.html.trim().len()
+            "surface response still short on retry ({} chars) — likely a generation-budget issue. Re-run with a shorter persona / fewer scaffolds.",
+            retry_parsed.html.trim().len()
         )));
     }
-    Ok(parsed)
+    Ok(retry_parsed)
+}
+
+/// If the user-passed `intent` carries augmentation (the orchestrator
+/// prepends persona + skill + wiki blocks to the design call's intent),
+/// strip everything from the first `\n\n## Persona authority` or
+/// `\n\n## Applicable skills` or `\n\n## Reference materials` marker.
+/// This isolates the user's original intent line for the composer retry.
+fn strip_augmentation(intent: &str) -> &str {
+    let markers = [
+        "\n\n## Persona authority",
+        "\n\n## Applicable skills",
+        "\n\n## Reference materials",
+    ];
+    let earliest = markers
+        .iter()
+        .filter_map(|m| intent.find(m))
+        .min()
+        .unwrap_or(intent.len());
+    &intent[..earliest]
 }
 
 fn parse_response(raw: &str, _doc: &DesignDocument) -> Option<SurfaceOutput> {
@@ -216,6 +252,19 @@ fn parse_response(raw: &str, _doc: &DesignDocument) -> Option<SurfaceOutput> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn strip_augmentation_finds_earliest_marker() {
+        let intent = "Make a landing page\n\n## Persona authority\nbig prose\n\n## Reference materials\nstuff";
+        let stripped = strip_augmentation(intent);
+        assert_eq!(stripped, "Make a landing page");
+    }
+
+    #[test]
+    fn strip_augmentation_returns_full_when_no_marker() {
+        let intent = "Just a plain intent";
+        assert_eq!(strip_augmentation(intent), "Just a plain intent");
+    }
 
     #[test]
     fn parses_clean_response() {
