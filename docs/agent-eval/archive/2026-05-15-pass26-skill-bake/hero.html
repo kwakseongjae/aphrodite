@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>forma-industrial — Aphrodite</title>
+<style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Garamond, ITC Garamond, EB Garamond, Georgia, serif", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --aphrodite-typography-display: "Garamond, ITC Garamond, EB Garamond, Georgia, serif", "Garamond, ITC Garamond, EB Garamond, Georgia, serif", Georgia, "Times New Roman", serif;
+    --aphrodite-typography-body: "Garamond, ITC Garamond, EB Garamond, Georgia, serif", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant="brand-a"] {
+    --colors-background-primary: #f2f1eb;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #e8e6df;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #c9c5b8;
+    --colors-neutral-300: #9e9889;
+    --colors-neutral-400: #6b6560;
+    --colors-neutral-50: #f7f6f1;
+    --colors-neutral-500: #4a4540;
+    --colors-neutral-600: #2a2724;
+    --colors-neutral-700: #1a1816;
+    --colors-neutral-800: #0f0e0c;
+    --colors-neutral-900: #070706;
+    --colors-primary-100: #c8f0e0;
+    --colors-primary-200: #7de4bd;
+    --colors-primary-300: #2dd494;
+    --colors-primary-400: #00bf7b;
+    --colors-primary-50: #f0faf6;
+    --colors-primary-500: #009966;
+    --colors-primary-600: #007a52;
+    --colors-primary-700: #005c3d;
+    --colors-primary-800: #003d29;
+    --colors-primary-900: #001f15;
+    --colors-text-primary: #1a1816;
+    --rounded-md: 4px;
+    --rounded-sm: 2px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-40: 160px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Garamond, ITC Garamond, EB Garamond, Georgia, serif;
+    --typography-body-weight: 400;
+    --typography-display-family: Garamond, ITC Garamond, EB Garamond, Georgia, serif;
+    --typography-display-weight: 700;
+    --bg: #f2f1eb;
+    --fg: #1a1816;
+    --accent: #009966;
+    --muted: #2dd494;
+  }
+  
+  [data-variant="brand-b"] {
+    --colors-background-primary: #f0faf6;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #e8e6df;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #c9c5b8;
+    --colors-neutral-300: #9e9889;
+    --colors-neutral-400: #6b6560;
+    --colors-neutral-50: #f7f6f1;
+    --colors-neutral-500: #4a4540;
+    --colors-neutral-600: #2a2724;
+    --colors-neutral-700: #1a1816;
+    --colors-neutral-800: #0f0e0c;
+    --colors-neutral-900: #070706;
+    --colors-primary-100: #c8f0e0;
+    --colors-primary-200: #7de4bd;
+    --colors-primary-300: #2dd494;
+    --colors-primary-400: #00bf7b;
+    --colors-primary-50: #f0faf6;
+    --colors-primary-500: #009966;
+    --colors-primary-600: #007a52;
+    --colors-primary-700: #005c3d;
+    --colors-primary-800: #003d29;
+    --colors-primary-900: #001f15;
+    --colors-text-primary: #0f0e0c;
+    --rounded-md: 4px;
+    --rounded-sm: 2px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-40: 160px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Garamond, ITC Garamond, EB Garamond, Georgia, serif;
+    --typography-body-weight: 400;
+    --typography-display-family: Garamond, ITC Garamond, EB Garamond, Georgia, serif;
+    --typography-display-weight: 700;
+    --bg: #f0faf6;
+    --fg: #0f0e0c;
+    --accent: #009966;
+    --muted: #2dd494;
+  }
+  
+  [data-variant="dark"] {
+    --colors-background-primary: #0f0e0c;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #e8e6df;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #c9c5b8;
+    --colors-neutral-300: #9e9889;
+    --colors-neutral-400: #6b6560;
+    --colors-neutral-50: #f7f6f1;
+    --colors-neutral-500: #4a4540;
+    --colors-neutral-600: #2a2724;
+    --colors-neutral-700: #1a1816;
+    --colors-neutral-800: #0f0e0c;
+    --colors-neutral-900: #070706;
+    --colors-primary-100: #c8f0e0;
+    --colors-primary-200: #7de4bd;
+    --colors-primary-300: #2dd494;
+    --colors-primary-400: #00bf7b;
+    --colors-primary-50: #f0faf6;
+    --colors-primary-500: #009966;
+    --colors-primary-600: #007a52;
+    --colors-primary-700: #005c3d;
+    --colors-primary-800: #003d29;
+    --colors-primary-900: #001f15;
+    --colors-text-primary: #e8e6df;
+    --rounded-md: 4px;
+    --rounded-sm: 2px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-40: 160px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Garamond, ITC Garamond, EB Garamond, Georgia, serif;
+    --typography-body-weight: 400;
+    --typography-display-family: Garamond, ITC Garamond, EB Garamond, Georgia, serif;
+    --typography-display-weight: 700;
+    --bg: #0f0e0c;
+    --fg: #e8e6df;
+    --accent: #009966;
+    --muted: #2dd494;
+  }
+  
+  [data-variant="light"] {
+    --colors-background-primary: #f7f6f1;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #e8e6df;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #c9c5b8;
+    --colors-neutral-300: #9e9889;
+    --colors-neutral-400: #6b6560;
+    --colors-neutral-50: #f7f6f1;
+    --colors-neutral-500: #4a4540;
+    --colors-neutral-600: #2a2724;
+    --colors-neutral-700: #1a1816;
+    --colors-neutral-800: #0f0e0c;
+    --colors-neutral-900: #070706;
+    --colors-primary-100: #c8f0e0;
+    --colors-primary-200: #7de4bd;
+    --colors-primary-300: #2dd494;
+    --colors-primary-400: #00bf7b;
+    --colors-primary-50: #f0faf6;
+    --colors-primary-500: #009966;
+    --colors-primary-600: #007a52;
+    --colors-primary-700: #005c3d;
+    --colors-primary-800: #003d29;
+    --colors-primary-900: #001f15;
+    --colors-text-primary: #1a1816;
+    --rounded-md: 4px;
+    --rounded-sm: 2px;
+    --spacing-1: 4px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-40: 160px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Garamond, ITC Garamond, EB Garamond, Georgia, serif;
+    --typography-body-weight: 400;
+    --typography-display-family: Garamond, ITC Garamond, EB Garamond, Georgia, serif;
+    --typography-display-weight: 700;
+    --bg: #f7f6f1;
+    --fg: #1a1816;
+    --accent: #009966;
+    --muted: #2dd494;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Garamond,+ITC+Garamond,+EB+Garamond,+Georgia,+serif:wght@300;400;500;600;700&display=swap">
+</head>
+<body data-variant="light">
+  <nav class="switcher" aria-label="Variant switcher">
+    <button data-set="brand-a" aria-pressed="false">brand-a</button>
+    <button data-set="brand-b" aria-pressed="false">brand-b</button>
+    <button data-set="dark" aria-pressed="false">dark</button>
+    <button data-set="light" aria-pressed="true">light</button>
+    </nav>
+  <main class="wrap">
+    <p class="eyebrow">forma-industrial</p>
+    <h1>Corporate identity site for a mid-century industrial design consultancy.</h1>
+    <p class="lede">Corporate identity site for a mid-century industrial design consultancy — authority, restraint, craft Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class="cta" href="#" aria-label="Primary call to action">Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
