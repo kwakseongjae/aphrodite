@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.3.4 — 2026-05-15 (evening)
+
+### Added
+- **`aphrodite log [--n N]`** — recent Aphrodite-authored commits with kind-tag (create/refine/design/other), short SHA, relative time. Colour-coded.
+- **`aphrodite undo [--n N] [--yes]`** — rolls back the last N Aphrodite auto-commits via `git reset --hard`. Dry-run by default; refuses to drop non-Aphrodite commits in the range so user work is never silently lost. `git reflog` recovers prior HEAD if needed.
+
+### Negative result (committed and reverted, documented honestly)
+- **Pass 34/35 — design/critic context split** (commit `8e7bf3b`, reverted in `2594b2f`). Hypothesis: lighten design-call augmentation (titles/tags/principles only; bodies reserved for critic) for speed gain on heavy intents. Empirical result: Pass 35 on the Seoul furniture-maker intent went from Pass 16's 251 s / 0 refines → 838 s / 1 refine. Hypothesis was wrong — with thinner anchoring the LLM iterates longer on its own picks, costing both speed and quality. Reverted. The architecture might resurface as an opt-in `--fast` flag in a later release.
+
+### Findings carried
+- **#13** brand-name palette recall
+- **#25** composition regenerates every refine
+- **#37 partial** — clinical-dashboard slow-DESIGN ceiling. Pass 33/34 confirmed bottleneck is z.ai's intent-class inference behaviour, not augmentation size. Right next experiment is *composer DESIGN.md truncation* (composer's input is heavy independent of augmentation), or per-class fast-model fallback.
+
+### Catalog (after 0.3.4)
+- 13 personas + 13 wiki entries + 6 skills + 9 MCP tools + **11 CLI verbs**
+
 ## 0.3.3 — 2026-05-15 (afternoon)
 
 ### Added
