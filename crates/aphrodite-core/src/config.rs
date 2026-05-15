@@ -37,6 +37,15 @@ pub struct ProviderConfig {
     pub model: Option<String>,
     #[serde(default)]
     pub base_url: Option<String>,
+    /// Optional per-call model overrides. When set, the orchestrator uses
+    /// these instead of `model` for the respective phase. Use a *faster*
+    /// model (e.g. z.ai `glm-4.5-air`) for the composer and critic calls
+    /// where reasoning depth isn't the bottleneck — and keep `model` (e.g.
+    /// `glm-5.1`) for the design call where it is.
+    #[serde(default)]
+    pub composer_model: Option<String>,
+    #[serde(default)]
+    pub critic_model: Option<String>,
 }
 
 pub fn config_path() -> PathBuf {

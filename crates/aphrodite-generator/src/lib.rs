@@ -196,6 +196,21 @@ fn warnings_for(intent: &str, provider_used: &str) -> Vec<Warning> {
     out
 }
 
+/// Look up the configured composer model override for the active provider.
+/// Returns None if not configured — caller uses the default model.
+pub fn composer_model_override() -> Option<String> {
+    let cfg = aphrodite_core::config::load();
+    let name = cfg.default_provider.as_deref()?;
+    cfg.providers.get(name).and_then(|p| p.composer_model.clone())
+}
+
+/// Look up the configured critic model override for the active provider.
+pub fn critic_model_override() -> Option<String> {
+    let cfg = aphrodite_core::config::load();
+    let name = cfg.default_provider.as_deref()?;
+    cfg.providers.get(name).and_then(|p| p.critic_model.clone())
+}
+
 /// Resolve a provider. Honors `~/.aphrodite/config.toml` for default_provider
 /// + per-provider model/base_url overrides. Falls back to scanning all
 /// providers in priority order. Honors env-var fallbacks for headless / CI.

@@ -215,6 +215,7 @@ Each section is 2-5 short paragraphs of design rationale. No code, no JSON, no f
 
 /// A resolved call target. CLI/MCP build one of these from keyring + config
 /// lookups, then hand it to `call`.
+#[derive(Clone)]
 pub struct ResolvedProvider {
     pub id: ProviderId,
     pub api_key: String,
@@ -223,6 +224,17 @@ pub struct ResolvedProvider {
 }
 
 impl ResolvedProvider {
+    /// Clone this provider with a different model. Used by the orchestrator
+    /// to send composer/critic calls to a faster model than the design call.
+    pub fn with_model(&self, model: impl Into<String>) -> Self {
+        Self {
+            id: self.id,
+            api_key: self.api_key.clone(),
+            model: model.into(),
+            base_url: self.base_url.clone(),
+        }
+    }
+
     pub fn with_default_model(id: ProviderId, api_key: String) -> Self {
         Self {
             id,

@@ -134,6 +134,8 @@ pub async fn run() -> anyhow::Result<serde_json::Value> {
             plan: Some(plan_id.to_string()),
             model: Some(model_id.to_string()),
             base_url: Some(provider.base_url_for_plan(plan_id).to_string()),
+            composer_model: None,
+            critic_model: None,
         },
     );
     config::save(&cfg)?;
@@ -223,6 +225,8 @@ fn persist_and_finish(provider: ProviderId, plan_id: &str, model_id: &str, key: 
         plan: Some(plan_id.to_string()),
         model: Some(model_id.to_string()),
         base_url: Some(provider.base_url_for_plan(plan_id).to_string()),
+        composer_model: None,
+        critic_model: None,
     });
     config::save(&cfg)?;
     eprintln!("  {} Preferences saved to {}", style("✓").green(), style(config::config_path().display()).underlined());

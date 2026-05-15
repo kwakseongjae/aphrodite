@@ -1,0 +1,30 @@
+Pass 36 — clinical-dashboard with composer trim + emit-immediately directive
+
+Goal: close Finding #37 (empty composition under heavy context) by attacking
+the composer-side bottleneck:
+  - trim_design_for_composer: keep frontmatter + Components + Do/Don't,
+    drop Overview/Colors/Typography/Layout prose
+  - emit-immediately directive in both system + user prompt
+  - max_tokens 12288 → 16384
+
+Result: design phase 865 s (normal for this intent shape on z.ai).
+Composer's first call returned empty. Retry path's trimmed-DESIGN.md
++ stripped-intent also failed. composition.html: 0 bytes.
+
+Critic correctly diagnosed empty composition at 0.78 satisfaction.
+
+Conclusion: my prompt-side mitigations don't address the underlying
+z.ai-specific behaviour on this intent shape. This is now a genuine
+*provider infra ceiling*, not a prompt design issue.
+
+Two remaining intervention paths
+1. composer_model override — config.toml [providers.zai]
+   composer_model = "glm-4.5-air" (or similar). The lighter model may
+   not hit the same generation-budget ceiling. The override hook is
+   now wired (commit pending); empirical validation is the next step.
+2. Document this clinical-dashboard-shape as a known limitation and
+   give users an "expected composition empty; re-run composer
+   separately or use --no-write to get DESIGN.md only" UX.
+
+Finding #37 carries. Composer path-1 (model override) becomes the
+next experiment.

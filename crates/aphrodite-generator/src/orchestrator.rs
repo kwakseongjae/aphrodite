@@ -51,6 +51,25 @@ pub async fn run(
     let resolved = crate::resolve_default_provider().ok_or_else(|| {
         anyhow::anyhow!("no provider credential reachable. Run `aphrodite doctor`.")
     })?;
+    // Per-call model overrides (e.g. ~/.aphrodite/config.toml's
+    // [providers.zai] composer_model = "glm-4.5-air"). Falls back to the
+    // base model when unset. Used by surface composer and critic to spend
+    // a faster tier on translation/critique tasks while keeping the design
+    // call on the quality model.
+    let composer_resolved = match crate::composer_model_override() {
+        Some(m) => {
+            eprintln!("● using composer model override: {m}");
+            resolved.with_model(m)
+        }
+        None => resolved.clone(),
+    };
+    let critic_resolved = match crate::critic_model_override() {
+        Some(m) => {
+            eprintln!("● using critic model override: {m}");
+            resolved.with_model(m)
+        }
+        None => resolved.clone(),
+    };
 
     let write_mode = if no_write {
         WriteMode::ArtifactOnly
@@ -259,7 +278,7 @@ pub async fn run(
         let t_start = Instant::now();
         eprintln!("  → turn {turn} / critique …");
         let verdict_result = critic::critique(
-            &resolved,
+            &critic_resolved,
             &intent,
             &design_md,
             &composition_html,
@@ -344,7 +363,7 @@ pub async fn run(
             }
         };
         let new_variants = resolve_variants(&new_doc);
-        let new_composition = match surface::compose(&resolved, &intent, &new_md, &new_doc).await {
+        let new_composition = match surface::compose(&composer_resolved, &intent, &new_md, &new_doc).await {
             Ok(out) => {
                 llm_calls += 1;
                 crate::hero::inject_variant_css(&out.html, &new_doc, &new_variants)
