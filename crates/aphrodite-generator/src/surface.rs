@@ -167,10 +167,10 @@ pub async fn compose(
         "Original user intent:\n{intent}\n\n\
          The DESIGN.md you (or a peer) just generated for this intent:\n\
          ----- BEGIN DESIGN.md -----\n{design_md}\n----- END DESIGN.md -----\n\n\
-         Now classify the intent and build the surface. Output the SURFACE: marker on line 1, then the full <!DOCTYPE html>."
+         Now classify the intent and build the surface. {DIRECTIVE_EMIT_IMMEDIATELY}"
     );
 
-    let raw = provider::call_raw(resolved, SURFACE_SYSTEM_PROMPT, &user, 12288).await?;
+    let raw = provider::call_raw(resolved, SURFACE_SYSTEM_PROMPT, &user, 16384).await?;
     let parsed_or_short = match parse_response(&raw, doc) {
         Some(p) if p.html.trim().len() >= 1_024 => Some(Ok(p)),
         Some(_) => None, // parsed but too short — fall through to retry
@@ -180,19 +180,22 @@ pub async fn compose(
         return result;
     }
 
-    // Finding #37 mitigation: retry with a stripped-down user message
-    // (intent + DESIGN.md only, no scaffold/persona augmentation passthrough
-    // baked into the design call's intent). Helps when the composer ran out
-    // of generation tokens under heavy context.
-    tracing::warn!("surface composer returned empty/short on first attempt — retrying with stripped intent");
+    // Finding #37 mitigation v3: retry with stripped intent AND trimmed
+    // DESIGN.md. The composer's input on heavy-content DESIGN.md (clinical-
+    // dashboard, long-prose personas like Niemann/Bakker/Galileo) drives
+    // generation cost; trimming the prose sections to just frontmatter +
+    // Components + Do/Don't keeps the *tokens* (which the HTML actually
+    // needs) and drops the *rationale* (which the LLM doesn't need to re-read).
+    tracing::warn!("surface composer returned empty/short on first attempt — retrying with stripped intent + trimmed DESIGN.md");
     let stripped_intent = strip_augmentation(intent);
+    let trimmed_design = trim_design_for_composer(design_md);
     let retry_user = format!(
         "Original user intent:\n{stripped_intent}\n\n\
-         The DESIGN.md you (or a peer) just generated for this intent:\n\
-         ----- BEGIN DESIGN.md -----\n{design_md}\n----- END DESIGN.md -----\n\n\
-         Now classify the intent and build the surface. Output the SURFACE: marker on line 1, then the full <!DOCTYPE html>."
+         The DESIGN.md you (or a peer) just generated for this intent (frontmatter + key sections only):\n\
+         ----- BEGIN DESIGN.md -----\n{trimmed_design}\n----- END DESIGN.md -----\n\n\
+         Now classify the intent and build the surface. {DIRECTIVE_EMIT_IMMEDIATELY}"
     );
-    let retry_raw = provider::call_raw(resolved, SURFACE_SYSTEM_PROMPT, &retry_user, 12288).await?;
+    let retry_raw = provider::call_raw(resolved, SURFACE_SYSTEM_PROMPT, &retry_user, 16384).await?;
     let retry_parsed = parse_response(&retry_raw, doc).ok_or_else(|| {
         ProviderError::Malformed(
             "surface response missing SURFACE: marker or <!DOCTYPE html> on retry".into(),
@@ -205,6 +208,56 @@ pub async fn compose(
         )));
     }
     Ok(retry_parsed)
+}
+
+const DIRECTIVE_EMIT_IMMEDIATELY: &str = "IMPORTANT: Emit the SURFACE: marker on line 1 IMMEDIATELY. Do NOT write any reasoning or commentary before the marker. Start the HTML body on line 2. Your entire response is consumed by a downstream parser — narrative tokens before SURFACE: are wasted budget.";
+
+/// Trim DESIGN.md to frontmatter + key implementation sections only.
+/// Drops Overview / Colors / Typography / Layout / Elevation / Shapes prose
+/// (those sections explain *why* the tokens are what they are — the
+/// frontmatter already encodes the *what*, which is all the composer needs).
+/// Keeps Components and Do's-and-Don'ts because those describe page chrome
+/// the composer must implement.
+pub fn trim_design_for_composer(design_md: &str) -> String {
+    // Find the frontmatter close marker.
+    let trimmed = design_md.trim_start();
+    if !trimmed.starts_with("---") {
+        return design_md.to_string();
+    }
+    let after_open = &trimmed[3..];
+    let close_idx = match after_open.find("\n---") {
+        Some(i) => i,
+        None => return design_md.to_string(),
+    };
+    let frontmatter = &after_open[..close_idx];
+    let body_start = close_idx + 4;
+    let body = &after_open[body_start..];
+
+    let mut out = String::with_capacity(design_md.len());
+    out.push_str("---\n");
+    out.push_str(frontmatter.trim_start_matches('\n'));
+    out.push_str("\n---\n\n");
+
+    // Pull only the sections that affect composition (component shapes, page
+    // chrome rules) — skip the prose-heavy rationale sections.
+    let keep_headers = ["# Components", "# Do's and Don'ts", "# Do's & Don'ts", "# Do/Don't"];
+    let mut current_header: Option<&str> = None;
+    let mut keep_current = false;
+    for line in body.lines() {
+        if let Some(line_header) = line.strip_prefix("# ").map(|_| line) {
+            current_header = Some(line_header);
+            keep_current = keep_headers.iter().any(|h| line_header.eq_ignore_ascii_case(h));
+            if keep_current {
+                out.push_str(line);
+                out.push('\n');
+            }
+        } else if keep_current {
+            out.push_str(line);
+            out.push('\n');
+        }
+        let _ = current_header; // silence unused
+    }
+    out
 }
 
 /// If the user-passed `intent` carries augmentation (the orchestrator
@@ -264,6 +317,58 @@ mod tests {
     fn strip_augmentation_returns_full_when_no_marker() {
         let intent = "Just a plain intent";
         assert_eq!(strip_augmentation(intent), "Just a plain intent");
+    }
+
+    #[test]
+    fn trim_design_keeps_frontmatter_plus_components_and_donts() {
+        let md = r####"---
+name: "Test"
+colors:
+  primary:
+    "500": "#abcdef"
+typography:
+  display:
+    family: "Inter"
+---
+
+# Overview
+
+Long prose that explains *why* the tokens are the way they are. Should be dropped.
+Several paragraphs of rationale that the composer doesn't need.
+
+# Colors
+
+More rationale about colour relationships. Drop.
+
+# Typography
+
+Body about typography choices. Drop.
+
+# Components
+
+Navigation: top bar 64 px with logo left, links right.
+Card: 320 px wide, 1 px border in neutral-200.
+
+# Do's and Don'ts
+
+Do let photography dominate.
+Don't use form widgets for contact.
+"####;
+        let trimmed = trim_design_for_composer(md);
+        assert!(trimmed.contains("primary"), "frontmatter must survive");
+        assert!(trimmed.contains("#abcdef"));
+        assert!(trimmed.contains("# Components"), "Components section must survive");
+        assert!(trimmed.contains("Navigation: top bar"));
+        assert!(trimmed.contains("# Do's and Don'ts"));
+        assert!(trimmed.contains("Do let photography"));
+        assert!(!trimmed.contains("Long prose that explains"), "Overview prose must drop");
+        assert!(!trimmed.contains("rationale about colour"), "Colors prose must drop");
+    }
+
+    #[test]
+    fn trim_design_no_frontmatter_returns_as_is() {
+        let md = "no frontmatter here\njust body";
+        assert_eq!(trim_design_for_composer(md), md);
     }
 
     #[test]
