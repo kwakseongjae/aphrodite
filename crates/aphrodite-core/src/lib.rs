@@ -13,6 +13,13 @@ pub mod skills;     // on-disk SKILL.md substrate + usage tracker (ADR 0004)
 pub mod personas;   // on-disk PERSONA.md authorities — Rams / Vignelli / Ando / etc.
 pub mod wiki;       // on-disk design-reference wiki (Karpathy LLM-Wiki pattern)
 pub mod assets;     // <project>/.aphrodite/assets/ directory + dedupe (Phase 6)
+
+#[cfg(test)]
+pub(crate) mod test_lock {
+    // Cross-module shared mutex. skills / personas / wiki tests all mutate
+    // the process-global HOME env var; per-module locks aren't enough.
+    pub static GLOBAL: std::sync::Mutex<()> = std::sync::Mutex::new(());
+}
 pub mod policy;     // deny-list policy
 pub mod invocation; // Invocation type — the contract entry point
 pub mod seed;       // Reads .ouroboros/seeds/*.yaml

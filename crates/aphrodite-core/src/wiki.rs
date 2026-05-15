@@ -284,6 +284,10 @@ const BUNDLED_WIKI: &[(&str, &str)] = &[
     ("vercel", include_str!("../seed-wiki/vercel.md")),
     ("nyt-magazine", include_str!("../seed-wiki/nyt-magazine.md")),
     ("pitchfork", include_str!("../seed-wiki/pitchfork.md")),
+    (
+        "teenage-engineering",
+        include_str!("../seed-wiki/teenage-engineering.md"),
+    ),
 ];
 
 pub fn seed_bundled_wiki() -> Vec<String> {
@@ -357,15 +361,13 @@ pub fn render_references_block(entries: &[WikiEntry]) -> String {
 mod tests {
     use super::*;
 
-    static LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
-
     struct Scratch {
         _td: tempfile::TempDir,
         _g: std::sync::MutexGuard<'static, ()>,
     }
     impl Scratch {
         fn new() -> Self {
-            let g = LOCK.lock().unwrap_or_else(|e| e.into_inner());
+            let g = crate::test_lock::GLOBAL.lock().unwrap_or_else(|e| e.into_inner());
             let td = tempfile::tempdir().unwrap();
             unsafe { std::env::set_var("HOME", td.path()); }
             Self { _td: td, _g: g }

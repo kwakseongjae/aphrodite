@@ -258,15 +258,13 @@ pub fn as_system_prompt_block(p: &Persona) -> String {
 mod tests {
     use super::*;
 
-    static TEST_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
-
     struct Scratch {
         _td: tempfile::TempDir,
         _guard: std::sync::MutexGuard<'static, ()>,
     }
     impl Scratch {
         fn new() -> Self {
-            let guard = TEST_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+            let guard = crate::test_lock::GLOBAL.lock().unwrap_or_else(|e| e.into_inner());
             let td = tempfile::tempdir().expect("tempdir");
             unsafe { std::env::set_var("HOME", td.path()); }
             Self { _td: td, _guard: guard }

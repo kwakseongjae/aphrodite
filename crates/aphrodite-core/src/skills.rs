@@ -435,9 +435,13 @@ pub fn extract_intent_tags(intent: &str) -> Vec<String> {
         (&["editorial", "magazine", "long-form", "journal"], "editorial"),
         // domain
         (&["furniture", "woodwork", "walnut", "oak", "joinery", "cabinet maker"], "furniture"),
-        (&["architecture", "architect", "studio", "atelier"], "architecture"),
+        // "studio" alone is too generic (design studio / music studio / etc.) —
+        // only architectural cues qualify.
+        (&["architecture", "architect", "architectural studio", "atelier"], "architecture"),
         (&["ceramic", "pottery", "stoneware"], "ceramics"),
         (&["photograph", "photog"], "photography"),
+        (&["consumer electronics", "household object", "appliance", "radio", "kettle", "speaker", "lamp"], "consumer-electronics"),
+        (&["product design", "industrial design"], "product-design"),
         // maker register
         (&["independent", "solo", "craftsperson", "maker", "artisan"], "solo-maker"),
         (&["studio practice", "small workshop"], "solo-maker"),
@@ -528,19 +532,15 @@ pub fn rank_for_intent(intent_tags: &[&str], top_k: usize) -> Vec<Skill> {
 mod tests {
     use super::*;
 
-    /// Global mutex to serialize tests in this module — they all mutate the
-    /// shared process env var HOME, so running them concurrently would race.
-    static TEST_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
-
-    /// Hermetic scratch dir for one test — holds the lock for its lifetime
-    /// and points HOME at a tempdir.
+    /// Hermetic scratch dir for one test — holds the shared workspace mutex
+    /// for its lifetime and points HOME at a tempdir.
     struct Scratch {
         _td: tempfile::TempDir,
         _guard: std::sync::MutexGuard<'static, ()>,
     }
     impl Scratch {
         fn new() -> Self {
-            let guard = TEST_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+            let guard = crate::test_lock::GLOBAL.lock().unwrap_or_else(|e| e.into_inner());
             let td = tempfile::tempdir().expect("tempdir");
             // SAFETY: HOME is mutated only while we hold TEST_LOCK; no
             // concurrent reader exists in this test module.
