@@ -1,0 +1,37 @@
+Pass 35 — Seoul furniture maker portfolio with design/critic split active
+
+Goal: validate split refactor (commit 8e7bf3b) doesn't regress on normal-
+shape intents. Same intent as Pass 9 (286 s, 0 refines, 0.88 sat) and
+Pass 16 (251 s, 0 refines, 0.88 sat).
+
+Result: 838 s design + 1 refine triggered. NEGATIVE REGRESSION.
+
+Critic at turn 1 cited:
+  "The editorial-portfolio scaffold explicitly rejects Renaissance/
+   olde-style faces like EB Garamond as wrong register for a working
+   studio, prescribing instead Source Serif 4, Newsreader, Fraunces."
+
+The "avoid EB Garamond" rule is in editorial-portfolio's SKILL BODY,
+which the design call DID NOT SEE under v0.3.4's light design context
+(only titles + tags). So the design call picked EB Garamond (because
+the rejection isn't in the design prompt), and the critic correctly
+flagged it (because critic prompt sees full bodies).
+
+The split costs both speed AND quality on normal intents:
+- 251 s → 838 s (3.3× slower)
+- 0 refines → 1 refine (refine round trip = additional 5+ min)
+- EB Garamond pick vs Pass 16's Newsreader (worse register selection)
+
+Hypothesis "less context = faster inference" is WRONG. Likely reason:
+the LLM with strong anchoring context (full skill body) settles on a
+correct pick faster; with thin anchoring it iterates more on its own.
+
+Decision: REVERT the split refactor. Restore the full-body design
+prompt path. The split *might* be useful as an opt-in --fast flag
+where the user accepts more refines for less per-call latency, but
+unconditional split is a strict regression.
+
+Pass 33/34's slow clinical-dashboard ceiling stays as carry Finding
+#37 partial. The right next experiment is composer-side DESIGN.md
+truncation (lighter input to the COMPOSER call specifically), not
+design-call augmentation lightening.
