@@ -8,6 +8,7 @@ use std::path::PathBuf;
 mod assets_cmd;
 mod banner;
 mod create_cmd;
+mod curator_cmd;
 mod design_cmd;
 mod feedback_cmd;
 mod gallery_cmd;
@@ -174,6 +175,19 @@ enum Command {
         #[command(subcommand)]
         sub: AssetsSub,
     },
+
+    /// Periodic review of agent-created skills — transition stale (30 days
+    /// default) and archive (90 days default). Hermes-pattern. Only touches
+    /// `agent_created: true` skills; user-installed or bundled skills are
+    /// never auto-mutated.
+    Curator {
+        #[arg(long)]
+        dry_run: bool,
+        #[arg(long)]
+        stale_after_days: Option<u32>,
+        #[arg(long)]
+        archive_after_days: Option<u32>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -315,6 +329,9 @@ async fn main() -> anyhow::Result<()> {
             AssetsSub::List { repo } => assets_cmd::list(repo)?,
             AssetsSub::Clean { repo } => assets_cmd::clean(repo)?,
         },
+        Command::Curator { dry_run, stale_after_days, archive_after_days } => {
+            curator_cmd::run(dry_run, stale_after_days, archive_after_days)?
+        }
     };
 
     if cli.json {

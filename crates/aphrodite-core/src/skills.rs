@@ -64,6 +64,10 @@ pub fn skill_md_path(slug: &str) -> PathBuf {
     p
 }
 
+pub fn save_usage_pub(store: &UsageStore) -> Result<(), SkillError> {
+    save_usage(store)
+}
+
 // ---------------------------------------------------------------------------
 // SKILL.md model
 // ---------------------------------------------------------------------------

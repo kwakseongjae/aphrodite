@@ -13,6 +13,7 @@ pub mod skills;     // on-disk SKILL.md substrate + usage tracker (ADR 0004)
 pub mod personas;   // on-disk PERSONA.md authorities — Rams / Vignelli / Ando / etc.
 pub mod wiki;       // on-disk design-reference wiki (Karpathy LLM-Wiki pattern)
 pub mod assets;     // <project>/.aphrodite/assets/ directory + dedupe (Phase 6)
+pub mod curator;    // skill stale/archive lifecycle (Hermes pattern)
 
 #[cfg(test)]
 pub(crate) mod test_lock {
