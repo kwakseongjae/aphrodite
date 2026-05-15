@@ -169,6 +169,15 @@ const BUNDLED_PERSONAS: &[(&str, &str)] = &[
         "galileo-galilei",
         include_str!("../seed-personas/galileo-galilei/PERSONA.md"),
     ),
+    ("paul-rand", include_str!("../seed-personas/paul-rand/PERSONA.md")),
+    (
+        "charlotte-perriand",
+        include_str!("../seed-personas/charlotte-perriand/PERSONA.md"),
+    ),
+    (
+        "naoto-fukasawa",
+        include_str!("../seed-personas/naoto-fukasawa/PERSONA.md"),
+    ),
 ];
 
 pub fn seed_bundled_personas() -> Vec<String> {
@@ -268,10 +277,11 @@ mod tests {
     fn seed_bundled_personas_materialises_seven() {
         let _s = Scratch::new();
         let newly = seed_bundled_personas();
-        assert_eq!(newly.len(), 7, "expected 7 seeded personas, got {newly:?}");
+        assert_eq!(newly.len(), 10, "expected 10 seeded personas, got {newly:?}");
         for slug in &[
             "dieter-rams", "massimo-vignelli", "tadao-ando",
             "rei-kawakubo", "ettore-sottsass", "kenya-hara", "galileo-galilei",
+            "paul-rand", "charlotte-perriand", "naoto-fukasawa",
         ] {
             let p = load(slug).unwrap_or_else(|e| panic!("load {slug}: {e}"));
             assert!(!p.frontmatter.name.is_empty(), "{slug} missing name");

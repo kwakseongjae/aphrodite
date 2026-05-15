@@ -281,6 +281,9 @@ const BUNDLED_WIKI: &[(&str, &str)] = &[
     ("linear-app", include_str!("../seed-wiki/linear-app.md")),
     ("are-na", include_str!("../seed-wiki/are-na.md")),
     ("naver-papago", include_str!("../seed-wiki/naver-papago.md")),
+    ("vercel", include_str!("../seed-wiki/vercel.md")),
+    ("nyt-magazine", include_str!("../seed-wiki/nyt-magazine.md")),
+    ("pitchfork", include_str!("../seed-wiki/pitchfork.md")),
 ];
 
 pub fn seed_bundled_wiki() -> Vec<String> {

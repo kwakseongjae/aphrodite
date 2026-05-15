@@ -119,6 +119,24 @@ STEP 2 — Build a COMPLETE, SELF-CONTAINED HTML document for that surface that:
     - Use whitespace generously — section padding ≥ 64px desktop / 32px mobile.
     - Aim for ≥ 8 000 bytes of HTML — short outputs read as placeholders.
 
+  Radical-register exception (Finding #36):
+    If the DESIGN.md prose, persona authority, or scaffold explicitly calls for
+    ANTI-templated layout — phrases like "anti-fashion", "deconstructive",
+    "refuses to accommodate", "crop characters at viewport edges", "asymmetry
+    is the natural state", "one element in vast space" — DO NOT fall back to
+    the conventional grid for the chosen surface type. Build the layout the
+    prose demands, even if it violates the per-surface-type element list above.
+    Specifically:
+      - You MAY drop sidebars, navs, footers if the prose argues for it.
+      - You MAY centre a single sentence in a viewport of empty space.
+      - You MAY use `position: absolute` to crop content at viewport edges.
+      - You MAY use asymmetric grid columns (1fr-4fr instead of 12-col).
+    But the page must still BE a page — visible content, real copy, semantic
+    HTML. "Empty composition.html" is never a valid output; if you cannot
+    interpret the radical brief, fall back to the conventional grid AND
+    emit a 12px italic line at the foot reading "Composer fell back —
+    radical brief not translated."
+
 OUTPUT FORMAT — exactly this shape, no prose around it:
 
 SURFACE: <one of the six labels>
