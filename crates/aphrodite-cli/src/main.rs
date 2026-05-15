@@ -145,6 +145,11 @@ enum Command {
         /// `galileo-galilei`). Persona principles outrank generic skill scaffolds.
         #[arg(long)]
         persona: Option<String>,
+        /// Preview phase-1 retrieval + estimated LLM call count + wall-clock
+        /// estimate without making any provider calls. Useful for sanity-checking
+        /// what the harness will do before incurring cost.
+        #[arg(long)]
+        estimate: bool,
         #[arg(long)]
         no_write: bool,
         #[arg(long)]
@@ -291,8 +296,12 @@ async fn main() -> anyhow::Result<()> {
         Command::Hate { repo } => feedback_cmd::run(-0.30, "hate", repo)?,
         Command::Prefs { repo } => feedback_cmd::show(repo)?,
         Command::Refine { change, no_write, repo } => refine_cmd::run(change, no_write, repo).await?,
-        Command::Create { intent, max_turns, satisfaction_threshold, persona, no_write, repo } => {
-            create_cmd::run(intent, max_turns, satisfaction_threshold, persona, no_write, repo).await?
+        Command::Create { intent, max_turns, satisfaction_threshold, persona, estimate, no_write, repo } => {
+            if estimate {
+                create_cmd::estimate(intent, max_turns, satisfaction_threshold, persona, repo)?
+            } else {
+                create_cmd::run(intent, max_turns, satisfaction_threshold, persona, no_write, repo).await?
+            }
         }
         Command::Personas => personas_list(),
         Command::Wiki { sub } => match sub {
