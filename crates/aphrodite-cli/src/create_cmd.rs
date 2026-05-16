@@ -4,6 +4,8 @@
 //! The orchestration logic lives in the generator crate so both CLI and
 //! MCP surfaces share the same execution path.
 
+#![allow(clippy::module_inception)]
+
 use aphrodite_core::{personas, skills, wiki};
 use serde_json::json;
 use std::path::PathBuf;

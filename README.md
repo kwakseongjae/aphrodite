@@ -1,8 +1,30 @@
 # Aphrodite
 
-> *"As if you asked the goddess of beauty herself to build it — undeniably stunning UI, every time."*
+> *Hand a UI brief to the goddess of beauty herself.*
+> *Get back a complete design system + production-grade page, in one command.*
+
+[![38 dogfood passes recorded](https://img.shields.io/badge/dogfood-38_passes-a78bfa)](docs/agent-eval/archive/journey.html)
+[![ADR 0004 — autonomous harness](https://img.shields.io/badge/ADR_0004-9%2F9_phases_done-86efac)](docs/adr/0004-autonomous-creation-harness.md)
+[![13 design authorities](https://img.shields.io/badge/personas-13-fcd34d)](crates/aphrodite-core/seed-personas/)
+[![Apache 2.0](https://img.shields.io/badge/license-Apache_2.0-57575c)](LICENSE)
 
 Aphrodite is an **open, model-agnostic UI generation harness**. It is not a Claude Code plugin. It is a standalone runtime that any human or AI agent can call to get authentic, production-grade, *beautiful* user interfaces — by orchestrating today's UI tooling under a single **DESIGN.md**-grounded design contract.
+
+It is positioned as a **standalone product**, comparable to Hermes Agent (general agent canon) or Ouroboros (Seed-driven loop runtime) — but scoped *narrowly* and *deeply* to UI generation.
+
+## Why Aphrodite, not an LLM directly?
+
+The headline difference: Aphrodite **compiles** designs, it doesn't just *advise* on them.
+
+| Use case | LLM chat | Aphrodite |
+|---|---|---|
+| "What font pairs with serif display?" | great | not the right tool |
+| "Generate a landing page for a Seoul furniture maker" | OK-ish — 1 page, 0 validation, 0 reproducibility | a 4-variant DESIGN.md + WCAG-AA-validated composition.html + hero.html, auto-committed, with a *learned* skill on disk so next time is faster |
+| "Use Dieter Rams's voice" | "OK, here's a more minimal version…" — vague | one of 13 hand-curated PERSONA.md authorities, declared principles + rejects + cjk_strategy, critic enforces the persona over scaffolds |
+| "Use these reference sites" | doesn't remember next session | Karpathy LLM-Wiki pattern — curated wiki entries compound across runs, query at create-time by intent tag overlap |
+| "I don't like that — try again" | starts from scratch | TastePreferences accumulate; same intent next time avoids the rejected direction |
+
+The same property that makes Hermes loved (skills + memory + curator) is what makes Aphrodite trustworthy: **nothing the LLM learns is lost between runs**.
 
 ## What works today (v0.3)
 

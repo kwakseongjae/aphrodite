@@ -427,6 +427,12 @@ pub async fn run(
     if !harmonize_bits.is_empty() {
         eprintln!("● phase 7 / harmonize: {}", harmonize_bits.join("; "));
     }
+    if !harmonize_report.quality_warnings.is_empty() {
+        eprintln!("● phase 7 / quality audit — {} concern(s):", harmonize_report.quality_warnings.len());
+        for w in &harmonize_report.quality_warnings {
+            eprintln!("    ⚠ {w}");
+        }
+    }
     let final_report = validate_design(&final_doc, &final_variants);
 
     let (design_path, hero_path, composition_path) = if no_write {

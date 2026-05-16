@@ -119,6 +119,39 @@ STEP 2 — Build a COMPLETE, SELF-CONTAINED HTML document for that surface that:
     - Use whitespace generously — section padding ≥ 64px desktop / 32px mobile.
     - Aim for ≥ 8 000 bytes of HTML — short outputs read as placeholders.
 
+  Semantic HTML — REQUIRED, every page:
+    - Exactly ONE `<h1>` per page (the hero headline). Subsequent headings
+      are `<h2>` / `<h3>` (h2 for section titles, h3 for sub-divisions).
+      A page with no h1 is incomplete — production-grade pages always
+      have a single h1 above the fold.
+    - Major regions wrapped in `<section>` tags. Each section's first
+      child should be an `<h2>` matching the section's content. Don't
+      use bare `<div>` where a `<section>` / `<article>` / `<nav>` /
+      `<footer>` would be semantically correct.
+    - Navigation in `<nav>`. Footer in `<footer>`. Sidebars in `<aside>`.
+    - Form-like elements (filter chips, search, login) wrapped in
+      `<form>` even if they don't submit; helps screen readers and
+      auditing tools.
+
+  Lucide icons — REQUIRED when icons appear:
+    Every inline icon SVG MUST carry `class="lucide lucide-<icon-name>"`
+    as written in https://lucide.dev/icons. The class name is the
+    *contract* downstream tools rely on. Use the canonical path data
+    from lucide.dev/icons/<icon-name>, not a hand-drawn approximation.
+    The asset-standards skill body (loaded into your context above)
+    contains 10 verbatim Lucide SVGs to copy from — preserve their
+    class attribute exactly. Stripping the class is a partial-credit
+    failure.
+
+  Font loading — REQUIRED when typography frontmatter names ≥ 2 families:
+    The page's `<head>` MUST `<link rel="stylesheet" href="...">`
+    Google Fonts for EVERY declared typography family that isn't a
+    system font (system-ui, sans-serif, serif, monospace, etc).
+    Stack the families into ONE css2 URL:
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=<Display>:wght@...&family=<Body>:wght@...&family=<Mono>:wght@...&display=swap">
+    Skip families that are paid-only (Söhne, Geist, Whyte, Suisse Works);
+    use the canonical free fallback in the family-stack instead.
+
   Radical-register exception (Finding #36):
     If the DESIGN.md prose, persona authority, or scaffold explicitly calls for
     ANTI-templated layout — phrases like "anti-fashion", "deconstructive",

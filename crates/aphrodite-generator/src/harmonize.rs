@@ -27,6 +27,10 @@ pub struct HarmonizeReport {
     pub hero_typography_fixed: bool,
     /// Lucide icon slugs we re-labelled by path-data fingerprint matching.
     pub lucide_labels_recovered: Vec<String>,
+    /// Quality warnings — visible-from-HTML problems we found but didn't fix
+    /// (no h1, no section tags, fewer fonts loaded than declared, etc).
+    /// These flag production-readiness concerns without auto-mutating.
+    pub quality_warnings: Vec<String>,
     /// Non-fatal diagnostics — kept terse, the caller decides what to surface.
     pub notes: Vec<String>,
 }
@@ -90,7 +94,50 @@ pub fn harmonize(
             .push("composition.html already had a Google Fonts link; skipped re-injection".into());
     }
 
+    // Production-readiness audit on the composition (read-only — flags issues
+    // the user should know about but doesn't auto-mutate).
+    report.quality_warnings = audit_composition(&composition_out_labeled, display.as_deref(), body.as_deref());
+
     (composition_out_labeled, hero_out, report)
+}
+
+/// Read-only semantic-HTML audit. Surfaces gaps that a production page
+/// would not ship with: missing `<h1>`, zero `<section>` tags, declared
+/// fonts not actually loaded, etc.
+fn audit_composition(html: &str, display: Option<&str>, body: Option<&str>) -> Vec<String> {
+    let mut warnings = Vec::new();
+    let h1_count = html.matches("<h1").count();
+    let section_count = html.matches("<section").count();
+    let nav_count = html.matches("<nav").count();
+    let footer_count = html.matches("<footer").count();
+    if h1_count == 0 {
+        warnings.push("no `<h1>` element — production pages must have exactly one page-level heading.".into());
+    } else if h1_count > 1 {
+        warnings.push(format!(
+            "{h1_count} `<h1>` elements — production pages should have exactly one."
+        ));
+    }
+    if section_count == 0 {
+        warnings.push("zero `<section>` tags — major regions should be wrapped in <section> for semantic accessibility.".into());
+    }
+    if nav_count == 0 && (html.contains("class=\"nav") || html.contains("class=\"sidebar")) {
+        warnings.push("nav/sidebar found in classes but no `<nav>` element — wrap navigation in `<nav>` for semantic accessibility.".into());
+    }
+    if footer_count == 0 && html.contains("class=\"footer") {
+        warnings.push("footer class found but no `<footer>` element — wrap site footer in `<footer>`.".into());
+    }
+    // Check that declared fonts actually appear in the @import URL.
+    for fam in [display, body].iter().flatten() {
+        if !is_system_family(fam) {
+            let fam_plus = fam.replace(' ', "+");
+            if !html.contains(&fam_plus) {
+                warnings.push(format!(
+                    "declared font `{fam}` not present in any fonts.googleapis.com link — will fall back to system stack."
+                ));
+            }
+        }
+    }
+    warnings
 }
 
 // ---------------------------------------------------------------------------
@@ -104,21 +151,73 @@ pub fn harmonize(
 const LUCIDE_FINGERPRINTS: &[(&str, &str)] = &[
     ("arrow-right", "M5 12h14"),
     ("arrow-up-right", "M7 7h10v10"),
+    ("arrow-left", "m12 19-7-7 7-7"),
+    ("arrow-down", "M12 5v14"),
+    ("arrow-up", "m5 12 7-7 7 7"),
     ("mail", "M22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"),
     ("mail", "m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"),
     ("phone", "M22 16.92v3a2 2 0 0 1-2.18 2"),
     ("map-pin", "M20 10c0 4.993-5.539 10.193-7.399 11.799"),
     ("map-pin", "M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0"),
+    ("home", "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"),
+    ("home", "m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2"),
+    ("house", "M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"),
     ("hammer", "m15 12-8.373 8.373"),
     ("ruler", "M21.3 8.7 8.7 21.3a2.41 2.41 0 0 1-3.4 0"),
     ("flask-conical", "M14 2v6a2 2 0 0 0 .245.96l5.51 10.08"),
     ("chart-line", "M3 3v16a2 2 0 0 0 2 2h16"),
     ("chart-line", "M3 3v18h18"),
     ("chevron-right", "m9 18 6-6-6-6"),
+    ("chevron-left", "m15 18-6-6 6-6"),
+    ("chevron-down", "m6 9 6 6 6-6"),
+    ("chevron-up", "m18 15-6-6-6 6"),
     ("triangle-alert", "m21.73 18-8-14a2 2 0 0 0-3.48 0"),
     ("layout-dashboard", ""), // detected via rect-block heuristic below
     ("user-plus", "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"),
     ("users", "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"),
+    ("user", "M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"),
+    ("settings", "M19.14 12.94c.04-.3.06-.61.06-.94"),
+    ("settings", "M12.22 2h-.44a2 2 0 0 0-2 2v.18"),
+    ("search", "m21 21-4.34-4.34"),
+    ("search", "M21 21l-4.35-4.35"),
+    ("menu", "M4 12h16"),
+    ("menu", "M3 12h18"),
+    ("x", "M18 6 6 18"),
+    ("check", "M20 6 9 17l-5-5"),
+    ("plus", "M5 12h14"),
+    ("minus", "M5 12h14"),
+    ("calendar", "M8 2v4"),
+    ("clock", "M12 6v6l4 2"),
+    ("heart", "M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3"),
+    ("star", "M11.525 2.295a.53.53 0 0 1 .95 0"),
+    ("download", "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"),
+    ("upload", "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"),
+    ("trash", "M3 6h18"),
+    ("edit", "M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"),
+    ("file", "M14.5 22H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h7l5 5v3.5"),
+    ("folder", "M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13"),
+    ("globe", "M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0"),
+    ("eye", "M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0"),
+    ("link", "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"),
+    ("external-link", "M15 3h6v6"),
+    ("log-out", "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"),
+    ("log-in", "M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"),
+    ("filter", "M3 6h18l-7 12v6l-4-2v-4z"),
+    ("filter", "M2 6h20l-9 12v6l-2-2v-4z"),
+    ("share", "M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"),
+    ("info", "M12 16v-4"),
+    ("info", "M12 8h.01"),
+    ("zap", "M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7"),
+    ("circle", "M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"),
+    ("square", "M21 16V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8"),
+    ("activity", "M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48"),
+    ("activity", "M22 12h-4l-3 9L9 3l-3 9H2"),
+    ("git-branch", "M6 3v12"),
+    ("terminal", "m4 17 6-6-6-6"),
+    ("database", "M5 3a9 3 0 0 1 14 0"),
+    ("database", "M3 5a9 3 0 0 0 18 0"),
+    ("cloud", "M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9"),
+    ("lock", "M5 11h14"),
 ];
 
 /// Walk every `<svg ...>...</svg>` block. If its first path / shape opens
@@ -566,6 +665,14 @@ spacing:
         let (out, recovered) = recover_lucide_classes(html);
         assert_eq!(recovered, vec!["chart-line".to_string()]);
         assert!(out.contains("class=\"lucide lucide-chart-line chart-svg\""));
+    }
+
+    #[test]
+    fn recovers_home_icon_by_fingerprint() {
+        let html = r##"<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>"##;
+        let (out, recovered) = recover_lucide_classes(html);
+        assert_eq!(recovered, vec!["home".to_string()]);
+        assert!(out.contains("class=\"lucide lucide-home\""));
     }
 
     #[test]

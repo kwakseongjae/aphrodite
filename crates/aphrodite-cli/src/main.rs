@@ -14,6 +14,7 @@ mod feedback_cmd;
 mod gallery_cmd;
 mod init_cmd;
 mod log_cmd;
+mod preview_cmd;
 mod refine_cmd;
 mod setup_cmd;
 mod wiki_cmd;
@@ -211,6 +212,18 @@ enum Command {
         #[arg(long)]
         repo: Option<PathBuf>,
     },
+
+    /// Open the current run's composition.html (or hero.html fallback) in
+    /// the default browser. Closes the "no visual editor" pain — single
+    /// keystroke to see your output.
+    Preview {
+        #[arg(long)]
+        repo: Option<PathBuf>,
+        /// Override which file to open (defaults to composition.html →
+        /// hero.html → .aphrodite/out/composition.html).
+        #[arg(long)]
+        file: Option<String>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -357,6 +370,7 @@ async fn main() -> anyhow::Result<()> {
         }
         Command::Log { n, repo } => log_cmd::show_log(repo, n)?,
         Command::Undo { n, yes, repo } => log_cmd::undo(repo, n, yes)?,
+        Command::Preview { repo, file } => preview_cmd::run(repo, file)?,
     };
 
     if cli.json {
