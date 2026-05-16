@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Walnut Seoul - Furniture Maker</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:wght@400&family=Pretendard:wght@300;400&display=swap">
+    <style>
+        :root {
+            --colors-primary-50: #f2f0f5;
+            --colors-primary-100: #e4e1eb;
+            --colors-primary-200: #c9c3d7;
+            --colors-primary-300: #aea5c3;
+            --colors-primary-400: #9387af;
+            --colors-primary-500: #6b5b91;
+            --colors-primary-600: #564875;
+            --colors-primary-700: #413659;
+            --colors-primary-800: #2c243e;
+            --colors-primary-900: #171224;
+            --colors-neutral-0: #ffffff;
+            --colors-neutral-50: #f8f8f8;
+            --colors-neutral-100: #f0efef;
+            --colors-neutral-200: #e2e1e0;
+            --colors-neutral-300: #c7c5c4;
+            --colors-neutral-400: #9e9b99;
+            --colors-neutral-500: #767370;
+            --colors-neutral-600: #5a5754;
+            --colors-neutral-700: #42403d;
+            --colors-neutral-800: #2c2a28;
+            --colors-neutral-900: #1a1918;
+            --colors-neutral-1000: #000000;
+            --colors-background-primary: var(--colors-neutral-50);
+            --colors-text-primary: var(--colors-neutral-900);
+            --colors-text-muted: var(--colors-neutral-600);
+            --typography-display-family: "Instrument Serif", serif;
+            --typography-body-family: "Pretendard", sans-serif;
+            --spacing-1: 4px;
+            --spacing-2: 8px;
+            --spacing-3: 12px;
+            --spacing-4: 16px;
+            --spacing-6: 24px;
+            --spacing-8: 32px;
+            --spacing-12: 48px;
+            --spacing-16: 64px;
+            --spacing-24: 96px;
+            --spacing-32: 128px;
+            --spacing-48: 192px;
+            --rounded-sm: 2px;
+            --rounded-md: 4px;
+            --rounded-lg: 8px;
+        }
+
+        body[data-variant="dark"] {
+            --colors-background-primary: var(--colors-neutral-900);
+            --colors-text-primary: var(--colors-neutral-100);
+        }
+
+        body[data-variant="brand-a"] {
+            --colors-background-primary: #faf8f4;
+            --colors-text-primary: #24211e;
+        }
+
+        body[data-variant="brand-b"] {
+            --colors-background-primary: #eeedec;
+            --colors-text-primary: #1e1d1b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--typography-body-family);
+            font-weight: 300;
+            color: var(--colors-text-primary);
+            background-color: var(--colors-background-primary);
+            line-height: 1.6;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-6) var(--spacing-16);
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: var(--typography-display-family);
+            font-weight: 400;
+            font-size: 24px;
+            letter-spacing: -0.5px;
+        }
+
+        nav a {
+            color: var(--colors-text-primary);
+            text-decoration: none;
+            font-weight: 400;
+            margin-left: var(--spacing-8);
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: var(--colors-primary-500);
+        }
+
+        .switcher {
+            position: absolute;
+            top: var(--spacing-6);
+            right: var(--spacing-16);
+            display: flex;
+            gap: var(--spacing-2);
+        }
+
+        .switcher button {
+            background: none;
+            border: 1px solid var(--colors-text-primary);
+            color: var(--colors-text-primary);
+            padding: var(--spacing-2) var(--spacing-4);
+            border-radius: var(--rounded-sm);
+            cursor: pointer;
+        }
+
+        .switcher button:hover {
+            background-color: var(--colors-primary-500);
+            color: var(--colors-background-primary);
+            border-color: var(--colors-primary-500);
+        }
+
+        .section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: var(--spacing-16) var(--spacing-8);
+            text-align: center;
+        }
+
+        .section-image {
+            width: 100%;
+            height: auto;
+            border-radius: var(--rounded-sm);
+            margin-bottom: var(--spacing-8);
+        }
+
+        .project-content {
+            max-width: 640px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .project-title {
+            font-family: var(--typography-display-family);
+            font-weight: 400;
+            font-size: 48px;
+            line-height: 1.1;
+            margin-bottom: var(--spacing-8);
+        }
+
+        .project-details {
+            font-size: 15px;
+            color: var(--colors-text-muted);
+            margin-bottom: var(--spacing-4);
+        }
+
+        .project-description {
+            font-size: 15px;
+            margin-bottom: var(--spacing-32);
+        }
+
+        .contact {
+            padding: var(--spacing-32) var(--spacing-16);
+            text-align: center;
+            background-color: var(--colors-neutral-800);
+            color: var(--colors-neutral-100);
+        }
+
+        .contact p {
+            font-size: 15px;
+            margin-bottom: var(--spacing-4);
+        }
+
+        .contact a {
+            color: var(--colors-primary-500);
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .section {
+                min-height: 100vh;
+            }
+            
+            .project-title {
+                font-size: 38px;
+            }
+            
+            nav {
+                padding: var(--spacing-4) var(--spacing-8);
+            }
+            
+            .logo {
+                font-size: 19px;
+            }
+            
+            nav a {
+                margin-left: var(--spacing-4);
+                font-size: 13px;
+            }
+        }
+    </style>
+
+<style data-aphrodite-variants>
+[data-variant="brand-a"] {
+  --colors-background-primary: #faf8f4;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0efef;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #e2e1e0;
+  --colors-neutral-300: #c7c5c4;
+  --colors-neutral-400: #9e9b99;
+  --colors-neutral-50: #f8f8f8;
+  --colors-neutral-500: #767370;
+  --colors-neutral-600: #5a5754;
+  --colors-neutral-700: #42403d;
+  --colors-neutral-800: #2c2a28;
+  --colors-neutral-900: #1a1918;
+  --colors-primary-100: #e4e1eb;
+  --colors-primary-200: #c9c3d7;
+  --colors-primary-300: #aea5c3;
+  --colors-primary-400: #9387af;
+  --colors-primary-50: #f2f0f5;
+  --colors-primary-500: #6b5b91;
+  --colors-primary-600: #564875;
+  --colors-primary-700: #413659;
+  --colors-primary-800: #2c243e;
+  --colors-primary-900: #171224;
+  --colors-text-primary: #24211e;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-48: 192px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Pretendard;
+  --typography-body-weight: 300;
+  --typography-display-family: Instrument Serif;
+  --typography-display-weight: 400;
+  --bg: #faf8f4;
+  --fg: #24211e;
+  --muted: #6b5b91;
+}
+[data-variant="brand-b"] {
+  --colors-background-primary: #eeedec;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0efef;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #e2e1e0;
+  --colors-neutral-300: #c7c5c4;
+  --colors-neutral-400: #9e9b99;
+  --colors-neutral-50: #f8f8f8;
+  --colors-neutral-500: #767370;
+  --colors-neutral-600: #5a5754;
+  --colors-neutral-700: #42403d;
+  --colors-neutral-800: #2c2a28;
+  --colors-neutral-900: #1a1918;
+  --colors-primary-100: #e4e1eb;
+  --colors-primary-200: #c9c3d7;
+  --colors-primary-300: #aea5c3;
+  --colors-primary-400: #9387af;
+  --colors-primary-50: #f2f0f5;
+  --colors-primary-500: #6b5b91;
+  --colors-primary-600: #564875;
+  --colors-primary-700: #413659;
+  --colors-primary-800: #2c243e;
+  --colors-primary-900: #171224;
+  --colors-text-primary: #1e1d1b;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-48: 192px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Pretendard;
+  --typography-body-weight: 300;
+  --typography-display-family: Instrument Serif;
+  --typography-display-weight: 400;
+  --bg: #eeedec;
+  --fg: #1e1d1b;
+  --muted: #6b5b91;
+}
+[data-variant="dark"] {
+  --colors-background-primary: #1a1918;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0efef;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #e2e1e0;
+  --colors-neutral-300: #c7c5c4;
+  --colors-neutral-400: #9e9b99;
+  --colors-neutral-50: #f8f8f8;
+  --colors-neutral-500: #767370;
+  --colors-neutral-600: #5a5754;
+  --colors-neutral-700: #42403d;
+  --colors-neutral-800: #2c2a28;
+  --colors-neutral-900: #1a1918;
+  --colors-primary-100: #e4e1eb;
+  --colors-primary-200: #c9c3d7;
+  --colors-primary-300: #aea5c3;
+  --colors-primary-400: #9387af;
+  --colors-primary-50: #f2f0f5;
+  --colors-primary-500: #6b5b91;
+  --colors-primary-600: #564875;
+  --colors-primary-700: #413659;
+  --colors-primary-800: #2c243e;
+  --colors-primary-900: #171224;
+  --colors-text-primary: #e8e7e6;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-48: 192px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Pretendard;
+  --typography-body-weight: 300;
+  --typography-display-family: Instrument Serif;
+  --typography-display-weight: 400;
+  --bg: #1a1918;
+  --fg: #e8e7e6;
+  --muted: #6b5b91;
+}
+[data-variant="light"] {
+  --colors-background-primary: #f8f8f8;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0efef;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #e2e1e0;
+  --colors-neutral-300: #c7c5c4;
+  --colors-neutral-400: #9e9b99;
+  --colors-neutral-50: #f8f8f8;
+  --colors-neutral-500: #767370;
+  --colors-neutral-600: #5a5754;
+  --colors-neutral-700: #42403d;
+  --colors-neutral-800: #2c2a28;
+  --colors-neutral-900: #1a1918;
+  --colors-primary-100: #e4e1eb;
+  --colors-primary-200: #c9c3d7;
+  --colors-primary-300: #aea5c3;
+  --colors-primary-400: #9387af;
+  --colors-primary-50: #f2f0f5;
+  --colors-primary-500: #6b5b91;
+  --colors-primary-600: #564875;
+  --colors-primary-700: #413659;
+  --colors-primary-800: #2c243e;
+  --colors-primary-900: #171224;
+  --colors-text-primary: #1a1918;
+  --rounded-md: 4px;
+  --rounded-sm: 2px;
+  --spacing-1: 4px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-48: 192px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Pretendard;
+  --typography-body-weight: 300;
+  --typography-display-family: Instrument Serif;
+  --typography-display-weight: 400;
+  --bg: #f8f8f8;
+  --fg: #1a1918;
+  --muted: #6b5b91;
+}
+body{background:var(--bg);color:var(--fg);}
+</style>
+</head>
+<body data-variant="light">
+    <nav>
+        <div class="logo">Walnut Seoul</div>
+        <div>
+            <a href="#work" class="active">Work</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+
+    <div class="switcher">
+        <button onclick="document.body.dataset.variant='light'">light</button>
+        <button onclick="document.body.dataset.variant='dark'">dark</button>
+        <button onclick="document.body.dataset.variant='brand-a'">gallery</button>
+        <button onclick="document.body.dataset.variant='brand-b'">workshop</button>
+    </div>
+
+    <section id="work" class="section">
+        <div class="project-content">
+            <img class="section-image" src="https://via.placeholder.com/1200x1500?text=Seoul+Dining+Table" alt="Seoul Dining Table">
+            <h1 class="project-title">Seoul Dining Table</h1>
+            <p class="project-details">Black walnut • 180 × 90 × 74 cm • 2024</p>
+            <p class="project-description">A dining table commissioned for a private residence in Hannam-dong, featuring a live edge slab sourced from sustainable forests in Gangwon Province. The table showcases the natural beauty of walnut with minimal intervention, allowing the grain to guide the form.</p>
+        </div>
+    </section>
+
+    <div style="height: var(--spacing-48);"></div>
+
+    <section class="section">
+        <div class="project-content">
+            <img class="section-image" src="https://via.placeholder.com/1200x1500?text=Jeju+Sideboard" alt="Jeju Sideboard">
+            <h1 class="project-title">Jeju Sideboard</h1>
+            <p class="project-details">Black walnut • 200 × 60 × 85 cm • 2023</p>
+            <p class="project-description">Inspired by volcanic rock formations on Jeju Island, this sideboard features asymmetrical doors and a textured finish achieved through controlled burning of the wood surface. Each door is fitted with hand-carved walnut handles that follow the natural curvature of the grain.</p>
+        </div>
+    </section>
+
+    <div style="height: var(--spacing-48);"></div>
+
+    <section class="section">
+        <div class="project-content">
+            <img class="section-image" src="https://via.placeholder.com/1200x1500?text=Han+River+Chair" alt="Han River Chair">
+            <h1 class="project-title">Han River Chair</h1>
+            <p class="project-details">Black walnut • 65 × 55 × 75 cm • 2023</p>
+            <p class="project-description">Designed for contemplative spaces near the Han River, this chair balances traditional joinery techniques with contemporary form. The seat is carved from a single piece of walnut, allowing for a continuous flow of grain from back to seat.</p>
+        </div>
+    </section>
+
+    <div style="height: var(--spacing-48);"></div>
+
+    <section class="section">
+        <div class="project-content">
+            <img class="section-image" src="https://via.placeholder.com/1200x1500?text=Gyeongbokgung+Cabinet" alt="Gyeongbokgung Cabinet">
+            <h1 class="project-title">Gyeongbokgung Cabinet</h1>
+            <p class="project-details">Black walnut • 120 × 45 × 130 cm • 2022</p>
+            <p class="project-description">A reinterpretation of traditional Korean cabinet forms, scaled for modern living spaces. The drawer fronts feature inlaid brass patterns inspired by palace roof tiles, while the interior is lined with handcrafted paper from Jeonju.</p>
+        </div>
+    </section>
+
+    <div style="height: var(--spacing-48);"></div>
+
+    <section class="section">
+        <div class="project-content">
+            <img class="section-image" src="https://via.placeholder.com/1200x1500?text=Bukchon+Bed" alt="Bukchon Bed">
+            <h1 class="project-title">Bukchon Bed</h1>
+            <p class="project-details">Black walnut • 200 × 180 × 110 cm • 2022</p>
+            <p class="project-description">Designed for a renovated hanok in Bukchon, this bed frame integrates traditional Korean architecture elements with contemporary comfort. The headboard features carved panels inspired by moon doors, creating a play of light and shadow in the bedroom.</p>
+        </div>
+    </section>
+
+    <div style="height: var(--spacing-48);"></div>
+
+    <section class="section">
+        <div class="project-content">
+            <img class="section-image" src="https://via.placeholder.com/1200x1500?text=Namsan+Bookshelf" alt="Namsan Bookshelf">
+            <h1 class="project-title">Namsan Bookshelf</h1>
+            <p class="project-details">Black walnut • 120 × 30 × 200 cm • 2021</p>
+            <p class="project-description">Organized around the concept of layers, this bookshelf features staggered shelves that create visual rhythm while accommodating books of varying sizes. The asymmetrical design is balanced through careful attention to negative space and proportion.</p>
+        </div>
+    </section>
+
+    <footer id="contact" class="contact">
+        <p>Seoul, South Korea</p>
+        <p><a href="tel:+821012345678">+82 10 1234 5678</a></p>
+        <p><a href="mailto:info@walnutseoul.com">info@walnutseoul.com</a></p>
+    </footer>
+</body>
+</html>

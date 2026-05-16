@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en" data-variant="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Walnut Seoul - Solid Walnut Furniture</title>
+  <style>
+    :root {
+      /* Colors */
+      --colors-primary-50: #f0f5f2;
+      --colors-primary-100: #d9e8df;
+      --colors-primary-200: #b3d1bf;
+      --colors-primary-300: #8dba9f;
+      --colors-primary-400: #5f8f74;
+      --colors-primary-500: #3d6b53;
+      --colors-primary-600: #2f5542;
+      --colors-primary-700: #244033;
+      --colors-primary-800: #1a2b24;
+      --colors-primary-900: #0f1a15;
+      --colors-neutral-0: #ffffff;
+      --colors-neutral-50: #faf9f6;
+      --colors-neutral-100: #f0efeb;
+      --colors-neutral-200: #dddbd5;
+      --colors-neutral-300: #c4c1b9;
+      --colors-neutral-400: #a8a49b;
+      --colors-neutral-500: #8a857c;
+      --colors-neutral-600: #6d6860;
+      --colors-neutral-700: #524e47;
+      --colors-neutral-800: #363330;
+      --colors-neutral-900: #1a1917;
+      --colors-neutral-1000: #000000;
+      --colors-accent-50: #fbf4ed;
+      --colors-accent-100: #f3dfd0;
+      --colors-accent-200: #e5bfa0;
+      --colors-accent-300: #d49c6c;
+      --colors-accent-400: #c67f44;
+      --colors-accent-500: #b86830;
+      --colors-accent-600: #9a5326;
+      --colors-accent-700: #7a401e;
+      --colors-accent-800: #5a2e16;
+      --colors-accent-900: #3c1e0e;
+      
+      /* Typography */
+      --typography-display-family: "DM Serif Display", serif;
+      --typography-body-family: "Outfit", sans-serif;
+      --typography-mono-family: "JetBrains Mono", monospace;
+      
+      /* Spacing */
+      --spacing-1: 4px;
+      --spacing-2: 8px;
+      --spacing-3: 12px;
+      --spacing-4: 16px;
+      --spacing-5: 20px;
+      --spacing-6: 24px;
+      --spacing-8: 32px;
+      --spacing-10: 40px;
+      --spacing-12: 48px;
+      --spacing-16: 64px;
+      --spacing-20: 80px;
+      --spacing-24: 96px;
+      --spacing-32: 128px;
+      --spacing-40: 160px;
+      --spacing-48: 192px;
+      --spacing-56: 224px;
+      
+      /* Rounded */
+      --rounded-none: 0px;
+      --rounded-xs: 2px;
+      --rounded-sm: 4px;
+      --rounded-md: 6px;
+      
+      /* Text Colors */
+      --colors-text-primary: var(--colors-neutral-900);
+      --colors-text-secondary: var(--colors-neutral-700);
+      --colors-text-tertiary: var(--colors-neutral-500);
+      
+      /* Background Colors */
+      --colors-background-primary: var(--colors-neutral-0);
+      --colors-background-secondary: var(--colors-neutral-50);
+      --colors-border-primary: var(--colors-neutral-300);
+      --colors-surface-elevated: var(--colors-neutral-0);
+    }
+    
+    /* Typography */
+    @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:wght@400&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--typography-body-family);
+      font-weight: 300;
+      color: var(--colors-text-primary);
+      background-color: var(--colors-background-primary);
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+    
+    /* Typography Scale */
+    h1 {
+      font-family: var(--typography-display-family);
+      font-weight: 400;
+      font-size: 72px;
+      line-height: 1.2;
+      margin-bottom: var(--spacing-6);
+    }
+    
+    h2 {
+      font-family: var(--typography-display-family);
+      font-weight: 400;
+      font-size: 48px;
+      line-height: 1.2;
+      margin-bottom: var(--spacing-8);
+    }
+    
+    h3 {
+      font-family: var(--typography-display-family);
+      font-weight: 400;
+      font-size: 32px;
+      line-height: 1.2;
+      margin-bottom: var(--spacing-6);
+    }
+    
+    p {
+      font-size: 17px;
+      margin-bottom: var(--spacing-6);
+    }
+    
+    .caption {
+      font-size: 13px;
+      color: var(--colors-text-tertiary);
+      margin-bottom: var(--spacing-4);
+    }
+    
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: var(--spacing-4) 0;
+      z-index: 100;
+      background-color: var(--colors-background-primary);
+      transition: padding 0.3s ease;
+    }
+    
+    .nav-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-12);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .nav-left {
+      font-family: var(--typography-display-family);
+      font-size: 24px;
+      font-weight: 400;
+    }
+    
+    .nav-right {
+      display: flex;
+      gap: var(--spacing-8);
+      font-size: 16px;
+    }
+    
+    .nav-right a {
+      text-decoration: none;
+      color: var(--colors-text-primary);
+      transition: color 0.2s;
+    }
+    
+    .nav-right a:hover {
+      color: var(--colors-accent-500);
+    }
+    
+    /* Variant Switcher */
+    .switcher {
+      position: absolute;
+      top: var(--spacing-6);
+      right: var(--spacing-12);
+      display: flex;
+      gap: var(--spacing-2);
+    }
+    
+    .switcher button {
+      font-family: var(--typography-body-family);
+      font-size: 12px;
+      font-weight: 400;
+      padding: var(--spacing-2) var(--spacing-4);
+      background: none;
+      border: 1px solid var(--colors-border-primary);
+      border-radius: var(--rounded-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .switcher button:hover {
+      border-color: var(--colors-primary-500);
+      color: var(--colors-primary-500);
+    }
+    
+    .switcher button.active {
+      background-color: var(--colors-primary-500);
+      color: white;
+      border-color: var(--colors-primary-500);
+    }
+    
+    /* Main Container */
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-12);
+    }
+    
+    /* Project Cards */
+    .project-card {
+      display: flex;
+      align-items: center;
+      margin-bottom: var(--spacing-40);
+      cursor: pointer;
+      transition: opacity 0.3s;
+    }
+    
+    .project-card:hover {
+      opacity: 0.9;
+    }
+    
+    .project-image {
+      flex: 1;
+      height: 500px;
+      background-color: var(--colors-neutral-100);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .project-text {
+      width: 320px;
+      padding: var(--spacing-16);
+      background-color: var(--colors-background-secondary);
+    }
+    
+    .project-card:nth-child(even) .project-image {
+      order: 2;
+    }
+    
+    .project-card:nth-child(even) .project-text {
+      order: 1;
+    }
+    
+    .project-title {
+      font-family: var(--typography-display-family);
+      font-size: 24px;
+      margin-bottom: var(--spacing-4);
+    }
+    
+    /* About Section */
+    .about-section {
+      margin-top: var(--spacing-56);
+      margin-bottom: var(--spacing-56);
+    }
+    
+    /* Contact Section */
+    .contact-section {
+      margin-top: var(--spacing-56);
+      margin-bottom: var(--spacing-40);
+    }
+    
+    .contact-intro {
+      font-family: var(--typography-display-family);
+      font-size: 32px;
+      margin-bottom: var(--spacing-16);
+    }
+    
+    .contact-details p {
+      font-size: 16px;
+      margin-bottom: var(--spacing-4);
+    }
+    
+    .contact-details a {
+      color: var(--colors-accent-500);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    .contact-details a:hover {
+      color: var(--colors-accent-700);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 48px;
+      }
+      
+      h2 {
+        font-size: 36px;
+      }
+      
+      h3 {
+        font-size: 24px;
+      }
+      
+      .project-card {
+        flex-direction: column;
+      }
+      
+      .project-text {
+        width: 100%;
+      }
+      
+      .project-card:nth-child(even) .project-image,
+      .project-card:nth-child(even) .project-text {
+        order: 1;
+      }
+      
+      .project-image {
+        height: 400px;
+      }
+    }
+    
+    /* Dark mode styles */
+    [data-variant="dark"] {
+      --colors-text-primary: #e8e6e1;
+      --colors-text-secondary: #a8a49b;
+      --colors-text-tertiary: #6d6860;
+      --colors-background-primary: #0f100e;
+      --colors-background-secondary: #1a1b18;
+      --colors-border-primary: #363330;
+      --colors-surface-elevated: #242522;
+    }
+    
+    /* Brand variant styles */
+    [data-variant="brand-a"] {
+      --colors-background-primary: #faf9f6;
+      --colors-background-secondary: #f0efeb;
+      --colors-text-primary: #1a1917;
+      --colors-text-secondary: #524e47;
+      --colors-text-tertiary: #8a857c;
+      --colors-border-primary: #c4c1b9;
+      --colors-surface-elevated: #ffffff;
+    }
+    
+    [data-variant="brand-b"] {
+      --colors-background-primary: #111d17;
+      --colors-background-secondary: #182920;
+      --colors-text-primary: #e4ebe6;
+      --colors-text-secondary: #96a99e;
+      --colors-text-tertiary: #5f7a6c;
+      --colors-border-primary: #2a3e33;
+      --colors-surface-elevated: #1e3328;
+    }
+  </style>
+
+<style data-aphrodite-variants>
+[data-variant="brand-a"] {
+  --colors-accent-100: #f3dfd0;
+  --colors-accent-200: #e5bfa0;
+  --colors-accent-300: #d49c6c;
+  --colors-accent-400: #c67f44;
+  --colors-accent-50: #fbf4ed;
+  --colors-accent-500: #b86830;
+  --colors-accent-600: #9a5326;
+  --colors-accent-700: #7a401e;
+  --colors-accent-800: #5a2e16;
+  --colors-accent-900: #3c1e0e;
+  --colors-background-primary: #faf9f6;
+  --colors-background-secondary: #f0efeb;
+  --colors-border-primary: #c4c1b9;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0efeb;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #dddbd5;
+  --colors-neutral-300: #c4c1b9;
+  --colors-neutral-400: #a8a49b;
+  --colors-neutral-50: #faf9f6;
+  --colors-neutral-500: #8a857c;
+  --colors-neutral-600: #6d6860;
+  --colors-neutral-700: #524e47;
+  --colors-neutral-800: #363330;
+  --colors-neutral-900: #1a1917;
+  --colors-primary-100: #d9e8df;
+  --colors-primary-200: #b3d1bf;
+  --colors-primary-300: #8dba9f;
+  --colors-primary-400: #5f8f74;
+  --colors-primary-50: #f0f5f2;
+  --colors-primary-500: #3d6b53;
+  --colors-primary-600: #2f5542;
+  --colors-primary-700: #244033;
+  --colors-primary-800: #1a2b24;
+  --colors-primary-900: #0f1a15;
+  --colors-surface-elevated: #ffffff;
+  --colors-text-primary: #1a1917;
+  --colors-text-secondary: #524e47;
+  --colors-text-tertiary": #8a857c;
+  --rounded-md: 6px;
+  --rounded-none: 0px;
+  --rounded-sm: 4px;
+  --rounded-xs: 2px;
+  --spacing-1: 4px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-48: 192px;
+  --spacing-5: 20px;
+  --spacing-56: 224px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Outfit;
+  --typography-body-weight: 300;
+  --typography-display-family: DM Serif Display;
+  --typography-display-weight: 400;
+  --typography-mono-family: JetBrains Mono;
+  --typography-mono-weight: 400;
+  --bg: #faf9f6;
+  --fg: #1a1917;
+  --muted: #3d6b53;
+}
+[data-variant="brand-b"] {
+  --colors-accent-100: #f3dfd0;
+  --colors-accent-200: #e5bfa0;
+  --colors-accent-300: #d49c6c;
+  --colors-accent-400: #c67f44;
+  --colors-accent-50: #fbf4ed;
+  --colors-accent-500: #b86830;
+  --colors-accent-600: #9a5326;
+  --colors-accent-700: #7a401e;
+  --colors-accent-800: #5a2e16;
+  --colors-accent-900: #3c1e0e;
+  --colors-background-primary: #111d17;
+  --colors-background-secondary: #182920;
+  --colors-border-primary: #2a3e33;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0efeb;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #dddbd5;
+  --colors-neutral-300: #c4c1b9;
+  --colors-neutral-400: #a8a49b;
+  --colors-neutral-50: #faf9f6;
+  --colors-neutral-500: #8a857c;
+  --colors-neutral-600: #6d6860;
+  --colors-neutral-700: #524e47;
+  --colors-neutral-800: #363330;
+  --colors-neutral-900: #1a1917;
+  --colors-primary-100: #d9e8df;
+  --colors-primary-200: #b3d1bf;
+  --colors-primary-300: #8dba9f;
+  --colors-primary-400: #5f8f74;
+  --colors-primary-50: #f0f5f2;
+  --colors-primary-500: #3d6b53;
+  --colors-primary-600: #2f5542;
+  --colors-primary-700: #244033;
+  --colors-primary-800: #1a2b24;
+  --colors-primary-900: #0f1a15;
+  --colors-surface-elevated: #1e3328;
+  --colors-text-primary: #e4ebe6;
+  --colors-text-secondary: #96a99e;
+  --colors-text-tertiary: #5f7a6c;
+  --rounded-md: 6px;
+  --rounded-none: 0px;
+  --rounded-sm: 4px;
+  --rounded-xs: 2px;
+  --spacing-1: 4px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-48: 192px;
+  --spacing-5: 20px;
+  --spacing-56: 224px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Outfit;
+  --typography-body-weight: 300;
+  --typography-display-family: DM Serif Display;
+  --typography-display-weight: 400;
+  --typography-mono-family: JetBrains Mono;
+  --typography-mono-weight: 400;
+  --bg: #111d17;
+  --fg: #e4ebe6;
+  --muted: #3d6b53;
+}
+[data-variant="dark"] {
+  --colors-accent-100: #f3dfd0;
+  --colors-accent-200: #e5bfa0;
+  --colors-accent-300: #d49c6c;
+  --colors-accent-400: #c67f44;
+  --colors-accent-50: #fbf4ed;
+  --colors-accent-500: #b86830;
+  --colors-accent-600: #9a5326;
+  --colors-accent-700: #7a401e;
+  --colors-accent-800: #5a2e16;
+  --colors-accent-900: #3c1e0e;
+  --colors-background-primary: #0f100e;
+  --colors-background-secondary: #1a1b18;
+  --colors-border-primary: #363330;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0efeb;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #dddbd5;
+  --colors-neutral-300: #c4c1b9;
+  --colors-neutral-400: #a8a49b;
+  --colors-neutral-50: #faf9f6;
+  --colors-neutral-500: #8a857c;
+  --colors-neutral-600: #6d6860;
+  --colors-neutral-700: #524e47;
+  --colors-neutral-800: #363330;
+  --colors-neutral-900: #1a1917;
+  --colors-primary-100: #d9e8df;
+  --colors-primary-200: #b3d1bf;
+  --colors-primary-300: #8dba9f;
+  --colors-primary-400: #5f8f74;
+  --colors-primary-50: #f0f5f2;
+  --colors-primary-500: #3d6b53;
+  --colors-primary-600: #2f5542;
+  --colors-primary-700: #244033;
+  --colors-primary-800: #1a2b24;
+  --colors-primary-900: #0f1a15;
+  --colors-surface-elevated: #242522;
+  --colors-text-primary: #e8e6e1;
+  --colors-text-secondary: #a8a49b;
+  --colors-text-tertiary: #6d6860;
+  --rounded-md: 6px;
+  --rounded-none: 0px;
+  --rounded-sm: 4px;
+  --rounded-xs: 2px;
+  --spacing-1: 4px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-48: 192px;
+  --spacing-5: 20px;
+  --spacing-56: 224px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Outfit;
+  --typography-body-weight: 300;
+  --typography-display-family: DM Serif Display;
+  --typography-display-weight: 400;
+  --typography-mono-family: JetBrains Mono;
+  --typography-mono-weight: 400;
+  --bg: #0f100e;
+  --fg: #e8e6e1;
+  --muted: #3d6b53;
+}
+[data-variant="light"] {
+  --colors-accent-100: #f3dfd0;
+  --colors-accent-200: #e5bfa0;
+  --colors-accent-300: #d49c6c;
+  --colors-accent-400: #c67f44;
+  --colors-accent-50: #fbf4ed;
+  --colors-accent-500: #b86830;
+  --colors-accent-600: #9a5326;
+  --colors-accent-700: #7a401e;
+  --colors-accent-800: #5a2e16;
+  --colors-accent-900: #3c1e0e;
+  --colors-background-primary: #ffffff;
+  --colors-background-secondary: #faf9f6;
+  --colors-border-primary: #dddbd5;
+  --colors-neutral-0: #ffffff;
+  --colors-neutral-100: #f0efeb;
+  --colors-neutral-1000: #000000;
+  --colors-neutral-200: #dddbd5;
+  --colors-neutral-300: #c4c1b9;
+  --colors-neutral-400: #a8a49b;
+  --colors-neutral-50: #faf9f6;
+  --colors-neutral-500: #8a857c;
+  --colors-neutral-600: #6d6860;
+  --colors-neutral-700: #524e47;
+  --colors-neutral-800: #363330;
+  --colors-neutral-900: #1a1917;
+  --colors-primary-100: #d9e8df;
+  --colors-primary-200: #b3d1bf;
+  --colors-primary-300: #8dba9f;
+  --colors-primary-400: #5f8f74;
+  --colors-primary-50: #f0f5f2;
+  --colors-primary-500: #3d6b53;
+  --colors-primary-600: #2f5542;
+  --colors-primary-700: #244033;
+  --colors-primary-800: #1a2b24;
+  --colors-primary-900: #0f1a15;
+  --colors-surface-elevated: #ffffff;
+  --colors-text-primary: #1a1917;
+  --colors-text-secondary: #524e47;
+  --colors-text-tertiary: #8a857c;
+  --rounded-md: 6px;
+  --rounded-none: 0px;
+  --rounded-sm: 4px;
+  --rounded-xs: 2px;
+  --spacing-1: 4px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-2: 8px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-3: 12px;
+  --spacing-32: 128px;
+  --spacing-4: 16px;
+  --spacing-40: 160px;
+  --spacing-48: 192px;
+  --spacing-5: 20px;
+  --spacing-56: 224px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --typography-body-family: Outfit;
+  --typography-body-weight: 300;
+  --typography-display-family: DM Serif Display;
+  --typography-display-weight: 400;
+  --typography-mono-family: JetBrains Mono;
+  --typography-mono-weight: 400;
+  --bg: #ffffff;
+  --fg: #1a1917;
+  --muted: #3d6b53;
+}
+body{background:var(--bg);color:var(--fg);}
+</style>
+</head>
+<body>
+  <nav>
+    <div class="nav-container">
+      <div class="nav-left">Walnut Seoul</div>
+      <div class="nav-right">
+        <a href="#work">Work</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+    <div class="switcher">
+      <button onclick="setVariant('light')" class="active">Light</button>
+      <button onclick="setVariant('dark')">Dark</button>
+      <button onclick="setVariant('brand-a')">Warm</button>
+      <button onclick="setVariant('brand-b')">Forest</button>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container" style="padding-top: 120px;">
+      <h1>Handcrafted Solid Walnut Furniture</h1>
+      
+      <section id="work">
+        <div class="project-card">
+          <div class="project-image">
+            <!-- Placeholder for image -->
+            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background-color: var(--colors-primary-100);">
+              <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="var(--colors-text-tertiary)" stroke-width="2" style="display: block;">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+            </div>
+          </div>
+          <div class="project-text">
+            <h3 class="project-title">Jinsol Dining Table</h3>
+            <p class="caption">Black walnut, brass joinery, 2024</p>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-image">
+            <!-- Placeholder for image -->
+            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background-color: var(--colors-primary-100);">
+              <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="var(--colors-text-tertiary)" stroke-width="2" style="display: block;">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+            </div>
+          </div>
+          <div class="project-text">
+            <h3 class="project-title">Seongbok Chair</h3>
+            <p class="caption">Solid walnut, hand-carved legs, 2023</p>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-image">
+            <!-- Placeholder for image -->
+            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background-color: var(--colors-primary-100);">
+              <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="var(--colors-text-tertiary)" stroke-width="2" style="display: block;">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+            </div>
+          </div>
+          <div class="project-text">
+            <h3 class="project-title">Jiyun Coffee Table</h3>
+            <p class="caption">Live edge walnut, steel base, 2023</p>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-image">
+            <!-- Placeholder for image -->
+            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background-color: var(--colors-primary-100);">
+              <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="var(--colors-text-tertiary)" stroke-width="2" style="display: block;">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+            </div>
+          </div>
+          <div class="project-text">
+            <h3 class="project-title">Minho Bedside</h3>
+            <p class="caption">Walnut with copper inlays, 2024</p>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-image">
+            <!-- Placeholder for image -->
+            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background-color: var(--colors-primary-100);">
+              <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="var(--colors-text-tertiary)" stroke-width="2" style="display: block;">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+            </div>
+          </div>
+          <div class="project-text">
+            <h3 class="project-title">Eunsu Bookshelf</h3>
+            <p class="caption">Walnut and brass, adjustable shelves, 2023</p>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-image">
+            <!-- Placeholder for image -->
+            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background-color: var(--colors-primary-100);">
+              <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="var(--colors-text-tertiary)" stroke-width="2" style="display: block;">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+            </div>
+          </div>
+          <div class="project-text">
+            <h3 class="project-title">Hana Bench</h3>
+            <p class="caption">Solid walnut, hand-finished, 2024</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="about-section">
+        <h2>About the Maker</h2>
+        <p>Based in Seoul, I create furniture exclusively from solid walnut wood, celebrating its natural grain and warm character. Each piece is handcrafted using traditional joinery techniques combined with modern design sensibilities.</p>
+        <p>My practice focuses on creating heirloom-quality furniture that develops a rich patina over time. I work directly with clients to create pieces that harmonize with their living spaces while honoring the material itself.</p>
+        <p>The workshop is located in the Mapo district, where I've been refining my craft for over a decade. My training combines Korean woodworking traditions with European furniture making techniques.</p>
+      </section>
+
+      <section id="contact" class="contact-section">
+        <h2 class="contact-intro">Let's talk about a piece</h2>
+        <div class="contact-details">
+          <p>Jiwoo Kim</p>
+          <p>Walnut Seoul Studio</p>
+          <p>123 Artisan Street, Mapo-gu, Seoul, South Korea</p>
+          <p><a href="mailto:hello@walnutseoul.com">hello@walnutseoul.com</a></p>
+          <p><a href="tel:+82-2-123-4567">+82 2 123 4567</a></p>
+          <p><a href="https://instagram.com/walnutseoul" style="color: var(--colors-accent-500);">Instagram</a></p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    function setVariant(variant) {
+      document.body.dataset.variant = variant;
+      
+      // Update active state for buttons
+      const buttons = document.querySelectorAll('.switcher button');
+      buttons.forEach(button => {
+        button.classList.remove('active');
+        if (button.textContent.toLowerCase() === variant) {
+          button.classList.add('active');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

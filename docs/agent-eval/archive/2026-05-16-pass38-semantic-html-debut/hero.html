@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>walnut-seoul — Aphrodite</title>
+<style>
+  :root { color-scheme: light dark; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Outfit", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --aphrodite-typography-display: "DM Serif Display", "Outfit", Georgia, "Times New Roman", serif;
+    --aphrodite-typography-body: "Outfit", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 320ms ease, color 320ms ease;
+  }
+  
+  [data-variant="brand-a"] {
+    --colors-accent-100: #f3dfd0;
+    --colors-accent-200: #e5bfa0;
+    --colors-accent-300: #d49c6c;
+    --colors-accent-400: #c67f44;
+    --colors-accent-50: #fbf4ed;
+    --colors-accent-500: #b86830;
+    --colors-accent-600: #9a5326;
+    --colors-accent-700: #7a401e;
+    --colors-accent-800: #5a2e16;
+    --colors-accent-900: #3c1e0e;
+    --colors-background-primary: #faf9f6;
+    --colors-background-secondary: #f0efeb;
+    --colors-border-primary: #c4c1b9;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0efeb;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #dddbd5;
+    --colors-neutral-300: #c4c1b9;
+    --colors-neutral-400: #a8a49b;
+    --colors-neutral-50: #faf9f6;
+    --colors-neutral-500: #8a857c;
+    --colors-neutral-600: #6d6860;
+    --colors-neutral-700: #524e47;
+    --colors-neutral-800: #363330;
+    --colors-neutral-900: #1a1917;
+    --colors-primary-100: #d9e8df;
+    --colors-primary-200: #b3d1bf;
+    --colors-primary-300: #8dba9f;
+    --colors-primary-400: #5f8f74;
+    --colors-primary-50: #f0f5f2;
+    --colors-primary-500: #3d6b53;
+    --colors-primary-600: #2f5542;
+    --colors-primary-700: #244033;
+    --colors-primary-800: #1a2b24;
+    --colors-primary-900: #0f1a15;
+    --colors-surface-elevated: #ffffff;
+    --colors-text-primary: #1a1917;
+    --colors-text-secondary: #524e47;
+    --colors-text-tertiary": #8a857c;
+    --rounded-md: 6px;
+    --rounded-none: 0px;
+    --rounded-sm: 4px;
+    --rounded-xs: 2px;
+    --spacing-1: 4px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-40: 160px;
+    --spacing-48: 192px;
+    --spacing-5: 20px;
+    --spacing-56: 224px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Outfit;
+    --typography-body-weight: 300;
+    --typography-display-family: DM Serif Display;
+    --typography-display-weight: 400;
+    --typography-mono-family: JetBrains Mono;
+    --typography-mono-weight: 400;
+    --bg: #faf9f6;
+    --fg: #1a1917;
+    --accent: #3d6b53;
+    --muted: #8dba9f;
+  }
+  
+  [data-variant="brand-b"] {
+    --colors-accent-100: #f3dfd0;
+    --colors-accent-200: #e5bfa0;
+    --colors-accent-300: #d49c6c;
+    --colors-accent-400: #c67f44;
+    --colors-accent-50: #fbf4ed;
+    --colors-accent-500: #b86830;
+    --colors-accent-600: #9a5326;
+    --colors-accent-700: #7a401e;
+    --colors-accent-800: #5a2e16;
+    --colors-accent-900: #3c1e0e;
+    --colors-background-primary: #111d17;
+    --colors-background-secondary: #182920;
+    --colors-border-primary: #2a3e33;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0efeb;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #dddbd5;
+    --colors-neutral-300: #c4c1b9;
+    --colors-neutral-400: #a8a49b;
+    --colors-neutral-50: #faf9f6;
+    --colors-neutral-500: #8a857c;
+    --colors-neutral-600: #6d6860;
+    --colors-neutral-700: #524e47;
+    --colors-neutral-800: #363330;
+    --colors-neutral-900: #1a1917;
+    --colors-primary-100: #d9e8df;
+    --colors-primary-200: #b3d1bf;
+    --colors-primary-300: #8dba9f;
+    --colors-primary-400: #5f8f74;
+    --colors-primary-50: #f0f5f2;
+    --colors-primary-500: #3d6b53;
+    --colors-primary-600: #2f5542;
+    --colors-primary-700: #244033;
+    --colors-primary-800: #1a2b24;
+    --colors-primary-900: #0f1a15;
+    --colors-surface-elevated: #1e3328;
+    --colors-text-primary: #e4ebe6;
+    --colors-text-secondary: #96a99e;
+    --colors-text-tertiary: #5f7a6c;
+    --rounded-md: 6px;
+    --rounded-none: 0px;
+    --rounded-sm: 4px;
+    --rounded-xs: 2px;
+    --spacing-1: 4px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-40: 160px;
+    --spacing-48: 192px;
+    --spacing-5: 20px;
+    --spacing-56: 224px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Outfit;
+    --typography-body-weight: 300;
+    --typography-display-family: DM Serif Display;
+    --typography-display-weight: 400;
+    --typography-mono-family: JetBrains Mono;
+    --typography-mono-weight: 400;
+    --bg: #111d17;
+    --fg: #e4ebe6;
+    --accent: #3d6b53;
+    --muted: #8dba9f;
+  }
+  
+  [data-variant="dark"] {
+    --colors-accent-100: #f3dfd0;
+    --colors-accent-200: #e5bfa0;
+    --colors-accent-300: #d49c6c;
+    --colors-accent-400: #c67f44;
+    --colors-accent-50: #fbf4ed;
+    --colors-accent-500: #b86830;
+    --colors-accent-600: #9a5326;
+    --colors-accent-700: #7a401e;
+    --colors-accent-800: #5a2e16;
+    --colors-accent-900: #3c1e0e;
+    --colors-background-primary: #0f100e;
+    --colors-background-secondary: #1a1b18;
+    --colors-border-primary: #363330;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0efeb;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #dddbd5;
+    --colors-neutral-300: #c4c1b9;
+    --colors-neutral-400: #a8a49b;
+    --colors-neutral-50: #faf9f6;
+    --colors-neutral-500: #8a857c;
+    --colors-neutral-600: #6d6860;
+    --colors-neutral-700: #524e47;
+    --colors-neutral-800: #363330;
+    --colors-neutral-900: #1a1917;
+    --colors-primary-100: #d9e8df;
+    --colors-primary-200: #b3d1bf;
+    --colors-primary-300: #8dba9f;
+    --colors-primary-400: #5f8f74;
+    --colors-primary-50: #f0f5f2;
+    --colors-primary-500: #3d6b53;
+    --colors-primary-600: #2f5542;
+    --colors-primary-700: #244033;
+    --colors-primary-800: #1a2b24;
+    --colors-primary-900: #0f1a15;
+    --colors-surface-elevated: #242522;
+    --colors-text-primary: #e8e6e1;
+    --colors-text-secondary: #a8a49b;
+    --colors-text-tertiary: #6d6860;
+    --rounded-md: 6px;
+    --rounded-none: 0px;
+    --rounded-sm: 4px;
+    --rounded-xs: 2px;
+    --spacing-1: 4px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-40: 160px;
+    --spacing-48: 192px;
+    --spacing-5: 20px;
+    --spacing-56: 224px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Outfit;
+    --typography-body-weight: 300;
+    --typography-display-family: DM Serif Display;
+    --typography-display-weight: 400;
+    --typography-mono-family: JetBrains Mono;
+    --typography-mono-weight: 400;
+    --bg: #0f100e;
+    --fg: #e8e6e1;
+    --accent: #3d6b53;
+    --muted: #8dba9f;
+  }
+  
+  [data-variant="light"] {
+    --colors-accent-100: #f3dfd0;
+    --colors-accent-200: #e5bfa0;
+    --colors-accent-300: #d49c6c;
+    --colors-accent-400: #c67f44;
+    --colors-accent-50: #fbf4ed;
+    --colors-accent-500: #b86830;
+    --colors-accent-600: #9a5326;
+    --colors-accent-700: #7a401e;
+    --colors-accent-800: #5a2e16;
+    --colors-accent-900: #3c1e0e;
+    --colors-background-primary: #ffffff;
+    --colors-background-secondary: #faf9f6;
+    --colors-border-primary: #dddbd5;
+    --colors-neutral-0: #ffffff;
+    --colors-neutral-100: #f0efeb;
+    --colors-neutral-1000: #000000;
+    --colors-neutral-200: #dddbd5;
+    --colors-neutral-300: #c4c1b9;
+    --colors-neutral-400: #a8a49b;
+    --colors-neutral-50: #faf9f6;
+    --colors-neutral-500: #8a857c;
+    --colors-neutral-600: #6d6860;
+    --colors-neutral-700: #524e47;
+    --colors-neutral-800: #363330;
+    --colors-neutral-900: #1a1917;
+    --colors-primary-100: #d9e8df;
+    --colors-primary-200: #b3d1bf;
+    --colors-primary-300: #8dba9f;
+    --colors-primary-400: #5f8f74;
+    --colors-primary-50: #f0f5f2;
+    --colors-primary-500: #3d6b53;
+    --colors-primary-600: #2f5542;
+    --colors-primary-700: #244033;
+    --colors-primary-800: #1a2b24;
+    --colors-primary-900: #0f1a15;
+    --colors-surface-elevated: #ffffff;
+    --colors-text-primary: #1a1917;
+    --colors-text-secondary: #524e47;
+    --colors-text-tertiary: #8a857c;
+    --rounded-md: 6px;
+    --rounded-none: 0px;
+    --rounded-sm: 4px;
+    --rounded-xs: 2px;
+    --spacing-1: 4px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+    --spacing-2: 8px;
+    --spacing-20: 80px;
+    --spacing-24: 96px;
+    --spacing-3: 12px;
+    --spacing-32: 128px;
+    --spacing-4: 16px;
+    --spacing-40: 160px;
+    --spacing-48: 192px;
+    --spacing-5: 20px;
+    --spacing-56: 224px;
+    --spacing-6: 24px;
+    --spacing-8: 32px;
+    --typography-body-family: Outfit;
+    --typography-body-weight: 300;
+    --typography-display-family: DM Serif Display;
+    --typography-display-weight: 400;
+    --typography-mono-family: JetBrains Mono;
+    --typography-mono-weight: 400;
+    --bg: #ffffff;
+    --fg: #1a1917;
+    --accent: #3d6b53;
+    --muted: #8dba9f;
+  }
+  
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(40px, 6vw, 84px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    font-weight: 700;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 22px);
+    line-height: 1.55;
+    max-width: 60ch;
+    color: var(--muted);
+    margin: 0 0 40px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 160ms ease, filter 160ms ease;
+  }
+  .cta:hover { transform: translateY(-1px); filter: brightness(1.05); }
+  .switcher {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    padding: 6px;
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .switcher button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .switcher button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  @media (max-width: 600px) {
+    .wrap { padding: 64px 20px; }
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap">
+</head>
+<body data-variant="light">
+  <nav class="switcher" aria-label="Variant switcher">
+    <button data-set="brand-a" aria-pressed="false">brand-a</button>
+    <button data-set="brand-b" aria-pressed="false">brand-b</button>
+    <button data-set="dark" aria-pressed="false">dark</button>
+    <button data-set="light" aria-pressed="true">light</button>
+    </nav>
+  <main class="wrap">
+    <p class="eyebrow">walnut-seoul</p>
+    <h1>Editorial portfolio for an independent solid-walnut furniture maker in Seoul.</h1>
+    <p class="lede">Editorial portfolio for an independent solid-walnut furniture maker in Seoul, featuring full-bleed project photography with alternating text rails Every variant of this surface validates against WCAG-AA contrast and the Google Labs DESIGN.md alpha schema.</p>
+    <a class="cta" href="#" aria-label="Primary call to action">Get started →</a>
+  </main>
+  <script>
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.addEventListener('click', () => {
+        const v = b.dataset.set;
+        document.body.dataset.variant = v;
+        document.querySelectorAll('.switcher button').forEach(x => {
+          x.setAttribute('aria-pressed', x.dataset.set === v ? 'true' : 'false');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

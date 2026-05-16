@@ -94,11 +94,74 @@ pub fn harmonize(
             .push("composition.html already had a Google Fonts link; skipped re-injection".into());
     }
 
-    // Production-readiness audit on the composition (read-only — flags issues
-    // the user should know about but doesn't auto-mutate).
-    report.quality_warnings = audit_composition(&composition_out_labeled, display.as_deref(), body.as_deref());
+    // Auto-fix safe quality issues before audit, so the audit reports
+    // what's *really* still wrong rather than what we already fixed.
+    let composition_post_fix = auto_fix_h1_count(&composition_out_labeled);
+    // Production-readiness audit on the FIXED composition (read-only after this point).
+    report.quality_warnings = audit_composition(&composition_post_fix, display.as_deref(), body.as_deref());
 
-    (composition_out_labeled, hero_out, report)
+    (composition_post_fix, hero_out, report)
+}
+
+/// If composition has > 1 `<h1>` tags, keep the FIRST one (typically the
+/// page hero) and downgrade all others to `<h2>`. This is a safe transform
+/// because the page-level hero should be h1 and section headers should be
+/// h2. Pass 39 surfaced this — composer emitted h1 per section.
+fn auto_fix_h1_count(html: &str) -> String {
+    let h1_count = html.matches("<h1").count();
+    if h1_count <= 1 {
+        return html.to_string();
+    }
+    let mut out = String::with_capacity(html.len());
+    let mut cursor = 0usize;
+    let mut seen_h1_open = false;
+    while let Some(rel) = html[cursor..].find("<h1") {
+        let i = cursor + rel;
+        out.push_str(&html[cursor..i]);
+        // Each occurrence: is it an opening or closing-tag-like? Should be
+        // matched as `<h1` followed by space or `>`. We map opening + closing
+        // <h1...>...</h1> as a pair on each occurrence.
+        if !seen_h1_open {
+            // Keep the first <h1...> as-is + find its </h1> and keep it.
+            seen_h1_open = true;
+            // Find matching </h1>
+            let close_search_start = i;
+            if let Some(close_rel) = html[close_search_start..].find("</h1>") {
+                let close_end = close_search_start + close_rel + "</h1>".len();
+                out.push_str(&html[i..close_end]);
+                cursor = close_end;
+            } else {
+                out.push_str(&html[i..]);
+                return out;
+            }
+        } else {
+            // Downgrade this <h1 ...> ... </h1> to <h2 ...> ... </h2>
+            // Find end of opening tag.
+            let open_end = match html[i..].find('>') {
+                Some(o) => i + o + 1,
+                None => {
+                    out.push_str(&html[i..]);
+                    return out;
+                }
+            };
+            let opening_tag = &html[i..open_end];
+            let opening_rewritten = opening_tag.replacen("<h1", "<h2", 1);
+            out.push_str(&opening_rewritten);
+            // Find matching </h1> and replace with </h2>
+            if let Some(close_rel) = html[open_end..].find("</h1>") {
+                let close_start = open_end + close_rel;
+                let close_end = close_start + "</h1>".len();
+                out.push_str(&html[open_end..close_start]);
+                out.push_str("</h2>");
+                cursor = close_end;
+            } else {
+                out.push_str(&html[open_end..]);
+                return out;
+            }
+        }
+    }
+    out.push_str(&html[cursor..]);
+    out
 }
 
 /// Read-only semantic-HTML audit. Surfaces gaps that a production page
@@ -665,6 +728,29 @@ spacing:
         let (out, recovered) = recover_lucide_classes(html);
         assert_eq!(recovered, vec!["chart-line".to_string()]);
         assert!(out.contains("class=\"lucide lucide-chart-line chart-svg\""));
+    }
+
+    #[test]
+    fn auto_fix_h1_downgrades_extras_to_h2() {
+        let html = r##"<html><body>
+<h1 class="hero">Page Title</h1>
+<section><h1>First Project</h1><p>...</p></section>
+<section><h1 id="p2">Second Project</h1><p>...</p></section>
+</body></html>"##;
+        let fixed = auto_fix_h1_count(html);
+        // First h1 stays
+        assert!(fixed.contains("<h1 class=\"hero\">Page Title</h1>"));
+        // Others become h2 with the original attributes preserved
+        assert!(fixed.contains("<h2>First Project</h2>"));
+        assert!(fixed.contains("<h2 id=\"p2\">Second Project</h2>"));
+        assert_eq!(fixed.matches("<h1").count(), 1);
+        assert_eq!(fixed.matches("<h2").count(), 2);
+    }
+
+    #[test]
+    fn auto_fix_h1_idempotent_when_single() {
+        let html = "<h1>One</h1><h2>Two</h2><h2>Three</h2>";
+        assert_eq!(auto_fix_h1_count(html), html);
     }
 
     #[test]
