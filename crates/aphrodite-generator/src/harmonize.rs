@@ -97,10 +97,74 @@ pub fn harmonize(
     // Auto-fix safe quality issues before audit, so the audit reports
     // what's *really* still wrong rather than what we already fixed.
     let composition_post_fix = auto_fix_h1_count(&composition_out_labeled);
+    let composition_post_fix = fix_broken_img_placeholders(&composition_post_fix);
     // Production-readiness audit on the FIXED composition (read-only after this point).
     report.quality_warnings = audit_composition(&composition_post_fix, display.as_deref(), body.as_deref());
 
     (composition_post_fix, hero_out, report)
+}
+
+/// Walk `<img>` tags. If src is empty / fake / placeholder-shaped, replace
+/// the whole `<img>` with a styled `<figure>` placeholder. Hand-rolled
+/// scan to avoid an extra crate dep.
+///
+/// Closes the "broken image icon" visual bug surfaced by Pass 39 review.
+pub fn fix_broken_img_placeholders(html: &str) -> String {
+    let mut out = String::with_capacity(html.len());
+    let mut cursor = 0usize;
+    while let Some(rel) = html[cursor..].find("<img") {
+        let img_start = cursor + rel;
+        out.push_str(&html[cursor..img_start]);
+        let end_rel = match html[img_start..].find('>') {
+            Some(i) => i,
+            None => {
+                out.push_str(&html[img_start..]);
+                return out;
+            }
+        };
+        let tag_end = img_start + end_rel + 1;
+        let img_tag = &html[img_start..tag_end];
+        let src = pick_attr(img_tag, "src").unwrap_or_default();
+        let alt = pick_attr(img_tag, "alt").unwrap_or_default();
+        let is_placeholder = src.trim().is_empty()
+            || src.starts_with('#')
+            || src.starts_with("[photo")
+            || src.starts_with("[image")
+            || src.starts_with("placeholder")
+            || src.contains("example.com")
+            || src.contains("placehold.")
+            || src.contains("via.placeholder")
+            || src.contains("picsum.photos");
+        if is_placeholder {
+            let label = if !alt.is_empty() { alt } else { "photo".to_string() };
+            out.push_str(&format!(
+                r#"<figure class="image-placeholder" style="aspect-ratio: 4/5; max-width: 480px; max-height: 600px; margin: 0 auto; background: var(--colors-primary-100, #f0ead8); display: flex; align-items: center; justify-content: center; color: var(--colors-text-muted, #71717a); font-size: 13px; padding: 24px; text-align: center; border-radius: 4px;">[photo: {label}]</figure>"#
+            ));
+        } else {
+            out.push_str(img_tag);
+        }
+        cursor = tag_end;
+    }
+    out.push_str(&html[cursor..]);
+    out
+}
+
+fn pick_attr(tag: &str, attr: &str) -> Option<String> {
+    let needle = format!("{attr}=\"");
+    if let Some(i) = tag.find(&needle) {
+        let after = &tag[i + needle.len()..];
+        if let Some(end) = after.find('"') {
+            return Some(after[..end].to_string());
+        }
+    }
+    let needle_sq = format!("{attr}='");
+    if let Some(i) = tag.find(&needle_sq) {
+        let after = &tag[i + needle_sq.len()..];
+        if let Some(end) = after.find('\'') {
+            return Some(after[..end].to_string());
+        }
+    }
+    None
 }
 
 /// If composition has > 1 `<h1>` tags, keep the FIRST one (typically the
@@ -728,6 +792,24 @@ spacing:
         let (out, recovered) = recover_lucide_classes(html);
         assert_eq!(recovered, vec!["chart-line".to_string()]);
         assert!(out.contains("class=\"lucide lucide-chart-line chart-svg\""));
+    }
+
+    #[test]
+    fn fix_broken_img_replaces_empty_src_with_figure() {
+        let html = r##"<body>
+<img src="" alt="Seoul Dining Table">
+<img src="https://real.cdn/photo.jpg" alt="real photo">
+<img src="[photo: workshop interior]" alt="workshop">
+</body>"##;
+        let fixed = fix_broken_img_placeholders(html);
+        // Empty-src img and bracket-prefixed img become figures
+        assert!(fixed.contains("image-placeholder"));
+        assert!(fixed.contains("[photo: Seoul Dining Table]"));
+        assert!(fixed.contains("[photo: workshop]"));
+        // Real img URL is preserved
+        assert!(fixed.contains(r#"<img src="https://real.cdn/photo.jpg""#));
+        // Should NOT have any <img src=""
+        assert!(!fixed.contains(r#"<img src="""#));
     }
 
     #[test]

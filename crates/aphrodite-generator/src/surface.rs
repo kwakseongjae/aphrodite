@@ -143,6 +143,41 @@ STEP 2 — Build a COMPLETE, SELF-CONTAINED HTML document for that surface that:
     class attribute exactly. Stripping the class is a partial-credit
     failure.
 
+  Image placeholders — REQUIRED when no real image asset is supplied:
+    NEVER emit `<img src="...">` with a placeholder/fake URL — that renders
+    as a broken-image icon in the browser. When the design wants imagery
+    but no asset is available, emit a styled `<figure>` instead:
+
+      <figure class="image-placeholder" style="aspect-ratio: 4/5; max-width: 480px; max-height: 600px; margin: 0 auto; background: var(--colors-primary-100); display: flex; align-items: center; justify-content: center; color: var(--colors-text-muted); font-size: 13px; padding: 24px; text-align: center;">
+        [photo: <one-sentence art-direction brief naming the subject, material, year>]
+      </figure>
+
+    The text in square brackets doubles as the photographer's brief —
+    "[photo: Hakwi Dining Table — black walnut, oil finish, 2024]" not
+    "[image placeholder]". Asset-standards skill body has the discipline.
+
+  Variant switcher — REQUIRED, fixed position, high z-index:
+    The page MUST include a variant switcher matching this exact structure:
+      <nav class="aphrodite-variant-switcher" style="position: fixed; top: 16px; right: 16px; z-index: 9999; display: flex; gap: 4px; padding: 6px; background: var(--colors-background-primary); border: 1px solid var(--colors-border-primary); border-radius: 8px;">
+        <button data-variant="light">light</button>
+        <button data-variant="dark">dark</button>
+        <button data-variant="brand-a">brand-a</button>
+        <button data-variant="brand-b">brand-b</button>
+      </nav>
+    Variant names match DESIGN.md frontmatter's `metadata.variants` keys
+    (typically: light, dark, brand-a, brand-b — or persona-renamed labels
+    like "BIRCH" / "STEEL" / "warm clay" / "stone"). The z-index 9999 +
+    position fixed ensures the switcher NEVER overlaps the site's own
+    nav/header (which should be position: sticky at lower z-index).
+
+    The SITE's own nav (logo + links) MUST leave room for the switcher.
+    On desktop the switcher sits in the top-right ~16px from edge —
+    site nav links should END at least 280 px from the right edge OR be
+    placed on a separate line below the switcher. If the layout puts
+    links flush-right, ADD `padding-right: 280px` to the nav container.
+    Inline `<script>` toggling `document.body.dataset.variant` ships as
+    today.
+
   Font loading — REQUIRED when typography frontmatter names ≥ 2 families:
     The page's `<head>` MUST `<link rel="stylesheet" href="...">`
     Google Fonts for EVERY declared typography family that isn't a
