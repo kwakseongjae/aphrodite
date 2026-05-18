@@ -124,6 +124,15 @@ pub fn harmonize(
     } else {
         0
     };
+    // v0.8 polish: Korean pages need `word-break: keep-all` on display
+    // headings (otherwise long Hangul phrases overflow at narrow mobile
+    // viewports), and the variant switcher needs to wrap rather than
+    // clip when there isn't horizontal room. Inject a small CSS shim if
+    // Hangul is present and these rules are not already declared. The
+    // shim goes inside an existing <style> block if one exists, else
+    // wraps in its own <style>.
+    let composition_post_fix =
+        inject_korean_layout_shim(&composition_post_fix);
     // Locale auto-detect: if the composition contains Hangul code points
     // but `<html lang="en">` (or no lang attribute), patch the tag to
     // `lang="ko"`. The composer's hardcoded default is "en" inherited
@@ -305,6 +314,45 @@ fn pick_attr(tag: &str, attr: &str) -> Option<String> {
 /// page hero) and downgrade all others to `<h2>`. This is a safe transform
 /// because the page-level hero should be h1 and section headers should be
 /// h2. Pass 39 surfaced this — composer emitted h1 per section.
+/// Inject a minimal `word-break: keep-all` + variant-switcher wrap shim
+/// when the composition contains Hangul. Idempotent — bails if the
+/// shim's marker is already present. Solves the Pass 47/48 mobile h1
+/// overflow + brand-a/brand-b switcher clipping issues.
+fn inject_korean_layout_shim(html: &str) -> String {
+    let has_hangul = html.chars().any(is_korean_char);
+    if !has_hangul {
+        return html.to_string();
+    }
+    let marker = "aphrodite-ko-shim";
+    if html.contains(marker) {
+        return html.to_string();
+    }
+    let shim = format!(
+        "\n<style data-aphrodite-ko-shim=\"{marker}\">\n\
+         h1, h2, h3, .hero h1 {{ word-break: keep-all; overflow-wrap: anywhere; }}\n\
+         .aphrodite-variant-switcher {{ flex-wrap: wrap; max-width: calc(100vw - 32px); }}\n\
+         @media (max-width: 480px) {{\n\
+         .aphrodite-variant-switcher {{ position: static !important; margin: 8px 16px; }}\n\
+         }}\n\
+         </style>\n"
+    );
+    if let Some(idx) = html.find("</head>") {
+        let mut out = String::with_capacity(html.len() + shim.len());
+        out.push_str(&html[..idx]);
+        out.push_str(&shim);
+        out.push_str(&html[idx..]);
+        out
+    } else if let Some(idx) = html.find("<body") {
+        let mut out = String::with_capacity(html.len() + shim.len());
+        out.push_str(&html[..idx]);
+        out.push_str(&shim);
+        out.push_str(&html[idx..]);
+        out
+    } else {
+        format!("{shim}{html}")
+    }
+}
+
 /// v0.7 i18n: detect Korean (Hangul / Jamo / CJK common) characters in
 /// the composition body. If present, ensure `<html lang="ko">` is set.
 /// Composer's default came from the hero template's hardcoded `lang="en"`
@@ -1330,6 +1378,23 @@ spacing:
         ];
         let (_axes, score) = score_quality(html, &warnings);
         assert!(score < 70, "expected < 70, got {score}");
+    }
+
+    #[test]
+    fn korean_shim_injected_when_hangul() {
+        let html = r#"<html lang="en"><head></head><body>안녕</body></html>"#;
+        let out = inject_korean_layout_shim(html);
+        assert!(out.contains("aphrodite-ko-shim"));
+        assert!(out.contains("word-break: keep-all"));
+        // idempotent
+        let out2 = inject_korean_layout_shim(&out);
+        assert_eq!(out, out2);
+    }
+
+    #[test]
+    fn korean_shim_skipped_on_english_only() {
+        let html = "<html><body>Hello</body></html>";
+        assert_eq!(inject_korean_layout_shim(html), html);
     }
 
     #[test]
