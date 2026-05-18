@@ -138,10 +138,13 @@ enum Command {
         intent: String,
         /// Cap on internal critic→refine iterations. Each iteration costs
         /// ~3 LLM calls (critic + refine + surface re-compose).
-        #[arg(long, default_value_t = 3)]
+        #[arg(long, default_value_t = 2)]
         max_turns: u32,
         /// Stop when critic's satisfaction estimate reaches this value.
-        #[arg(long, default_value_t = 0.85)]
+        /// Calibrated against rolling Pass 30-44 data: critic settles into
+        /// 0.70-0.80 with constructive minor critique; 0.85 forced wasted
+        /// refines that didn't change the verdict on the next turn.
+        #[arg(long, default_value_t = 0.78)]
         satisfaction_threshold: f32,
         /// Invoke a design-authority persona (e.g. `dieter-rams`, `tadao-ando`,
         /// `rei-kawakubo`, `ettore-sottsass`, `kenya-hara`, `massimo-vignelli`,

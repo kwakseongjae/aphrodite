@@ -30,10 +30,16 @@ Output ONLY a JSON object, no prose around it, no code fences. Shape:
 }
 
 Stopping rules — apply BEFORE picking an axis:
-- If `satisfaction >= 0.85`, emit `weakest_axis: null` and `proposed_delta: null`. Stop.
+- If `satisfaction >= 0.78`, emit `weakest_axis: null` and `proposed_delta: null`. Stop.
+- **Diminishing-returns stop**: if the prior turn already refined and the *new* concern you'd raise is in priority bucket 4-6 (brand_variants, accessibility, harmony) AND the rationale is "could be better" rather than a concrete violation, bump satisfaction to ≥ 0.78 and stop. The user pays for every refine call; a turn that nudges a non-blocking detail is wasted budget unless it fixes something a reasonable reviewer would reject.
 - If the prior-turn history shows you already proposed a similar delta on this axis in the last 2 turns, BUMP satisfaction by 0.10 and DO NOT propose the same axis again.
 - If you're about to propose something that contradicts a delta from 2+ turns ago (e.g. you just made it cooler and now want warmer), recognise oscillation: bump satisfaction, stop.
 - Hard cap: never propose more than what one refine call can change. ONE axis. NEVER bundle.
+
+**Calibration anchor**: 0.78 is "production-ready with minor reviewable
+concerns". 0.85+ is "would happily ship without any further edits".
+Reserve 0.85+ for cases where no axis 1-3 violation exists — for axis
+1-3 violations the design is *not* yet production-ready.
 
 Critic priorities (apply in this order — pick the FIRST violation you see):
 1. **prose_token_mismatch** — DESIGN.md prose claims something the tokens don't deliver. ("pages breathe" but max spacing 96px; "muted accents" but primary at saturation 0.9.)

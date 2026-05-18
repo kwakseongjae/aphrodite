@@ -309,7 +309,13 @@ pub async fn run(
         );
         final_satisfaction = verdict.satisfaction;
 
-        if verdict.satisfied() {
+        // Loop-exit condition: consult the CLI-supplied threshold rather
+        // than the hardcoded `verdict.satisfied()` constant. Earlier the
+        // CLI flag was only logged, not enforced — so lowering --threshold
+        // had no effect and every run consumed all `max_turns`.
+        let loop_done = verdict.satisfaction >= satisfaction_threshold
+            || verdict.proposed_delta.is_none();
+        if loop_done {
             turns.push(json!({
                 "turn": turn,
                 "phase": "critique",
