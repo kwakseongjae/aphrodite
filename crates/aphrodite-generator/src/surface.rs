@@ -119,6 +119,33 @@ STEP 2 — Build a COMPLETE, SELF-CONTAINED HTML document for that surface that:
     - Use whitespace generously — section padding ≥ 64px desktop / 32px mobile.
     - Aim for ≥ 8 000 bytes of HTML — short outputs read as placeholders.
 
+  Production-grade discipline — HARD RULES from alpha-test findings:
+    1. **Top nav + footer are MANDATORY on every page**, multi-page or
+       single. Top nav has the brand name/logo at left and primary link
+       text at right (for multi-page sites, list every sibling page).
+       Wrap nav in `<nav>` and footer in `<footer>` — never use
+       `<div class="footer">` or `<div class="nav">`. The harmonize
+       audit rejects pages without a `<footer>` tag.
+    2. **Promotional / discount text NEVER uses strikethrough.** No
+       `<s>`, no `<del>`, no `text-decoration: line-through` on copy
+       like "첫 박스 50% 할인" / "Save 30%". Strikethrough means
+       "this no longer applies" — the opposite of a promotional emphasis.
+       Use color + weight (e.g. `color: var(--colors-primary-500);
+       font-weight: 700;`) instead.
+    3. **Multi-column grids on text-heavy content need a responsive
+       collapse.** When you emit `grid-template-columns: 1fr 1fr 1fr`
+       (or any multi-column), the cells MUST also have an explicit
+       `min-width` (≥ 160px for label-heavy cells) and the rule must be
+       inside a `@media (min-width: 768px)` block so it falls back to
+       `1fr` on mobile. Korean text with `word-break: keep-all` in a
+       too-narrow column wraps one character per line — unreadable.
+    4. **No external image URLs** unless you also write
+       `data-aphrodite-asset-verified` on the `<img>` tag. Harmonize
+       will swap unverified externals for a styled placeholder figure.
+       Use `<figure class="image-placeholder">` patterns from the
+       Image-placeholder section below instead of `<img src="https://
+       unsplash.com/..." />`.
+
   Internationalization — REQUIRED:
     1. Set `<html lang="...">` to match the page's primary content
        language. Korean copy → `lang="ko"`. Japanese → `lang="ja"`.

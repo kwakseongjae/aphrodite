@@ -553,7 +553,18 @@ pub async fn run(
                 continue;
             }
             let page_intent = format!(
-                "{intent} — additional page: `{slug}`. Reuse the existing DESIGN.md tokens, components, nav, footer, and variant switcher. Compose the `<main>` content for the `{slug}` page only; the rest of the chrome must visually match the primary page so this works as a section of the same multi-page site."
+                "{intent} — additional page: `{slug}`. \
+                 IMPORTANT — this is a desktop+mobile RESPONSIVE WEB PAGE for a multi-page website, \
+                 NOT a phone-app mockup. Do NOT wrap content in a phone frame. Do NOT render a \
+                 mobile status bar (9:41, signal bars) or a bottom-tab nav bar — those belong only \
+                 in `mobile_app` surface type which is not appropriate here. \
+                 Reuse the existing DESIGN.md tokens, components, top nav (with links to ALL sibling \
+                 pages including this one), footer (use `<footer>` tag NOT `<div class=\"footer\">`), \
+                 and variant switcher. Compose the page content (hero + body + footer) for the \
+                 `{slug}` page only. The chrome (nav + footer + switcher) must visually match the \
+                 primary page so this works as a section of the same multi-page site. \
+                 Sibling pages: {siblings}.",
+                siblings = pages.join(", "),
             );
             eprintln!("● phase 8.4 / secondary page `{slug}` — composing");
             let page_compose = surface::compose(
@@ -565,8 +576,13 @@ pub async fn run(
             .await;
             match page_compose {
                 Ok(out) => {
+                    // Pass 50 surfaced: secondary pages were not getting
+                    // the variant CSS injected, so their `data-variant`
+                    // switcher buttons fell back to the unscoped rule
+                    // and re-introduced the "dark button invisible" bug.
+                    let page_with_variants = crate::hero::inject_variant_css(&out.html, &final_doc, &final_variants);
                     let (page_html_h, _, _) = harmonize::harmonize(
-                        &out.html,
+                        &page_with_variants,
                         &hero_html,
                         &design_md,
                         &final_doc,

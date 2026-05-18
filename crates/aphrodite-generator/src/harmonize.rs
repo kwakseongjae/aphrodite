@@ -268,6 +268,18 @@ pub fn fix_broken_img_placeholders(html: &str) -> String {
             && !src_trim.starts_with("https://")
             && !src_trim.starts_with("data:")
             && !src_trim.is_empty();
+        // Pass 50 Banchan surfaced: composer used a stock unsplash-style
+        // URL that happened to load — a 1.77MB hero image. Even when
+        // such an URL resolves, it's not an asset the user authored, and
+        // it leaks an external dependency into a brand surface. Treat
+        // every `<img>` (local OR external) as a placeholder unless it
+        // carries `data-aphrodite-asset-verified`. Users who actually
+        // want a real image add the opt-out attribute; the default
+        // behaviour is safe.
+        let is_unverified_remote = !is_local_path
+            && !src_trim.is_empty()
+            && !src_trim.starts_with("data:")
+            && !img_tag.contains("data-aphrodite-asset-verified");
         let is_placeholder = src_trim.is_empty()
             || src_trim.starts_with('#')
             || src_trim.starts_with("[photo")
@@ -277,7 +289,8 @@ pub fn fix_broken_img_placeholders(html: &str) -> String {
             || src_trim.contains("placehold.")
             || src_trim.contains("via.placeholder")
             || src_trim.contains("picsum.photos")
-            || (is_local_path && !img_tag.contains("data-aphrodite-asset-verified"));
+            || (is_local_path && !img_tag.contains("data-aphrodite-asset-verified"))
+            || is_unverified_remote;
         if is_placeholder {
             let label = if !alt.is_empty() { alt } else { "photo".to_string() };
             out.push_str(&format!(
@@ -330,6 +343,15 @@ fn inject_korean_layout_shim(html: &str) -> String {
     let shim = format!(
         "\n<style data-aphrodite-ko-shim=\"{marker}\">\n\
          h1, h2, h3, .hero h1 {{ word-break: keep-all; overflow-wrap: anywhere; }}\n\
+         /* Korean grid-item collapse: when a multi-column grid is too narrow per cell,\n\
+            word-break: keep-all causes one-char-per-line vertical wrap. Force a sensible\n\
+            min-width per grid item so cells either fit horizontally or the grid drops to\n\
+            a single column at narrow viewports. Pass 50 Banchan pricing surfaced this. */\n\
+         [class*=\"grid\"] > *, [class*=\"pricing\"] > *, [class*=\"plans\"] > *,\n\
+         [class*=\"tiers\"] > *, [class*=\"cards\"] > * {{ min-width: 0; }}\n\
+         @media (max-width: 768px) {{\n\
+         [style*=\"grid-template-columns\"] {{ grid-template-columns: 1fr !important; }}\n\
+         }}\n\
          .aphrodite-variant-switcher {{ flex-wrap: wrap; max-width: calc(100vw - 32px); }}\n\
          @media (max-width: 480px) {{\n\
          .aphrodite-variant-switcher {{ position: static !important; margin: 8px 16px; }}\n\
@@ -1317,9 +1339,11 @@ spacing:
 
     #[test]
     fn fix_broken_img_replaces_empty_src_with_figure() {
+        // Pass 50 alpha: external URLs are now placeholder-by-default
+        // unless explicitly opted out with data-aphrodite-asset-verified.
         let html = r##"<body>
 <img src="" alt="Seoul Dining Table">
-<img src="https://real.cdn/photo.jpg" alt="real photo">
+<img src="https://real.cdn/photo.jpg" alt="real photo" data-aphrodite-asset-verified>
 <img src="[photo: workshop interior]" alt="workshop">
 </body>"##;
         let fixed = fix_broken_img_placeholders(html);
@@ -1327,10 +1351,22 @@ spacing:
         assert!(fixed.contains("image-placeholder"));
         assert!(fixed.contains("[photo: Seoul Dining Table]"));
         assert!(fixed.contains("[photo: workshop]"));
-        // Real img URL is preserved
+        // Explicitly verified real img URL is preserved
         assert!(fixed.contains(r#"<img src="https://real.cdn/photo.jpg""#));
         // Should NOT have any <img src=""
         assert!(!fixed.contains(r#"<img src="""#));
+    }
+
+    #[test]
+    fn fix_broken_img_replaces_unverified_external_url() {
+        // Pass 50 Banchan critical #3: composer used an unsplash-style
+        // URL that resolved → 1.77 MB hero image. Default-to-placeholder
+        // unless verified.
+        let html = r#"<body><img src="https://images.unsplash.com/photo-xyz.jpg" alt="bibimbap"></body>"#;
+        let fixed = fix_broken_img_placeholders(html);
+        assert!(fixed.contains("image-placeholder"));
+        assert!(fixed.contains("[photo: bibimbap]"));
+        assert!(!fixed.contains("images.unsplash.com"));
     }
 
     #[test]
