@@ -119,6 +119,42 @@ STEP 2 — Build a COMPLETE, SELF-CONTAINED HTML document for that surface that:
     - Use whitespace generously — section padding ≥ 64px desktop / 32px mobile.
     - Aim for ≥ 8 000 bytes of HTML — short outputs read as placeholders.
 
+  Mobile padding + viewport edge — ENFORCED:
+    Every page-level wrapper / main / section MUST have horizontal
+    padding ≥ 16px at narrow viewports. Default to
+    `padding: 16px` on `<main>` and add `@media (min-width: 768px) {
+    main { padding: 48px 64px } }` (or similar) for desktop. NEVER set
+    `padding: 0` or omit horizontal padding on the body / main on
+    mobile — Korean text will overflow the viewport.
+    Body-level fallback: emit `body { padding: 0 }` then put padding
+    on the actual content wrapper, OR emit
+    `body { padding-left: 16px; padding-right: 16px }` directly.
+
+  Promotion badges + sibling elements — POSITIONING DISCIPLINE:
+    When you place a `position: absolute` badge ("첫 구독 50% 할인",
+    "BEST" tag) on a pricing tier or card, ALWAYS reserve top space on
+    the host element with `padding-top: 24px` (or `margin-top: 24px`
+    on the title) so the badge doesn't overlap the title. Pass 51
+    Banchan pricing surfaced this: "첫 구독 50% 할인" badge sat on
+    top of "1주 체험" tier title.
+
+  Mobile variant switcher — RESPONSIVE PLACEMENT:
+    The fixed-position variant switcher at `top: 16px; right: 16px`
+    can clip the rightmost buttons at very narrow viewports (≤ 360px).
+    Add `@media (max-width: 480px) { .aphrodite-variant-switcher {
+    position: static; margin: 8px 16px; max-width: calc(100vw - 32px) }
+    }` so it inlines under the nav on phones rather than overflowing.
+    Harmonize already injects this when Hangul is present; you should
+    also write it yourself so non-Korean pages benefit.
+
+  Narrow column word-break — KOREAN CARDS:
+    Inside any card / tier / cell narrower than 220px on desktop OR
+    that becomes single-column on mobile, allow `word-break: normal;
+    overflow-wrap: break-word` so short Korean phrases like "선택 하기"
+    or "20가지 반찬" don't wrap mid-word. The Korean shim's
+    `word-break: keep-all` rule applies to h1/h2/h3 only — body text
+    in narrow cards should not inherit it via inline override.
+
   Production-grade discipline — HARD RULES from alpha-test findings:
     1. **Top nav + footer are MANDATORY on every page**, multi-page or
        single. Top nav has the brand name/logo at left and primary link

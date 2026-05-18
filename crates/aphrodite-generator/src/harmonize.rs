@@ -352,6 +352,17 @@ fn inject_korean_layout_shim(html: &str) -> String {
          @media (max-width: 768px) {{\n\
          [style*=\"grid-template-columns\"] {{ grid-template-columns: 1fr !important; }}\n\
          }}\n\
+         /* Mobile body padding safety net — Pass 51 Banchan home surfaced text\n\
+            running off the right edge at 360px. Apply edge-padding on the body\n\
+            ONLY when no other padding rule wins (lowest specificity, no \\!important). */\n\
+         @media (max-width: 600px) {{\n\
+           body {{ padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }}\n\
+         }}\n\
+         /* Narrow card / tier body text: allow standard word-break so short Korean\n\
+            phrases (선택하기, 20가지 반찬) don't wrap mid-word inside a narrow column. */\n\
+         [class*=\"tier\"] p, [class*=\"plan\"] p, [class*=\"card\"] p,\n\
+         [class*=\"tier\"] li, [class*=\"plan\"] li, [class*=\"card\"] li,\n\
+         button {{ word-break: normal; overflow-wrap: break-word; }}\n\
          .aphrodite-variant-switcher {{ flex-wrap: wrap; max-width: calc(100vw - 32px); }}\n\
          @media (max-width: 480px) {{\n\
          .aphrodite-variant-switcher {{ position: static !important; margin: 8px 16px; }}\n\
