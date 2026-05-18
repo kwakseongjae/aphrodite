@@ -440,6 +440,23 @@ pub async fn run(
             eprintln!("    ⚠ {w}");
         }
     }
+    let qa = &harmonize_report.quality_axes;
+    let score_emoji = if harmonize_report.quality_score >= 90 {
+        "✓"
+    } else if harmonize_report.quality_score >= 75 {
+        "•"
+    } else {
+        "⚠"
+    };
+    eprintln!(
+        "● Aphrodite Quality Score: {} {}/100  (a11y={} mobile={} perf={} semantic={})",
+        score_emoji,
+        harmonize_report.quality_score,
+        qa.a11y,
+        qa.mobile,
+        qa.performance,
+        qa.semantic
+    );
     let final_report = validate_design(&final_doc, &final_variants);
 
     // Composition write rule:
@@ -760,6 +777,14 @@ pub async fn run(
             "hero_typography_fixed": harmonize_report.hero_typography_fixed,
             "lucide_labels_recovered": harmonize_report.lucide_labels_recovered,
             "notes": harmonize_report.notes,
+            "quality_warnings": harmonize_report.quality_warnings,
+        },
+        "quality_score": harmonize_report.quality_score,
+        "quality_axes": {
+            "a11y": harmonize_report.quality_axes.a11y,
+            "mobile": harmonize_report.quality_axes.mobile,
+            "performance": harmonize_report.quality_axes.performance,
+            "semantic": harmonize_report.quality_axes.semantic,
         },
         "telemetry": {
             "llm_calls": llm_calls,

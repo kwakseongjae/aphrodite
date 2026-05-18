@@ -33,6 +33,19 @@ pub struct HarmonizeReport {
     pub quality_warnings: Vec<String>,
     /// Non-fatal diagnostics — kept terse, the caller decides what to surface.
     pub notes: Vec<String>,
+    /// v0.8 Aphrodite Quality Score (0-100). Composite of accessibility,
+    /// mobile-first, performance, and semantic-HTML axes. ≥ 85 = ship.
+    pub quality_score: u32,
+    /// Per-axis breakdown (a11y / mobile / perf / semantic), 0-100 each.
+    pub quality_axes: QualityAxes,
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct QualityAxes {
+    pub a11y: u32,
+    pub mobile: u32,
+    pub performance: u32,
+    pub semantic: u32,
 }
 
 /// Run the full harmonize pass over a (composition.html, hero.html) pair.
@@ -140,8 +153,77 @@ pub fn harmonize(
             "{vh_violations_pre_fix} viewport-relative height rule(s) around placeholder figures — composer ignored prompt-level ban; harmonize capped them, but if this warning persists across runs the prompt may need tightening."
         ));
     }
+    // v0.8: composite Aphrodite Quality Score.
+    let (axes, score) = score_quality(&composition_post_fix, &report.quality_warnings);
+    report.quality_axes = axes;
+    report.quality_score = score;
 
     (composition_post_fix, hero_out, report)
+}
+
+/// Compute the v0.8 Aphrodite Quality Score and per-axis breakdown.
+/// 0-100 each axis, composite is the average. Calibrated so a Pass 46
+/// clean run lands around 90+ and a Pass 45 broken run lands < 60.
+fn score_quality(html: &str, warnings: &[String]) -> (QualityAxes, u32) {
+    // Accessibility: starts at 100, -10 per a11y-flavoured warning.
+    let a11y_warning_keywords = [
+        "alt=", "lang", "viewport", "aria", "contrast", "<h1>", "heading hierarchy",
+    ];
+    let a11y_hits: u32 = warnings
+        .iter()
+        .filter(|w| a11y_warning_keywords.iter().any(|k| w.contains(k)))
+        .count() as u32;
+    let a11y = 100u32.saturating_sub(a11y_hits.saturating_mul(15));
+
+    // Mobile: 50 base, +25 if @media (min-width) present, +25 if Korean
+    // viewport meta tag explicitly declared.
+    let mut mobile = 50u32;
+    if html.contains("@media (min-width") || html.contains("@media(min-width") {
+        mobile += 25;
+    }
+    if html.contains("name=\"viewport\"") || html.contains("name='viewport'") {
+        mobile += 25;
+    }
+
+    // Performance heuristic: total HTML byte size. Under 30 KB = 100,
+    // 30-80 KB = 90, 80-150 KB = 75, > 150 KB = 60. (Hand-tuned vs
+    // observed Pass 30-48 distribution.)
+    let bytes = html.len();
+    let performance = if bytes < 30_000 {
+        100
+    } else if bytes < 80_000 {
+        90
+    } else if bytes < 150_000 {
+        75
+    } else {
+        60
+    };
+
+    // Semantic: 1 h1 + nav + footer + ≥ 2 sections each worth 25.
+    let mut semantic = 0u32;
+    if html.matches("<h1").count() == 1 {
+        semantic += 25;
+    }
+    if html.contains("<nav") {
+        semantic += 25;
+    }
+    if html.contains("<footer") {
+        semantic += 25;
+    }
+    if html.matches("<section").count() >= 2 {
+        semantic += 25;
+    }
+
+    let composite = (a11y + mobile + performance + semantic) / 4;
+    (
+        QualityAxes {
+            a11y,
+            mobile,
+            performance,
+            semantic,
+        },
+        composite,
+    )
 }
 
 /// Walk `<img>` tags. If src is empty / fake / placeholder-shaped, replace
@@ -1227,6 +1309,27 @@ spacing:
         assert!(out.contains("min-height: 40vh"));
         assert!(out.contains("min-height: 30vh"), "values below the cap pass through");
         assert!(!out.contains("80vh"));
+    }
+
+    #[test]
+    fn quality_score_high_on_clean_production_page() {
+        let html = r##"<!doctype html><html lang="ko"><head><meta name="viewport" content="width=device-width, initial-scale=1"><style>@media (min-width: 768px) {}</style></head><body><nav>n</nav><h1>안녕</h1><section>s1</section><section>s2</section><footer>f</footer></body></html>"##;
+        let (axes, score) = score_quality(html, &[]);
+        assert!(score >= 90, "expected ≥ 90, got {score} (axes: {axes:?})");
+        assert_eq!(axes.mobile, 100);
+        assert_eq!(axes.semantic, 100);
+    }
+
+    #[test]
+    fn quality_score_low_when_critical_warnings() {
+        let html = "<html><body><div>no semantic</div></body></html>";
+        let warnings = vec![
+            "no <h1>".to_string(),
+            "`<html>` has no `lang` attribute".to_string(),
+            "missing viewport meta".to_string(),
+        ];
+        let (_axes, score) = score_quality(html, &warnings);
+        assert!(score < 70, "expected < 70, got {score}");
     }
 
     #[test]
