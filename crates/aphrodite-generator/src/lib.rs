@@ -10,6 +10,7 @@ pub mod orchestrator;
 pub mod provider;
 pub mod react_export;
 pub mod refine;
+pub mod visual_diff;
 pub mod skill;
 pub mod surface;
 pub mod wiki_fetch;

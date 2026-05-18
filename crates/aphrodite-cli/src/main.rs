@@ -95,12 +95,30 @@ enum Command {
     },
 
     /// Generate a publishable React component package (`react/` directory
-    /// with package.json + tsconfig + 12 typed primitive .tsx files +
-    /// tokens.ts) from the DESIGN.md in the target directory. The package
-    /// can be `npm publish`-ed or vendored into a monorepo.
+    /// with package.json + tsconfig + 30 typed primitive .tsx files +
+    /// 30 CSF3 Storybook stories + tokens.ts) from the DESIGN.md in the
+    /// target directory. The package can be `npm publish`-ed or vendored
+    /// into a monorepo.
     React {
         #[arg(long)]
         repo: Option<PathBuf>,
+    },
+
+    /// Visual regression: compare the screenshots in `<baseline>` against
+    /// the screenshots in `<current>` (defaults to cwd). Emits a JSON
+    /// summary + per-file verdict (identical / minor / changed) so CI
+    /// can gate on the changed count. Falls back to file-size delta when
+    /// ImageMagick's `compare` binary isn't on PATH.
+    Diff {
+        baseline: PathBuf,
+        current: Option<PathBuf>,
+        /// Size-delta percentage above which a pair is flagged as
+        /// Changed (when ImageMagick is unavailable). Default 2.5.
+        #[arg(long, default_value_t = 2.5)]
+        threshold: f32,
+        /// Also write ImageMagick heat-map PNGs alongside current files.
+        #[arg(long, default_value_t = false)]
+        write_heatmaps: bool,
     },
 
     /// Build a single-file gallery.html that previews every run subdirectory
@@ -413,6 +431,27 @@ async fn main() -> anyhow::Result<()> {
                 "components": tsx_count,
                 "files": pkg.files.len()
             })
+        }
+        Command::Diff { baseline, current, threshold, write_heatmaps } => {
+            let current = current.unwrap_or_else(|| std::env::current_dir().expect("cwd"));
+            let report = aphrodite_generator::visual_diff::diff_dirs(&baseline, &current, threshold, write_heatmaps)?;
+            let s = &report.summary;
+            println!(
+                "visual diff — identical={} minor={} changed={} only_baseline={} only_current={}",
+                s.identical, s.minor, s.changed, s.only_baseline, s.only_current
+            );
+            for p in &report.pairs {
+                if !matches!(p.verdict, aphrodite_generator::visual_diff::DiffVerdict::Identical) {
+                    println!(
+                        "  {:?}  {}  baseline={}B current={}B Δ={:.1}%{}",
+                        p.verdict, p.file, p.baseline_bytes, p.current_bytes, p.size_delta_pct,
+                        p.imagemagick_diff_pct.map(|x| format!(" im={:.2}%", x)).unwrap_or_default()
+                    );
+                }
+            }
+            for f in &report.only_in_baseline { println!("  REMOVED  {f}"); }
+            for f in &report.only_in_current { println!("  ADDED    {f}"); }
+            serde_json::to_value(&report)?
         }
         Command::Gallery { dir } => {
             let out = gallery_cmd::build(&dir)?;
