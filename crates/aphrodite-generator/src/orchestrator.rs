@@ -521,6 +521,19 @@ pub async fn run(
         (dp, hp, cp)
     };
 
+    // Phase 8.5: visual capture. macOS Chrome headless renders the
+    // composition to a PNG next to composition.html so every run carries
+    // visual evidence of what the harness produced. Failures are silent —
+    // a missing screenshot is not a run failure.
+    let screenshot_path = if let Some(comp_path) = composition_path.as_ref() {
+        capture_screenshot(comp_path)
+    } else {
+        None
+    };
+    if let Some(p) = screenshot_path.as_ref() {
+        eprintln!("● phase 8.5 / visual capture: {}", p.display());
+    }
+
     // Single Accept (or Regenerate if no turns made it satisfied) taste event
     // covering the create run as a whole. Per-turn events would double-count.
     let signal = if final_satisfaction >= satisfaction_threshold && prior_deltas.is_empty() {
@@ -660,6 +673,45 @@ fn short(s: &str, max: usize) -> String {
         let mut out: String = s.chars().take(max - 1).collect();
         out.push('…');
         out
+    }
+}
+
+/// Render composition.html to a PNG next to it using macOS Chrome
+/// headless. Returns the screenshot path on success, `None` on any
+/// failure (binary missing, render error, non-macOS) — visual capture
+/// is a nice-to-have, never a run blocker.
+///
+/// Honours `APHRODITE_NO_SCREENSHOT=1` for runs that don't want it
+/// (e.g. CI without a display server).
+fn capture_screenshot(composition_path: &std::path::Path) -> Option<std::path::PathBuf> {
+    if std::env::var_os("APHRODITE_NO_SCREENSHOT").is_some() {
+        return None;
+    }
+    let chrome_candidates = [
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "/Applications/Chromium.app/Contents/MacOS/Chromium",
+        "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
+    ];
+    let chrome = chrome_candidates
+        .iter()
+        .find(|p| std::path::Path::new(p).exists())?;
+    let out_path = composition_path.with_extension("png");
+    let file_url = format!("file://{}", composition_path.display());
+    let status = std::process::Command::new(chrome)
+        .arg("--headless")
+        .arg("--disable-gpu")
+        .arg("--no-sandbox")
+        .arg(format!("--screenshot={}", out_path.display()))
+        .arg("--window-size=1440,1800")
+        .arg(&file_url)
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null())
+        .status()
+        .ok()?;
+    if status.success() && out_path.exists() {
+        Some(out_path)
+    } else {
+        None
     }
 }
 
