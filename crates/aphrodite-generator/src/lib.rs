@@ -3,6 +3,7 @@
 pub mod critic;
 pub mod design_system;
 pub mod extractor;
+pub mod figma_sync;
 pub mod harmonize;
 pub mod hero;
 pub mod offline;

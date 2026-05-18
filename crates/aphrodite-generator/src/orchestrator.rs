@@ -635,8 +635,12 @@ pub async fn run(
         let _ = std::fs::write(&css_path, crate::design_system::build_tokens_css(&final_variants));
         let _ = std::fs::write(&json_path, crate::design_system::build_tokens_json(&final_variants));
         let _ = std::fs::write(&comp_path, crate::design_system::build_components_html(&final_variants));
+        // Tokens Studio JSON for Figma — designers import via the
+        // Tokens Studio plugin (free, no Enterprise plan needed).
+        let figma_path = ds_target.join("tokens.figma.json");
+        let _ = std::fs::write(&figma_path, crate::figma_sync::build_tokens_studio_json(&final_variants));
         eprintln!(
-            "● phase 8.7 / design-system handoff: tokens.css, tokens.json, components.html"
+            "● phase 8.7 / design-system handoff: tokens.css, tokens.json, tokens.figma.json, components.html"
         );
         // Capture the components.html preview at 3 viewports too.
         let _ = capture_screenshots(&comp_path);

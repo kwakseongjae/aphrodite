@@ -104,6 +104,15 @@ enum Command {
         repo: Option<PathBuf>,
     },
 
+    /// Figma Variables sync. `export` writes `tokens.figma.json` (Tokens
+    /// Studio format) from DESIGN.md. `pull <file_key>` fetches the
+    /// linked Figma file's local variables (requires APHRODITE_FIGMA_TOKEN
+    /// env) and prints a diff vs DESIGN.md.
+    Figma {
+        #[command(subcommand)]
+        sub: FigmaSub,
+    },
+
     /// Visual regression: compare the screenshots in `<baseline>` against
     /// the screenshots in `<current>` (defaults to cwd). Emits a JSON
     /// summary + per-file verdict (identical / minor / changed) so CI
@@ -289,6 +298,24 @@ enum AssetsSub {
 }
 
 #[derive(Subcommand)]
+enum FigmaSub {
+    /// Write `tokens.figma.json` (Tokens Studio plugin format) in the
+    /// target directory. Designers import via Tokens Studio.
+    Export {
+        #[arg(long)]
+        repo: Option<PathBuf>,
+    },
+    /// Fetch a Figma file's local variables and diff vs DESIGN.md.
+    /// Requires APHRODITE_FIGMA_TOKEN (or FIGMA_TOKEN) env var.
+    /// `file_key` is the segment after `figma.com/file/` in the URL.
+    Pull {
+        file_key: String,
+        #[arg(long)]
+        repo: Option<PathBuf>,
+    },
+}
+
+#[derive(Subcommand)]
 enum WikiSub {
     /// List installed wiki entries (bundled + user-added).
     List,
@@ -431,6 +458,47 @@ async fn main() -> anyhow::Result<()> {
                 "components": tsx_count,
                 "files": pkg.files.len()
             })
+        }
+        Command::Figma { sub } => match sub {
+            FigmaSub::Export { repo } => {
+                let target = repo.unwrap_or_else(|| std::env::current_dir().expect("cwd"));
+                let design_md = std::fs::read_to_string(target.join("DESIGN.md"))
+                    .map_err(|e| anyhow::anyhow!("cannot read DESIGN.md: {e}"))?;
+                let doc = aphrodite_core::parse_design(&design_md)
+                    .map_err(|e| anyhow::anyhow!("parse DESIGN.md: {e}"))?;
+                let variants = aphrodite_core::resolve_variants(&doc);
+                let json = aphrodite_generator::figma_sync::build_tokens_studio_json(&variants);
+                let out_path = target.join("tokens.figma.json");
+                std::fs::write(&out_path, &json)?;
+                println!("wrote {} ({} variants, Tokens Studio format)", out_path.display(), variants.len());
+                json!({ "kind": "figma_export", "path": out_path.to_string_lossy(), "variants": variants.len() })
+            }
+            FigmaSub::Pull { file_key, repo } => {
+                let target = repo.unwrap_or_else(|| std::env::current_dir().expect("cwd"));
+                let design_md = std::fs::read_to_string(target.join("DESIGN.md"))
+                    .map_err(|e| anyhow::anyhow!("cannot read DESIGN.md: {e}"))?;
+                let doc = aphrodite_core::parse_design(&design_md)
+                    .map_err(|e| anyhow::anyhow!("parse DESIGN.md: {e}"))?;
+                let variants = aphrodite_core::resolve_variants(&doc);
+                let figma_vars = aphrodite_generator::figma_sync::pull_figma_variables(&file_key).await
+                    .map_err(|e| anyhow::anyhow!("figma pull: {e}"))?;
+                let d = aphrodite_generator::figma_sync::diff(&variants, &figma_vars);
+                println!(
+                    "figma sync — matched={} only_design={} only_figma={} mismatched={}",
+                    d.matched.len(), d.only_in_design.len(), d.only_in_figma.len(), d.value_mismatches.len()
+                );
+                for m in &d.value_mismatches {
+                    println!("  MISMATCH {}  design={}  figma={}", m.key, m.design_value, m.figma_value);
+                }
+                for k in d.only_in_design.iter().take(20) {
+                    println!("  DESIGN-ONLY  {k}");
+                }
+                if d.only_in_design.len() > 20 { println!("  ... + {} more", d.only_in_design.len() - 20); }
+                for k in d.only_in_figma.iter().take(20) {
+                    println!("  FIGMA-ONLY   {k}");
+                }
+                serde_json::to_value(&d)?
+            }
         }
         Command::Diff { baseline, current, threshold, write_heatmaps } => {
             let current = current.unwrap_or_else(|| std::env::current_dir().expect("cwd"));
