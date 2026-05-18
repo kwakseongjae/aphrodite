@@ -126,6 +126,22 @@ pub fn build(variants: &[Variant], project_name: &str) -> ReactPackage {
     files.insert("src/Command.tsx".into(), COMMAND_TSX.into());
     files.insert("src/Hint.tsx".into(), HINT_TSX.into());
     files.insert("src/PhoneInputKR.tsx".into(), PHONE_INPUT_KR_TSX.into());
+    // RC.8: 15 new primitives to reach 70 total.
+    files.insert("src/DateRangePicker.tsx".into(), DATE_RANGE_PICKER_TSX.into());
+    files.insert("src/MultiCombobox.tsx".into(), MULTI_COMBOBOX_TSX.into());
+    files.insert("src/AddressInputKR.tsx".into(), ADDRESS_INPUT_KR_TSX.into());
+    files.insert("src/ColorPicker.tsx".into(), COLOR_PICKER_TSX.into());
+    files.insert("src/TimePicker.tsx".into(), TIME_PICKER_TSX.into());
+    files.insert("src/ChartLine.tsx".into(), CHART_LINE_TSX.into());
+    files.insert("src/ChartBar.tsx".into(), CHART_BAR_TSX.into());
+    files.insert("src/Quote.tsx".into(), QUOTE_TSX.into());
+    files.insert("src/Banner.tsx".into(), BANNER_TSX.into());
+    files.insert("src/KeyboardShortcut.tsx".into(), KEYBOARD_SHORTCUT_TSX.into());
+    files.insert("src/CodeBlock.tsx".into(), CODE_BLOCK_TSX.into());
+    files.insert("src/Toggle.tsx".into(), TOGGLE_TSX.into());
+    files.insert("src/TreeView.tsx".into(), TREE_VIEW_TSX.into());
+    files.insert("src/DescriptionList.tsx".into(), DESCRIPTION_LIST_TSX.into());
+    files.insert("src/Resizable.tsx".into(), RESIZABLE_TSX.into());
     files.insert("src/index.ts".into(), build_index_ts());
     files.insert("src/styles.css".into(), build_styles_css(variants));
     files.insert(".npmignore".into(), build_npmignore());
@@ -177,6 +193,21 @@ pub fn build(variants: &[Variant], project_name: &str) -> ReactPackage {
         ("Toolbar", TOOLBAR_STORIES),
         ("HoverCard", HOVER_CARD_STORIES),
         ("PhoneInputKR", PHONE_INPUT_KR_STORIES),
+        ("DateRangePicker", DATE_RANGE_PICKER_STORIES),
+        ("MultiCombobox", MULTI_COMBOBOX_STORIES),
+        ("AddressInputKR", ADDRESS_INPUT_KR_STORIES),
+        ("ColorPicker", COLOR_PICKER_STORIES),
+        ("TimePicker", TIME_PICKER_STORIES),
+        ("ChartLine", CHART_LINE_STORIES),
+        ("ChartBar", CHART_BAR_STORIES),
+        ("Quote", QUOTE_STORIES),
+        ("Banner", BANNER_STORIES),
+        ("KeyboardShortcut", KEYBOARD_SHORTCUT_STORIES),
+        ("CodeBlock", CODE_BLOCK_STORIES),
+        ("Toggle", TOGGLE_STORIES),
+        ("TreeView", TREE_VIEW_STORIES),
+        ("DescriptionList", DESCRIPTION_LIST_STORIES),
+        ("Resizable", RESIZABLE_STORIES),
         ("DataTable", DATA_TABLE_STORIES),
         ("Carousel", CAROUSEL_STORIES),
         ("Calendar", CALENDAR_STORIES),
@@ -499,6 +530,36 @@ export { HoverCard } from "./HoverCard";
 export type { HoverCardProps } from "./HoverCard";
 export { PhoneInputKR, formatKoreanPhone, parseKoreanPhone } from "./PhoneInputKR";
 export type { PhoneInputKRProps } from "./PhoneInputKR";
+export { DateRangePicker } from "./DateRangePicker";
+export type { DateRangePickerProps, DateRange } from "./DateRangePicker";
+export { MultiCombobox } from "./MultiCombobox";
+export type { MultiComboboxProps, MultiComboboxOption } from "./MultiCombobox";
+export { AddressInputKR } from "./AddressInputKR";
+export type { AddressInputKRProps, KoreanAddress } from "./AddressInputKR";
+export { ColorPicker } from "./ColorPicker";
+export type { ColorPickerProps } from "./ColorPicker";
+export { TimePicker } from "./TimePicker";
+export type { TimePickerProps } from "./TimePicker";
+export { ChartLine } from "./ChartLine";
+export type { ChartLineProps } from "./ChartLine";
+export { ChartBar } from "./ChartBar";
+export type { ChartBarProps } from "./ChartBar";
+export { Quote } from "./Quote";
+export type { QuoteProps } from "./Quote";
+export { Banner } from "./Banner";
+export type { BannerProps } from "./Banner";
+export { KeyboardShortcut } from "./KeyboardShortcut";
+export type { KeyboardShortcutProps } from "./KeyboardShortcut";
+export { CodeBlock } from "./CodeBlock";
+export type { CodeBlockProps } from "./CodeBlock";
+export { Toggle } from "./Toggle";
+export type { ToggleProps } from "./Toggle";
+export { TreeView, TreeNode } from "./TreeView";
+export type { TreeViewProps, TreeNodeData } from "./TreeView";
+export { DescriptionList } from "./DescriptionList";
+export type { DescriptionListProps } from "./DescriptionList";
+export { Resizable } from "./Resizable";
+export type { ResizableProps } from "./Resizable";
 export { DataTable } from "./DataTable";
 export type { DataTableProps, DataTableColumn } from "./DataTable";
 export { Carousel } from "./Carousel";
@@ -809,6 +870,73 @@ const BASE_STYLES: &str = r#"
 .aph-hint { font-size: 12px; color: var(--colors-text-muted); display: inline-flex; align-items: flex-start; gap: 4px; }
 .aph-hint--warning { color: var(--colors-warning-700, #b45309); }
 .aph-hint--danger { color: var(--colors-danger-700, #b91c1c); }
+
+/* RC.8 advanced primitives (15) */
+.aph-daterange { display: inline-flex; gap: 8px; align-items: center; }
+.aph-daterange__sep { color: var(--colors-text-muted); }
+
+.aph-multicombo { position: relative; }
+.aph-multicombo__field { display: flex; flex-wrap: wrap; gap: 4px; padding: 6px 10px; min-height: 44px; border: 1px solid var(--colors-border-primary); border-radius: 8px; background: var(--colors-background-primary); align-items: center; cursor: text; }
+.aph-multicombo__chip { display: inline-flex; align-items: center; padding: 2px 6px 2px 8px; background: var(--colors-primary-100, #e8eaff); color: var(--colors-primary-700, #111); border-radius: 999px; font-size: 12px; gap: 4px; }
+.aph-multicombo__chip-x { border: none; background: transparent; cursor: pointer; padding: 0 2px; font-size: 12px; line-height: 1; color: var(--colors-primary-700, #111); }
+.aph-multicombo__input { flex: 1; min-width: 80px; border: none; outline: none; background: transparent; font: inherit; color: var(--colors-text-primary); padding: 4px 0; }
+.aph-multicombo__list { position: absolute; top: calc(100% + 4px); left: 0; right: 0; max-height: 240px; overflow: auto; background: var(--colors-background-primary); border: 1px solid var(--colors-border-primary); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); z-index: 100; padding: 4px; }
+
+.aph-address-kr { display: flex; flex-direction: column; gap: 8px; }
+.aph-address-kr__row { display: flex; gap: 8px; align-items: stretch; }
+.aph-address-kr__postcode { width: 120px; flex-shrink: 0; }
+
+.aph-colorpicker { display: inline-flex; gap: 8px; align-items: center; padding: 4px; border: 1px solid var(--colors-border-primary); border-radius: 8px; background: var(--colors-background-primary); }
+.aph-colorpicker__swatch { width: 32px; height: 32px; border-radius: 4px; border: 1px solid var(--colors-border-primary); cursor: pointer; padding: 0; }
+.aph-colorpicker__input { width: 100px; border: none; background: transparent; font: inherit; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 13px; color: var(--colors-text-primary); }
+
+.aph-timepicker { display: inline-flex; gap: 4px; align-items: center; }
+.aph-timepicker select { padding: 6px 8px; border: 1px solid var(--colors-border-primary); border-radius: 6px; background: var(--colors-background-primary); color: var(--colors-text-primary); font: inherit; min-height: 36px; }
+
+.aph-chart { width: 100%; height: auto; display: block; }
+.aph-chart-line__path { fill: none; stroke: var(--colors-primary-500); stroke-width: 2; }
+.aph-chart-line__area { fill: var(--colors-primary-100, rgba(0,112,243,0.12)); opacity: 0.6; }
+.aph-chart-line__dot { fill: var(--colors-primary-500); }
+.aph-chart__axis { stroke: var(--colors-border-primary); stroke-width: 1; }
+.aph-chart__label { font-size: 11px; fill: var(--colors-text-muted); }
+.aph-chart-bar__bar { fill: var(--colors-primary-500); }
+
+.aph-quote { font-size: 24px; font-weight: 500; line-height: 1.4; color: var(--colors-text-primary); padding: 24px 32px; border-left: 4px solid var(--colors-primary-500); margin: 24px 0; font-family: var(--typography-display-family); letter-spacing: -0.01em; }
+.aph-quote__cite { display: block; margin-top: 16px; font-size: 14px; font-weight: 400; color: var(--colors-text-muted); font-style: normal; }
+
+.aph-banner { padding: 12px 18px; background: var(--colors-primary-500); color: var(--colors-background-primary, #fff); text-align: center; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 12px; }
+.aph-banner__dismiss { background: transparent; border: none; color: inherit; cursor: pointer; font-size: 18px; padding: 0 4px; }
+.aph-banner--info { background: var(--colors-primary-500); color: #fff; }
+.aph-banner--warning { background: var(--colors-warning-500, #f59e0b); color: #fff; }
+.aph-banner--danger { background: var(--colors-danger-500, #dc2626); color: #fff; }
+
+.aph-kshortcut { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--colors-text-muted); }
+.aph-kshortcut__keys { display: inline-flex; gap: 3px; }
+
+.aph-codeblock-wrap { position: relative; }
+.aph-codeblock { background: var(--colors-background-secondary); padding: 14px 16px; border-radius: 8px; overflow-x: auto; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 12px; line-height: 1.6; color: var(--colors-text-primary); margin: 0; }
+.aph-codeblock-copy { position: absolute; top: 8px; right: 8px; background: var(--colors-background-primary); border: 1px solid var(--colors-border-primary); color: var(--colors-text-muted); cursor: pointer; padding: 4px 8px; border-radius: 4px; font-size: 11px; opacity: 0; transition: opacity 0.15s; }
+.aph-codeblock-wrap:hover .aph-codeblock-copy { opacity: 1; }
+
+.aph-toggle { font: inherit; min-height: 36px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--colors-border-primary); background: var(--colors-background-primary); color: var(--colors-text-primary); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.aph-toggle[aria-pressed="true"] { background: var(--colors-primary-500); color: var(--colors-background-primary, #fff); border-color: var(--colors-primary-500); }
+
+.aph-tree { font-size: 14px; }
+.aph-tree__node { display: flex; align-items: center; gap: 6px; padding: 4px 8px; cursor: pointer; border-radius: 4px; min-height: 32px; }
+.aph-tree__node:hover { background: var(--colors-background-secondary); }
+.aph-tree__node[aria-selected="true"] { background: var(--colors-primary-50, var(--colors-background-secondary)); color: var(--colors-primary-700, var(--colors-text-primary)); font-weight: 500; }
+.aph-tree__caret { font-size: 11px; width: 12px; color: var(--colors-text-muted); }
+.aph-tree__caret--leaf { visibility: hidden; }
+.aph-tree__children { padding-left: 18px; }
+
+.aph-desc-list { display: grid; grid-template-columns: max-content 1fr; gap: 8px 16px; align-items: baseline; }
+.aph-desc-list dt { font-weight: 500; color: var(--colors-text-muted); font-size: 13px; }
+.aph-desc-list dd { margin: 0; color: var(--colors-text-primary); }
+
+.aph-resizable { display: flex; width: 100%; height: 100%; border: 1px solid var(--colors-border-primary); border-radius: 8px; overflow: hidden; }
+.aph-resizable__pane { overflow: auto; padding: 16px; }
+.aph-resizable__handle { width: 6px; cursor: col-resize; background: var(--colors-border-primary); flex-shrink: 0; }
+.aph-resizable__handle:hover { background: var(--colors-primary-300, var(--colors-border-primary)); }
 "#;
 
 // ---- Component .tsx bodies ----
@@ -2814,6 +2942,891 @@ export function Hint({ tone = "neutral", icon, children, className }: HintProps)
 }
 "#;
 
+// ---- RC.8 advanced primitives (15) ----
+
+const DATE_RANGE_PICKER_TSX: &str = r#"import { useId } from "react";
+import { cn } from "./cn";
+
+export interface DateRange {
+  start: string;
+  end: string;
+}
+
+export interface DateRangePickerProps {
+  value: DateRange;
+  onChange: (next: DateRange) => void;
+  min?: string;
+  max?: string;
+  className?: string;
+  labelStart?: string;
+  labelEnd?: string;
+}
+
+export function DateRangePicker({ value, onChange, min, max, className, labelStart = "시작", labelEnd = "종료" }: DateRangePickerProps) {
+  const id = useId();
+  return (
+    <div className={cn("aph-daterange", className)}>
+      <input
+        type="date"
+        id={`${id}-start`}
+        aria-label={labelStart}
+        className="aph-input"
+        style={{ minHeight: 40, padding: "8px 10px" }}
+        value={value.start}
+        max={value.end || max}
+        min={min}
+        onChange={(e) => onChange({ ...value, start: e.target.value })}
+      />
+      <span className="aph-daterange__sep" aria-hidden="true">—</span>
+      <input
+        type="date"
+        id={`${id}-end`}
+        aria-label={labelEnd}
+        className="aph-input"
+        style={{ minHeight: 40, padding: "8px 10px" }}
+        value={value.end}
+        min={value.start || min}
+        max={max}
+        onChange={(e) => onChange({ ...value, end: e.target.value })}
+      />
+    </div>
+  );
+}
+"#;
+
+const MULTI_COMBOBOX_TSX: &str = r#"import { useState, useRef, useEffect, ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface MultiComboboxOption {
+  value: string;
+  label: ReactNode;
+  search?: string;
+}
+
+export interface MultiComboboxProps {
+  options: MultiComboboxOption[];
+  value: string[];
+  onChange: (next: string[]) => void;
+  placeholder?: string;
+  className?: string;
+  ariaLabel?: string;
+}
+
+export function MultiCombobox({ options, value, onChange, placeholder, className, ariaLabel }: MultiComboboxProps) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const wrapRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [open]);
+  const filtered = options.filter((o) => {
+    if (value.includes(o.value)) return false;
+    if (!query) return true;
+    return (o.search ?? o.value).toLowerCase().includes(query.toLowerCase());
+  });
+  const remove = (v: string) => onChange(value.filter((x) => x !== v));
+  const add = (v: string) => { onChange([...value, v]); setQuery(""); };
+  return (
+    <div ref={wrapRef} className={cn("aph-multicombo", className)}>
+      <div className="aph-multicombo__field" role="combobox" aria-expanded={open} aria-label={ariaLabel} onClick={() => setOpen(true)}>
+        {value.map((v) => {
+          const opt = options.find((o) => o.value === v);
+          return (
+            <span key={v} className="aph-multicombo__chip">
+              {opt?.label ?? v}
+              <button type="button" className="aph-multicombo__chip-x" aria-label={`${opt?.label ?? v} 제거`} onClick={(e) => { e.stopPropagation(); remove(v); }}>×</button>
+            </span>
+          );
+        })}
+        <input
+          className="aph-multicombo__input"
+          value={query}
+          onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
+          onFocus={() => setOpen(true)}
+          placeholder={value.length === 0 ? placeholder : ""}
+        />
+      </div>
+      {open && filtered.length > 0 && (
+        <ul role="listbox" className="aph-multicombo__list">
+          {filtered.map((o) => (
+            <li
+              key={o.value}
+              role="option"
+              aria-selected={false}
+              className="aph-combobox__option"
+              onMouseDown={(e) => { e.preventDefault(); add(o.value); }}
+            >
+              {o.label}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+"#;
+
+const ADDRESS_INPUT_KR_TSX: &str = r#"import { useId } from "react";
+import { cn } from "./cn";
+
+export interface KoreanAddress {
+  postcode: string;
+  /** 도로명 또는 지번 주소. */
+  road: string;
+  /** 상세 주소 (동/호수/층 등). */
+  detail: string;
+}
+
+export interface AddressInputKRProps {
+  value: KoreanAddress;
+  onChange: (next: KoreanAddress) => void;
+  className?: string;
+  /** Triggered when the user clicks the lookup button — wire to your
+   *  Daum/Kakao postcode service. Receives `(setter)` so the lookup can
+   *  push results back into the form. */
+  onLookup?: (apply: (postcode: string, road: string) => void) => void;
+}
+
+export function AddressInputKR({ value, onChange, className, onLookup }: AddressInputKRProps) {
+  const id = useId();
+  const triggerLookup = () => {
+    onLookup?.((postcode, road) => onChange({ ...value, postcode, road }));
+  };
+  return (
+    <div className={cn("aph-address-kr", className)}>
+      <div className="aph-address-kr__row">
+        <input
+          id={`${id}-postcode`}
+          className="aph-input aph-address-kr__postcode"
+          placeholder="우편번호"
+          aria-label="우편번호"
+          value={value.postcode}
+          readOnly
+        />
+        <button type="button" className="aph-btn aph-btn--secondary" onClick={triggerLookup}>주소 검색</button>
+      </div>
+      <input
+        className="aph-input"
+        placeholder="도로명 주소"
+        aria-label="도로명 주소"
+        value={value.road}
+        readOnly
+      />
+      <input
+        className="aph-input"
+        placeholder="상세 주소 (동/호수/층)"
+        aria-label="상세 주소"
+        value={value.detail}
+        onChange={(e) => onChange({ ...value, detail: e.target.value })}
+      />
+    </div>
+  );
+}
+"#;
+
+const COLOR_PICKER_TSX: &str = r#"import { ChangeEvent } from "react";
+import { cn } from "./cn";
+
+export interface ColorPickerProps {
+  value: string;
+  onChange: (hex: string) => void;
+  className?: string;
+  ariaLabel?: string;
+}
+
+export function ColorPicker({ value, onChange, className, ariaLabel = "Color" }: ColorPickerProps) {
+  const onSwatch = (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value);
+  const onText = (e: ChangeEvent<HTMLInputElement>) => {
+    const v = e.target.value.trim();
+    if (/^#[0-9a-fA-F]{6}$/.test(v)) onChange(v);
+    else if (/^#[0-9a-fA-F]{3}$/.test(v)) {
+      const r = v[1], g = v[2], b = v[3];
+      onChange(`#${r}${r}${g}${g}${b}${b}`);
+    }
+  };
+  return (
+    <div className={cn("aph-colorpicker", className)}>
+      <input
+        type="color"
+        className="aph-colorpicker__swatch"
+        aria-label={`${ariaLabel} swatch`}
+        value={value}
+        onChange={onSwatch}
+      />
+      <input
+        type="text"
+        className="aph-colorpicker__input"
+        aria-label={`${ariaLabel} hex`}
+        defaultValue={value}
+        onBlur={onText}
+        spellCheck={false}
+      />
+    </div>
+  );
+}
+"#;
+
+const TIME_PICKER_TSX: &str = r#"import { ChangeEvent } from "react";
+import { cn } from "./cn";
+
+export interface TimePickerProps {
+  /** "HH:mm" 24-hour. */
+  value: string;
+  onChange: (hhmm: string) => void;
+  minuteStep?: number;
+  className?: string;
+  ariaLabel?: string;
+}
+
+export function TimePicker({ value, onChange, minuteStep = 15, className, ariaLabel }: TimePickerProps) {
+  const [hStr = "09", mStr = "00"] = value.split(":");
+  const onH = (e: ChangeEvent<HTMLSelectElement>) => onChange(`${e.target.value}:${mStr}`);
+  const onM = (e: ChangeEvent<HTMLSelectElement>) => onChange(`${hStr}:${e.target.value}`);
+  const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
+  const minutes: string[] = [];
+  for (let m = 0; m < 60; m += minuteStep) minutes.push(String(m).padStart(2, "0"));
+  return (
+    <div role="group" aria-label={ariaLabel} className={cn("aph-timepicker", className)}>
+      <select value={hStr} onChange={onH} aria-label="시간">
+        {hours.map((h) => <option key={h} value={h}>{h}</option>)}
+      </select>
+      <span aria-hidden="true">:</span>
+      <select value={mStr} onChange={onM} aria-label="분">
+        {minutes.map((m) => <option key={m} value={m}>{m}</option>)}
+      </select>
+    </div>
+  );
+}
+"#;
+
+const CHART_LINE_TSX: &str = r#"import { cn } from "./cn";
+
+export interface ChartLineProps {
+  points: Array<{ x: number | string; y: number }>;
+  width?: number;
+  height?: number;
+  className?: string;
+  showArea?: boolean;
+  showDots?: boolean;
+  ariaLabel?: string;
+}
+
+export function ChartLine({ points, width = 480, height = 200, className, showArea = true, showDots = true, ariaLabel = "Line chart" }: ChartLineProps) {
+  if (points.length === 0) return null;
+  const pad = 32;
+  const ys = points.map((p) => p.y);
+  const minY = Math.min(...ys, 0);
+  const maxY = Math.max(...ys, 1);
+  const stepX = (width - pad * 2) / Math.max(1, points.length - 1);
+  const scaleY = (y: number) => height - pad - ((y - minY) / (maxY - minY || 1)) * (height - pad * 2);
+  const coords = points.map((p, i) => ({ cx: pad + i * stepX, cy: scaleY(p.y) }));
+  const path = coords.map((c, i) => `${i === 0 ? "M" : "L"} ${c.cx.toFixed(1)} ${c.cy.toFixed(1)}`).join(" ");
+  const area = `${path} L ${coords[coords.length - 1].cx.toFixed(1)} ${(height - pad).toFixed(1)} L ${coords[0].cx.toFixed(1)} ${(height - pad).toFixed(1)} Z`;
+  return (
+    <svg className={cn("aph-chart", className)} viewBox={`0 0 ${width} ${height}`} role="img" aria-label={ariaLabel}>
+      {showArea && <path className="aph-chart-line__area" d={area} />}
+      <path className="aph-chart-line__path" d={path} />
+      {showDots && coords.map((c, i) => <circle key={i} className="aph-chart-line__dot" cx={c.cx} cy={c.cy} r={3} />)}
+      <line className="aph-chart__axis" x1={pad} x2={width - pad} y1={height - pad} y2={height - pad} />
+    </svg>
+  );
+}
+"#;
+
+const CHART_BAR_TSX: &str = r#"import { cn } from "./cn";
+
+export interface ChartBarProps {
+  bars: Array<{ label: string; value: number }>;
+  width?: number;
+  height?: number;
+  className?: string;
+  ariaLabel?: string;
+}
+
+export function ChartBar({ bars, width = 480, height = 200, className, ariaLabel = "Bar chart" }: ChartBarProps) {
+  if (bars.length === 0) return null;
+  const pad = 32;
+  const maxV = Math.max(...bars.map((b) => b.value), 1);
+  const barW = (width - pad * 2) / bars.length * 0.7;
+  const gap = (width - pad * 2) / bars.length * 0.3;
+  return (
+    <svg className={cn("aph-chart", className)} viewBox={`0 0 ${width} ${height}`} role="img" aria-label={ariaLabel}>
+      {bars.map((b, i) => {
+        const x = pad + i * (barW + gap) + gap / 2;
+        const h = (b.value / maxV) * (height - pad * 2);
+        const y = height - pad - h;
+        return (
+          <g key={i}>
+            <rect className="aph-chart-bar__bar" x={x} y={y} width={barW} height={h} rx={2}>
+              <title>{b.label}: {b.value}</title>
+            </rect>
+            <text className="aph-chart__label" x={x + barW / 2} y={height - pad + 14} textAnchor="middle">{b.label}</text>
+          </g>
+        );
+      })}
+      <line className="aph-chart__axis" x1={pad} x2={width - pad} y1={height - pad} y2={height - pad} />
+    </svg>
+  );
+}
+"#;
+
+const QUOTE_TSX: &str = r#"import { ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface QuoteProps {
+  children: ReactNode;
+  cite?: ReactNode;
+  className?: string;
+}
+
+export function Quote({ children, cite, className }: QuoteProps) {
+  return (
+    <blockquote className={cn("aph-quote", className)}>
+      {children}
+      {cite && <cite className="aph-quote__cite">— {cite}</cite>}
+    </blockquote>
+  );
+}
+"#;
+
+const BANNER_TSX: &str = r#"import { ReactNode, useState } from "react";
+import { cn } from "./cn";
+
+export interface BannerProps {
+  tone?: "info" | "warning" | "danger";
+  children: ReactNode;
+  dismissible?: boolean;
+  onDismiss?: () => void;
+  className?: string;
+}
+
+export function Banner({ tone = "info", children, dismissible, onDismiss, className }: BannerProps) {
+  const [hidden, setHidden] = useState(false);
+  if (hidden) return null;
+  return (
+    <div role="status" className={cn("aph-banner", `aph-banner--${tone}`, className)}>
+      <span>{children}</span>
+      {dismissible && (
+        <button type="button" className="aph-banner__dismiss" aria-label="닫기" onClick={() => { setHidden(true); onDismiss?.(); }}>×</button>
+      )}
+    </div>
+  );
+}
+"#;
+
+const KEYBOARD_SHORTCUT_TSX: &str = r#"import { ReactNode } from "react";
+import { Kbd } from "./Kbd";
+import { cn } from "./cn";
+
+export interface KeyboardShortcutProps {
+  keys: ReactNode[];
+  label?: ReactNode;
+  className?: string;
+}
+
+export function KeyboardShortcut({ keys, label, className }: KeyboardShortcutProps) {
+  return (
+    <span className={cn("aph-kshortcut", className)}>
+      {label && <span>{label}</span>}
+      <span className="aph-kshortcut__keys">
+        {keys.map((k, i) => (
+          <span key={i}>
+            {i > 0 && <span aria-hidden="true"> + </span>}
+            <Kbd>{k}</Kbd>
+          </span>
+        ))}
+      </span>
+    </span>
+  );
+}
+"#;
+
+const CODE_BLOCK_TSX: &str = r#"import { useState, ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface CodeBlockProps {
+  children: string;
+  language?: string;
+  copyable?: boolean;
+  className?: string;
+}
+
+export function CodeBlock({ children, language, copyable = true, className }: CodeBlockProps) {
+  const [copied, setCopied] = useState(false);
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(children);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1200);
+    } catch {
+      // ignore
+    }
+  };
+  return (
+    <div className={cn("aph-codeblock-wrap", className)}>
+      <pre className="aph-codeblock" data-language={language}>
+        <code>{children}</code>
+      </pre>
+      {copyable && (
+        <button type="button" className="aph-codeblock-copy" onClick={onCopy} aria-label={copied ? "복사됨" : "복사"}>
+          {copied ? "복사됨" : "복사"}
+        </button>
+      )}
+    </div>
+  );
+}
+"#;
+
+const TOGGLE_TSX: &str = r#"import { forwardRef, ButtonHTMLAttributes, ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface ToggleProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onChange"> {
+  pressed: boolean;
+  onPressedChange: (next: boolean) => void;
+  children: ReactNode;
+}
+
+export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(function Toggle(
+  { pressed, onPressedChange, className, children, ...rest },
+  ref,
+) {
+  return (
+    <button
+      ref={ref}
+      type="button"
+      aria-pressed={pressed}
+      onClick={() => onPressedChange(!pressed)}
+      className={cn("aph-toggle", className)}
+      {...rest}
+    >
+      {children}
+    </button>
+  );
+});
+"#;
+
+const TREE_VIEW_TSX: &str = r#"import { useState, ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface TreeNodeData {
+  id: string;
+  label: ReactNode;
+  children?: TreeNodeData[];
+}
+
+export interface TreeViewProps {
+  nodes: TreeNodeData[];
+  selectedId?: string;
+  onSelect?: (id: string) => void;
+  defaultExpanded?: string[];
+  className?: string;
+}
+
+export function TreeView({ nodes, selectedId, onSelect, defaultExpanded = [], className }: TreeViewProps) {
+  const [expanded, setExpanded] = useState<Set<string>>(new Set(defaultExpanded));
+  const toggle = (id: string) => {
+    setExpanded((s) => {
+      const next = new Set(s);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+  return (
+    <ul role="tree" className={cn("aph-tree", className)}>
+      {nodes.map((n) => <TreeNode key={n.id} node={n} expanded={expanded} toggle={toggle} selectedId={selectedId} onSelect={onSelect} />)}
+    </ul>
+  );
+}
+
+export function TreeNode({ node, expanded, toggle, selectedId, onSelect }: { node: TreeNodeData; expanded: Set<string>; toggle: (id: string) => void; selectedId?: string; onSelect?: (id: string) => void }) {
+  const isOpen = expanded.has(node.id);
+  const isLeaf = !node.children || node.children.length === 0;
+  return (
+    <li role="treeitem" aria-expanded={isLeaf ? undefined : isOpen}>
+      <div
+        role="presentation"
+        className="aph-tree__node"
+        aria-selected={selectedId === node.id}
+        onClick={() => { if (!isLeaf) toggle(node.id); onSelect?.(node.id); }}
+      >
+        <span className={cn("aph-tree__caret", isLeaf && "aph-tree__caret--leaf")} aria-hidden="true">{isOpen ? "▾" : "▸"}</span>
+        <span>{node.label}</span>
+      </div>
+      {!isLeaf && isOpen && (
+        <ul role="group" className="aph-tree__children">
+          {node.children!.map((c) => <TreeNode key={c.id} node={c} expanded={expanded} toggle={toggle} selectedId={selectedId} onSelect={onSelect} />)}
+        </ul>
+      )}
+    </li>
+  );
+}
+"#;
+
+const DESCRIPTION_LIST_TSX: &str = r#"import { ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface DescriptionListProps {
+  items: Array<{ label: ReactNode; value: ReactNode }>;
+  className?: string;
+}
+
+export function DescriptionList({ items, className }: DescriptionListProps) {
+  return (
+    <dl className={cn("aph-desc-list", className)}>
+      {items.map((it, i) => (
+        <span key={i} style={{ display: "contents" }}>
+          <dt>{it.label}</dt>
+          <dd>{it.value}</dd>
+        </span>
+      ))}
+    </dl>
+  );
+}
+"#;
+
+const RESIZABLE_TSX: &str = r#"import { useRef, ReactNode, useState, MouseEvent as ReactMouseEvent } from "react";
+import { cn } from "./cn";
+
+export interface ResizableProps {
+  left: ReactNode;
+  right: ReactNode;
+  /** Initial left-pane width (px). */
+  initialLeft?: number;
+  /** Minimum left-pane width (px). */
+  minLeft?: number;
+  /** Minimum right-pane width (px). */
+  minRight?: number;
+  className?: string;
+}
+
+export function Resizable({ left, right, initialLeft = 280, minLeft = 120, minRight = 200, className }: ResizableProps) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [leftW, setLeftW] = useState(initialLeft);
+  const onMouseDown = (_e: ReactMouseEvent<HTMLDivElement>) => {
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+    const rect = wrap.getBoundingClientRect();
+    const onMove = (e: MouseEvent) => {
+      const next = e.clientX - rect.left;
+      const max = rect.width - minRight;
+      setLeftW(Math.max(minLeft, Math.min(max, next)));
+    };
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  };
+  return (
+    <div ref={wrapRef} className={cn("aph-resizable", className)}>
+      <div className="aph-resizable__pane" style={{ width: leftW, flexShrink: 0 }}>{left}</div>
+      <div role="separator" aria-orientation="vertical" className="aph-resizable__handle" onMouseDown={onMouseDown} />
+      <div className="aph-resizable__pane" style={{ flex: 1 }}>{right}</div>
+    </div>
+  );
+}
+"#;
+
+// Stories for RC.8 advanced primitives
+
+const DATE_RANGE_PICKER_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { DateRangePicker } from "./DateRangePicker";
+
+const meta: Meta<typeof DateRangePicker> = { component: DateRangePicker };
+export default meta;
+type Story = StoryObj<typeof DateRangePicker>;
+
+export const Default: Story = {
+  render: () => {
+    const [v, setV] = useState({ start: "2026-05-01", end: "2026-05-31" });
+    return <DateRangePicker value={v} onChange={setV} />;
+  },
+};
+"#;
+
+const MULTI_COMBOBOX_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { MultiCombobox } from "./MultiCombobox";
+
+const meta: Meta<typeof MultiCombobox> = { component: MultiCombobox };
+export default meta;
+type Story = StoryObj<typeof MultiCombobox>;
+
+export const Tags: Story = {
+  render: () => {
+    const [v, setV] = useState<string[]>(["seoul"]);
+    return (
+      <div style={{ width: 320 }}>
+        <MultiCombobox
+          value={v}
+          onChange={setV}
+          ariaLabel="배송 가능 지역"
+          placeholder="지역 추가…"
+          options={[
+            { value: "seoul", label: "서울" },
+            { value: "busan", label: "부산" },
+            { value: "incheon", label: "인천" },
+            { value: "daegu", label: "대구" },
+            { value: "daejeon", label: "대전" },
+            { value: "gwangju", label: "광주" },
+          ]}
+        />
+      </div>
+    );
+  },
+};
+"#;
+
+const ADDRESS_INPUT_KR_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { AddressInputKR } from "./AddressInputKR";
+
+const meta: Meta<typeof AddressInputKR> = { component: AddressInputKR };
+export default meta;
+type Story = StoryObj<typeof AddressInputKR>;
+
+export const Default: Story = {
+  render: () => {
+    const [v, setV] = useState({ postcode: "", road: "", detail: "" });
+    return (
+      <div style={{ width: 360 }}>
+        <AddressInputKR
+          value={v}
+          onChange={setV}
+          onLookup={(apply) => {
+            // wire Daum/Kakao postcode service here
+            apply("04524", "서울특별시 중구 세종대로 110");
+          }}
+        />
+      </div>
+    );
+  },
+};
+"#;
+
+const COLOR_PICKER_STORIES: &str = r###"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { ColorPicker } from "./ColorPicker";
+
+const meta: Meta<typeof ColorPicker> = { component: ColorPicker };
+export default meta;
+type Story = StoryObj<typeof ColorPicker>;
+
+export const Default: Story = {
+  render: () => {
+    const [c, setC] = useState("#16a34a");
+    return <ColorPicker value={c} onChange={setC} ariaLabel="Brand color" />;
+  },
+};
+"###;
+
+const TIME_PICKER_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { TimePicker } from "./TimePicker";
+
+const meta: Meta<typeof TimePicker> = { component: TimePicker };
+export default meta;
+type Story = StoryObj<typeof TimePicker>;
+
+export const Default: Story = {
+  render: () => {
+    const [t, setT] = useState("09:30");
+    return <TimePicker value={t} onChange={setT} ariaLabel="배송 희망 시간" />;
+  },
+};
+"#;
+
+const CHART_LINE_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { ChartLine } from "./ChartLine";
+
+const meta: Meta<typeof ChartLine> = { component: ChartLine };
+export default meta;
+type Story = StoryObj<typeof ChartLine>;
+
+export const MonthlyRevenue: Story = {
+  args: {
+    ariaLabel: "월별 매출",
+    points: [
+      { x: "1월", y: 12 }, { x: "2월", y: 19 }, { x: "3월", y: 14 },
+      { x: "4월", y: 22 }, { x: "5월", y: 27 }, { x: "6월", y: 31 },
+    ],
+  },
+};
+"#;
+
+const CHART_BAR_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { ChartBar } from "./ChartBar";
+
+const meta: Meta<typeof ChartBar> = { component: ChartBar };
+export default meta;
+type Story = StoryObj<typeof ChartBar>;
+
+export const WeeklyOrders: Story = {
+  args: {
+    ariaLabel: "요일별 주문",
+    bars: [
+      { label: "월", value: 24 }, { label: "화", value: 18 }, { label: "수", value: 27 },
+      { label: "목", value: 22 }, { label: "금", value: 35 }, { label: "토", value: 41 }, { label: "일", value: 38 },
+    ],
+  },
+};
+"#;
+
+const QUOTE_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Quote } from "./Quote";
+
+const meta: Meta<typeof Quote> = { component: Quote };
+export default meta;
+type Story = StoryObj<typeof Quote>;
+
+export const Editorial: Story = {
+  args: {
+    children: "신선한 제철 재료로 만든 진정한 한국 음식을 집까지 즐기다.",
+    cite: "김민주, 서울",
+  },
+};
+"#;
+
+const BANNER_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Banner } from "./Banner";
+
+const meta: Meta<typeof Banner> = { component: Banner };
+export default meta;
+type Story = StoryObj<typeof Banner>;
+
+export const Info: Story = { args: { tone: "info", dismissible: true, children: "6월 1일부터 새로운 배송 정책이 적용됩니다." } };
+export const Warning: Story = { args: { tone: "warning", dismissible: true, children: "본인 인증을 완료해주세요." } };
+export const Danger: Story = { args: { tone: "danger", children: "결제 처리 중 오류가 발생했습니다." } };
+"#;
+
+const KEYBOARD_SHORTCUT_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { KeyboardShortcut } from "./KeyboardShortcut";
+
+const meta: Meta<typeof KeyboardShortcut> = { component: KeyboardShortcut };
+export default meta;
+type Story = StoryObj<typeof KeyboardShortcut>;
+
+export const Search: Story = { args: { label: "검색", keys: ["⌘", "K"] } };
+export const Save: Story = { args: { label: "저장", keys: ["⌘", "S"] } };
+"#;
+
+const CODE_BLOCK_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { CodeBlock } from "./CodeBlock";
+
+const meta: Meta<typeof CodeBlock> = { component: CodeBlock };
+export default meta;
+type Story = StoryObj<typeof CodeBlock>;
+
+export const TypeScript: Story = {
+  args: {
+    language: "tsx",
+    children: "import { Button } from \"@aphrodite/x\";\n\nexport default function Page() {\n  return <Button>시작하기</Button>;\n}",
+  },
+};
+"#;
+
+const TOGGLE_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { Toggle } from "./Toggle";
+
+const meta: Meta<typeof Toggle> = { component: Toggle };
+export default meta;
+type Story = StoryObj<typeof Toggle>;
+
+export const Bold: Story = {
+  render: () => {
+    const [on, setOn] = useState(false);
+    return <Toggle pressed={on} onPressedChange={setOn}>B</Toggle>;
+  },
+};
+"#;
+
+const TREE_VIEW_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { TreeView } from "./TreeView";
+
+const meta: Meta<typeof TreeView> = { component: TreeView };
+export default meta;
+type Story = StoryObj<typeof TreeView>;
+
+export const Categories: Story = {
+  render: () => {
+    const [sel, setSel] = useState<string>("rice");
+    return (
+      <TreeView
+        selectedId={sel}
+        onSelect={setSel}
+        defaultExpanded={["main", "side"]}
+        nodes={[
+          {
+            id: "main", label: "주요리",
+            children: [
+              { id: "rice", label: "밥류" },
+              { id: "soup", label: "국·찌개" },
+              { id: "noodle", label: "면류" },
+            ],
+          },
+          {
+            id: "side", label: "반찬",
+            children: [
+              { id: "kimchi", label: "김치류" },
+              { id: "namul", label: "나물류" },
+              { id: "jorim", label: "조림류" },
+            ],
+          },
+          { id: "dessert", label: "디저트" },
+        ]}
+      />
+    );
+  },
+};
+"#;
+
+const DESCRIPTION_LIST_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { DescriptionList } from "./DescriptionList";
+
+const meta: Meta<typeof DescriptionList> = { component: DescriptionList };
+export default meta;
+type Story = StoryObj<typeof DescriptionList>;
+
+export const ProductSpecs: Story = {
+  args: {
+    items: [
+      { label: "원산지", value: "국내산 (강원도 평창)" },
+      { label: "유통기한", value: "냉장 보관 5일" },
+      { label: "용량", value: "300g × 5팩" },
+      { label: "보관 방법", value: "0~4°C 냉장" },
+    ],
+  },
+};
+"#;
+
+const RESIZABLE_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Resizable } from "./Resizable";
+
+const meta: Meta<typeof Resizable> = { component: Resizable };
+export default meta;
+type Story = StoryObj<typeof Resizable>;
+
+export const TwoPane: Story = {
+  render: () => (
+    <div style={{ width: 600, height: 240 }}>
+      <Resizable
+        left={<div><h4 style={{ margin: 0 }}>사이드바</h4><p>여기에 폴더 목록 등을 넣습니다.</p></div>}
+        right={<div><h4 style={{ margin: 0 }}>본문</h4><p>핸들을 좌우로 끌어 너비 조절.</p></div>}
+      />
+    </div>
+  ),
+};
+"#;
+
 // ---- Korean phone input (locale-specific RC.8) ----
 
 const PHONE_INPUT_KR_TSX: &str = r#"import { forwardRef, InputHTMLAttributes, ChangeEvent } from "react";
@@ -3715,14 +4728,14 @@ mod tests {
     }
 
     #[test]
-    fn full_component_count_is_55() {
+    fn full_component_count_is_70() {
         let pkg = build(&fixture(), "x");
         let tsx_count = pkg.files.keys()
             .filter(|k| k.ends_with(".tsx") && !k.ends_with(".stories.tsx"))
             .count();
-        assert_eq!(tsx_count, 55, "expected 55 component .tsx files, got {tsx_count}");
+        assert_eq!(tsx_count, 70, "expected 70 component .tsx files, got {tsx_count}");
         let story_count = pkg.files.keys().filter(|k| k.ends_with(".stories.tsx")).count();
-        assert_eq!(story_count, 55, "expected 55 story files, got {story_count}");
+        assert_eq!(story_count, 70, "expected 70 story files, got {story_count}");
     }
 
     #[test]
