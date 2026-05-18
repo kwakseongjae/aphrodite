@@ -156,6 +156,21 @@ STEP 2 — Build a COMPLETE, SELF-CONTAINED HTML document for that surface that:
     "[photo: Hakwi Dining Table — black walnut, oil finish, 2024]" not
     "[image placeholder]". Asset-standards skill body has the discipline.
 
+    HARD CONSTRAINT — placeholder geometry. Any section, container, or
+    figure that wraps an image-placeholder MUST NOT use viewport-relative
+    height units. That means:
+      - NO `height: NNvh` / `min-height: NNvh` on `.hero`, `.feature`,
+        wrapping sections, or the placeholder figure itself.
+      - NO `height: calc(100vw * N)` / `calc(100vh * N)` constructions.
+      - NO `height: 100%` on a placeholder figure whose parent has a
+        viewport-relative height.
+    Use FIXED pixel limits with `max-height` (e.g. `max-height: 600px`)
+    and let `aspect-ratio` do the rest. The placeholder is small art with
+    no real asset behind it — sizing it to the viewport produces
+    1500+px of dead vertical space at desktop widths. This rule is
+    enforced by the harmonize phase; violating it forces a cleanup pass
+    that you cannot see, so write it correctly the first time.
+
   Variant switcher — REQUIRED, fixed position, high z-index:
     The page MUST include a variant switcher matching this exact structure:
       <nav class="aphrodite-variant-switcher" style="position: fixed; top: 16px; right: 16px; z-index: 9999; display: flex; gap: 4px; padding: 6px; background: var(--colors-background-primary); border: 1px solid var(--colors-border-primary); border-radius: 8px;">
