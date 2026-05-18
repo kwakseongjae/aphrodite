@@ -94,6 +94,15 @@ enum Command {
         repo: Option<PathBuf>,
     },
 
+    /// Generate a publishable React component package (`react/` directory
+    /// with package.json + tsconfig + 12 typed primitive .tsx files +
+    /// tokens.ts) from the DESIGN.md in the target directory. The package
+    /// can be `npm publish`-ed or vendored into a monorepo.
+    React {
+        #[arg(long)]
+        repo: Option<PathBuf>,
+    },
+
     /// Build a single-file gallery.html that previews every run subdirectory
     /// under the given path. Each run becomes a card with intent text,
     /// metrics, palette swatches, and an iframe of the composition (or hero
@@ -374,6 +383,36 @@ async fn main() -> anyhow::Result<()> {
             std::fs::write(target.join("components.html"), &html)?;
             println!("wrote tokens.css, tokens.json, components.html in {}", target.display());
             json!({ "kind": "components", "path": target.to_string_lossy() })
+        }
+        Command::React { repo } => {
+            let target = repo.unwrap_or_else(|| std::env::current_dir().expect("cwd"));
+            let design_path = target.join("DESIGN.md");
+            let design_md = std::fs::read_to_string(&design_path)
+                .map_err(|e| anyhow::anyhow!("cannot read {}: {e}", design_path.display()))?;
+            let doc = aphrodite_core::parse_design(&design_md)
+                .map_err(|e| anyhow::anyhow!("parse DESIGN.md: {e}"))?;
+            let variants = aphrodite_core::resolve_variants(&doc);
+            let project_name = if doc.frontmatter.name.is_empty() {
+                "aphrodite-design"
+            } else {
+                doc.frontmatter.name.as_str()
+            };
+            let pkg = aphrodite_generator::react_export::build(&variants, project_name);
+            let react_root = target.join("react");
+            pkg.write_to(&react_root)?;
+            let tsx_count = pkg.files.keys().filter(|k| k.ends_with(".tsx")).count();
+            println!(
+                "wrote react/ package — {} files, {} components, in {}",
+                pkg.files.len(),
+                tsx_count,
+                react_root.display()
+            );
+            json!({
+                "kind": "react",
+                "path": react_root.to_string_lossy(),
+                "components": tsx_count,
+                "files": pkg.files.len()
+            })
         }
         Command::Gallery { dir } => {
             let out = gallery_cmd::build(&dir)?;

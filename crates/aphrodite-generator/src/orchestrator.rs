@@ -640,6 +640,21 @@ pub async fn run(
         );
         // Capture the components.html preview at 3 viewports too.
         let _ = capture_screenshots(&comp_path);
+        // v1.0 React package: publishable npm package with typed
+        // primitives. Lives in `react/` so it doesn't clash with any
+        // existing project files. FE engineers can `cd react && npm
+        // publish` (or vendor into a monorepo) immediately.
+        let react_root = ds_target.join("react");
+        let project_name = final_doc.frontmatter.name.as_str();
+        let project_name = if project_name.is_empty() { "aphrodite-design" } else { project_name };
+        let pkg = crate::react_export::build(&final_variants, project_name);
+        if pkg.write_to(&react_root).is_ok() {
+            eprintln!(
+                "● phase 8.7 / react package: {} files in react/ ({} components + tokens.ts + package.json)",
+                pkg.files.len(),
+                pkg.files.keys().filter(|k| k.ends_with(".tsx")).count()
+            );
+        }
     }
 
     // Phase 8.6: optional external audits. If the user has installed

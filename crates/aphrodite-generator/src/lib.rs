@@ -8,6 +8,7 @@ pub mod hero;
 pub mod offline;
 pub mod orchestrator;
 pub mod provider;
+pub mod react_export;
 pub mod refine;
 pub mod skill;
 pub mod surface;
