@@ -639,8 +639,20 @@ pub async fn run(
         // Tokens Studio plugin (free, no Enterprise plan needed).
         let figma_path = ds_target.join("tokens.figma.json");
         let _ = std::fs::write(&figma_path, crate::figma_sync::build_tokens_studio_json(&final_variants));
+        // v1.0 RC.6 docs site — material-ui style single-page docs.
+        let docs_dir = ds_target.join("docs");
+        let _ = std::fs::create_dir_all(&docs_dir);
+        let project_name = if final_doc.frontmatter.name.is_empty() {
+            "aphrodite-design"
+        } else {
+            final_doc.frontmatter.name.as_str()
+        };
+        let _ = std::fs::write(
+            docs_dir.join("index.html"),
+            crate::docs_site::build_docs_index(&final_variants, project_name),
+        );
         eprintln!(
-            "● phase 8.7 / design-system handoff: tokens.css, tokens.json, tokens.figma.json, components.html"
+            "● phase 8.7 / design-system handoff: tokens.css, tokens.json, tokens.figma.json, components.html, docs/"
         );
         // Capture the components.html preview at 3 viewports too.
         let _ = capture_screenshots(&comp_path);

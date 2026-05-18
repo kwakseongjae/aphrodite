@@ -104,6 +104,14 @@ enum Command {
         repo: Option<PathBuf>,
     },
 
+    /// Rebuild the single-file docs site (`docs/index.html`) — Material-
+    /// UI style component documentation with TOC sidebar, install
+    /// snippet, color tokens, type scale, and a section per component.
+    Docs {
+        #[arg(long)]
+        repo: Option<PathBuf>,
+    },
+
     /// Figma Variables sync. `export` writes `tokens.figma.json` (Tokens
     /// Studio format) from DESIGN.md. `pull <file_key>` fetches the
     /// linked Figma file's local variables (requires APHRODITE_FIGMA_TOKEN
@@ -458,6 +466,26 @@ async fn main() -> anyhow::Result<()> {
                 "components": tsx_count,
                 "files": pkg.files.len()
             })
+        }
+        Command::Docs { repo } => {
+            let target = repo.unwrap_or_else(|| std::env::current_dir().expect("cwd"));
+            let design_md = std::fs::read_to_string(target.join("DESIGN.md"))
+                .map_err(|e| anyhow::anyhow!("cannot read DESIGN.md: {e}"))?;
+            let doc = aphrodite_core::parse_design(&design_md)
+                .map_err(|e| anyhow::anyhow!("parse DESIGN.md: {e}"))?;
+            let variants = aphrodite_core::resolve_variants(&doc);
+            let project_name = if doc.frontmatter.name.is_empty() {
+                "aphrodite-design"
+            } else {
+                doc.frontmatter.name.as_str()
+            };
+            let docs_dir = target.join("docs");
+            std::fs::create_dir_all(&docs_dir)?;
+            let html = aphrodite_generator::docs_site::build_docs_index(&variants, project_name);
+            let out = docs_dir.join("index.html");
+            std::fs::write(&out, &html)?;
+            println!("wrote {} ({} variants, 42 component sections)", out.display(), variants.len());
+            json!({ "kind": "docs", "path": out.to_string_lossy() })
         }
         Command::Figma { sub } => match sub {
             FigmaSub::Export { repo } => {
