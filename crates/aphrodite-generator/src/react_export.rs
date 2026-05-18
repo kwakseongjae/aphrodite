@@ -110,6 +110,21 @@ pub fn build(variants: &[Variant], project_name: &str) -> ReactPackage {
     files.insert("src/Stat.tsx".into(), STAT_TSX.into());
     files.insert("src/Toolbar.tsx".into(), TOOLBAR_TSX.into());
     files.insert("src/HoverCard.tsx".into(), HOVER_CARD_TSX.into());
+    // v1.0 RC.7: 12 advanced primitives — DataTable, Carousel, Calendar,
+    // and supporting ones for 0-1 brand pages (Chip, Image, KBD, Code,
+    // Timeline, Disclosure, ContextMenu, Command).
+    files.insert("src/DataTable.tsx".into(), DATA_TABLE_TSX.into());
+    files.insert("src/Carousel.tsx".into(), CAROUSEL_TSX.into());
+    files.insert("src/Calendar.tsx".into(), CALENDAR_TSX.into());
+    files.insert("src/Chip.tsx".into(), CHIP_TSX.into());
+    files.insert("src/Image.tsx".into(), IMAGE_TSX.into());
+    files.insert("src/Kbd.tsx".into(), KBD_TSX.into());
+    files.insert("src/Code.tsx".into(), CODE_TSX.into());
+    files.insert("src/Timeline.tsx".into(), TIMELINE_TSX.into());
+    files.insert("src/Disclosure.tsx".into(), DISCLOSURE_TSX.into());
+    files.insert("src/ContextMenu.tsx".into(), CONTEXT_MENU_TSX.into());
+    files.insert("src/Command.tsx".into(), COMMAND_TSX.into());
+    files.insert("src/Hint.tsx".into(), HINT_TSX.into());
     files.insert("src/index.ts".into(), build_index_ts());
     files.insert("src/styles.css".into(), build_styles_css(variants));
     files.insert(".npmignore".into(), build_npmignore());
@@ -160,6 +175,18 @@ pub fn build(variants: &[Variant], project_name: &str) -> ReactPackage {
         ("Stat", STAT_STORIES),
         ("Toolbar", TOOLBAR_STORIES),
         ("HoverCard", HOVER_CARD_STORIES),
+        ("DataTable", DATA_TABLE_STORIES),
+        ("Carousel", CAROUSEL_STORIES),
+        ("Calendar", CALENDAR_STORIES),
+        ("Chip", CHIP_STORIES),
+        ("Image", IMAGE_STORIES),
+        ("Kbd", KBD_STORIES),
+        ("Code", CODE_STORIES),
+        ("Timeline", TIMELINE_STORIES),
+        ("Disclosure", DISCLOSURE_STORIES),
+        ("ContextMenu", CONTEXT_MENU_STORIES),
+        ("Command", COMMAND_STORIES),
+        ("Hint", HINT_STORIES),
     ] {
         files.insert(format!("src/{name}.stories.tsx"), body.into());
     }
@@ -468,6 +495,30 @@ export { Toolbar } from "./Toolbar";
 export type { ToolbarProps } from "./Toolbar";
 export { HoverCard } from "./HoverCard";
 export type { HoverCardProps } from "./HoverCard";
+export { DataTable } from "./DataTable";
+export type { DataTableProps, DataTableColumn } from "./DataTable";
+export { Carousel } from "./Carousel";
+export type { CarouselProps } from "./Carousel";
+export { Calendar } from "./Calendar";
+export type { CalendarProps } from "./Calendar";
+export { Chip } from "./Chip";
+export type { ChipProps } from "./Chip";
+export { Image } from "./Image";
+export type { ImageProps } from "./Image";
+export { Kbd } from "./Kbd";
+export type { KbdProps } from "./Kbd";
+export { Code } from "./Code";
+export type { CodeProps } from "./Code";
+export { Timeline, TimelineItem } from "./Timeline";
+export type { TimelineProps, TimelineItemProps } from "./Timeline";
+export { Disclosure } from "./Disclosure";
+export type { DisclosureProps } from "./Disclosure";
+export { ContextMenu } from "./ContextMenu";
+export type { ContextMenuProps } from "./ContextMenu";
+export { Command } from "./Command";
+export type { CommandProps, CommandItem } from "./Command";
+export { Hint } from "./Hint";
+export type { HintProps } from "./Hint";
 export { tokens } from "./tokens";
 export type { VariantName, TokenKey } from "./tokens";
 export { cn } from "./cn";
@@ -679,6 +730,81 @@ const BASE_STYLES: &str = r#"
 .aph-hover-wrap { position: relative; display: inline-block; }
 .aph-hover-card { position: absolute; bottom: calc(100% + 8px); left: 0; min-width: 240px; background: var(--colors-background-primary); border: 1px solid var(--colors-border-primary); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); padding: 14px; opacity: 0; pointer-events: none; transition: opacity 0.12s ease; z-index: 100; }
 .aph-hover-wrap:hover .aph-hover-card, .aph-hover-wrap:focus-within .aph-hover-card { opacity: 1; pointer-events: auto; }
+
+/* advanced primitives (RC.7) */
+.aph-table-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--colors-border-primary); border-radius: 8px; }
+.aph-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.aph-table th, .aph-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--colors-border-primary); }
+.aph-table th { background: var(--colors-background-secondary); font-weight: 600; color: var(--colors-text-primary); font-size: 13px; }
+.aph-table th[aria-sort] { cursor: pointer; user-select: none; }
+.aph-table th[aria-sort]:hover { background: var(--colors-border-primary); }
+.aph-table tr:last-child td { border-bottom: none; }
+.aph-table tr:hover td { background: var(--colors-background-secondary); }
+.aph-table__sort-icon { font-size: 11px; margin-left: 4px; color: var(--colors-text-muted); }
+.aph-table__sort-icon--active { color: var(--colors-primary-500); }
+
+.aph-carousel { position: relative; overflow: hidden; border-radius: 12px; }
+.aph-carousel__track { display: flex; transition: transform 0.3s ease; }
+.aph-carousel__slide { flex: 0 0 100%; }
+.aph-carousel__btn { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 999px; background: var(--colors-background-primary); border: 1px solid var(--colors-border-primary); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.aph-carousel__btn--prev { left: 12px; }
+.aph-carousel__btn--next { right: 12px; }
+.aph-carousel__dots { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; }
+.aph-carousel__dot { width: 8px; height: 8px; border-radius: 999px; background: rgba(255,255,255,0.6); border: none; padding: 0; cursor: pointer; }
+.aph-carousel__dot[aria-current="true"] { background: #fff; transform: scale(1.3); }
+
+.aph-calendar { display: inline-flex; flex-direction: column; gap: 8px; padding: 12px; background: var(--colors-background-primary); border: 1px solid var(--colors-border-primary); border-radius: 8px; font-size: 14px; }
+.aph-calendar__head { display: flex; justify-content: space-between; align-items: center; padding: 0 4px; }
+.aph-calendar__month { font-weight: 600; }
+.aph-calendar__nav { background: transparent; border: none; cursor: pointer; padding: 4px 8px; font-size: 16px; color: var(--colors-text-primary); border-radius: 4px; }
+.aph-calendar__nav:hover { background: var(--colors-background-secondary); }
+.aph-calendar__grid { display: grid; grid-template-columns: repeat(7, 36px); gap: 2px; }
+.aph-calendar__dow { text-align: center; font-size: 11px; color: var(--colors-text-muted); padding: 4px 0; font-weight: 500; }
+.aph-calendar__cell { width: 36px; height: 36px; border: none; background: transparent; border-radius: 999px; cursor: pointer; font: inherit; color: var(--colors-text-primary); }
+.aph-calendar__cell:hover:not([disabled]) { background: var(--colors-background-secondary); }
+.aph-calendar__cell--other { color: var(--colors-text-muted); opacity: 0.4; }
+.aph-calendar__cell--today { font-weight: 700; color: var(--colors-primary-500); }
+.aph-calendar__cell--selected { background: var(--colors-primary-500); color: #fff; font-weight: 600; }
+.aph-calendar__cell--selected:hover:not([disabled]) { background: var(--colors-primary-600, var(--colors-primary-500)); }
+
+.aph-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 4px 4px 10px; border-radius: 999px; background: var(--colors-background-secondary); color: var(--colors-text-primary); font-size: 13px; min-height: 28px; }
+.aph-chip__close { width: 20px; height: 20px; border-radius: 999px; border: none; background: transparent; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; color: var(--colors-text-muted); font-size: 14px; line-height: 1; }
+.aph-chip__close:hover { background: var(--colors-border-primary); color: var(--colors-text-primary); }
+
+.aph-image { display: inline-block; position: relative; overflow: hidden; background: var(--colors-background-secondary); }
+.aph-image img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.aph-image__fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--colors-text-muted); font-size: 12px; }
+
+.aph-kbd { display: inline-flex; align-items: center; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--colors-border-primary); background: var(--colors-background-secondary); font-family: ui-monospace, SFMono-Regular, monospace; font-size: 11px; font-weight: 600; color: var(--colors-text-primary); min-width: 18px; height: 20px; justify-content: center; }
+
+.aph-code { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 12px; background: var(--colors-background-secondary); padding: 2px 6px; border-radius: 4px; color: var(--colors-text-primary); }
+.aph-code-block { background: var(--colors-background-secondary); padding: 14px 16px; border-radius: 8px; overflow-x: auto; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 12px; }
+
+.aph-timeline { display: flex; flex-direction: column; gap: 0; }
+.aph-timeline-item { display: flex; gap: 16px; position: relative; padding-bottom: 24px; }
+.aph-timeline-item:not(:last-child)::before { content: ""; position: absolute; left: 11px; top: 24px; bottom: 0; width: 2px; background: var(--colors-border-primary); }
+.aph-timeline-item__bubble { width: 24px; height: 24px; border-radius: 999px; background: var(--colors-primary-500); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; z-index: 1; }
+.aph-timeline-item__body { display: flex; flex-direction: column; gap: 4px; padding-top: 2px; }
+.aph-timeline-item__title { font-weight: 600; color: var(--colors-text-primary); }
+.aph-timeline-item__time { font-size: 12px; color: var(--colors-text-muted); }
+
+.aph-disclosure { padding: 12px 16px; border: 1px solid var(--colors-border-primary); border-radius: 8px; background: var(--colors-background-primary); }
+.aph-disclosure__trigger { width: 100%; background: transparent; border: none; cursor: pointer; padding: 0; font: inherit; text-align: left; display: flex; justify-content: space-between; align-items: center; color: var(--colors-text-primary); font-weight: 500; min-height: 32px; }
+.aph-disclosure__body { padding-top: 8px; color: var(--colors-text-muted); }
+
+.aph-context-menu { position: fixed; background: var(--colors-background-primary); border: 1px solid var(--colors-border-primary); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); padding: 4px; min-width: 180px; z-index: 1000; }
+
+.aph-command-root { background: var(--colors-background-primary); border: 1px solid var(--colors-border-primary); border-radius: 12px; box-shadow: 0 16px 48px rgba(0,0,0,0.2); width: 100%; max-width: 540px; overflow: hidden; }
+.aph-command-input { width: 100%; padding: 14px 18px; border: none; border-bottom: 1px solid var(--colors-border-primary); font: inherit; background: transparent; color: var(--colors-text-primary); }
+.aph-command-input:focus { outline: none; }
+.aph-command-list { max-height: 320px; overflow: auto; padding: 4px; }
+.aph-command-empty { padding: 24px; text-align: center; color: var(--colors-text-muted); font-size: 13px; }
+.aph-command-row { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 6px; cursor: pointer; min-height: 40px; }
+.aph-command-row[aria-selected="true"] { background: var(--colors-background-secondary); }
+
+.aph-hint { font-size: 12px; color: var(--colors-text-muted); display: inline-flex; align-items: flex-start; gap: 4px; }
+.aph-hint--warning { color: var(--colors-warning-700, #b45309); }
+.aph-hint--danger { color: var(--colors-danger-700, #b91c1c); }
 "#;
 
 // ---- Component .tsx bodies ----
@@ -2181,6 +2307,701 @@ export function HoverCard({ trigger, children, className }: HoverCardProps) {
 }
 "#;
 
+// ---- RC.7 advanced primitives ----
+
+const DATA_TABLE_TSX: &str = r#"import { useState, useMemo, ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface DataTableColumn<T> {
+  key: keyof T & string;
+  header: ReactNode;
+  /** When true, header is clickable and toggles asc → desc → none. */
+  sortable?: boolean;
+  /** Custom cell renderer. */
+  cell?: (row: T) => ReactNode;
+  align?: "left" | "right" | "center";
+  width?: string;
+}
+
+export interface DataTableProps<T> {
+  rows: T[];
+  columns: DataTableColumn<T>[];
+  /** Stable key fn for React keys + selection. Defaults to row index. */
+  rowKey?: (row: T, i: number) => string | number;
+  className?: string;
+  emptyMessage?: ReactNode;
+}
+
+type SortDir = "asc" | "desc" | null;
+
+export function DataTable<T>({ rows, columns, rowKey, className, emptyMessage = "데이터가 없습니다" }: DataTableProps<T>) {
+  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<SortDir>(null);
+  const sorted = useMemo(() => {
+    if (!sortKey || !sortDir) return rows;
+    return [...rows].sort((a, b) => {
+      const av = (a as unknown as Record<string, unknown>)[sortKey];
+      const bv = (b as unknown as Record<string, unknown>)[sortKey];
+      if (av == null && bv == null) return 0;
+      if (av == null) return 1;
+      if (bv == null) return -1;
+      const cmp = av < bv ? -1 : av > bv ? 1 : 0;
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+  }, [rows, sortKey, sortDir]);
+  const cycle = (key: string) => {
+    if (sortKey !== key) { setSortKey(key); setSortDir("asc"); return; }
+    if (sortDir === "asc") { setSortDir("desc"); return; }
+    if (sortDir === "desc") { setSortKey(null); setSortDir(null); return; }
+    setSortDir("asc");
+  };
+  return (
+    <div className={cn("aph-table-wrap", className)}>
+      <table className="aph-table">
+        <thead>
+          <tr>
+            {columns.map((c) => {
+              const sort = c.sortable && sortKey === c.key ? (sortDir === "asc" ? "ascending" : "descending") : c.sortable ? "none" : undefined;
+              return (
+                <th
+                  key={c.key}
+                  aria-sort={sort as React.AriaAttributes["aria-sort"]}
+                  style={{ textAlign: c.align ?? "left", width: c.width }}
+                  onClick={c.sortable ? () => cycle(c.key) : undefined}
+                >
+                  {c.header}
+                  {c.sortable && (
+                    <span className={cn("aph-table__sort-icon", sortKey === c.key && "aph-table__sort-icon--active")}>
+                      {sortKey === c.key ? (sortDir === "asc" ? "▲" : "▼") : "⇅"}
+                    </span>
+                  )}
+                </th>
+              );
+            })}
+          </tr>
+        </thead>
+        <tbody>
+          {sorted.length === 0 ? (
+            <tr><td colSpan={columns.length} style={{ textAlign: "center", padding: "32px 16px", color: "var(--colors-text-muted)" }}>{emptyMessage}</td></tr>
+          ) : (
+            sorted.map((row, i) => (
+              <tr key={rowKey ? rowKey(row, i) : i}>
+                {columns.map((c) => (
+                  <td key={c.key} style={{ textAlign: c.align ?? "left" }}>
+                    {c.cell ? c.cell(row) : String((row as unknown as Record<string, unknown>)[c.key] ?? "")}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+"#;
+
+const CAROUSEL_TSX: &str = r#"import { useState, ReactNode, Children, useEffect } from "react";
+import { cn } from "./cn";
+
+export interface CarouselProps {
+  children: ReactNode;
+  autoplay?: number;
+  showArrows?: boolean;
+  showDots?: boolean;
+  className?: string;
+  ariaLabel?: string;
+}
+
+export function Carousel({ children, autoplay, showArrows = true, showDots = true, className, ariaLabel }: CarouselProps) {
+  const slides = Children.toArray(children);
+  const [idx, setIdx] = useState(0);
+  const go = (next: number) => setIdx((next + slides.length) % slides.length);
+  useEffect(() => {
+    if (!autoplay) return;
+    const t = setInterval(() => go(idx + 1), autoplay);
+    return () => clearInterval(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoplay, idx, slides.length]);
+  return (
+    <div role="region" aria-roledescription="carousel" aria-label={ariaLabel} className={cn("aph-carousel", className)}>
+      <div className="aph-carousel__track" style={{ transform: `translateX(-${idx * 100}%)` }}>
+        {slides.map((s, i) => (
+          <div key={i} className="aph-carousel__slide" aria-hidden={i !== idx}>{s}</div>
+        ))}
+      </div>
+      {showArrows && slides.length > 1 && (
+        <>
+          <button type="button" className="aph-carousel__btn aph-carousel__btn--prev" onClick={() => go(idx - 1)} aria-label="이전">‹</button>
+          <button type="button" className="aph-carousel__btn aph-carousel__btn--next" onClick={() => go(idx + 1)} aria-label="다음">›</button>
+        </>
+      )}
+      {showDots && slides.length > 1 && (
+        <div className="aph-carousel__dots" role="tablist">
+          {slides.map((_, i) => (
+            <button key={i} type="button" role="tab" aria-current={i === idx} className="aph-carousel__dot" onClick={() => setIdx(i)} aria-label={`슬라이드 ${i + 1}`} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+"#;
+
+const CALENDAR_TSX: &str = r#"import { useState } from "react";
+import { cn } from "./cn";
+
+export interface CalendarProps {
+  value?: Date;
+  onChange?: (d: Date) => void;
+  /** ISO yyyy-mm-dd strings to disable. */
+  disabledDates?: string[];
+  locale?: string;
+  className?: string;
+}
+
+const KOREAN_DOW = ["일", "월", "화", "수", "목", "금", "토"];
+
+export function Calendar({ value, onChange, disabledDates = [], locale = "ko-KR", className }: CalendarProps) {
+  const initial = value ?? new Date();
+  const [view, setView] = useState({ year: initial.getFullYear(), month: initial.getMonth() });
+  const today = new Date();
+  const todayIso = isoDate(today);
+  const selectedIso = value ? isoDate(value) : null;
+
+  const first = new Date(view.year, view.month, 1);
+  const startDow = first.getDay();
+  const daysInMonth = new Date(view.year, view.month + 1, 0).getDate();
+  const prevMonthDays = new Date(view.year, view.month, 0).getDate();
+
+  const cells: Array<{ d: number; otherMonth: boolean; iso: string; date: Date }> = [];
+  for (let i = startDow - 1; i >= 0; i--) {
+    const day = prevMonthDays - i;
+    const date = new Date(view.year, view.month - 1, day);
+    cells.push({ d: day, otherMonth: true, iso: isoDate(date), date });
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(view.year, view.month, d);
+    cells.push({ d, otherMonth: false, iso: isoDate(date), date });
+  }
+  while (cells.length % 7 !== 0) {
+    const d = cells.length - (startDow + daysInMonth) + 1;
+    const date = new Date(view.year, view.month + 1, d);
+    cells.push({ d, otherMonth: true, iso: isoDate(date), date });
+  }
+
+  const monthLabel = new Date(view.year, view.month, 1).toLocaleDateString(locale, { year: "numeric", month: "long" });
+
+  return (
+    <div className={cn("aph-calendar", className)} role="grid" aria-label={monthLabel}>
+      <div className="aph-calendar__head">
+        <button type="button" className="aph-calendar__nav" aria-label="이전 달" onClick={() => setView(({ year, month }) => month === 0 ? { year: year - 1, month: 11 } : { year, month: month - 1 })}>‹</button>
+        <span className="aph-calendar__month">{monthLabel}</span>
+        <button type="button" className="aph-calendar__nav" aria-label="다음 달" onClick={() => setView(({ year, month }) => month === 11 ? { year: year + 1, month: 0 } : { year, month: month + 1 })}>›</button>
+      </div>
+      <div className="aph-calendar__grid">
+        {KOREAN_DOW.map((d) => <div key={d} className="aph-calendar__dow">{d}</div>)}
+        {cells.map((c, i) => {
+          const disabled = disabledDates.includes(c.iso);
+          const selected = selectedIso === c.iso;
+          const isToday = todayIso === c.iso;
+          return (
+            <button
+              key={i}
+              type="button"
+              role="gridcell"
+              aria-selected={selected}
+              aria-current={isToday ? "date" : undefined}
+              disabled={disabled}
+              className={cn(
+                "aph-calendar__cell",
+                c.otherMonth && "aph-calendar__cell--other",
+                isToday && "aph-calendar__cell--today",
+                selected && "aph-calendar__cell--selected",
+              )}
+              onClick={() => !disabled && onChange?.(c.date)}
+            >
+              {c.d}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function isoDate(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+"#;
+
+const CHIP_TSX: &str = r#"import { ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface ChipProps {
+  children: ReactNode;
+  onClose?: () => void;
+  className?: string;
+}
+
+export function Chip({ children, onClose, className }: ChipProps) {
+  return (
+    <span className={cn("aph-chip", className)}>
+      {children}
+      {onClose && (
+        <button type="button" className="aph-chip__close" aria-label="제거" onClick={onClose}>×</button>
+      )}
+    </span>
+  );
+}
+"#;
+
+const IMAGE_TSX: &str = r#"import { useState, ImgHTMLAttributes } from "react";
+import { cn } from "./cn";
+
+export interface ImageProps extends ImgHTMLAttributes<HTMLImageElement> {
+  fallback?: string;
+  width?: number;
+  height?: number;
+  rounded?: boolean | number;
+}
+
+export function Image({ src, fallback, width, height, rounded, alt = "", className, ...rest }: ImageProps) {
+  const [errored, setErrored] = useState(false);
+  const radius = typeof rounded === "number" ? rounded : rounded ? 999 : 0;
+  return (
+    <span
+      className={cn("aph-image", className)}
+      style={{ width, height, borderRadius: radius }}
+    >
+      {!errored && src ? (
+        <img src={src} alt={alt} loading="lazy" onError={() => setErrored(true)} {...rest} />
+      ) : (
+        <span className="aph-image__fallback">{fallback ?? (alt || "이미지를 불러올 수 없습니다")}</span>
+      )}
+    </span>
+  );
+}
+"#;
+
+const KBD_TSX: &str = r#"import { ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface KbdProps {
+  children: ReactNode;
+  className?: string;
+}
+
+export function Kbd({ children, className }: KbdProps) {
+  return <kbd className={cn("aph-kbd", className)}>{children}</kbd>;
+}
+"#;
+
+const CODE_TSX: &str = r#"import { ReactNode, HTMLAttributes } from "react";
+import { cn } from "./cn";
+
+export interface CodeProps extends HTMLAttributes<HTMLElement> {
+  block?: boolean;
+  children: ReactNode;
+}
+
+export function Code({ block, className, children, ...rest }: CodeProps) {
+  if (block) {
+    return (
+      <pre className={cn("aph-code-block", className)} {...rest as HTMLAttributes<HTMLPreElement>}>
+        <code>{children}</code>
+      </pre>
+    );
+  }
+  return <code className={cn("aph-code", className)} {...rest}>{children}</code>;
+}
+"#;
+
+const TIMELINE_TSX: &str = r#"import { ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface TimelineProps {
+  children: ReactNode;
+  className?: string;
+}
+
+export interface TimelineItemProps {
+  marker?: ReactNode;
+  title: ReactNode;
+  time?: ReactNode;
+  children?: ReactNode;
+}
+
+export function Timeline({ children, className }: TimelineProps) {
+  return <ol className={cn("aph-timeline", className)}>{children}</ol>;
+}
+
+export function TimelineItem({ marker, title, time, children }: TimelineItemProps) {
+  return (
+    <li className="aph-timeline-item">
+      <span className="aph-timeline-item__bubble" aria-hidden="true">{marker ?? "•"}</span>
+      <div className="aph-timeline-item__body">
+        <span className="aph-timeline-item__title">{title}</span>
+        {time && <span className="aph-timeline-item__time">{time}</span>}
+        {children && <div>{children}</div>}
+      </div>
+    </li>
+  );
+}
+"#;
+
+const DISCLOSURE_TSX: &str = r#"import { useState, ReactNode, useId } from "react";
+import { cn } from "./cn";
+
+export interface DisclosureProps {
+  title: ReactNode;
+  children: ReactNode;
+  defaultOpen?: boolean;
+  className?: string;
+}
+
+export function Disclosure({ title, children, defaultOpen = false, className }: DisclosureProps) {
+  const [open, setOpen] = useState(defaultOpen);
+  const id = useId();
+  return (
+    <div className={cn("aph-disclosure", className)}>
+      <button type="button" aria-expanded={open} aria-controls={`${id}-body`} className="aph-disclosure__trigger" onClick={() => setOpen((o) => !o)}>
+        <span>{title}</span>
+        <span aria-hidden="true">{open ? "−" : "+"}</span>
+      </button>
+      {open && <div id={`${id}-body`} className="aph-disclosure__body">{children}</div>}
+    </div>
+  );
+}
+"#;
+
+const CONTEXT_MENU_TSX: &str = r#"import { useState, useEffect, useRef, ReactNode, MouseEvent as ReactMouseEvent } from "react";
+import { cn } from "./cn";
+
+export interface ContextMenuProps {
+  trigger: ReactNode;
+  items: Array<{ label: ReactNode; onSelect: () => void; disabled?: boolean }>;
+  className?: string;
+}
+
+export function ContextMenu({ trigger, items, className }: ContextMenuProps) {
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!pos) return;
+    const onDoc = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setPos(null);
+    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setPos(null); };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
+  }, [pos]);
+  const onTrigger = (e: ReactMouseEvent) => {
+    e.preventDefault();
+    setPos({ x: e.clientX, y: e.clientY });
+  };
+  return (
+    <>
+      <span onContextMenu={onTrigger}>{trigger}</span>
+      {pos && (
+        <div ref={ref} role="menu" className={cn("aph-context-menu", className)} style={{ left: pos.x, top: pos.y }}>
+          {items.map((it, i) => (
+            <button key={i} type="button" role="menuitem" className="aph-menu-item" disabled={it.disabled} onClick={() => { it.onSelect(); setPos(null); }}>
+              {it.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+"#;
+
+const COMMAND_TSX: &str = r#"import { useState, useMemo, ReactNode, KeyboardEvent } from "react";
+import { cn } from "./cn";
+
+export interface CommandItem {
+  id: string;
+  label: ReactNode;
+  /** Lower-cased search-key. Defaults to id. */
+  search?: string;
+  hint?: ReactNode;
+  onSelect: () => void;
+}
+
+export interface CommandProps {
+  items: CommandItem[];
+  placeholder?: string;
+  emptyMessage?: ReactNode;
+  className?: string;
+  ariaLabel?: string;
+}
+
+export function Command({ items, placeholder = "Search...", emptyMessage = "결과가 없습니다", className, ariaLabel = "Command" }: CommandProps) {
+  const [q, setQ] = useState("");
+  const [active, setActive] = useState(0);
+  const filtered = useMemo(() => {
+    if (!q) return items;
+    const needle = q.toLowerCase();
+    return items.filter((it) => (it.search ?? it.id).toLowerCase().includes(needle));
+  }, [items, q]);
+  const onKey = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "ArrowDown") { e.preventDefault(); setActive((a) => Math.min(filtered.length - 1, a + 1)); }
+    if (e.key === "ArrowUp") { e.preventDefault(); setActive((a) => Math.max(0, a - 1)); }
+    if (e.key === "Enter") { e.preventDefault(); filtered[active]?.onSelect(); }
+  };
+  return (
+    <div role="combobox" aria-label={ariaLabel} aria-expanded="true" className={cn("aph-command-root", className)}>
+      <input
+        type="text"
+        autoFocus
+        value={q}
+        onChange={(e) => { setQ(e.target.value); setActive(0); }}
+        onKeyDown={onKey}
+        placeholder={placeholder}
+        className="aph-command-input"
+        aria-label={placeholder}
+      />
+      <div className="aph-command-list" role="listbox">
+        {filtered.length === 0 ? (
+          <div className="aph-command-empty">{emptyMessage}</div>
+        ) : (
+          filtered.map((it, i) => (
+            <div
+              key={it.id}
+              role="option"
+              aria-selected={i === active}
+              onMouseEnter={() => setActive(i)}
+              onClick={() => it.onSelect()}
+              className="aph-command-row"
+            >
+              <span style={{ flex: 1 }}>{it.label}</span>
+              {it.hint && <span style={{ fontSize: 12, color: "var(--colors-text-muted)" }}>{it.hint}</span>}
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+"#;
+
+const HINT_TSX: &str = r#"import { ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface HintProps {
+  tone?: "neutral" | "warning" | "danger";
+  icon?: ReactNode;
+  children: ReactNode;
+  className?: string;
+}
+
+export function Hint({ tone = "neutral", icon, children, className }: HintProps) {
+  return (
+    <span className={cn("aph-hint", tone !== "neutral" && `aph-hint--${tone}`, className)}>
+      {icon && <span aria-hidden="true">{icon}</span>}
+      <span>{children}</span>
+    </span>
+  );
+}
+"#;
+
+// ---- Stories for RC.7 advanced primitives ----
+
+const DATA_TABLE_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { DataTable } from "./DataTable";
+
+type Tx = { date: string; merchant: string; amount: number; status: string };
+const rows: Tx[] = [
+  { date: "2026-05-18", merchant: "스타벅스 강남점", amount: -6500, status: "완료" },
+  { date: "2026-05-17", merchant: "월급", amount: 3200000, status: "완료" },
+  { date: "2026-05-16", merchant: "GS25", amount: -3200, status: "완료" },
+  { date: "2026-05-15", merchant: "쿠팡", amount: -42000, status: "대기" },
+];
+
+const meta: Meta<typeof DataTable<Tx>> = { component: DataTable };
+export default meta;
+type Story = StoryObj<typeof DataTable<Tx>>;
+
+export const Transactions: Story = {
+  args: {
+    rows,
+    columns: [
+      { key: "date", header: "날짜", sortable: true },
+      { key: "merchant", header: "내역", sortable: true },
+      { key: "amount", header: "금액", sortable: true, align: "right", cell: (r) => (r.amount > 0 ? `+${r.amount.toLocaleString()}` : `${r.amount.toLocaleString()}`) + "원" },
+      { key: "status", header: "상태" },
+    ],
+  },
+};
+"#;
+
+const CAROUSEL_STORIES: &str = r###"import type { Meta, StoryObj } from "@storybook/react";
+import { Carousel } from "./Carousel";
+
+const meta: Meta<typeof Carousel> = { component: Carousel };
+export default meta;
+type Story = StoryObj<typeof Carousel>;
+
+export const Hero: Story = {
+  render: () => (
+    <div style={{ width: 600, height: 280 }}>
+      <Carousel ariaLabel="홈 배너">
+        {["#16a34a", "#3b82f6", "#dc2626"].map((bg, i) => (
+          <div key={i} style={{ background: bg, height: 280, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 32, fontWeight: 700 }}>슬라이드 {i + 1}</div>
+        ))}
+      </Carousel>
+    </div>
+  ),
+};
+"###;
+
+const CALENDAR_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { Calendar } from "./Calendar";
+
+const meta: Meta<typeof Calendar> = { component: Calendar };
+export default meta;
+type Story = StoryObj<typeof Calendar>;
+
+export const Default: Story = {
+  render: () => {
+    const [d, setD] = useState(new Date());
+    return <Calendar value={d} onChange={setD} />;
+  },
+};
+"#;
+
+const CHIP_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Chip } from "./Chip";
+
+const meta: Meta<typeof Chip> = { component: Chip };
+export default meta;
+type Story = StoryObj<typeof Chip>;
+
+export const Closable: Story = {
+  args: { children: "서울", onClose: () => alert("removed") },
+};
+"#;
+
+const IMAGE_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Image } from "./Image";
+
+const meta: Meta<typeof Image> = { component: Image };
+export default meta;
+type Story = StoryObj<typeof Image>;
+
+export const Fallback: Story = { args: { width: 200, height: 200, src: "nope.jpg", alt: "상품 사진", rounded: 12 } };
+"#;
+
+const KBD_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Kbd } from "./Kbd";
+
+const meta: Meta<typeof Kbd> = { component: Kbd };
+export default meta;
+type Story = StoryObj<typeof Kbd>;
+
+export const Shortcut: Story = {
+  render: () => <span><Kbd>⌘</Kbd> + <Kbd>K</Kbd> 로 검색 열기</span>,
+};
+"#;
+
+const CODE_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Code } from "./Code";
+
+const meta: Meta<typeof Code> = { component: Code };
+export default meta;
+type Story = StoryObj<typeof Code>;
+
+export const Inline: Story = { render: () => <span><Code>npm i @aphrodite/your-name</Code> 로 설치</span> };
+export const Block: Story = { args: { block: true, children: "import { Button } from '@aphrodite/x';\n\n<Button>Hi</Button>" } };
+"#;
+
+const TIMELINE_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Timeline, TimelineItem } from "./Timeline";
+
+const meta: Meta<typeof Timeline> = { component: Timeline };
+export default meta;
+type Story = StoryObj<typeof Timeline>;
+
+export const OrderHistory: Story = {
+  render: () => (
+    <Timeline>
+      <TimelineItem marker="1" title="주문 접수" time="5/17 14:02">결제가 완료되었습니다.</TimelineItem>
+      <TimelineItem marker="2" title="상품 준비" time="5/18 09:14" />
+      <TimelineItem marker="3" title="배송 시작" time="5/18 11:38" />
+    </Timeline>
+  ),
+};
+"#;
+
+const DISCLOSURE_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Disclosure } from "./Disclosure";
+
+const meta: Meta<typeof Disclosure> = { component: Disclosure };
+export default meta;
+type Story = StoryObj<typeof Disclosure>;
+
+export const Default: Story = {
+  args: { title: "자세히 보기", children: <p>여기에 추가 정보가 들어갑니다.</p> },
+};
+"#;
+
+const CONTEXT_MENU_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { ContextMenu } from "./ContextMenu";
+
+const meta: Meta<typeof ContextMenu> = { component: ContextMenu };
+export default meta;
+type Story = StoryObj<typeof ContextMenu>;
+
+export const Default: Story = {
+  args: {
+    trigger: <span style={{ padding: 20, border: "1px dashed", display: "inline-block" }}>우클릭해보세요</span>,
+    items: [
+      { label: "수정", onSelect: () => alert("수정") },
+      { label: "복사", onSelect: () => alert("복사") },
+      { label: "삭제", onSelect: () => alert("삭제") },
+    ],
+  },
+};
+"#;
+
+const COMMAND_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Command } from "./Command";
+
+const meta: Meta<typeof Command> = { component: Command };
+export default meta;
+type Story = StoryObj<typeof Command>;
+
+export const Default: Story = {
+  args: {
+    placeholder: "명령어 또는 검색어 입력...",
+    items: [
+      { id: "new-doc", label: "새 문서", hint: "⌘N", onSelect: () => {} },
+      { id: "search", label: "검색", hint: "⌘K", onSelect: () => {} },
+      { id: "settings", label: "설정", hint: "⌘,", onSelect: () => {} },
+      { id: "logout", label: "로그아웃", onSelect: () => {} },
+    ],
+  },
+};
+"#;
+
+const HINT_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Hint } from "./Hint";
+
+const meta: Meta<typeof Hint> = { component: Hint };
+export default meta;
+type Story = StoryObj<typeof Hint>;
+
+export const Neutral: Story = { args: { children: "최대 100MB까지 업로드할 수 있습니다." } };
+export const Warning: Story = { args: { tone: "warning", icon: "⚠️", children: "이 작업은 되돌릴 수 없습니다." } };
+export const Danger: Story = { args: { tone: "danger", icon: "✕", children: "비밀번호가 일치하지 않습니다." } };
+"#;
+
 // ---- Stories for RC.5 advanced primitives ----
 
 const SEGMENTED_CONTROL_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
@@ -2812,14 +3633,14 @@ mod tests {
     }
 
     #[test]
-    fn full_component_count_is_42() {
+    fn full_component_count_is_54() {
         let pkg = build(&fixture(), "x");
         let tsx_count = pkg.files.keys()
             .filter(|k| k.ends_with(".tsx") && !k.ends_with(".stories.tsx"))
             .count();
-        assert_eq!(tsx_count, 42, "expected 42 component .tsx files, got {tsx_count}");
+        assert_eq!(tsx_count, 54, "expected 54 component .tsx files, got {tsx_count}");
         let story_count = pkg.files.keys().filter(|k| k.ends_with(".stories.tsx")).count();
-        assert_eq!(story_count, 42, "expected 42 story files, got {story_count}");
+        assert_eq!(story_count, 54, "expected 54 story files, got {story_count}");
     }
 
     #[test]
