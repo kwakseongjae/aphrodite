@@ -69,6 +69,26 @@ pub fn build(variants: &[Variant], project_name: &str) -> ReactPackage {
     files.insert("src/Switch.tsx".into(), SWITCH_TSX.into());
     files.insert("src/Badge.tsx".into(), BADGE_TSX.into());
     files.insert("src/Spinner.tsx".into(), SPINNER_TSX.into());
+    // v1.0 RC additional primitives — 18 more to reach Toss/Karrot
+    // coverage. Form controls, navigation, feedback, overlays.
+    files.insert("src/Textarea.tsx".into(), TEXTAREA_TSX.into());
+    files.insert("src/Select.tsx".into(), SELECT_TSX.into());
+    files.insert("src/Checkbox.tsx".into(), CHECKBOX_TSX.into());
+    files.insert("src/Radio.tsx".into(), RADIO_TSX.into());
+    files.insert("src/RadioGroup.tsx".into(), RADIO_GROUP_TSX.into());
+    files.insert("src/Tabs.tsx".into(), TABS_TSX.into());
+    files.insert("src/Accordion.tsx".into(), ACCORDION_TSX.into());
+    files.insert("src/Toast.tsx".into(), TOAST_TSX.into());
+    files.insert("src/Tooltip.tsx".into(), TOOLTIP_TSX.into());
+    files.insert("src/Popover.tsx".into(), POPOVER_TSX.into());
+    files.insert("src/Menu.tsx".into(), MENU_TSX.into());
+    files.insert("src/ProgressBar.tsx".into(), PROGRESS_BAR_TSX.into());
+    files.insert("src/Stepper.tsx".into(), STEPPER_TSX.into());
+    files.insert("src/Slider.tsx".into(), SLIDER_TSX.into());
+    files.insert("src/Breadcrumb.tsx".into(), BREADCRUMB_TSX.into());
+    files.insert("src/Pagination.tsx".into(), PAGINATION_TSX.into());
+    files.insert("src/Divider.tsx".into(), DIVIDER_TSX.into());
+    files.insert("src/EmptyState.tsx".into(), EMPTY_STATE_TSX.into());
     files.insert("src/index.ts".into(), build_index_ts());
     files.insert("src/styles.css".into(), build_styles_css(variants));
     // Storybook stories (CSF3 format) for each component. Optional —
@@ -194,8 +214,11 @@ export function Page() {{
 - `tokens.ts` exporting the resolved palette / spacing / typography as
   typed constants — usable in styled-components, Emotion, vanilla CSS
   vars (consume via `styles.css`)
-- 12 primitive components: Button, Input, Tag, Avatar, Card, Modal,
-  Drawer, Skeleton, FormField, Switch, Badge, Spinner.
+- 30 primitive components: Button, Input, Textarea, Select, Checkbox,
+  Radio, RadioGroup, Tag, Badge, Avatar, Card, Modal, Drawer, Popover,
+  Tooltip, Menu, Tabs, Accordion, Toast (+ ToastProvider/useToast),
+  ProgressBar, Stepper, Slider, Breadcrumb, Pagination, Divider,
+  EmptyState, Skeleton, FormField, Switch, Spinner.
 
 ## Versioning
 
@@ -275,6 +298,42 @@ export { Badge } from "./Badge";
 export type { BadgeProps } from "./Badge";
 export { Spinner } from "./Spinner";
 export type { SpinnerProps } from "./Spinner";
+export { Textarea } from "./Textarea";
+export type { TextareaProps } from "./Textarea";
+export { Select } from "./Select";
+export type { SelectProps } from "./Select";
+export { Checkbox } from "./Checkbox";
+export type { CheckboxProps } from "./Checkbox";
+export { Radio } from "./Radio";
+export type { RadioProps } from "./Radio";
+export { RadioGroup } from "./RadioGroup";
+export type { RadioGroupProps } from "./RadioGroup";
+export { Tabs, TabList, Tab, TabPanel } from "./Tabs";
+export type { TabsProps } from "./Tabs";
+export { Accordion, AccordionItem } from "./Accordion";
+export type { AccordionProps, AccordionItemProps } from "./Accordion";
+export { Toast, ToastProvider, useToast } from "./Toast";
+export type { ToastProps } from "./Toast";
+export { Tooltip } from "./Tooltip";
+export type { TooltipProps } from "./Tooltip";
+export { Popover } from "./Popover";
+export type { PopoverProps } from "./Popover";
+export { Menu, MenuItem } from "./Menu";
+export type { MenuProps, MenuItemProps } from "./Menu";
+export { ProgressBar } from "./ProgressBar";
+export type { ProgressBarProps } from "./ProgressBar";
+export { Stepper } from "./Stepper";
+export type { StepperProps } from "./Stepper";
+export { Slider } from "./Slider";
+export type { SliderProps } from "./Slider";
+export { Breadcrumb } from "./Breadcrumb";
+export type { BreadcrumbProps } from "./Breadcrumb";
+export { Pagination } from "./Pagination";
+export type { PaginationProps } from "./Pagination";
+export { Divider } from "./Divider";
+export type { DividerProps } from "./Divider";
+export { EmptyState } from "./EmptyState";
+export type { EmptyStateProps } from "./EmptyState";
 export { tokens } from "./tokens";
 export type { VariantName, TokenKey } from "./tokens";
 export { cn } from "./cn";
@@ -353,6 +412,82 @@ const BASE_STYLES: &str = r#"
 @keyframes aph-spin { to { transform: rotate(360deg); } }
 .aph-spinner--sm { width: 16px; height: 16px; border-width: 1.5px; }
 .aph-spinner--lg { width: 32px; height: 32px; border-width: 3px; }
+
+/* extended primitives */
+.aph-textarea { font: inherit; min-height: 96px; padding: 12px 14px; border-radius: 8px; border: 1px solid var(--colors-border-primary); background: var(--colors-background-primary); color: var(--colors-text-primary); width: 100%; resize: vertical; line-height: 1.5; }
+.aph-textarea:focus { outline: 2px solid var(--colors-primary-500); outline-offset: 1px; }
+
+.aph-select { font: inherit; min-height: 44px; padding: 12px 36px 12px 14px; border-radius: 8px; border: 1px solid var(--colors-border-primary); background: var(--colors-background-primary); color: var(--colors-text-primary); width: 100%; appearance: none; background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
+
+.aph-checkbox { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+.aph-checkbox input { width: 20px; height: 20px; accent-color: var(--colors-primary-500); cursor: pointer; }
+.aph-checkbox--disabled { opacity: 0.5; cursor: not-allowed; }
+
+.aph-radio { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+.aph-radio input { width: 20px; height: 20px; accent-color: var(--colors-primary-500); cursor: pointer; }
+.aph-radio-group { display: flex; flex-direction: column; gap: 8px; }
+.aph-radio-group--horizontal { flex-direction: row; flex-wrap: wrap; gap: 16px; }
+
+.aph-tabs { display: flex; flex-direction: column; }
+.aph-tab-list { display: flex; gap: 4px; border-bottom: 1px solid var(--colors-border-primary); }
+.aph-tab { font: inherit; padding: 12px 16px; background: transparent; border: none; cursor: pointer; color: var(--colors-text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px; font-weight: 500; min-height: 44px; }
+.aph-tab[aria-selected="true"] { color: var(--colors-text-primary); border-bottom-color: var(--colors-primary-500); }
+.aph-tab-panel { padding: 24px 0; }
+
+.aph-accordion { display: flex; flex-direction: column; }
+.aph-accordion-item { border-bottom: 1px solid var(--colors-border-primary); }
+.aph-accordion-trigger { font: inherit; width: 100%; text-align: left; padding: 16px 0; background: transparent; border: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--colors-text-primary); font-weight: 500; min-height: 44px; }
+.aph-accordion-content { padding: 0 0 16px; color: var(--colors-text-muted); }
+.aph-accordion-trigger[aria-expanded="true"] .aph-accordion-chevron { transform: rotate(180deg); }
+.aph-accordion-chevron { transition: transform 0.15s ease; }
+
+.aph-toast-region { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 9999; pointer-events: none; }
+.aph-toast { background: var(--colors-text-primary); color: var(--colors-background-primary); padding: 12px 18px; border-radius: 8px; font-size: 14px; pointer-events: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.18); min-width: 240px; max-width: 80vw; }
+.aph-toast--success { background: var(--colors-success-600, #16a34a); color: #fff; }
+.aph-toast--danger { background: var(--colors-danger-600, #dc2626); color: #fff; }
+
+.aph-tooltip-wrap { position: relative; display: inline-flex; }
+.aph-tooltip { position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: var(--colors-text-primary); color: var(--colors-background-primary); padding: 6px 10px; border-radius: 6px; font-size: 12px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.1s ease; }
+.aph-tooltip-wrap:hover .aph-tooltip, .aph-tooltip-wrap:focus-within .aph-tooltip { opacity: 1; }
+
+.aph-popover-wrap { position: relative; display: inline-block; }
+.aph-popover { position: absolute; top: calc(100% + 6px); left: 0; min-width: 200px; background: var(--colors-background-primary); border: 1px solid var(--colors-border-primary); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); padding: 12px; z-index: 100; }
+
+.aph-menu { background: var(--colors-background-primary); border: 1px solid var(--colors-border-primary); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); padding: 4px; min-width: 200px; }
+.aph-menu-item { font: inherit; width: 100%; text-align: left; background: transparent; border: none; cursor: pointer; padding: 10px 12px; border-radius: 4px; color: var(--colors-text-primary); display: flex; align-items: center; gap: 8px; min-height: 40px; }
+.aph-menu-item:hover, .aph-menu-item:focus { background: var(--colors-background-secondary); outline: none; }
+.aph-menu-item[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+.aph-progress { width: 100%; height: 8px; background: var(--colors-border-primary); border-radius: 999px; overflow: hidden; }
+.aph-progress__bar { height: 100%; background: var(--colors-primary-500); transition: width 0.3s ease; }
+
+.aph-stepper { display: flex; align-items: center; gap: 12px; }
+.aph-stepper-step { display: flex; align-items: center; gap: 8px; color: var(--colors-text-muted); }
+.aph-stepper-step--active { color: var(--colors-text-primary); font-weight: 600; }
+.aph-stepper-step--done { color: var(--colors-primary-500); }
+.aph-stepper-bubble { width: 24px; height: 24px; border-radius: 999px; background: var(--colors-border-primary); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; }
+.aph-stepper-step--active .aph-stepper-bubble { background: var(--colors-primary-500); color: #fff; }
+.aph-stepper-step--done .aph-stepper-bubble { background: var(--colors-primary-500); color: #fff; }
+.aph-stepper-line { flex: 1; height: 2px; background: var(--colors-border-primary); }
+
+.aph-slider { width: 100%; accent-color: var(--colors-primary-500); }
+
+.aph-breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--colors-text-muted); flex-wrap: wrap; }
+.aph-breadcrumb a { color: var(--colors-text-muted); text-decoration: none; }
+.aph-breadcrumb a:hover { color: var(--colors-text-primary); text-decoration: underline; }
+.aph-breadcrumb__current { color: var(--colors-text-primary); font-weight: 500; }
+.aph-breadcrumb__sep { color: var(--colors-text-muted); }
+
+.aph-pagination { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.aph-pagination__btn { font: inherit; min-width: 36px; min-height: 36px; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--colors-border-primary); background: var(--colors-background-primary); color: var(--colors-text-primary); cursor: pointer; }
+.aph-pagination__btn[aria-current="page"] { background: var(--colors-primary-500); color: var(--colors-background-primary); border-color: var(--colors-primary-500); }
+.aph-pagination__btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+
+.aph-divider { border: none; border-top: 1px solid var(--colors-border-primary); margin: 16px 0; }
+.aph-divider--vertical { border-top: none; border-left: 1px solid var(--colors-border-primary); height: 100%; width: 1px; margin: 0 16px; display: inline-block; }
+
+.aph-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 24px; text-align: center; gap: 12px; color: var(--colors-text-muted); }
+.aph-empty__title { color: var(--colors-text-primary); font-weight: 600; font-size: 18px; }
 "#;
 
 // ---- Component .tsx bodies ----
@@ -690,6 +825,535 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
     <span ref={ref} className={cn("aph-badge", className)} {...rest}>{label}</span>
   );
 });
+"#;
+
+// ---- Extended primitives (v1.0 RC component expansion) ----
+
+const TEXTAREA_TSX: &str = r#"import { forwardRef, TextareaHTMLAttributes } from "react";
+import { cn } from "./cn";
+
+export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+  error?: boolean;
+}
+
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(
+  { error, className, ...rest },
+  ref,
+) {
+  return (
+    <textarea
+      ref={ref}
+      className={cn("aph-textarea", error && "aph-input--error", className)}
+      aria-invalid={error || undefined}
+      {...rest}
+    />
+  );
+});
+"#;
+
+const SELECT_TSX: &str = r#"import { forwardRef, SelectHTMLAttributes, ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+  error?: boolean;
+  children: ReactNode;
+}
+
+export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
+  { error, className, children, ...rest },
+  ref,
+) {
+  return (
+    <select
+      ref={ref}
+      className={cn("aph-select", error && "aph-input--error", className)}
+      aria-invalid={error || undefined}
+      {...rest}
+    >
+      {children}
+    </select>
+  );
+});
+"#;
+
+const CHECKBOX_TSX: &str = r#"import { forwardRef, InputHTMLAttributes, ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type"> {
+  label?: ReactNode;
+}
+
+export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
+  { label, className, disabled, ...rest },
+  ref,
+) {
+  const input = <input ref={ref} type="checkbox" disabled={disabled} {...rest} />;
+  if (!label) return input;
+  return (
+    <label className={cn("aph-checkbox", disabled && "aph-checkbox--disabled", className)}>
+      {input}
+      <span>{label}</span>
+    </label>
+  );
+});
+"#;
+
+const RADIO_TSX: &str = r#"import { forwardRef, InputHTMLAttributes, ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface RadioProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type"> {
+  label?: ReactNode;
+}
+
+export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
+  { label, className, disabled, ...rest },
+  ref,
+) {
+  const input = <input ref={ref} type="radio" disabled={disabled} {...rest} />;
+  if (!label) return input;
+  return (
+    <label className={cn("aph-radio", className)}>
+      {input}
+      <span>{label}</span>
+    </label>
+  );
+});
+"#;
+
+const RADIO_GROUP_TSX: &str = r#"import { ReactNode, Children, cloneElement, isValidElement } from "react";
+import { cn } from "./cn";
+
+export interface RadioGroupProps {
+  name: string;
+  value: string;
+  onChange: (next: string) => void;
+  horizontal?: boolean;
+  className?: string;
+  children: ReactNode;
+}
+
+export function RadioGroup({ name, value, onChange, horizontal, className, children }: RadioGroupProps) {
+  return (
+    <div role="radiogroup" className={cn("aph-radio-group", horizontal && "aph-radio-group--horizontal", className)}>
+      {Children.map(children, (child) => {
+        if (!isValidElement(child)) return child;
+        const props = child.props as Record<string, unknown>;
+        return cloneElement(child as React.ReactElement<Record<string, unknown>>, {
+          name,
+          checked: props.value === value,
+          onChange: (e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
+        });
+      })}
+    </div>
+  );
+}
+"#;
+
+const TABS_TSX: &str = r#"import { createContext, useContext, useState, useId, ReactNode } from "react";
+import { cn } from "./cn";
+
+type TabsCtx = { value: string; setValue: (v: string) => void; baseId: string };
+const Ctx = createContext<TabsCtx | null>(null);
+
+export interface TabsProps {
+  defaultValue: string;
+  value?: string;
+  onValueChange?: (v: string) => void;
+  children: ReactNode;
+  className?: string;
+}
+
+export function Tabs({ defaultValue, value, onValueChange, children, className }: TabsProps) {
+  const [internal, setInternal] = useState(defaultValue);
+  const current = value ?? internal;
+  const setCurrent = (v: string) => {
+    if (value === undefined) setInternal(v);
+    onValueChange?.(v);
+  };
+  const baseId = useId();
+  return (
+    <div className={cn("aph-tabs", className)}>
+      <Ctx.Provider value={{ value: current, setValue: setCurrent, baseId }}>{children}</Ctx.Provider>
+    </div>
+  );
+}
+
+export function TabList({ children }: { children: ReactNode }) {
+  return <div role="tablist" className="aph-tab-list">{children}</div>;
+}
+
+export function Tab({ value, children }: { value: string; children: ReactNode }) {
+  const ctx = useContext(Ctx);
+  if (!ctx) throw new Error("Tab must be inside <Tabs>");
+  const selected = ctx.value === value;
+  return (
+    <button
+      type="button"
+      role="tab"
+      id={`${ctx.baseId}-tab-${value}`}
+      aria-controls={`${ctx.baseId}-panel-${value}`}
+      aria-selected={selected}
+      tabIndex={selected ? 0 : -1}
+      onClick={() => ctx.setValue(value)}
+      className="aph-tab"
+    >
+      {children}
+    </button>
+  );
+}
+
+export function TabPanel({ value, children }: { value: string; children: ReactNode }) {
+  const ctx = useContext(Ctx);
+  if (!ctx) throw new Error("TabPanel must be inside <Tabs>");
+  if (ctx.value !== value) return null;
+  return (
+    <div role="tabpanel" id={`${ctx.baseId}-panel-${value}`} aria-labelledby={`${ctx.baseId}-tab-${value}`} className="aph-tab-panel">
+      {children}
+    </div>
+  );
+}
+"#;
+
+const ACCORDION_TSX: &str = r#"import { useState, ReactNode, useId } from "react";
+import { cn } from "./cn";
+
+export interface AccordionProps {
+  children: ReactNode;
+  className?: string;
+  /** Allow multiple items open at once. */
+  multiple?: boolean;
+}
+
+export interface AccordionItemProps {
+  title: ReactNode;
+  children: ReactNode;
+  defaultOpen?: boolean;
+}
+
+export function Accordion({ children, className }: AccordionProps) {
+  return <div className={cn("aph-accordion", className)}>{children}</div>;
+}
+
+export function AccordionItem({ title, children, defaultOpen = false }: AccordionItemProps) {
+  const [open, setOpen] = useState(defaultOpen);
+  const id = useId();
+  return (
+    <div className="aph-accordion-item">
+      <button
+        type="button"
+        className="aph-accordion-trigger"
+        aria-expanded={open}
+        aria-controls={`${id}-content`}
+        id={`${id}-trigger`}
+        onClick={() => setOpen((o) => !o)}
+      >
+        <span>{title}</span>
+        <span className="aph-accordion-chevron" aria-hidden="true">▾</span>
+      </button>
+      {open && (
+        <div role="region" id={`${id}-content`} aria-labelledby={`${id}-trigger`} className="aph-accordion-content">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
+"#;
+
+const TOAST_TSX: &str = r#"import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from "react";
+import { cn } from "./cn";
+
+export interface ToastProps {
+  id: number;
+  message: ReactNode;
+  tone?: "neutral" | "success" | "danger";
+  duration?: number;
+}
+
+type ToastCtx = {
+  toasts: ToastProps[];
+  push: (t: Omit<ToastProps, "id">) => void;
+  dismiss: (id: number) => void;
+};
+
+const Ctx = createContext<ToastCtx | null>(null);
+
+export function ToastProvider({ children }: { children: ReactNode }) {
+  const [toasts, setToasts] = useState<ToastProps[]>([]);
+  const dismiss = useCallback((id: number) => setToasts((xs) => xs.filter((t) => t.id !== id)), []);
+  const push = useCallback((t: Omit<ToastProps, "id">) => {
+    const id = Date.now() + Math.random();
+    setToasts((xs) => [...xs, { ...t, id }]);
+    const duration = t.duration ?? 3000;
+    if (duration > 0) setTimeout(() => dismiss(id), duration);
+  }, [dismiss]);
+  return (
+    <Ctx.Provider value={{ toasts, push, dismiss }}>
+      {children}
+      <div role="region" aria-live="polite" aria-label="Notifications" className="aph-toast-region">
+        {toasts.map((t) => <Toast key={t.id} {...t} />)}
+      </div>
+    </Ctx.Provider>
+  );
+}
+
+export function useToast() {
+  const ctx = useContext(Ctx);
+  if (!ctx) throw new Error("useToast must be inside <ToastProvider>");
+  return ctx;
+}
+
+export function Toast({ message, tone = "neutral" }: ToastProps) {
+  return <div className={cn("aph-toast", tone !== "neutral" && `aph-toast--${tone}`)}>{message}</div>;
+}
+"#;
+
+const TOOLTIP_TSX: &str = r#"import { ReactElement, cloneElement, useState } from "react";
+
+export interface TooltipProps {
+  content: string;
+  children: ReactElement;
+}
+
+export function Tooltip({ content, children }: TooltipProps) {
+  const [open, setOpen] = useState(false);
+  return (
+    <span className="aph-tooltip-wrap" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)} onFocus={() => setOpen(true)} onBlur={() => setOpen(false)}>
+      {cloneElement(children, { "aria-describedby": open ? "aph-tooltip-active" : undefined })}
+      <span role="tooltip" id="aph-tooltip-active" className="aph-tooltip">{content}</span>
+    </span>
+  );
+}
+"#;
+
+const POPOVER_TSX: &str = r#"import { useState, useRef, useEffect, ReactNode, ReactElement, cloneElement } from "react";
+import { cn } from "./cn";
+
+export interface PopoverProps {
+  trigger: ReactElement;
+  children: ReactNode;
+  className?: string;
+}
+
+export function Popover({ trigger, children, className }: PopoverProps) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [open]);
+  return (
+    <span ref={ref} className="aph-popover-wrap">
+      {cloneElement(trigger, { onClick: () => setOpen((o) => !o), "aria-expanded": open })}
+      {open && <div className={cn("aph-popover", className)} role="dialog">{children}</div>}
+    </span>
+  );
+}
+"#;
+
+const MENU_TSX: &str = r#"import { ReactNode, ButtonHTMLAttributes, forwardRef } from "react";
+import { cn } from "./cn";
+
+export interface MenuProps {
+  children: ReactNode;
+  className?: string;
+  ariaLabel?: string;
+}
+
+export interface MenuItemProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children: ReactNode;
+}
+
+export function Menu({ children, className, ariaLabel }: MenuProps) {
+  return (
+    <div role="menu" aria-label={ariaLabel} className={cn("aph-menu", className)}>
+      {children}
+    </div>
+  );
+}
+
+export const MenuItem = forwardRef<HTMLButtonElement, MenuItemProps>(function MenuItem(
+  { children, className, ...rest },
+  ref,
+) {
+  return (
+    <button ref={ref} type="button" role="menuitem" className={cn("aph-menu-item", className)} {...rest}>
+      {children}
+    </button>
+  );
+});
+"#;
+
+const PROGRESS_BAR_TSX: &str = r#"import { cn } from "./cn";
+
+export interface ProgressBarProps {
+  value: number;
+  max?: number;
+  label?: string;
+  className?: string;
+}
+
+export function ProgressBar({ value, max = 100, label, className }: ProgressBarProps) {
+  const pct = Math.max(0, Math.min(100, (value / max) * 100));
+  return (
+    <div role="progressbar" aria-valuenow={value} aria-valuemin={0} aria-valuemax={max} aria-label={label} className={cn("aph-progress", className)}>
+      <div className="aph-progress__bar" style={{ width: `${pct}%` }} />
+    </div>
+  );
+}
+"#;
+
+const STEPPER_TSX: &str = r#"import { Fragment, ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface StepperProps {
+  steps: Array<{ label: ReactNode }>;
+  current: number;
+  className?: string;
+}
+
+export function Stepper({ steps, current, className }: StepperProps) {
+  return (
+    <ol className={cn("aph-stepper", className)}>
+      {steps.map((s, i) => (
+        <Fragment key={i}>
+          <li
+            className={cn(
+              "aph-stepper-step",
+              i === current && "aph-stepper-step--active",
+              i < current && "aph-stepper-step--done",
+            )}
+            aria-current={i === current ? "step" : undefined}
+          >
+            <span className="aph-stepper-bubble">{i < current ? "✓" : i + 1}</span>
+            <span>{s.label}</span>
+          </li>
+          {i < steps.length - 1 && <span className="aph-stepper-line" aria-hidden="true" />}
+        </Fragment>
+      ))}
+    </ol>
+  );
+}
+"#;
+
+const SLIDER_TSX: &str = r#"import { forwardRef, InputHTMLAttributes } from "react";
+import { cn } from "./cn";
+
+export interface SliderProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type"> {}
+
+export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
+  { className, ...rest },
+  ref,
+) {
+  return <input ref={ref} type="range" className={cn("aph-slider", className)} {...rest} />;
+});
+"#;
+
+const BREADCRUMB_TSX: &str = r#"import { ReactNode, Fragment } from "react";
+import { cn } from "./cn";
+
+export interface BreadcrumbProps {
+  items: Array<{ label: ReactNode; href?: string }>;
+  className?: string;
+  separator?: ReactNode;
+}
+
+export function Breadcrumb({ items, className, separator = "/" }: BreadcrumbProps) {
+  return (
+    <nav aria-label="Breadcrumb" className={cn("aph-breadcrumb", className)}>
+      {items.map((item, i) => {
+        const last = i === items.length - 1;
+        return (
+          <Fragment key={i}>
+            {item.href && !last ? (
+              <a href={item.href}>{item.label}</a>
+            ) : (
+              <span className={last ? "aph-breadcrumb__current" : undefined} aria-current={last ? "page" : undefined}>{item.label}</span>
+            )}
+            {!last && <span className="aph-breadcrumb__sep" aria-hidden="true">{separator}</span>}
+          </Fragment>
+        );
+      })}
+    </nav>
+  );
+}
+"#;
+
+const PAGINATION_TSX: &str = r#"import { cn } from "./cn";
+
+export interface PaginationProps {
+  page: number;
+  pageCount: number;
+  onChange: (page: number) => void;
+  className?: string;
+  /** Max number of page buttons shown. Default 7. */
+  siblingCount?: number;
+}
+
+export function Pagination({ page, pageCount, onChange, className, siblingCount = 7 }: PaginationProps) {
+  const pages: number[] = [];
+  const half = Math.floor(siblingCount / 2);
+  let start = Math.max(1, page - half);
+  let end = Math.min(pageCount, start + siblingCount - 1);
+  if (end - start + 1 < siblingCount) start = Math.max(1, end - siblingCount + 1);
+  for (let i = start; i <= end; i++) pages.push(i);
+  return (
+    <nav aria-label="Pagination" className={cn("aph-pagination", className)}>
+      <button type="button" className="aph-pagination__btn" disabled={page <= 1} onClick={() => onChange(page - 1)} aria-label="이전 페이지">‹</button>
+      {pages.map((p) => (
+        <button
+          key={p}
+          type="button"
+          className="aph-pagination__btn"
+          aria-current={p === page ? "page" : undefined}
+          onClick={() => onChange(p)}
+        >
+          {p}
+        </button>
+      ))}
+      <button type="button" className="aph-pagination__btn" disabled={page >= pageCount} onClick={() => onChange(page + 1)} aria-label="다음 페이지">›</button>
+    </nav>
+  );
+}
+"#;
+
+const DIVIDER_TSX: &str = r#"import { cn } from "./cn";
+
+export interface DividerProps {
+  orientation?: "horizontal" | "vertical";
+  className?: string;
+}
+
+export function Divider({ orientation = "horizontal", className }: DividerProps) {
+  return <hr role="separator" aria-orientation={orientation} className={cn("aph-divider", orientation === "vertical" && "aph-divider--vertical", className)} />;
+}
+"#;
+
+const EMPTY_STATE_TSX: &str = r#"import { ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface EmptyStateProps {
+  title: ReactNode;
+  description?: ReactNode;
+  action?: ReactNode;
+  icon?: ReactNode;
+  className?: string;
+}
+
+export function EmptyState({ title, description, action, icon, className }: EmptyStateProps) {
+  return (
+    <div role="status" className={cn("aph-empty", className)}>
+      {icon}
+      <div className="aph-empty__title">{title}</div>
+      {description && <div>{description}</div>}
+      {action}
+    </div>
+  );
+}
 "#;
 
 // ---- Storybook stories (CSF3) ----
