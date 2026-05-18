@@ -237,6 +237,25 @@ pub async fn run(
     } else {
         format!("{intent}\n\n{augmentation}")
     };
+    // Multi-page invocations are ALWAYS web landing pages, never phone-app
+    // mockups. Pass 52 Banchan home + Pass 53 Hada home both regressed to
+    // surface_type=mobile_app despite explicit landing intent — composer
+    // saw "정기 구독 서비스" / "프리랜서 핀테크" and assumed app screen. This
+    // pin overrides surface-type detection upstream of the composer call.
+    let intent_for_design = if pages.len() > 1 {
+        format!(
+            "{intent_for_design}\n\n\
+             SURFACE-TYPE PIN: this is a multi-page website. Every page MUST be \
+             classified as 'landing' / 'pricing' / 'editorial' / 'portfolio' / \
+             'dashboard' — NEVER 'mobile_app'. Do not render a phone frame, a 9:41 \
+             status bar, or a bottom-tab navigation. Use a desktop+mobile responsive \
+             web layout with a top nav and a `<footer>` element.\n\
+             Sibling pages this site will have: {siblings}.",
+            siblings = pages.join(", "),
+        )
+    } else {
+        intent_for_design
+    };
     // The critic also sees both: persona as the authority, scaffold as context.
     let critic_context = augmentation.clone();
     // Replace the invocation's intent for this run so the generator's

@@ -71,6 +71,33 @@ STEP 1 — Classify the intent into exactly one of these surface types:
   - "landing"   — marketing landing page with hero + features (default fallback)
   - "portfolio" — work showcase, case studies, project grid
 
+  CRITICAL — surface_type discipline for service / product brands:
+    When the intent describes a service or product brand (subscription,
+    SaaS, fintech, e-commerce, marketplace, food delivery, etc.) — even
+    if the service is delivered via a mobile app — the deliverable is a
+    MARKETING LANDING PAGE for that brand, NOT a screenshot/mockup of the
+    app itself. Classify as "landing". Do NOT pick "mobile_app" just
+    because the underlying product is an app. Phone-framed mobile_app
+    surfaces are only appropriate when the intent EXPLICITLY asks for an
+    in-app screen mockup (e.g. "the in-app account-balance screen for
+    Toss" or "an onboarding screen in the Banchan app").
+
+    Signals that mean LANDING (not mobile_app):
+      - "랜딩 페이지", "회원가입 페이지", "가격 페이지", "소개 페이지"
+      - "정기 구독 서비스", "프리미엄 서비스", "...전용 핀테크"
+      - The intent describes the BRAND (Banchan, Hada, Toss) and its
+        value proposition, not a specific app screen.
+      - User asked for multiple `--pages` (any multi-page invocation is
+        a website, never a phone app).
+
+    Visual rule: pages classified as "landing" / "pricing" / "editorial"
+    / "portfolio" MUST NOT contain:
+      - 9:41 status bar or signal/battery icons
+      - A device frame (`<div>` styled as a phone with width 360-414px
+        and tall aspect ratio)
+      - Bottom-tab navigation (홈/계정/마이페이지 patterns)
+      Those belong to "mobile_app" only.
+
 STEP 2 — Build a COMPLETE, SELF-CONTAINED HTML document for that surface that:
 
   Layout structure (REQUIRED per surface type — must include these elements):
