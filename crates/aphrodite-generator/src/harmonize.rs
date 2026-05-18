@@ -105,7 +105,18 @@ pub fn harmonize(
     // are present in the composition.
     let composition_post_fix = if composition_post_fix.contains("class=\"image-placeholder\"") {
         let capped = cap_vh_property(&composition_post_fix, "min-height", 40);
-        cap_vh_property(&capped, "height", 60)
+        let capped = cap_vh_property(&capped, "height", 60);
+        // Pass 44 surfaced: composer authored figures directly with
+        // `height: calc(100vw * 1.25)` (1800px at 1440px viewport) — no
+        // `vh` units at all. Enforce a max-height on every placeholder
+        // figure regardless of which path produced it.
+        let with_fig_cap = ensure_placeholder_max_height(&capped, 720);
+        // Composer also writes `.hero { height: calc(100vw * 1.25) }` etc
+        // on the *section* surrounding the placeholder. At 1440px viewport
+        // that's 1800px of empty section, dwarfing the now-capped figure.
+        // Inject a max-height alongside every `height: calc(100v...)` so
+        // the section can't outgrow the placeholder it contains.
+        clamp_calc_viewport_heights(&with_fig_cap, 720)
     } else {
         composition_post_fix
     };
@@ -182,6 +193,98 @@ fn pick_attr(tag: &str, attr: &str) -> Option<String> {
 /// page hero) and downgrade all others to `<h2>`. This is a safe transform
 /// because the page-level hero should be h1 and section headers should be
 /// h2. Pass 39 surfaced this — composer emitted h1 per section.
+/// Inject `max-height: <cap_px>px;` immediately after every
+/// `height: calc(100v...);` declaration. Idempotent — skips declarations
+/// that already have an adjacent `max-height`.
+fn clamp_calc_viewport_heights(html: &str, cap_px: u32) -> String {
+    let needle = "height: calc(100v";
+    if !html.contains(needle) {
+        return html.to_string();
+    }
+    let mut out = String::with_capacity(html.len() + 128);
+    let mut cursor = 0usize;
+    while let Some(rel) = html[cursor..].find(needle) {
+        let i = cursor + rel;
+        out.push_str(&html[cursor..i]);
+        // Find the `;` ending this declaration.
+        if let Some(semi_rel) = html[i..].find(';') {
+            let semi = i + semi_rel + 1;
+            out.push_str(&html[i..semi]);
+            // Peek ahead to see if max-height is already present in the
+            // immediately-following window (within ~120 chars of this rule).
+            let look = &html[semi..(semi + 120).min(html.len())];
+            if !look.contains("max-height:") {
+                out.push_str(&format!(" max-height: {cap_px}px;"));
+            }
+            cursor = semi;
+        } else {
+            out.push_str(&html[i..]);
+            return out;
+        }
+    }
+    out.push_str(&html[cursor..]);
+    out
+}
+
+/// Walk every `<figure class="image-placeholder" style="...">` and ensure
+/// the inline `style` includes `max-height: <max_px>px`. If the style has
+/// no max-height, append one. If it has a max-height greater than the
+/// cap, rewrite it. Pass 44 surfaced: composer wrote
+/// `height: calc(100vw * 1.25)` which produces 1800px-tall placeholders
+/// at desktop viewport. Capping at 720px keeps placeholders generous
+/// enough to read but stops them from eating the whole hero.
+fn ensure_placeholder_max_height(html: &str, max_px: u32) -> String {
+    let marker = r#"<figure class="image-placeholder""#;
+    if !html.contains(marker) {
+        return html.to_string();
+    }
+    let mut out = String::with_capacity(html.len() + 256);
+    let mut cursor = 0usize;
+    while let Some(rel) = html[cursor..].find(marker) {
+        let i = cursor + rel;
+        out.push_str(&html[cursor..i]);
+        // Find the end of this opening tag.
+        let tag_end = match html[i..].find('>') {
+            Some(n) => i + n,
+            None => {
+                out.push_str(&html[i..]);
+                return out;
+            }
+        };
+        let tag = &html[i..tag_end + 1];
+        let already_has_cap = tag.contains("max-height:") && {
+            // crude check: if it already has max-height: NNpx with N <= cap, leave alone
+            let after = tag.split("max-height:").nth(1).unwrap_or("");
+            let n: u32 = after
+                .chars()
+                .skip_while(|c| c.is_whitespace())
+                .take_while(|c| c.is_ascii_digit())
+                .collect::<String>()
+                .parse()
+                .unwrap_or(u32::MAX);
+            n <= max_px
+        };
+        if already_has_cap {
+            out.push_str(tag);
+        } else if let Some(style_pos) = tag.find("style=\"") {
+            let injected = format!("max-height: {max_px}px; ");
+            let abs = i + style_pos + "style=\"".len();
+            out.push_str(&html[i..abs]);
+            out.push_str(&injected);
+            out.push_str(&html[abs..tag_end + 1]);
+        } else {
+            // No style attribute — add one before `>`.
+            let injected_attr = format!(" style=\"max-height: {max_px}px;\"");
+            out.push_str(&html[i..tag_end]);
+            out.push_str(&injected_attr);
+            out.push('>');
+        }
+        cursor = tag_end + 1;
+    }
+    out.push_str(&html[cursor..]);
+    out
+}
+
 /// Scan `<prop>: NNvh` declarations. Any value > `max_vh` is clamped to
 /// `max_vh`. Used when the composition contains placeholder figures —
 /// full-viewport heroes don't make sense without real artwork.
@@ -922,6 +1025,37 @@ spacing:
         assert!(out.contains("min-height: 40vh"));
         assert!(out.contains("min-height: 30vh"), "values below the cap pass through");
         assert!(!out.contains("80vh"));
+    }
+
+    #[test]
+    fn clamp_calc_viewport_heights_adds_max_height() {
+        let css = ".hero { height: calc(100vw * 1.25); overflow: hidden; }";
+        let out = clamp_calc_viewport_heights(css, 720);
+        assert!(out.contains("height: calc(100vw * 1.25);"));
+        assert!(out.contains("max-height: 720px"));
+    }
+
+    #[test]
+    fn clamp_calc_viewport_heights_idempotent_when_capped() {
+        let css = ".hero { height: calc(100vw * 1.25); max-height: 640px; }";
+        let out = clamp_calc_viewport_heights(css, 720);
+        // Only one max-height in the output (didn't double-inject).
+        assert_eq!(out.matches("max-height:").count(), 1);
+    }
+
+    #[test]
+    fn ensure_placeholder_max_height_injects_when_missing() {
+        let html = r#"<figure class="image-placeholder" style="aspect-ratio: 4/5; height: calc(100vw * 1.25);">[photo: hero]</figure>"#;
+        let out = ensure_placeholder_max_height(html, 720);
+        assert!(out.contains("max-height: 720px"));
+    }
+
+    #[test]
+    fn ensure_placeholder_max_height_leaves_smaller_caps() {
+        let html = r#"<figure class="image-placeholder" style="max-height: 600px;">[photo: x]</figure>"#;
+        let out = ensure_placeholder_max_height(html, 720);
+        assert!(out.contains("max-height: 600px"));
+        assert!(!out.contains("max-height: 720px"));
     }
 
     #[test]
