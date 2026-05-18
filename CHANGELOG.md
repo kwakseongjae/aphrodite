@@ -1,5 +1,46 @@
 # Changelog
 
+## 0.3.7 — 2026-05-18
+
+### Fixed — Pass 42/43 visual review surfaced four production-grade bugs
+
+- **font-stack false positive in audit** — `extract_families_from_md` now
+  splits on `,` and keeps the first family. Composer routinely writes
+  `family: "Instrument Serif, Noto Serif KR, Georgia, serif"` into
+  DESIGN.md; treating the entire stack as a font name caused
+  `audit_composition` to flag a Google Fonts mismatch on every
+  multi-family stack. Closes the Pass 42 ⚠ font-stack noise.
+- **auto-promote h2 → h1 when zero h1** — `auto_fix_h1_count` was
+  downgrade-only. Composer occasionally ships a section-only page with
+  no top-level heading; harmonize now promotes the first `<h2>` instead
+  of just warning. Pass 43's "Atelier" came in as h2 and was correctly
+  promoted.
+- **vh cap on placeholder pages** — `cap_vh_property` clamps
+  `min-height: NNvh` ≤ 40 and `height: NNvh` ≤ 60 when the composition
+  contains `class="image-placeholder"` figures. Composer habitually
+  emits `.hero { min-height: 80vh }` + `.hero figure { height: 80vh }`
+  for full-bleed photographs; without a real asset shipped, that's
+  1500+px of dead vertical space. Pass 43's hero went from
+  ~80% empty space to a tight, intentional layout.
+- **variant CSS bleed onto switcher buttons** — `hero::inject_variant_css`
+  now scopes to `body[data-variant=...]` instead of bare
+  `[data-variant=...]`. The unscoped selector matched both `<body>` and
+  the variant-switcher `<button>` elements (which carry `data-variant`
+  for the click handler), painting the "dark" button's label invisible
+  against its own dark-theme background.
+
+### Added — Composition write guard
+- Orchestrator now refuses to write `composition.html` if the rendered
+  body is < 1 KB or lacks a `<body` tag. Surfaced in Pass 41 where
+  harmonize injected a Google Fonts `<link>` into otherwise-empty
+  composer output and produced a 292-byte file that falsely implied
+  composition had succeeded.
+
+### Catalog (after 0.3.7)
+- 22 harmonize unit tests (4 new this release)
+- All passes 38-43 in dogfood archive carry a Chrome-headless visual
+  review screenshot.
+
 ## 0.3.5 — 2026-05-15 (late)
 
 ### Added — Per-call model override (closes Finding #37)
