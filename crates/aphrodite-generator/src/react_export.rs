@@ -96,6 +96,20 @@ pub fn build(variants: &[Variant], project_name: &str) -> ReactPackage {
     files.insert("src/Pagination.tsx".into(), PAGINATION_TSX.into());
     files.insert("src/Divider.tsx".into(), DIVIDER_TSX.into());
     files.insert("src/EmptyState.tsx".into(), EMPTY_STATE_TSX.into());
+    // v1.0 RC.5: 12 advanced primitives bringing total to 42. Priorities
+    // chosen for Korean fintech / marketplace product surface area.
+    files.insert("src/SegmentedControl.tsx".into(), SEGMENTED_CONTROL_TSX.into());
+    files.insert("src/PinInput.tsx".into(), PIN_INPUT_TSX.into());
+    files.insert("src/NumberInput.tsx".into(), NUMBER_INPUT_TSX.into());
+    files.insert("src/SearchInput.tsx".into(), SEARCH_INPUT_TSX.into());
+    files.insert("src/FileUploader.tsx".into(), FILE_UPLOADER_TSX.into());
+    files.insert("src/DatePicker.tsx".into(), DATE_PICKER_TSX.into());
+    files.insert("src/Combobox.tsx".into(), COMBOBOX_TSX.into());
+    files.insert("src/Sheet.tsx".into(), SHEET_TSX.into());
+    files.insert("src/Alert.tsx".into(), ALERT_TSX.into());
+    files.insert("src/Stat.tsx".into(), STAT_TSX.into());
+    files.insert("src/Toolbar.tsx".into(), TOOLBAR_TSX.into());
+    files.insert("src/HoverCard.tsx".into(), HOVER_CARD_TSX.into());
     files.insert("src/index.ts".into(), build_index_ts());
     files.insert("src/styles.css".into(), build_styles_css(variants));
     files.insert(".npmignore".into(), build_npmignore());
@@ -134,6 +148,18 @@ pub fn build(variants: &[Variant], project_name: &str) -> ReactPackage {
         ("Pagination", PAGINATION_STORIES),
         ("Divider", DIVIDER_STORIES),
         ("EmptyState", EMPTY_STATE_STORIES),
+        ("SegmentedControl", SEGMENTED_CONTROL_STORIES),
+        ("PinInput", PIN_INPUT_STORIES),
+        ("NumberInput", NUMBER_INPUT_STORIES),
+        ("SearchInput", SEARCH_INPUT_STORIES),
+        ("FileUploader", FILE_UPLOADER_STORIES),
+        ("DatePicker", DATE_PICKER_STORIES),
+        ("Combobox", COMBOBOX_STORIES),
+        ("Sheet", SHEET_STORIES),
+        ("Alert", ALERT_STORIES),
+        ("Stat", STAT_STORIES),
+        ("Toolbar", TOOLBAR_STORIES),
+        ("HoverCard", HOVER_CARD_STORIES),
     ] {
         files.insert(format!("src/{name}.stories.tsx"), body.into());
     }
@@ -418,6 +444,30 @@ export { Divider } from "./Divider";
 export type { DividerProps } from "./Divider";
 export { EmptyState } from "./EmptyState";
 export type { EmptyStateProps } from "./EmptyState";
+export { SegmentedControl } from "./SegmentedControl";
+export type { SegmentedControlProps } from "./SegmentedControl";
+export { PinInput } from "./PinInput";
+export type { PinInputProps } from "./PinInput";
+export { NumberInput } from "./NumberInput";
+export type { NumberInputProps } from "./NumberInput";
+export { SearchInput } from "./SearchInput";
+export type { SearchInputProps } from "./SearchInput";
+export { FileUploader } from "./FileUploader";
+export type { FileUploaderProps } from "./FileUploader";
+export { DatePicker } from "./DatePicker";
+export type { DatePickerProps } from "./DatePicker";
+export { Combobox } from "./Combobox";
+export type { ComboboxProps, ComboboxOption } from "./Combobox";
+export { Sheet } from "./Sheet";
+export type { SheetProps } from "./Sheet";
+export { Alert } from "./Alert";
+export type { AlertProps } from "./Alert";
+export { Stat } from "./Stat";
+export type { StatProps } from "./Stat";
+export { Toolbar } from "./Toolbar";
+export type { ToolbarProps } from "./Toolbar";
+export { HoverCard } from "./HoverCard";
+export type { HoverCardProps } from "./HoverCard";
 export { tokens } from "./tokens";
 export type { VariantName, TokenKey } from "./tokens";
 export { cn } from "./cn";
@@ -572,6 +622,63 @@ const BASE_STYLES: &str = r#"
 
 .aph-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 24px; text-align: center; gap: 12px; color: var(--colors-text-muted); }
 .aph-empty__title { color: var(--colors-text-primary); font-weight: 600; font-size: 18px; }
+
+/* advanced primitives (RC.5) */
+.aph-segmented { display: inline-flex; padding: 4px; background: var(--colors-background-secondary); border-radius: 8px; gap: 2px; }
+.aph-segmented__btn { font: inherit; padding: 8px 14px; border: none; background: transparent; cursor: pointer; border-radius: 6px; color: var(--colors-text-muted); min-height: 40px; font-weight: 500; }
+.aph-segmented__btn[aria-pressed="true"] { background: var(--colors-background-primary); color: var(--colors-text-primary); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+
+.aph-pin { display: inline-flex; gap: 8px; }
+.aph-pin__digit { font: inherit; width: 44px; height: 52px; text-align: center; font-size: 20px; font-weight: 600; border-radius: 8px; border: 1px solid var(--colors-border-primary); background: var(--colors-background-primary); color: var(--colors-text-primary); }
+.aph-pin__digit:focus { outline: 2px solid var(--colors-primary-500); outline-offset: 1px; }
+
+.aph-number-input { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--colors-border-primary); border-radius: 8px; padding: 4px; background: var(--colors-background-primary); }
+.aph-number-input__btn { font: inherit; width: 32px; height: 32px; border: none; background: transparent; cursor: pointer; border-radius: 4px; color: var(--colors-text-primary); }
+.aph-number-input__btn:hover { background: var(--colors-background-secondary); }
+.aph-number-input__btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+.aph-number-input__field { font: inherit; width: 64px; text-align: center; border: none; background: transparent; color: var(--colors-text-primary); min-height: 32px; }
+.aph-number-input__field:focus { outline: none; }
+
+.aph-search { position: relative; display: inline-block; width: 100%; }
+.aph-search__input { padding-right: 36px; }
+.aph-search__clear { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); border: none; background: transparent; cursor: pointer; padding: 4px 8px; color: var(--colors-text-muted); font-size: 16px; }
+
+.aph-uploader { border: 2px dashed var(--colors-border-primary); border-radius: 12px; padding: 32px 24px; text-align: center; cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease; display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--colors-text-muted); }
+.aph-uploader:hover, .aph-uploader[data-drag="true"] { border-color: var(--colors-primary-500); background: var(--colors-background-secondary); color: var(--colors-text-primary); }
+.aph-uploader[data-disabled="true"] { opacity: 0.5; pointer-events: none; }
+
+.aph-date-input { position: relative; }
+.aph-date-input input { padding-right: 36px; }
+
+.aph-combobox { position: relative; }
+.aph-combobox__list { position: absolute; top: calc(100% + 4px); left: 0; right: 0; max-height: 240px; overflow: auto; background: var(--colors-background-primary); border: 1px solid var(--colors-border-primary); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); z-index: 100; padding: 4px; }
+.aph-combobox__option { padding: 8px 10px; cursor: pointer; border-radius: 4px; min-height: 36px; display: flex; align-items: center; }
+.aph-combobox__option[aria-selected="true"], .aph-combobox__option:hover { background: var(--colors-background-secondary); }
+
+.aph-sheet-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1000; }
+.aph-sheet { position: fixed; bottom: 0; left: 0; right: 0; background: var(--colors-background-primary); color: var(--colors-text-primary); border-top-left-radius: 16px; border-top-right-radius: 16px; padding: 24px 20px; max-height: 90vh; overflow: auto; z-index: 1001; }
+.aph-sheet__handle { width: 36px; height: 4px; background: var(--colors-border-primary); border-radius: 999px; margin: -8px auto 16px; }
+
+.aph-alert { display: flex; gap: 12px; padding: 14px 16px; border-radius: 8px; border: 1px solid var(--colors-border-primary); background: var(--colors-background-secondary); align-items: flex-start; }
+.aph-alert--info { border-color: var(--colors-primary-300); background: var(--colors-primary-50); color: var(--colors-primary-900); }
+.aph-alert--success { border-color: var(--colors-success-300, #6ee7b7); background: var(--colors-success-50, #ecfdf5); color: var(--colors-success-900, #064e3b); }
+.aph-alert--warning { border-color: var(--colors-warning-300, #fcd34d); background: var(--colors-warning-50, #fffbeb); color: var(--colors-warning-900, #78350f); }
+.aph-alert--danger { border-color: var(--colors-danger-300, #fca5a5); background: var(--colors-danger-50, #fef2f2); color: var(--colors-danger-900, #7f1d1d); }
+.aph-alert__title { font-weight: 600; margin: 0; }
+
+.aph-stat { display: flex; flex-direction: column; gap: 4px; }
+.aph-stat__label { font-size: 13px; color: var(--colors-text-muted); }
+.aph-stat__value { font-size: 28px; font-weight: 700; color: var(--colors-text-primary); letter-spacing: -0.02em; }
+.aph-stat__delta { font-size: 13px; font-weight: 500; }
+.aph-stat__delta--up { color: var(--colors-success-600, #16a34a); }
+.aph-stat__delta--down { color: var(--colors-danger-600, #dc2626); }
+
+.aph-toolbar { display: flex; align-items: center; gap: 4px; padding: 6px; background: var(--colors-background-primary); border: 1px solid var(--colors-border-primary); border-radius: 8px; flex-wrap: wrap; }
+.aph-toolbar__sep { width: 1px; height: 24px; background: var(--colors-border-primary); margin: 0 4px; }
+
+.aph-hover-wrap { position: relative; display: inline-block; }
+.aph-hover-card { position: absolute; bottom: calc(100% + 8px); left: 0; min-width: 240px; background: var(--colors-background-primary); border: 1px solid var(--colors-border-primary); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); padding: 14px; opacity: 0; pointer-events: none; transition: opacity 0.12s ease; z-index: 100; }
+.aph-hover-wrap:hover .aph-hover-card, .aph-hover-wrap:focus-within .aph-hover-card { opacity: 1; pointer-events: auto; }
 "#;
 
 // ---- Component .tsx bodies ----
@@ -1636,6 +1743,682 @@ export const Medium: Story = { args: { size: "md" } };
 export const Large: Story = { args: { size: "lg" } };
 "#;
 
+// ---- RC.5 advanced primitives ----
+
+const SEGMENTED_CONTROL_TSX: &str = r#"import { ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface SegmentedControlProps<T extends string> {
+  options: Array<{ value: T; label: ReactNode }>;
+  value: T;
+  onChange: (next: T) => void;
+  className?: string;
+  ariaLabel?: string;
+}
+
+export function SegmentedControl<T extends string>({ options, value, onChange, className, ariaLabel }: SegmentedControlProps<T>) {
+  return (
+    <div role="radiogroup" aria-label={ariaLabel} className={cn("aph-segmented", className)}>
+      {options.map((o) => (
+        <button
+          key={o.value}
+          type="button"
+          role="radio"
+          aria-pressed={value === o.value}
+          aria-checked={value === o.value}
+          onClick={() => onChange(o.value)}
+          className="aph-segmented__btn"
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+"#;
+
+const PIN_INPUT_TSX: &str = r#"import { useRef, ChangeEvent, KeyboardEvent } from "react";
+import { cn } from "./cn";
+
+export interface PinInputProps {
+  length?: number;
+  value: string;
+  onChange: (next: string) => void;
+  type?: "number" | "text";
+  className?: string;
+  ariaLabel?: string;
+}
+
+export function PinInput({ length = 6, value, onChange, type = "number", className, ariaLabel = "OTP" }: PinInputProps) {
+  const refs = useRef<Array<HTMLInputElement | null>>([]);
+  const digits = Array.from({ length }, (_, i) => value[i] ?? "");
+  const set = (i: number, v: string) => {
+    const next = (value.slice(0, i) + v + value.slice(i + 1)).slice(0, length);
+    onChange(next);
+  };
+  const onInput = (i: number) => (e: ChangeEvent<HTMLInputElement>) => {
+    const v = (type === "number" ? e.target.value.replace(/\D/g, "") : e.target.value).slice(-1);
+    set(i, v);
+    if (v && i < length - 1) refs.current[i + 1]?.focus();
+  };
+  const onKey = (i: number) => (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && !digits[i] && i > 0) refs.current[i - 1]?.focus();
+    if (e.key === "ArrowLeft" && i > 0) refs.current[i - 1]?.focus();
+    if (e.key === "ArrowRight" && i < length - 1) refs.current[i + 1]?.focus();
+  };
+  return (
+    <div role="group" aria-label={ariaLabel} className={cn("aph-pin", className)}>
+      {digits.map((d, i) => (
+        <input
+          key={i}
+          ref={(el) => { refs.current[i] = el; }}
+          inputMode={type === "number" ? "numeric" : "text"}
+          maxLength={1}
+          value={d}
+          onChange={onInput(i)}
+          onKeyDown={onKey(i)}
+          className="aph-pin__digit"
+          aria-label={`Digit ${i + 1}`}
+        />
+      ))}
+    </div>
+  );
+}
+"#;
+
+const NUMBER_INPUT_TSX: &str = r#"import { useId } from "react";
+import { cn } from "./cn";
+
+export interface NumberInputProps {
+  value: number;
+  onChange: (next: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  disabled?: boolean;
+  className?: string;
+  ariaLabel?: string;
+}
+
+export function NumberInput({ value, onChange, min, max, step = 1, disabled, className, ariaLabel }: NumberInputProps) {
+  const id = useId();
+  const clamp = (n: number) => {
+    if (typeof min === "number" && n < min) return min;
+    if (typeof max === "number" && n > max) return max;
+    return n;
+  };
+  return (
+    <div className={cn("aph-number-input", className)}>
+      <button type="button" className="aph-number-input__btn" aria-label="감소" disabled={disabled || (typeof min === "number" && value <= min)} onClick={() => onChange(clamp(value - step))}>−</button>
+      <input
+        id={id}
+        type="number"
+        className="aph-number-input__field"
+        value={value}
+        onChange={(e) => onChange(clamp(Number(e.target.value)))}
+        disabled={disabled}
+        aria-label={ariaLabel}
+      />
+      <button type="button" className="aph-number-input__btn" aria-label="증가" disabled={disabled || (typeof max === "number" && value >= max)} onClick={() => onChange(clamp(value + step))}>+</button>
+    </div>
+  );
+}
+"#;
+
+const SEARCH_INPUT_TSX: &str = r#"import { forwardRef, InputHTMLAttributes } from "react";
+import { cn } from "./cn";
+
+export interface SearchInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "onChange"> {
+  value: string;
+  onChange: (v: string) => void;
+  onClear?: () => void;
+}
+
+export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(function SearchInput(
+  { value, onChange, onClear, className, ...rest },
+  ref,
+) {
+  const clear = () => {
+    onChange("");
+    onClear?.();
+  };
+  return (
+    <div className={cn("aph-search", className)}>
+      <input
+        ref={ref}
+        type="search"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="aph-input aph-search__input"
+        {...rest}
+      />
+      {value && (
+        <button type="button" className="aph-search__clear" aria-label="검색어 지우기" onClick={clear}>×</button>
+      )}
+    </div>
+  );
+});
+"#;
+
+const FILE_UPLOADER_TSX: &str = r#"import { useState, useRef, ReactNode, DragEvent, ChangeEvent } from "react";
+import { cn } from "./cn";
+
+export interface FileUploaderProps {
+  onFiles: (files: File[]) => void;
+  accept?: string;
+  multiple?: boolean;
+  disabled?: boolean;
+  className?: string;
+  children?: ReactNode;
+}
+
+export function FileUploader({ onFiles, accept, multiple, disabled, className, children }: FileUploaderProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [drag, setDrag] = useState(false);
+  const handle = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    onFiles(Array.from(files));
+  };
+  const onDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDrag(false);
+    handle(e.dataTransfer.files);
+  };
+  return (
+    <div
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+      data-drag={drag}
+      data-disabled={disabled || undefined}
+      className={cn("aph-uploader", className)}
+      onClick={() => !disabled && inputRef.current?.click()}
+      onKeyDown={(e) => { if ((e.key === "Enter" || e.key === " ") && !disabled) inputRef.current?.click(); }}
+      onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
+      onDragLeave={() => setDrag(false)}
+      onDrop={onDrop}
+    >
+      <input
+        ref={inputRef}
+        type="file"
+        accept={accept}
+        multiple={multiple}
+        style={{ display: "none" }}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => handle(e.target.files)}
+      />
+      {children ?? (
+        <>
+          <span style={{ fontSize: 24 }}>📎</span>
+          <span><strong>파일을 끌어다 놓거나 클릭하여 업로드</strong></span>
+        </>
+      )}
+    </div>
+  );
+}
+"#;
+
+const DATE_PICKER_TSX: &str = r#"import { forwardRef, InputHTMLAttributes } from "react";
+import { cn } from "./cn";
+
+export interface DatePickerProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type"> {
+  error?: boolean;
+}
+
+/** Native HTML5 date input — picks up locale automatically. For custom
+ *  calendar UI use a third-party (react-aria-components / @internationalized/date)
+ *  paired with our tokens. */
+export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(function DatePicker(
+  { error, className, ...rest },
+  ref,
+) {
+  return (
+    <div className="aph-date-input">
+      <input
+        ref={ref}
+        type="date"
+        className={cn("aph-input", error && "aph-input--error", className)}
+        aria-invalid={error || undefined}
+        {...rest}
+      />
+    </div>
+  );
+});
+"#;
+
+const COMBOBOX_TSX: &str = r#"import { useState, useRef, useEffect, ReactNode, useId } from "react";
+import { cn } from "./cn";
+
+export interface ComboboxOption {
+  value: string;
+  label: ReactNode;
+  /** Lower-cased search-key. Defaults to the value. */
+  search?: string;
+}
+
+export interface ComboboxProps {
+  options: ComboboxOption[];
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  className?: string;
+  ariaLabel?: string;
+}
+
+export function Combobox({ options, value, onChange, placeholder, className, ariaLabel }: ComboboxProps) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const id = useId();
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [open]);
+  const filtered = options.filter((o) => {
+    if (!query) return true;
+    const haystack = (o.search ?? o.value).toLowerCase();
+    return haystack.includes(query.toLowerCase());
+  });
+  const current = options.find((o) => o.value === value);
+  return (
+    <div ref={wrapRef} className={cn("aph-combobox", className)}>
+      <input
+        type="text"
+        className="aph-input"
+        role="combobox"
+        aria-expanded={open}
+        aria-controls={`${id}-list`}
+        aria-label={ariaLabel}
+        placeholder={placeholder}
+        value={open ? query : (typeof current?.label === "string" ? current.label : value)}
+        onFocus={() => setOpen(true)}
+        onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
+      />
+      {open && filtered.length > 0 && (
+        <ul role="listbox" id={`${id}-list`} className="aph-combobox__list">
+          {filtered.map((o) => (
+            <li
+              key={o.value}
+              role="option"
+              aria-selected={o.value === value}
+              className="aph-combobox__option"
+              onMouseDown={(e) => { e.preventDefault(); onChange(o.value); setOpen(false); setQuery(""); }}
+            >
+              {o.label}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+"#;
+
+const SHEET_TSX: &str = r#"import { useEffect, ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface SheetProps {
+  open: boolean;
+  onClose: () => void;
+  title?: ReactNode;
+  children: ReactNode;
+  className?: string;
+}
+
+/** Mobile-first bottom sheet. Use Drawer for desktop right-side panels. */
+export function Sheet({ open, onClose, title, children, className }: SheetProps) {
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+  if (!open) return null;
+  return (
+    <>
+      <div className="aph-sheet-backdrop" onClick={onClose} aria-hidden="true" />
+      <div role="dialog" aria-modal="true" aria-label={typeof title === "string" ? title : undefined} className={cn("aph-sheet", className)}>
+        <div className="aph-sheet__handle" aria-hidden="true" />
+        {title && <h2 style={{ margin: "0 0 12px" }}>{title}</h2>}
+        {children}
+      </div>
+    </>
+  );
+}
+"#;
+
+const ALERT_TSX: &str = r#"import { ReactNode } from "react";
+import { cn } from "./cn";
+
+export type AlertTone = "info" | "success" | "warning" | "danger";
+
+export interface AlertProps {
+  tone?: AlertTone;
+  title?: ReactNode;
+  children?: ReactNode;
+  icon?: ReactNode;
+  className?: string;
+}
+
+export function Alert({ tone = "info", title, children, icon, className }: AlertProps) {
+  return (
+    <div role="alert" className={cn("aph-alert", `aph-alert--${tone}`, className)}>
+      {icon && <span aria-hidden="true">{icon}</span>}
+      <div>
+        {title && <div className="aph-alert__title">{title}</div>}
+        {children && <div>{children}</div>}
+      </div>
+    </div>
+  );
+}
+"#;
+
+const STAT_TSX: &str = r#"import { ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface StatProps {
+  label: ReactNode;
+  value: ReactNode;
+  delta?: { value: ReactNode; direction: "up" | "down" };
+  className?: string;
+}
+
+export function Stat({ label, value, delta, className }: StatProps) {
+  return (
+    <div className={cn("aph-stat", className)}>
+      <span className="aph-stat__label">{label}</span>
+      <span className="aph-stat__value">{value}</span>
+      {delta && (
+        <span className={cn("aph-stat__delta", `aph-stat__delta--${delta.direction}`)}>
+          {delta.direction === "up" ? "▲" : "▼"} {delta.value}
+        </span>
+      )}
+    </div>
+  );
+}
+"#;
+
+const TOOLBAR_TSX: &str = r#"import { ReactNode } from "react";
+import { cn } from "./cn";
+
+export interface ToolbarProps {
+  children: ReactNode;
+  className?: string;
+  ariaLabel?: string;
+}
+
+export function Toolbar({ children, className, ariaLabel }: ToolbarProps) {
+  return (
+    <div role="toolbar" aria-label={ariaLabel} className={cn("aph-toolbar", className)}>
+      {children}
+    </div>
+  );
+}
+
+Toolbar.Separator = function ToolbarSeparator() {
+  return <span role="separator" aria-orientation="vertical" className="aph-toolbar__sep" />;
+};
+"#;
+
+const HOVER_CARD_TSX: &str = r#"import { ReactNode, ReactElement } from "react";
+import { cn } from "./cn";
+
+export interface HoverCardProps {
+  trigger: ReactElement;
+  children: ReactNode;
+  className?: string;
+}
+
+export function HoverCard({ trigger, children, className }: HoverCardProps) {
+  return (
+    <span className="aph-hover-wrap" tabIndex={0}>
+      {trigger}
+      <span role="tooltip" className={cn("aph-hover-card", className)}>{children}</span>
+    </span>
+  );
+}
+"#;
+
+// ---- Stories for RC.5 advanced primitives ----
+
+const SEGMENTED_CONTROL_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { SegmentedControl } from "./SegmentedControl";
+
+const meta: Meta<typeof SegmentedControl> = { component: SegmentedControl };
+export default meta;
+type Story = StoryObj<typeof SegmentedControl>;
+
+export const Default: Story = {
+  render: () => {
+    const [v, setV] = useState<"all" | "active" | "done">("active");
+    return (
+      <SegmentedControl
+        value={v}
+        onChange={setV}
+        options={[
+          { value: "all", label: "전체" },
+          { value: "active", label: "진행 중" },
+          { value: "done", label: "완료" },
+        ]}
+      />
+    );
+  },
+};
+"#;
+
+const PIN_INPUT_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { PinInput } from "./PinInput";
+
+const meta: Meta<typeof PinInput> = { component: PinInput };
+export default meta;
+type Story = StoryObj<typeof PinInput>;
+
+export const OTP: Story = {
+  render: () => {
+    const [v, setV] = useState("");
+    return <PinInput length={6} value={v} onChange={setV} />;
+  },
+};
+"#;
+
+const NUMBER_INPUT_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { NumberInput } from "./NumberInput";
+
+const meta: Meta<typeof NumberInput> = { component: NumberInput };
+export default meta;
+type Story = StoryObj<typeof NumberInput>;
+
+export const Quantity: Story = {
+  render: () => {
+    const [v, setV] = useState(1);
+    return <NumberInput value={v} onChange={setV} min={0} max={99} ariaLabel="수량" />;
+  },
+};
+"#;
+
+const SEARCH_INPUT_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { SearchInput } from "./SearchInput";
+
+const meta: Meta<typeof SearchInput> = { component: SearchInput };
+export default meta;
+type Story = StoryObj<typeof SearchInput>;
+
+export const Default: Story = {
+  render: () => {
+    const [q, setQ] = useState("");
+    return <SearchInput value={q} onChange={setQ} placeholder="상품, 브랜드, 카테고리 검색" />;
+  },
+};
+"#;
+
+const FILE_UPLOADER_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { FileUploader } from "./FileUploader";
+
+const meta: Meta<typeof FileUploader> = { component: FileUploader };
+export default meta;
+type Story = StoryObj<typeof FileUploader>;
+
+export const Default: Story = {
+  render: () => {
+    const [files, setFiles] = useState<string[]>([]);
+    return (
+      <div style={{ width: 360 }}>
+        <FileUploader multiple accept="image/*" onFiles={(fs) => setFiles(fs.map((f) => f.name))} />
+        {files.length > 0 && <ul>{files.map((f) => <li key={f}>{f}</li>)}</ul>}
+      </div>
+    );
+  },
+};
+"#;
+
+const DATE_PICKER_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { DatePicker } from "./DatePicker";
+
+const meta: Meta<typeof DatePicker> = { component: DatePicker };
+export default meta;
+type Story = StoryObj<typeof DatePicker>;
+
+export const Default: Story = { args: { defaultValue: "2026-05-18" } };
+"#;
+
+const COMBOBOX_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { Combobox } from "./Combobox";
+
+const meta: Meta<typeof Combobox> = { component: Combobox };
+export default meta;
+type Story = StoryObj<typeof Combobox>;
+
+export const Cities: Story = {
+  render: () => {
+    const [v, setV] = useState("seoul");
+    return (
+      <div style={{ width: 280 }}>
+        <Combobox
+          value={v}
+          onChange={setV}
+          ariaLabel="도시 선택"
+          placeholder="도시 검색…"
+          options={[
+            { value: "seoul", label: "서울특별시" },
+            { value: "busan", label: "부산광역시" },
+            { value: "incheon", label: "인천광역시" },
+            { value: "daegu", label: "대구광역시" },
+            { value: "daejeon", label: "대전광역시" },
+            { value: "gwangju", label: "광주광역시" },
+            { value: "ulsan", label: "울산광역시" },
+            { value: "jeju", label: "제주특별자치도" },
+          ]}
+        />
+      </div>
+    );
+  },
+};
+"#;
+
+const SHEET_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { Sheet } from "./Sheet";
+import { Button } from "./Button";
+
+const meta: Meta<typeof Sheet> = { component: Sheet };
+export default meta;
+type Story = StoryObj<typeof Sheet>;
+
+export const Default: Story = {
+  render: () => {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Button onClick={() => setOpen(true)}>바텀시트 열기</Button>
+        <Sheet open={open} onClose={() => setOpen(false)} title="계좌 선택">
+          <p>출금하실 계좌를 선택해주세요.</p>
+          <Button onClick={() => setOpen(false)}>완료</Button>
+        </Sheet>
+      </>
+    );
+  },
+};
+"#;
+
+const ALERT_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Alert } from "./Alert";
+
+const meta: Meta<typeof Alert> = { component: Alert };
+export default meta;
+type Story = StoryObj<typeof Alert>;
+
+export const Info: Story = { args: { tone: "info", title: "안내", children: "본인 인증이 필요합니다." } };
+export const Success: Story = { args: { tone: "success", title: "전송 완료", children: "이체가 완료되었습니다." } };
+export const Warning: Story = { args: { tone: "warning", title: "주의", children: "잔액이 부족합니다." } };
+export const Danger: Story = { args: { tone: "danger", title: "오류", children: "결제에 실패했습니다." } };
+"#;
+
+const STAT_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Stat } from "./Stat";
+
+const meta: Meta<typeof Stat> = { component: Stat };
+export default meta;
+type Story = StoryObj<typeof Stat>;
+
+export const Default: Story = {
+  args: {
+    label: "월 거래액",
+    value: "₩ 12,456,789",
+    delta: { value: "+8.4%", direction: "up" },
+  },
+};
+"#;
+
+const TOOLBAR_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Toolbar } from "./Toolbar";
+import { Button } from "./Button";
+
+const meta: Meta<typeof Toolbar> = { component: Toolbar };
+export default meta;
+type Story = StoryObj<typeof Toolbar>;
+
+export const Default: Story = {
+  render: () => (
+    <Toolbar ariaLabel="문서 편집">
+      <Button variant="ghost" size="sm">굵게</Button>
+      <Button variant="ghost" size="sm">기울임</Button>
+      <Toolbar.Separator />
+      <Button variant="ghost" size="sm">왼쪽 정렬</Button>
+      <Button variant="ghost" size="sm">가운데</Button>
+    </Toolbar>
+  ),
+};
+"#;
+
+const HOVER_CARD_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { HoverCard } from "./HoverCard";
+import { Avatar } from "./Avatar";
+
+const meta: Meta<typeof HoverCard> = { component: HoverCard };
+export default meta;
+type Story = StoryObj<typeof HoverCard>;
+
+export const UserCard: Story = {
+  render: () => (
+    <HoverCard trigger={<Avatar initials="JK" alt="Jihyo Kim" />}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <strong>김지효</strong>
+        <small>jihyo@toss.im</small>
+        <small>마지막 활동: 5분 전</small>
+      </div>
+    </HoverCard>
+  ),
+};
+"#;
+
 // ---- Stories for extended primitives ----
 
 const TEXTAREA_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
@@ -2029,14 +2812,14 @@ mod tests {
     }
 
     #[test]
-    fn full_component_count_is_thirty() {
+    fn full_component_count_is_42() {
         let pkg = build(&fixture(), "x");
         let tsx_count = pkg.files.keys()
             .filter(|k| k.ends_with(".tsx") && !k.ends_with(".stories.tsx"))
             .count();
-        assert_eq!(tsx_count, 30, "expected 30 component .tsx files, got {tsx_count}");
+        assert_eq!(tsx_count, 42, "expected 42 component .tsx files, got {tsx_count}");
         let story_count = pkg.files.keys().filter(|k| k.ends_with(".stories.tsx")).count();
-        assert_eq!(story_count, 30, "expected 30 story files, got {story_count}");
+        assert_eq!(story_count, 42, "expected 42 story files, got {story_count}");
     }
 
     #[test]
