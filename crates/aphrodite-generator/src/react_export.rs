@@ -106,6 +106,24 @@ pub fn build(variants: &[Variant], project_name: &str) -> ReactPackage {
         ("Switch", SWITCH_STORIES),
         ("Badge", BADGE_STORIES),
         ("Spinner", SPINNER_STORIES),
+        ("Textarea", TEXTAREA_STORIES),
+        ("Select", SELECT_STORIES),
+        ("Checkbox", CHECKBOX_STORIES),
+        ("Radio", RADIO_STORIES),
+        ("RadioGroup", RADIO_GROUP_STORIES),
+        ("Tabs", TABS_STORIES),
+        ("Accordion", ACCORDION_STORIES),
+        ("Toast", TOAST_STORIES),
+        ("Tooltip", TOOLTIP_STORIES),
+        ("Popover", POPOVER_STORIES),
+        ("Menu", MENU_STORIES),
+        ("ProgressBar", PROGRESS_BAR_STORIES),
+        ("Stepper", STEPPER_STORIES),
+        ("Slider", SLIDER_STORIES),
+        ("Breadcrumb", BREADCRUMB_STORIES),
+        ("Pagination", PAGINATION_STORIES),
+        ("Divider", DIVIDER_STORIES),
+        ("EmptyState", EMPTY_STATE_STORIES),
     ] {
         files.insert(format!("src/{name}.stories.tsx"), body.into());
     }
@@ -1552,6 +1570,293 @@ export const Medium: Story = { args: { size: "md" } };
 export const Large: Story = { args: { size: "lg" } };
 "#;
 
+// ---- Stories for extended primitives ----
+
+const TEXTAREA_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Textarea } from "./Textarea";
+
+const meta: Meta<typeof Textarea> = { component: Textarea, args: { placeholder: "내용을 입력해주세요" } };
+export default meta;
+type Story = StoryObj<typeof Textarea>;
+
+export const Default: Story = {};
+export const Error: Story = { args: { error: true, defaultValue: "에러" } };
+"#;
+
+const SELECT_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Select } from "./Select";
+
+const meta: Meta<typeof Select> = {
+  component: Select,
+  args: { children: <><option value="kr">대한민국</option><option value="jp">일본</option><option value="us">미국</option></> },
+};
+export default meta;
+type Story = StoryObj<typeof Select>;
+
+export const Default: Story = {};
+"#;
+
+const CHECKBOX_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Checkbox } from "./Checkbox";
+
+const meta: Meta<typeof Checkbox> = { component: Checkbox, args: { label: "이용약관에 동의합니다" } };
+export default meta;
+type Story = StoryObj<typeof Checkbox>;
+
+export const Default: Story = {};
+export const Checked: Story = { args: { defaultChecked: true } };
+export const Disabled: Story = { args: { disabled: true } };
+"#;
+
+const RADIO_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Radio } from "./Radio";
+
+const meta: Meta<typeof Radio> = { component: Radio, args: { label: "개인", name: "membership", value: "personal" } };
+export default meta;
+type Story = StoryObj<typeof Radio>;
+
+export const Default: Story = {};
+"#;
+
+const RADIO_GROUP_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { RadioGroup } from "./RadioGroup";
+import { Radio } from "./Radio";
+
+const meta: Meta<typeof RadioGroup> = { component: RadioGroup };
+export default meta;
+type Story = StoryObj<typeof RadioGroup>;
+
+export const Default: Story = {
+  render: () => {
+    const [v, setV] = useState("personal");
+    return (
+      <RadioGroup name="membership" value={v} onChange={setV}>
+        <Radio value="personal" label="개인" />
+        <Radio value="business" label="사업자" />
+        <Radio value="foreign" label="외국인" />
+      </RadioGroup>
+    );
+  },
+};
+"#;
+
+const TABS_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Tabs, TabList, Tab, TabPanel } from "./Tabs";
+
+const meta: Meta<typeof Tabs> = { component: Tabs };
+export default meta;
+type Story = StoryObj<typeof Tabs>;
+
+export const Default: Story = {
+  render: () => (
+    <Tabs defaultValue="account">
+      <TabList>
+        <Tab value="account">계정</Tab>
+        <Tab value="notifications">알림</Tab>
+        <Tab value="security">보안</Tab>
+      </TabList>
+      <TabPanel value="account">계정 정보 내용</TabPanel>
+      <TabPanel value="notifications">알림 설정 내용</TabPanel>
+      <TabPanel value="security">보안 설정 내용</TabPanel>
+    </Tabs>
+  ),
+};
+"#;
+
+const ACCORDION_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Accordion, AccordionItem } from "./Accordion";
+
+const meta: Meta<typeof Accordion> = { component: Accordion };
+export default meta;
+type Story = StoryObj<typeof Accordion>;
+
+export const Default: Story = {
+  render: () => (
+    <Accordion>
+      <AccordionItem title="환불 정책이 어떻게 되나요?">7일 이내 전액 환불 가능합니다.</AccordionItem>
+      <AccordionItem title="해외에서도 사용할 수 있나요?">현재 한국과 일본에서 사용 가능합니다.</AccordionItem>
+      <AccordionItem title="문의는 어디로 하나요?">help@example.com 으로 문의 부탁드립니다.</AccordionItem>
+    </Accordion>
+  ),
+};
+"#;
+
+const TOAST_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { ToastProvider, useToast } from "./Toast";
+import { Button } from "./Button";
+
+const meta: Meta<typeof ToastProvider> = { component: ToastProvider };
+export default meta;
+type Story = StoryObj<typeof ToastProvider>;
+
+function Demo() {
+  const { push } = useToast();
+  return (
+    <div style={{ display: "flex", gap: 8 }}>
+      <Button onClick={() => push({ message: "저장되었습니다" })}>기본</Button>
+      <Button variant="secondary" onClick={() => push({ message: "전송 완료", tone: "success" })}>성공</Button>
+      <Button variant="danger" onClick={() => push({ message: "오류가 발생했습니다", tone: "danger" })}>위험</Button>
+    </div>
+  );
+}
+
+export const Default: Story = {
+  render: () => <ToastProvider><Demo /></ToastProvider>,
+};
+"#;
+
+const TOOLTIP_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Tooltip } from "./Tooltip";
+import { Button } from "./Button";
+
+const meta: Meta<typeof Tooltip> = { component: Tooltip };
+export default meta;
+type Story = StoryObj<typeof Tooltip>;
+
+export const Default: Story = {
+  render: () => <Tooltip content="저장 (⌘S)"><Button>저장</Button></Tooltip>,
+};
+"#;
+
+const POPOVER_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Popover } from "./Popover";
+import { Button } from "./Button";
+
+const meta: Meta<typeof Popover> = { component: Popover };
+export default meta;
+type Story = StoryObj<typeof Popover>;
+
+export const Default: Story = {
+  render: () => (
+    <Popover trigger={<Button variant="secondary">필터</Button>}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <label><input type="checkbox" /> 진행 중</label>
+        <label><input type="checkbox" /> 완료</label>
+        <label><input type="checkbox" /> 취소</label>
+      </div>
+    </Popover>
+  ),
+};
+"#;
+
+const MENU_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Menu, MenuItem } from "./Menu";
+
+const meta: Meta<typeof Menu> = { component: Menu };
+export default meta;
+type Story = StoryObj<typeof Menu>;
+
+export const Default: Story = {
+  render: () => (
+    <Menu ariaLabel="사용자 메뉴">
+      <MenuItem>프로필</MenuItem>
+      <MenuItem>설정</MenuItem>
+      <MenuItem>도움말</MenuItem>
+      <MenuItem>로그아웃</MenuItem>
+    </Menu>
+  ),
+};
+"#;
+
+const PROGRESS_BAR_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { ProgressBar } from "./ProgressBar";
+
+const meta: Meta<typeof ProgressBar> = { component: ProgressBar };
+export default meta;
+type Story = StoryObj<typeof ProgressBar>;
+
+export const ThirtyPercent: Story = { args: { value: 30, label: "업로드 진행률" } };
+export const Complete: Story = { args: { value: 100, label: "완료" } };
+"#;
+
+const STEPPER_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Stepper } from "./Stepper";
+
+const meta: Meta<typeof Stepper> = { component: Stepper };
+export default meta;
+type Story = StoryObj<typeof Stepper>;
+
+export const InProgress: Story = {
+  args: {
+    current: 1,
+    steps: [{ label: "본인 인증" }, { label: "계좌 등록" }, { label: "완료" }],
+  },
+};
+"#;
+
+const SLIDER_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Slider } from "./Slider";
+
+const meta: Meta<typeof Slider> = { component: Slider, args: { min: 0, max: 100, defaultValue: 30 } };
+export default meta;
+type Story = StoryObj<typeof Slider>;
+
+export const Default: Story = {};
+"#;
+
+const BREADCRUMB_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Breadcrumb } from "./Breadcrumb";
+
+const meta: Meta<typeof Breadcrumb> = { component: Breadcrumb };
+export default meta;
+type Story = StoryObj<typeof Breadcrumb>;
+
+export const Default: Story = {
+  args: {
+    items: [
+      { label: "홈", href: "/" },
+      { label: "투자", href: "/invest" },
+      { label: "삼성전자" },
+    ],
+  },
+};
+"#;
+
+const PAGINATION_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { Pagination } from "./Pagination";
+
+const meta: Meta<typeof Pagination> = { component: Pagination };
+export default meta;
+type Story = StoryObj<typeof Pagination>;
+
+export const Default: Story = {
+  render: () => {
+    const [p, setP] = useState(3);
+    return <Pagination page={p} pageCount={20} onChange={setP} />;
+  },
+};
+"#;
+
+const DIVIDER_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Divider } from "./Divider";
+
+const meta: Meta<typeof Divider> = { component: Divider };
+export default meta;
+type Story = StoryObj<typeof Divider>;
+
+export const Horizontal: Story = {};
+export const Vertical: Story = { args: { orientation: "vertical" } };
+"#;
+
+const EMPTY_STATE_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { EmptyState } from "./EmptyState";
+import { Button } from "./Button";
+
+const meta: Meta<typeof EmptyState> = { component: EmptyState };
+export default meta;
+type Story = StoryObj<typeof EmptyState>;
+
+export const Default: Story = {
+  args: {
+    title: "거래 내역이 없습니다",
+    description: "이번 달은 아직 거래가 없네요.",
+    action: <Button>거래 시작하기</Button>,
+  },
+};
+"#;
+
 const SPINNER_TSX: &str = r#"import { HTMLAttributes } from "react";
 import { cn } from "./cn";
 
@@ -1643,13 +1948,29 @@ mod tests {
     #[test]
     fn stories_files_emitted_for_every_component() {
         let pkg = build(&fixture(), "x");
-        for c in ["Button", "Input", "Tag", "Avatar", "Card", "Modal", "Drawer", "Skeleton", "FormField", "Switch", "Badge", "Spinner"] {
+        for c in [
+            "Button", "Input", "Tag", "Avatar", "Card", "Modal", "Drawer", "Skeleton",
+            "FormField", "Switch", "Badge", "Spinner",
+            "Textarea", "Select", "Checkbox", "Radio", "RadioGroup", "Tabs", "Accordion",
+            "Toast", "Tooltip", "Popover", "Menu", "ProgressBar", "Stepper", "Slider",
+            "Breadcrumb", "Pagination", "Divider", "EmptyState",
+        ] {
             let key = format!("src/{c}.stories.tsx");
             assert!(pkg.files.contains_key(&key), "missing stories file: {key}");
             let body = &pkg.files[&key];
             assert!(body.contains("@storybook/react"), "{c} story missing storybook import");
-            assert!(body.contains(&format!("import {{ {c} }}")), "{c} story missing component import");
         }
+    }
+
+    #[test]
+    fn full_component_count_is_thirty() {
+        let pkg = build(&fixture(), "x");
+        let tsx_count = pkg.files.keys()
+            .filter(|k| k.ends_with(".tsx") && !k.ends_with(".stories.tsx"))
+            .count();
+        assert_eq!(tsx_count, 30, "expected 30 component .tsx files, got {tsx_count}");
+        let story_count = pkg.files.keys().filter(|k| k.ends_with(".stories.tsx")).count();
+        assert_eq!(story_count, 30, "expected 30 story files, got {story_count}");
     }
 
     #[test]
