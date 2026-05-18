@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.0.0-rc.6 — 2026-05-18
+
+### Added — Material-UI-grade docs site (`docs/index.html`)
+- **`aphrodite docs`** CLI verb (also auto-emitted in phase 8.7).
+  Renders a single-file documentation site: sticky sidebar TOC,
+  install snippet, color swatch grid, type scale, and 42 component
+  sections each with live demo + escaped JSX snippet. Switcher in the
+  docs page itself cycles all 4 variants.
+- 46 KB Korean-language docs site emitted on every run.
+
+## 1.0.0-rc.5 — 2026-05-18
+
+### Added — 12 advanced primitives (30 → 42)
+- SegmentedControl, PinInput (OTP), NumberInput, SearchInput,
+  FileUploader (drag-drop), DatePicker, Combobox (autocomplete),
+  Sheet (bottom sheet), Alert (persistent banner), Stat (KPI),
+  Toolbar, HoverCard.
+- All with full ARIA, Korean stories.
+
 ## 1.0.0-rc.4 — 2026-05-18
 
 ### Added — Figma Variables sync
