@@ -71,6 +71,24 @@ pub fn build(variants: &[Variant], project_name: &str) -> ReactPackage {
     files.insert("src/Spinner.tsx".into(), SPINNER_TSX.into());
     files.insert("src/index.ts".into(), build_index_ts());
     files.insert("src/styles.css".into(), build_styles_css(variants));
+    // Storybook stories (CSF3 format) for each component. Optional —
+    // consumer Storybook config picks them up automatically.
+    for (name, body) in [
+        ("Button", BUTTON_STORIES),
+        ("Input", INPUT_STORIES),
+        ("Tag", TAG_STORIES),
+        ("Avatar", AVATAR_STORIES),
+        ("Card", CARD_STORIES),
+        ("Modal", MODAL_STORIES),
+        ("Drawer", DRAWER_STORIES),
+        ("Skeleton", SKELETON_STORIES),
+        ("FormField", FORM_FIELD_STORIES),
+        ("Switch", SWITCH_STORIES),
+        ("Badge", BADGE_STORIES),
+        ("Spinner", SPINNER_STORIES),
+    ] {
+        files.insert(format!("src/{name}.stories.tsx"), body.into());
+    }
     ReactPackage { files }
 }
 
@@ -674,6 +692,202 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
 });
 "#;
 
+// ---- Storybook stories (CSF3) ----
+
+const BUTTON_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Button } from "./Button";
+
+const meta: Meta<typeof Button> = { component: Button, args: { children: "확인" } };
+export default meta;
+type Story = StoryObj<typeof Button>;
+
+export const Primary: Story = { args: { variant: "primary" } };
+export const Secondary: Story = { args: { variant: "secondary" } };
+export const Ghost: Story = { args: { variant: "ghost" } };
+export const Danger: Story = { args: { variant: "danger" } };
+export const Small: Story = { args: { variant: "primary", size: "sm" } };
+export const Large: Story = { args: { variant: "primary", size: "lg" } };
+export const Loading: Story = { args: { variant: "primary", loading: true } };
+export const Disabled: Story = { args: { variant: "primary", disabled: true } };
+"#;
+
+const INPUT_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Input } from "./Input";
+
+const meta: Meta<typeof Input> = { component: Input, args: { placeholder: "이메일을 입력해주세요" } };
+export default meta;
+type Story = StoryObj<typeof Input>;
+
+export const Default: Story = {};
+export const Error: Story = { args: { error: true, defaultValue: "잘못된 이메일" } };
+export const Disabled: Story = { args: { disabled: true, defaultValue: "user@toss.im" } };
+"#;
+
+const TAG_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Tag } from "./Tag";
+
+const meta: Meta<typeof Tag> = { component: Tag, args: { children: "신규" } };
+export default meta;
+type Story = StoryObj<typeof Tag>;
+
+export const Neutral: Story = { args: { tone: "neutral" } };
+export const Success: Story = { args: { tone: "success", children: "완료" } };
+export const Warning: Story = { args: { tone: "warning", children: "주의" } };
+export const Danger: Story = { args: { tone: "danger", children: "실패" } };
+"#;
+
+const AVATAR_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Avatar } from "./Avatar";
+
+const meta: Meta<typeof Avatar> = { component: Avatar };
+export default meta;
+type Story = StoryObj<typeof Avatar>;
+
+export const Initials: Story = { args: { initials: "JK", alt: "Jihyo Kim" } };
+export const Small: Story = { args: { size: "sm", initials: "MJ" } };
+export const Large: Story = { args: { size: "lg", initials: "SA" } };
+"#;
+
+const CARD_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Card } from "./Card";
+
+const meta: Meta<typeof Card> = { component: Card };
+export default meta;
+type Story = StoryObj<typeof Card>;
+
+export const Default: Story = {
+  args: { children: <><h3 style={{ margin: 0 }}>월 정산 내역</h3><p style={{ marginTop: 8 }}>2026년 5월 1일 ~ 5월 31일</p></> },
+};
+"#;
+
+const MODAL_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { Modal } from "./Modal";
+import { Button } from "./Button";
+
+const meta: Meta<typeof Modal> = { component: Modal };
+export default meta;
+type Story = StoryObj<typeof Modal>;
+
+export const Default: Story = {
+  render: () => {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Button onClick={() => setOpen(true)}>모달 열기</Button>
+        <Modal open={open} onClose={() => setOpen(false)} title="확인">
+          <p>저장하시겠습니까?</p>
+          <Button onClick={() => setOpen(false)}>닫기</Button>
+        </Modal>
+      </>
+    );
+  },
+};
+"#;
+
+const DRAWER_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { Drawer } from "./Drawer";
+import { Button } from "./Button";
+
+const meta: Meta<typeof Drawer> = { component: Drawer };
+export default meta;
+type Story = StoryObj<typeof Drawer>;
+
+export const Default: Story = {
+  render: () => {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <Button onClick={() => setOpen(true)}>드로어 열기</Button>
+        <Drawer open={open} onClose={() => setOpen(false)}>
+          <h2>설정</h2>
+          <p>드로어 안의 컨텐츠입니다.</p>
+          <Button variant="secondary" onClick={() => setOpen(false)}>닫기</Button>
+        </Drawer>
+      </>
+    );
+  },
+};
+"#;
+
+const SKELETON_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Skeleton } from "./Skeleton";
+
+const meta: Meta<typeof Skeleton> = { component: Skeleton };
+export default meta;
+type Story = StoryObj<typeof Skeleton>;
+
+export const Line: Story = { args: { width: 240, height: 16 } };
+export const Block: Story = { args: { width: 320, height: 120 } };
+export const Circle: Story = { args: { width: 48, height: 48, circle: true } };
+"#;
+
+const FORM_FIELD_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { FormField } from "./FormField";
+import { Input } from "./Input";
+
+const meta: Meta<typeof FormField> = { component: FormField };
+export default meta;
+type Story = StoryObj<typeof FormField>;
+
+export const WithHint: Story = {
+  args: {
+    label: "이메일",
+    hint: "회사 이메일을 사용해주세요",
+    children: <Input placeholder="name@toss.im" />,
+  },
+};
+
+export const WithError: Story = {
+  args: {
+    label: "비밀번호",
+    error: "8자 이상이어야 합니다",
+    children: <Input type="password" error defaultValue="abc" />,
+  },
+};
+"#;
+
+const SWITCH_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { Switch } from "./Switch";
+
+const meta: Meta<typeof Switch> = { component: Switch };
+export default meta;
+type Story = StoryObj<typeof Switch>;
+
+export const Default: Story = {
+  render: () => {
+    const [on, setOn] = useState(true);
+    return <Switch checked={on} onChange={setOn} label="알림 받기" />;
+  },
+};
+"#;
+
+const BADGE_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Badge } from "./Badge";
+
+const meta: Meta<typeof Badge> = { component: Badge };
+export default meta;
+type Story = StoryObj<typeof Badge>;
+
+export const Count: Story = { args: { count: 3 } };
+export const Overflow: Story = { args: { count: 124, max: 99 } };
+export const Dot: Story = { args: { dot: true } };
+"#;
+
+const SPINNER_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { Spinner } from "./Spinner";
+
+const meta: Meta<typeof Spinner> = { component: Spinner };
+export default meta;
+type Story = StoryObj<typeof Spinner>;
+
+export const Small: Story = { args: { size: "sm" } };
+export const Medium: Story = { args: { size: "md" } };
+export const Large: Story = { args: { size: "lg" } };
+"#;
+
 const SPINNER_TSX: &str = r#"import { HTMLAttributes } from "react";
 import { cn } from "./cn";
 
@@ -760,6 +974,18 @@ mod tests {
         assert!(ts.contains("\"dark\""));
         assert!(ts.contains("export const tokens"));
         assert!(ts.contains("colors.primary.500"));
+    }
+
+    #[test]
+    fn stories_files_emitted_for_every_component() {
+        let pkg = build(&fixture(), "x");
+        for c in ["Button", "Input", "Tag", "Avatar", "Card", "Modal", "Drawer", "Skeleton", "FormField", "Switch", "Badge", "Spinner"] {
+            let key = format!("src/{c}.stories.tsx");
+            assert!(pkg.files.contains_key(&key), "missing stories file: {key}");
+            let body = &pkg.files[&key];
+            assert!(body.contains("@storybook/react"), "{c} story missing storybook import");
+            assert!(body.contains(&format!("import {{ {c} }}")), "{c} story missing component import");
+        }
     }
 
     #[test]

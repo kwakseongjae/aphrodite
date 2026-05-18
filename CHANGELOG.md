@@ -1,5 +1,63 @@
 # Changelog
 
+## 1.0.0-rc.1 — 2026-05-18 (v1.0 Release Candidate)
+
+The Toss/Karrot-adoption milestone. v0.6-v0.8 closed the design-system
+handoff gap; v1.0 closes the developer-adoption gap: actual typed React
+components, npm-publishable package, and Storybook stories.
+
+### Added — v1.0 React component package
+- **`aphrodite react`** CLI verb: generates a publishable npm package
+  (`react/`) from DESIGN.md. Auto-runs as part of every `aphrodite
+  create` (phase 8.7).
+- **12 typed React primitives**: Button, Input, Tag, Avatar, Card,
+  Modal, Drawer, Skeleton, FormField, Switch, Badge, Spinner. Each is
+  `forwardRef`, fully-typed Props, ARIA-correct, with sensible
+  variant/size/state props matching DESIGN.md tokens.
+- **`tokens.ts`** exporting a typed const `tokens` with the resolved
+  4-variant palette + spacing + typography + a `VariantName` union.
+- **Storybook stories** (CSF3) for every component — Korean copy
+  baked in so designers see real intent.
+- **`package.json`** with `@aphrodite/<project>` name, peer deps
+  `react ≥ 18`, exports map, build script via `tsup`.
+- **`README.md`** auto-generated quick-start.
+
+### Added — v0.8 Aphrodite Quality Score
+One-line composite production-readiness score on every run:
+`● Aphrodite Quality Score: ✓ 92/100  (a11y=100 mobile=100 perf=90 semantic=100)`.
+Surfaced in JSON result as `quality_score` + `quality_axes` for CI
+gating.
+
+### Added — v0.7 i18n
+- harmonize::patch_lang_attribute — Hangul → `lang="ko"` automatic
+  rewrite. Kana → `lang="ja"`. Idempotent.
+- SURFACE_SYSTEM_PROMPT now has explicit i18n discipline section.
+- Korean layout shim: `word-break: keep-all` + variant switcher mobile
+  wrap auto-injected when Hangul present.
+
+### Added — v0.6 design-system handoff
+- `tokens.css` (CSS vars per variant, body[data-variant] scope)
+- `tokens.json` (Style Dictionary shape, type-tagged leaves)
+- `components.html` (Storybook-style HTML preview — designer
+  inspection only, FE uses the React package)
+- `aphrodite components` CLI verb (rebuild standalone after DESIGN.md
+  edit)
+
+### Closed gaps from v0.8 honest-assessment retrospective
+- ✅ React/TSX component export
+- ✅ Components 5 → 12+
+- ✅ npm-publishable package output
+- ✅ Storybook stories (CSF3)
+- Remaining (not blocking adoption): Figma Variables sync, automated
+  publishing workflow, axe/Lighthouse in CI gate.
+
+### Catalog (after 1.0.0-rc.1)
+- 60+ generator tests
+- 11 CLI verbs (added `components`, `react`)
+- 13 personas + 13 wiki entries + 6 skills
+- 4 brand variants (light / dark / brand-a / brand-b)
+- 3-viewport auto-screenshots (mobile / tablet / desktop) per page
+
 ## 0.3.7 — 2026-05-18
 
 ### Fixed — Pass 42/43 visual review surfaced four production-grade bugs

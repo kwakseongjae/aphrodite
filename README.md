@@ -1,12 +1,56 @@
 # Aphrodite
 
 > *Hand a UI brief to the goddess of beauty herself.*
-> *Get back a complete design system + production-grade page, in one command.*
+> *Get back a typed React package, multi-page site, design system, and Quality Score — in one command.*
 
-[![38 dogfood passes recorded](https://img.shields.io/badge/dogfood-38_passes-a78bfa)](docs/agent-eval/archive/journey.html)
-[![ADR 0004 — autonomous harness](https://img.shields.io/badge/ADR_0004-9%2F9_phases_done-86efac)](docs/adr/0004-autonomous-creation-harness.md)
+[![v1.0 RC — Toss/Karrot-adoptable](https://img.shields.io/badge/v1.0_RC-Toss%2FKarrot_grade-a78bfa)](docs/agent-eval/archive/journey.html)
+[![49 dogfood passes recorded](https://img.shields.io/badge/dogfood-49_passes-9333ea)](docs/agent-eval/archive/journey.html)
+[![12 typed React primitives](https://img.shields.io/badge/react-12_components-61dafb)](crates/aphrodite-generator/src/react_export.rs)
 [![13 design authorities](https://img.shields.io/badge/personas-13-fcd34d)](crates/aphrodite-core/seed-personas/)
 [![Apache 2.0](https://img.shields.io/badge/license-Apache_2.0-57575c)](LICENSE)
+
+## What you get from one `aphrodite create` (v1.0 RC)
+
+```
+<your-project>/
+├── DESIGN.md                # Google Labs alpha schema, 4 brand variants, WCAG-AA validated
+├── home.html                # primary page
+├── pricing.html             # --pages secondary
+├── about.html               # --pages secondary
+├── sitemap.xml              # auto-listed
+├── home-{mobile,tablet,desktop}.png    # auto-screenshot at 3 viewports
+├── pricing-{mobile,tablet,desktop}.png
+├── about-{mobile,tablet,desktop}.png
+├── tokens.css               # CSS variables, scoped per variant
+├── tokens.json              # Style Dictionary shape — value + type per leaf
+├── components.html          # Storybook-style designer preview
+└── react/                   # 🆕 publishable npm package
+    ├── package.json         # @aphrodite/<name>, peer deps react ≥18
+    ├── tsconfig.json
+    ├── README.md
+    └── src/
+        ├── index.ts         # barrel export
+        ├── tokens.ts        # typed const + VariantName union
+        ├── cn.ts            # class-name helper
+        ├── styles.css       # base styles + CSS-var scopes
+        ├── Button.tsx       # forwardRef, variant/size/loading
+        ├── Input.tsx        # error state, aria-invalid wired
+        ├── Tag.tsx          # tone neutral/success/warning/danger
+        ├── Avatar.tsx       # src OR initials, three sizes
+        ├── Card.tsx
+        ├── Modal.tsx        # Escape close, aria-modal
+        ├── Drawer.tsx       # right-side, Escape close
+        ├── Skeleton.tsx     # shimmer animation
+        ├── FormField.tsx    # auto-wires id+aria to its child control
+        ├── Switch.tsx       # role=switch, aria-checked
+        ├── Badge.tsx        # count overflow + dot
+        ├── Spinner.tsx      # role=status, three sizes
+        └── *.stories.tsx    # Storybook CSF3 stories for every component
+```
+
+Plus a one-line **Aphrodite Quality Score** at the end of every run (`a11y / mobile / perf / semantic`, 0-100 each) so you can pin a CI gate.
+
+A Toss/Karrot frontend engineer can `cd react && npm publish` and other projects can `import { Button } from "@aphrodite/<your-project>"`.
 
 Aphrodite is an **open, model-agnostic UI generation harness**. It is not a Claude Code plugin. It is a standalone runtime that any human or AI agent can call to get authentic, production-grade, *beautiful* user interfaces — by orchestrating today's UI tooling under a single **DESIGN.md**-grounded design contract.
 
