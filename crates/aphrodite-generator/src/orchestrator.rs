@@ -605,6 +605,26 @@ pub async fn run(
         }
     }
 
+    // Phase 8.7: design-system handoff. Emit tokens.css, tokens.json
+    // (Style-Dictionary shape), and components.html — the artifacts a
+    // designer / FE engineer at a Korean production shop would need to
+    // adopt this run as the source of truth. Zero LLM cost; fully
+    // deterministic from the resolved variants.
+    if !no_write {
+        let ds_target: &std::path::Path = &target;
+        let css_path = ds_target.join("tokens.css");
+        let json_path = ds_target.join("tokens.json");
+        let comp_path = ds_target.join("components.html");
+        let _ = std::fs::write(&css_path, crate::design_system::build_tokens_css(&final_variants));
+        let _ = std::fs::write(&json_path, crate::design_system::build_tokens_json(&final_variants));
+        let _ = std::fs::write(&comp_path, crate::design_system::build_components_html(&final_variants));
+        eprintln!(
+            "● phase 8.7 / design-system handoff: tokens.css, tokens.json, components.html"
+        );
+        // Capture the components.html preview at 3 viewports too.
+        let _ = capture_screenshots(&comp_path);
+    }
+
     // Phase 8.6: optional external audits. If the user has installed
     // `lighthouse` (npm i -g lighthouse) and/or `axe` (npm i -g
     // @axe-core/cli) globally, run them against the composition and

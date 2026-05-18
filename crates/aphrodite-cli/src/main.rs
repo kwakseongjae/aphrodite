@@ -85,6 +85,15 @@ enum Command {
     /// Print the v0.1 capability matrix — what Aphrodite can and cannot do.
     Capabilities,
 
+    /// Rebuild the design-system handoff (tokens.css, tokens.json,
+    /// components.html) from the DESIGN.md in the target directory.
+    /// Useful when you've manually edited DESIGN.md and want to refresh
+    /// the engineering artifacts without re-running the full create flow.
+    Components {
+        #[arg(long)]
+        repo: Option<PathBuf>,
+    },
+
     /// Build a single-file gallery.html that previews every run subdirectory
     /// under the given path. Each run becomes a card with intent text,
     /// metrics, palette swatches, and an iframe of the composition (or hero
@@ -349,6 +358,23 @@ async fn main() -> anyhow::Result<()> {
         },
         Command::Doctor => doctor(),
         Command::Capabilities => capabilities(),
+        Command::Components { repo } => {
+            let target = repo.unwrap_or_else(|| std::env::current_dir().expect("cwd"));
+            let design_path = target.join("DESIGN.md");
+            let design_md = std::fs::read_to_string(&design_path)
+                .map_err(|e| anyhow::anyhow!("cannot read {}: {e}", design_path.display()))?;
+            let doc = aphrodite_core::parse_design(&design_md)
+                .map_err(|e| anyhow::anyhow!("parse DESIGN.md: {e}"))?;
+            let variants = aphrodite_core::resolve_variants(&doc);
+            let css = aphrodite_generator::design_system::build_tokens_css(&variants);
+            let json = aphrodite_generator::design_system::build_tokens_json(&variants);
+            let html = aphrodite_generator::design_system::build_components_html(&variants);
+            std::fs::write(target.join("tokens.css"), &css)?;
+            std::fs::write(target.join("tokens.json"), &json)?;
+            std::fs::write(target.join("components.html"), &html)?;
+            println!("wrote tokens.css, tokens.json, components.html in {}", target.display());
+            json!({ "kind": "components", "path": target.to_string_lossy() })
+        }
         Command::Gallery { dir } => {
             let out = gallery_cmd::build(&dir)?;
             println!("✓ wrote {}", out.display());
