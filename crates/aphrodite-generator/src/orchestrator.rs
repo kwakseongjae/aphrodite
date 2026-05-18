@@ -435,6 +435,21 @@ pub async fn run(
     }
     let final_report = validate_design(&final_doc, &final_variants);
 
+    // Composition write rule:
+    //   - If composer succeeded AND the rendered HTML body has ≥ 1 KB of real
+    //     content, write composition.html.
+    //   - Otherwise skip the write — a 200-byte file containing only the
+    //     Google Fonts <link> tags (harmonize's only contribution to an
+    //     otherwise-empty composer output) is worse than no file: it implies
+    //     to the user that composition succeeded.
+    let composition_writable =
+        composition_html.trim().len() >= 1_024 && composition_html.contains("<body");
+    if !composition_writable && !composition_html.is_empty() {
+        eprintln!(
+            "● composition.html skipped: only {} bytes after harmonize (composer call likely failed). DESIGN.md + hero.html still emitted.",
+            composition_html.trim().len()
+        );
+    }
     let (design_path, hero_path, composition_path) = if no_write {
         let out = target.join(".aphrodite").join("out");
         std::fs::create_dir_all(&out)?;
@@ -442,7 +457,7 @@ pub async fn run(
         let hp = out.join("hero.html");
         std::fs::write(&dp, &design_md)?;
         std::fs::write(&hp, &hero_html)?;
-        let cp = if !composition_html.is_empty() {
+        let cp = if composition_writable {
             let cp = out.join("composition.html");
             std::fs::write(&cp, &composition_html)?;
             Some(cp)
@@ -455,7 +470,7 @@ pub async fn run(
         let hp = target.join("hero.html");
         std::fs::write(&dp, &design_md)?;
         std::fs::write(&hp, &hero_html)?;
-        let cp = if !composition_html.is_empty() {
+        let cp = if composition_writable {
             let cp = target.join("composition.html");
             std::fs::write(&cp, &composition_html)?;
             Some(cp)

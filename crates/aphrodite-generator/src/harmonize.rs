@@ -98,6 +98,17 @@ pub fn harmonize(
     // what's *really* still wrong rather than what we already fixed.
     let composition_post_fix = auto_fix_h1_count(&composition_out_labeled);
     let composition_post_fix = fix_broken_img_placeholders(&composition_post_fix);
+    // Pass 43 surfaced: composer routinely sets `.hero { min-height: 80vh }`
+    // assuming a full-bleed photograph. When the actual hero content is a
+    // placeholder figure (no real asset shipped yet), 80vh becomes 1500+px
+    // of dead vertical space. Cap section min-heights when placeholders
+    // are present in the composition.
+    let composition_post_fix = if composition_post_fix.contains("class=\"image-placeholder\"") {
+        let capped = cap_vh_property(&composition_post_fix, "min-height", 40);
+        cap_vh_property(&capped, "height", 60)
+    } else {
+        composition_post_fix
+    };
     // Production-readiness audit on the FIXED composition (read-only after this point).
     report.quality_warnings = audit_composition(&composition_post_fix, display.as_deref(), body.as_deref());
 
@@ -171,9 +182,72 @@ fn pick_attr(tag: &str, attr: &str) -> Option<String> {
 /// page hero) and downgrade all others to `<h2>`. This is a safe transform
 /// because the page-level hero should be h1 and section headers should be
 /// h2. Pass 39 surfaced this — composer emitted h1 per section.
+/// Scan `<prop>: NNvh` declarations. Any value > `max_vh` is clamped to
+/// `max_vh`. Used when the composition contains placeholder figures —
+/// full-viewport heroes don't make sense without real artwork.
+fn cap_vh_property(html: &str, prop: &str, max_vh: u32) -> String {
+    let needle_owned = format!("{prop}:");
+    let needle = needle_owned.as_str();
+    if !html.contains(needle) {
+        return html.to_string();
+    }
+    let mut out = String::with_capacity(html.len());
+    let mut cursor = 0usize;
+    while let Some(rel) = html[cursor..].find(needle) {
+        let i = cursor + rel;
+        out.push_str(&html[cursor..i]);
+        out.push_str(needle);
+        let after = i + needle.len();
+        // Skip whitespace
+        let bytes = html.as_bytes();
+        let mut j = after;
+        while j < bytes.len() && (bytes[j] == b' ' || bytes[j] == b'\t') { j += 1; }
+        out.push_str(&html[after..j]);
+        // Read digits
+        let num_start = j;
+        while j < bytes.len() && bytes[j].is_ascii_digit() { j += 1; }
+        if j > num_start && j + 2 <= bytes.len() && &html[j..j + 2] == "vh" {
+            let n: u32 = html[num_start..j].parse().unwrap_or(0);
+            if n > max_vh {
+                out.push_str(&max_vh.to_string());
+                out.push_str("vh");
+                cursor = j + 2;
+                continue;
+            }
+        }
+        // Pass through unchanged
+        out.push_str(&html[num_start..j]);
+        cursor = j;
+    }
+    out.push_str(&html[cursor..]);
+    out
+}
+
 fn auto_fix_h1_count(html: &str) -> String {
     let h1_count = html.matches("<h1").count();
-    if h1_count <= 1 {
+    if h1_count == 0 {
+        // Pass 42 surfaced: composer sometimes ships zero h1. Promote the
+        // first h2 to h1 so the page has exactly one page-level heading.
+        if let Some(i) = html.find("<h2") {
+            // Find the matching closing tag for this opening h2.
+            if let Some(open_end_rel) = html[i..].find('>') {
+                let open_end = i + open_end_rel + 1;
+                if let Some(close_rel) = html[open_end..].find("</h2>") {
+                    let close_start = open_end + close_rel;
+                    let close_end = close_start + "</h2>".len();
+                    let mut out = String::with_capacity(html.len());
+                    out.push_str(&html[..i]);
+                    out.push_str(&html[i..open_end].replacen("<h2", "<h1", 1));
+                    out.push_str(&html[open_end..close_start]);
+                    out.push_str("</h1>");
+                    out.push_str(&html[close_end..]);
+                    return out;
+                }
+            }
+        }
+        return html.to_string();
+    }
+    if h1_count == 1 {
         return html.to_string();
     }
     let mut out = String::with_capacity(html.len());
@@ -518,10 +592,22 @@ pub fn extract_families_from_md(design_md: &str) -> (Option<String>, Option<Stri
             }
             if let Some(rest) = trimmed.strip_prefix("family:") {
                 let value = parse_yaml_scalar(rest.trim());
+                // YAML font value may be a single family ("Inter") or a
+                // CSS-style stack ("Inter, Helvetica, sans-serif"). Take
+                // the FIRST family (the primary intent) and drop the
+                // fallback chain.
+                let primary = value
+                    .split(',')
+                    .next()
+                    .unwrap_or(&value)
+                    .trim()
+                    .trim_matches('"')
+                    .trim_matches('\'')
+                    .to_string();
                 if in_display && display.is_none() {
-                    display = Some(value);
+                    display = Some(primary);
                 } else if in_body && body.is_none() {
-                    body = Some(value.clone());
+                    body = Some(primary);
                 }
             }
         }
@@ -830,6 +916,36 @@ spacing:
     }
 
     #[test]
+    fn cap_section_min_height_clamps_oversized_vh() {
+        let css = ".hero { min-height: 80vh; padding: 20px; } .other { min-height: 30vh; }";
+        let out = cap_vh_property(css, "min-height", 40);
+        assert!(out.contains("min-height: 40vh"));
+        assert!(out.contains("min-height: 30vh"), "values below the cap pass through");
+        assert!(!out.contains("80vh"));
+    }
+
+    #[test]
+    fn cap_vh_property_handles_plain_height() {
+        // Pass 43 surfaced: `.hero figure { height: 80vh }` was the real
+        // culprit — the cap must also clamp bare `height:` declarations,
+        // not just `min-height:`.
+        let css = ".hero figure { height: 80vh; width: 100%; }";
+        let out = cap_vh_property(css, "height", 60);
+        assert!(out.contains("height: 60vh"));
+        assert!(!out.contains("80vh"));
+    }
+
+    #[test]
+    fn auto_fix_h1_promotes_first_h2_when_zero() {
+        let html = "<body><h2 class=\"hero\">Hello</h2><h2>Section</h2></body>";
+        let fixed = auto_fix_h1_count(html);
+        assert_eq!(fixed.matches("<h1").count(), 1);
+        assert!(fixed.contains("<h1 class=\"hero\">Hello</h1>"));
+        // Second h2 untouched
+        assert!(fixed.contains("<h2>Section</h2>"));
+    }
+
+    #[test]
     fn auto_fix_h1_idempotent_when_single() {
         let html = "<h1>One</h1><h2>Two</h2><h2>Three</h2>";
         assert_eq!(auto_fix_h1_count(html), html);
@@ -868,6 +984,24 @@ typography:
 "#;
         let (d, b) = extract_families_from_md(md);
         assert_eq!(d.as_deref(), Some("Source Serif 4"));
+        assert_eq!(b.as_deref(), Some("Inter"));
+    }
+
+    #[test]
+    fn extract_families_takes_first_when_stack_provided() {
+        // Pass 42 surfaced: composer sometimes writes the full CSS-style
+        // stack into the YAML family field. Harmonize must pluck the
+        // primary intent (first family), not the whole string.
+        let md = r##"---
+typography:
+  display:
+    family: "Instrument Serif, Noto Serif KR, Georgia, serif"
+  body:
+    family: "Inter, 'Pretendard', system-ui, sans-serif"
+---
+"##;
+        let (d, b) = extract_families_from_md(md);
+        assert_eq!(d.as_deref(), Some("Instrument Serif"));
         assert_eq!(b.as_deref(), Some("Inter"));
     }
 }
