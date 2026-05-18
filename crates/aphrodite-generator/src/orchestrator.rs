@@ -42,6 +42,7 @@ pub async fn run(
     persona_slug: Option<String>,
     no_write: bool,
     repo: Option<PathBuf>,
+    pages: Vec<String>,
 ) -> anyhow::Result<serde_json::Value> {
     let target = match repo {
         Some(p) => p,
@@ -464,7 +465,7 @@ pub async fn run(
         std::fs::write(&dp, &design_md)?;
         std::fs::write(&hp, &hero_html)?;
         let cp = if composition_writable {
-            let cp = out.join("composition.html");
+            let cp = out.join(primary_page_filename(&pages));
             std::fs::write(&cp, &composition_html)?;
             Some(cp)
         } else {
@@ -477,7 +478,7 @@ pub async fn run(
         std::fs::write(&dp, &design_md)?;
         std::fs::write(&hp, &hero_html)?;
         let cp = if composition_writable {
-            let cp = target.join("composition.html");
+            let cp = target.join(primary_page_filename(&pages));
             std::fs::write(&cp, &composition_html)?;
             Some(cp)
         } else {
@@ -521,6 +522,57 @@ pub async fn run(
         (dp, hp, cp)
     };
 
+    // Phase 8.4: secondary-page composition loop (v0.5 multi-page).
+    // If `pages` lists more than one slug, re-call the composer for each
+    // additional slug using the SAME DESIGN.md + variants. We skip the
+    // expensive design / critic / refine phases — those happen once for
+    // the primary page. Each secondary page goes through harmonize and
+    // gets its own HTML file in the target directory.
+    let mut secondary_pages_written: Vec<std::path::PathBuf> = Vec::new();
+    if pages.len() > 1 && !no_write {
+        for slug in pages.iter().skip(1) {
+            let slug = sanitize_page_slug(slug);
+            if slug.is_empty() {
+                continue;
+            }
+            let page_intent = format!(
+                "{intent} — additional page: `{slug}`. Reuse the existing DESIGN.md tokens, components, nav, footer, and variant switcher. Compose the `<main>` content for the `{slug}` page only; the rest of the chrome must visually match the primary page so this works as a section of the same multi-page site."
+            );
+            eprintln!("● phase 8.4 / secondary page `{slug}` — composing");
+            let page_compose = surface::compose(
+                &composer_resolved,
+                &page_intent,
+                &design_md,
+                &final_doc,
+            )
+            .await;
+            match page_compose {
+                Ok(out) => {
+                    let (page_html_h, _, _) = harmonize::harmonize(
+                        &out.html,
+                        &hero_html,
+                        &design_md,
+                        &final_doc,
+                    );
+                    if page_html_h.trim().len() >= 1_024 && page_html_h.contains("<body") {
+                        let page_path = target.join(format!("{slug}.html"));
+                        if std::fs::write(&page_path, &page_html_h).is_ok() {
+                            secondary_pages_written.push(page_path);
+                        }
+                    } else {
+                        eprintln!("    ⚠ secondary page `{slug}` produced < 1 KB — skipped write");
+                    }
+                }
+                Err(e) => {
+                    eprintln!("    ⚠ secondary page `{slug}` failed: {e}");
+                }
+            }
+        }
+        if !secondary_pages_written.is_empty() {
+            let _ = write_sitemap(&target, composition_path.as_deref(), &secondary_pages_written);
+        }
+    }
+
     // Phase 8.5: visual capture across three viewports (mobile / tablet /
     // desktop). Korean production targets are mobile-first, so a single
     // 1440px shot lies — it can hide a layout that collapses at 360px.
@@ -540,6 +592,17 @@ pub async fn run(
                 .collect::<Vec<_>>()
                 .join(", ")
         );
+    }
+    // Also capture secondary pages — each one gets the 3-viewport set
+    // so the gallery shows real mobile/tablet/desktop evidence.
+    for sp in &secondary_pages_written {
+        let n = capture_screenshots(sp).len();
+        if n > 0 {
+            eprintln!(
+                "● phase 8.5 / visual capture (secondary `{}`): {n} viewport(s)",
+                sp.file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default()
+            );
+        }
     }
 
     // Phase 8.6: optional external audits. If the user has installed
@@ -762,6 +825,52 @@ fn capture_screenshots(composition_path: &std::path::Path) -> Vec<std::path::Pat
         }
     }
     out
+}
+
+/// Filename for the primary page. `pages[0]` if provided, else
+/// "composition.html" for backward compatibility with single-page runs.
+fn primary_page_filename(pages: &[String]) -> String {
+    pages
+        .first()
+        .map(|s| sanitize_page_slug(s))
+        .filter(|s| !s.is_empty())
+        .map(|s| format!("{s}.html"))
+        .unwrap_or_else(|| "composition.html".into())
+}
+
+/// Lowercase + ascii-letters / digits / hyphens / underscores only.
+/// Rejects path separators and traversal patterns.
+fn sanitize_page_slug(s: &str) -> String {
+    s.trim()
+        .to_ascii_lowercase()
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric() || *c == '-' || *c == '_')
+        .collect()
+}
+
+/// Emit a minimal sitemap.xml listing every written page so external
+/// crawlers + the harness gallery view can enumerate the multi-page
+/// site without filesystem traversal.
+fn write_sitemap(
+    target: &std::path::Path,
+    primary: Option<&std::path::Path>,
+    secondaries: &[std::path::PathBuf],
+) -> std::io::Result<()> {
+    let mut xml = String::from(
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n",
+    );
+    let push_loc = |xml: &mut String, p: &std::path::Path| {
+        let fname = p.file_name().and_then(|s| s.to_str()).unwrap_or_default();
+        xml.push_str(&format!("  <url><loc>{fname}</loc></url>\n"));
+    };
+    if let Some(p) = primary {
+        push_loc(&mut xml, p);
+    }
+    for p in secondaries {
+        push_loc(&mut xml, p);
+    }
+    xml.push_str("</urlset>\n");
+    std::fs::write(target.join("sitemap.xml"), xml)
 }
 
 /// Optional external audits: lighthouse + axe. Both pulled from PATH;

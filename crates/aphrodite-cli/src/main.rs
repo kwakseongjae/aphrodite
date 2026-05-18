@@ -160,6 +160,15 @@ enum Command {
         no_write: bool,
         #[arg(long)]
         repo: Option<PathBuf>,
+        /// Multi-page output. Comma-separated page slugs (e.g.
+        /// "home,pricing,about"). The first slug runs the full create
+        /// flow; subsequent slugs reuse the resulting DESIGN.md and only
+        /// re-run the composition phase with a page-specific brief. Each
+        /// page writes to `<slug>.html` and the harness emits a
+        /// `sitemap.xml` listing them. Default is a single page named
+        /// `composition`.
+        #[arg(long, value_delimiter = ',')]
+        pages: Vec<String>,
     },
 
     /// List installed personas (bundled + user-installed). Use `--persona <slug>`
@@ -349,11 +358,11 @@ async fn main() -> anyhow::Result<()> {
         Command::Hate { repo } => feedback_cmd::run(-0.30, "hate", repo)?,
         Command::Prefs { repo } => feedback_cmd::show(repo)?,
         Command::Refine { change, no_write, repo } => refine_cmd::run(change, no_write, repo).await?,
-        Command::Create { intent, max_turns, satisfaction_threshold, persona, estimate, no_write, repo } => {
+        Command::Create { intent, max_turns, satisfaction_threshold, persona, estimate, no_write, repo, pages } => {
             if estimate {
                 create_cmd::estimate(intent, max_turns, satisfaction_threshold, persona, repo)?
             } else {
-                create_cmd::run(intent, max_turns, satisfaction_threshold, persona, no_write, repo).await?
+                create_cmd::run(intent, max_turns, satisfaction_threshold, persona, no_write, repo, pages).await?
             }
         }
         Command::Personas => personas_list(),

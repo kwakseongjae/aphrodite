@@ -17,6 +17,7 @@ pub async fn run(
     persona_slug: Option<String>,
     no_write: bool,
     repo: Option<PathBuf>,
+    pages: Vec<String>,
 ) -> anyhow::Result<serde_json::Value> {
     aphrodite_generator::orchestrator::run(
         intent,
@@ -25,6 +26,7 @@ pub async fn run(
         persona_slug,
         no_write,
         repo,
+        pages,
     )
     .await
 }
