@@ -125,6 +125,7 @@ pub fn build(variants: &[Variant], project_name: &str) -> ReactPackage {
     files.insert("src/ContextMenu.tsx".into(), CONTEXT_MENU_TSX.into());
     files.insert("src/Command.tsx".into(), COMMAND_TSX.into());
     files.insert("src/Hint.tsx".into(), HINT_TSX.into());
+    files.insert("src/PhoneInputKR.tsx".into(), PHONE_INPUT_KR_TSX.into());
     files.insert("src/index.ts".into(), build_index_ts());
     files.insert("src/styles.css".into(), build_styles_css(variants));
     files.insert(".npmignore".into(), build_npmignore());
@@ -175,6 +176,7 @@ pub fn build(variants: &[Variant], project_name: &str) -> ReactPackage {
         ("Stat", STAT_STORIES),
         ("Toolbar", TOOLBAR_STORIES),
         ("HoverCard", HOVER_CARD_STORIES),
+        ("PhoneInputKR", PHONE_INPUT_KR_STORIES),
         ("DataTable", DATA_TABLE_STORIES),
         ("Carousel", CAROUSEL_STORIES),
         ("Calendar", CALENDAR_STORIES),
@@ -495,6 +497,8 @@ export { Toolbar } from "./Toolbar";
 export type { ToolbarProps } from "./Toolbar";
 export { HoverCard } from "./HoverCard";
 export type { HoverCardProps } from "./HoverCard";
+export { PhoneInputKR, formatKoreanPhone, parseKoreanPhone } from "./PhoneInputKR";
+export type { PhoneInputKRProps } from "./PhoneInputKR";
 export { DataTable } from "./DataTable";
 export type { DataTableProps, DataTableColumn } from "./DataTable";
 export { Carousel } from "./Carousel";
@@ -2810,6 +2814,84 @@ export function Hint({ tone = "neutral", icon, children, className }: HintProps)
 }
 "#;
 
+// ---- Korean phone input (locale-specific RC.8) ----
+
+const PHONE_INPUT_KR_TSX: &str = r#"import { forwardRef, InputHTMLAttributes, ChangeEvent } from "react";
+import { cn } from "./cn";
+
+/** Strip every non-digit and cap at 11 digits (010 prefix + 8). */
+export function parseKoreanPhone(raw: string): string {
+  return raw.replace(/\D/g, "").slice(0, 11);
+}
+
+/** Format a digit-string to 010-XXXX-XXXX (or partial). */
+export function formatKoreanPhone(digits: string): string {
+  const d = parseKoreanPhone(digits);
+  if (d.length < 4) return d;
+  if (d.length < 8) return `${d.slice(0, 3)}-${d.slice(3)}`;
+  return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7)}`;
+}
+
+export interface PhoneInputKRProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "value" | "onChange"> {
+  value: string;
+  /** Called with the raw 11-digit string (e.g. "01012345678"). */
+  onChange: (digits: string) => void;
+  error?: boolean;
+}
+
+/** Auto-formatting Korean mobile input — accepts paste of any digit/
+ *  hyphen pattern and emits a clean 11-digit string back via onChange. */
+export const PhoneInputKR = forwardRef<HTMLInputElement, PhoneInputKRProps>(function PhoneInputKR(
+  { value, onChange, error, className, placeholder = "010-1234-5678", ...rest },
+  ref,
+) {
+  const display = formatKoreanPhone(value);
+  return (
+    <input
+      ref={ref}
+      type="tel"
+      inputMode="numeric"
+      autoComplete="tel"
+      maxLength={13}
+      value={display}
+      placeholder={placeholder}
+      className={cn("aph-input", error && "aph-input--error", className)}
+      aria-invalid={error || undefined}
+      onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(parseKoreanPhone(e.target.value))}
+      {...rest}
+    />
+  );
+});
+"#;
+
+const PHONE_INPUT_KR_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
+import { useState } from "react";
+import { PhoneInputKR } from "./PhoneInputKR";
+
+const meta: Meta<typeof PhoneInputKR> = { component: PhoneInputKR };
+export default meta;
+type Story = StoryObj<typeof PhoneInputKR>;
+
+export const Default: Story = {
+  render: () => {
+    const [v, setV] = useState("");
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, width: 280 }}>
+        <PhoneInputKR value={v} onChange={setV} />
+        <small style={{ color: "var(--colors-text-muted)" }}>raw value: {v || "(empty)"}</small>
+      </div>
+    );
+  },
+};
+
+export const Prefilled: Story = {
+  render: () => {
+    const [v, setV] = useState("01012345678");
+    return <PhoneInputKR value={v} onChange={setV} />;
+  },
+};
+"#;
+
 // ---- Stories for RC.7 advanced primitives ----
 
 const DATA_TABLE_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
@@ -3633,14 +3715,14 @@ mod tests {
     }
 
     #[test]
-    fn full_component_count_is_54() {
+    fn full_component_count_is_55() {
         let pkg = build(&fixture(), "x");
         let tsx_count = pkg.files.keys()
             .filter(|k| k.ends_with(".tsx") && !k.ends_with(".stories.tsx"))
             .count();
-        assert_eq!(tsx_count, 54, "expected 54 component .tsx files, got {tsx_count}");
+        assert_eq!(tsx_count, 55, "expected 55 component .tsx files, got {tsx_count}");
         let story_count = pkg.files.keys().filter(|k| k.ends_with(".stories.tsx")).count();
-        assert_eq!(story_count, 54, "expected 54 story files, got {story_count}");
+        assert_eq!(story_count, 55, "expected 55 story files, got {story_count}");
     }
 
     #[test]

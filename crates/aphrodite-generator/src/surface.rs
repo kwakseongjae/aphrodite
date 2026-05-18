@@ -519,6 +519,25 @@ mod tests {
     use super::*;
 
     #[test]
+    fn surface_prompt_contains_landing_pin_guards() {
+        // Pass 50-55 critical: composer must not pick mobile_app for
+        // service/SaaS multi-page brands. These guards prevent future
+        // prompt edits from silently dropping the discipline section.
+        assert!(SURFACE_SYSTEM_PROMPT.contains("surface_type discipline for service / product brands"));
+        assert!(SURFACE_SYSTEM_PROMPT.contains("Phone-framed mobile_app"));
+        assert!(SURFACE_SYSTEM_PROMPT.contains("only appropriate when the intent"));
+        assert!(SURFACE_SYSTEM_PROMPT.contains("EXPLICITLY"));
+        // The visual rule that protects landing/pricing/editorial/portfolio
+        // from accidentally getting a phone frame.
+        assert!(SURFACE_SYSTEM_PROMPT.contains("9:41 status bar"));
+        assert!(SURFACE_SYSTEM_PROMPT.contains("Bottom-tab navigation"));
+        // The mobile_app surface_type itself still has a definition (so
+        // intent that DOES want an in-app screen can still get it).
+        assert!(SURFACE_SYSTEM_PROMPT.contains(r#""mobile_app" — mobile-first app screen"#));
+        assert!(SURFACE_SYSTEM_PROMPT.contains("390×844 phone frame"));
+    }
+
+    #[test]
     fn strip_augmentation_finds_earliest_marker() {
         let intent = "Make a landing page\n\n## Persona authority\nbig prose\n\n## Reference materials\nstuff";
         let stripped = strip_augmentation(intent);

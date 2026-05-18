@@ -111,6 +111,12 @@ pub fn harmonize(
     // what's *really* still wrong rather than what we already fixed.
     let composition_post_fix = auto_fix_h1_count(&composition_out_labeled);
     let composition_post_fix = fix_broken_img_placeholders(&composition_post_fix);
+    // Pass 55+ security: <video> and <audio> are higher-stakes than <img>
+    // for external-URL leaks (autoplay, autobuffer can pull MBs without
+    // user action, plus video CDNs commonly track). Strip any
+    // <video src="https://..."> or <audio src="..."> unless the tag
+    // carries `data-aphrodite-asset-verified`.
+    let composition_post_fix = strip_unverified_external_media(&composition_post_fix);
     // Pass 43 surfaced: composer routinely sets `.hero { min-height: 80vh }`
     // assuming a full-bleed photograph. When the actual hero content is a
     // placeholder figure (no real asset shipped yet), 80vh becomes 1500+px
@@ -233,6 +239,54 @@ fn score_quality(html: &str, warnings: &[String]) -> (QualityAxes, u32) {
         },
         composite,
     )
+}
+
+/// Walk `<video>` and `<audio>` tags. Replace any with an external `src`
+/// (or with `<source src="https://...">` children) that lacks the
+/// `data-aphrodite-asset-verified` opt-out with a styled placeholder
+/// `<figure>`. Pass 55+ security: video/audio external URLs are higher
+/// bandwidth + tracking risk than images, so we go stricter — any
+/// remote src triggers the swap.
+fn strip_unverified_external_media(html: &str) -> String {
+    let mut out = String::with_capacity(html.len());
+    let mut cursor = 0usize;
+    while let Some(rel) = html[cursor..].find("<video").or_else(|| html[cursor..].find("<audio")) {
+        let start = cursor + rel;
+        out.push_str(&html[cursor..start]);
+        // Determine which tag we matched.
+        let (tag, kind_label) = if html[start..].starts_with("<video") {
+            ("video", "video")
+        } else {
+            ("audio", "audio")
+        };
+        let close_marker = format!("</{tag}>");
+        let close_rel = match html[start..].find(close_marker.as_str()) {
+            Some(c) => c,
+            None => {
+                out.push_str(&html[start..]);
+                return out;
+            }
+        };
+        let block = &html[start..start + close_rel + close_marker.len()];
+        let opt_out = block.contains("data-aphrodite-asset-verified");
+        let has_remote = block.contains("src=\"http://")
+            || block.contains("src=\"https://")
+            || block.contains("src='http://")
+            || block.contains("src='https://");
+        if has_remote && !opt_out {
+            let label = pick_attr(block, "aria-label")
+                .or_else(|| pick_attr(block, "title"))
+                .unwrap_or_else(|| kind_label.to_string());
+            out.push_str(&format!(
+                r#"<figure class="image-placeholder" style="aspect-ratio: 16/9; max-width: 720px; max-height: 405px; margin: 0 auto; background: var(--colors-primary-100, #f0ead8); display: flex; align-items: center; justify-content: center; color: var(--colors-text-muted, #71717a); font-size: 13px; padding: 24px; text-align: center; border-radius: 4px;">[{kind_label}: {label}]</figure>"#
+            ));
+        } else {
+            out.push_str(block);
+        }
+        cursor = start + close_rel + close_marker.len();
+    }
+    out.push_str(&html[cursor..]);
+    out
 }
 
 /// Walk `<img>` tags. If src is empty / fake / placeholder-shaped, replace
@@ -1366,6 +1420,31 @@ spacing:
         assert!(fixed.contains(r#"<img src="https://real.cdn/photo.jpg""#));
         // Should NOT have any <img src=""
         assert!(!fixed.contains(r#"<img src="""#));
+    }
+
+    #[test]
+    fn strip_video_unverified_external_url() {
+        let html = r#"<body><video src="https://cdn.example.com/promo.mp4" autoplay aria-label="제품 소개 영상"></video></body>"#;
+        let out = strip_unverified_external_media(html);
+        assert!(out.contains("image-placeholder"));
+        assert!(out.contains("[video: 제품 소개 영상]"));
+        assert!(!out.contains("cdn.example.com"));
+    }
+
+    #[test]
+    fn strip_video_preserves_verified_external_url() {
+        let html = r#"<body><video src="https://real.cdn/video.mp4" data-aphrodite-asset-verified></video></body>"#;
+        let out = strip_unverified_external_media(html);
+        assert!(out.contains("real.cdn"));
+        assert!(!out.contains("image-placeholder"));
+    }
+
+    #[test]
+    fn strip_audio_unverified_external_url() {
+        let html = r#"<body><audio src="https://stream.example.com/podcast.mp3" title="에피소드 1"></audio></body>"#;
+        let out = strip_unverified_external_media(html);
+        assert!(out.contains("[audio: 에피소드 1]"));
+        assert!(!out.contains("stream.example.com"));
     }
 
     #[test]
