@@ -103,7 +103,15 @@ pub fn harmonize(
     // placeholder figure (no real asset shipped yet), 80vh becomes 1500+px
     // of dead vertical space. Cap section min-heights when placeholders
     // are present in the composition.
-    let composition_post_fix = if composition_post_fix.contains("class=\"image-placeholder\"") {
+    // Count viewport-height violations BEFORE the cap fires, so the audit
+    // can surface "composer ignored prompt-level placeholder-height ban".
+    let placeholder_present = composition_post_fix.contains("class=\"image-placeholder\"");
+    let vh_violations_pre_fix = if placeholder_present {
+        count_viewport_height_violations(&composition_post_fix)
+    } else {
+        0
+    };
+    let composition_post_fix = if placeholder_present {
         let capped = cap_vh_property(&composition_post_fix, "min-height", 40);
         let capped = cap_vh_property(&capped, "height", 60);
         // Pass 44 surfaced: composer authored figures directly with
@@ -122,6 +130,11 @@ pub fn harmonize(
     };
     // Production-readiness audit on the FIXED composition (read-only after this point).
     report.quality_warnings = audit_composition(&composition_post_fix, display.as_deref(), body.as_deref());
+    if vh_violations_pre_fix > 0 {
+        report.quality_warnings.push(format!(
+            "{vh_violations_pre_fix} viewport-relative height rule(s) around placeholder figures — composer ignored prompt-level ban; harmonize capped them, but if this warning persists across runs the prompt may need tightening."
+        ));
+    }
 
     (composition_post_fix, hero_out, report)
 }
@@ -193,6 +206,40 @@ fn pick_attr(tag: &str, attr: &str) -> Option<String> {
 /// page hero) and downgrade all others to `<h2>`. This is a safe transform
 /// because the page-level hero should be h1 and section headers should be
 /// h2. Pass 39 surfaced this — composer emitted h1 per section.
+/// Count violations of the prompt-level "no viewport-relative heights
+/// around placeholders" rule. Sees `height: NNvh` ≥ 70, `min-height:
+/// NNvh` ≥ 70, and any `height: calc(100v...)` rule. Run BEFORE the
+/// harmonize cap to capture the original composer output.
+fn count_viewport_height_violations(html: &str) -> usize {
+    let mut n = 0usize;
+    for prop in ["height:", "min-height:"] {
+        let mut cursor = 0usize;
+        while let Some(rel) = html[cursor..].find(prop) {
+            let i = cursor + rel;
+            // Skip `height:` matches that are tails of `min-height:` /
+            // `max-height:` — otherwise we'd double-count.
+            if prop == "height:" && i >= 4 {
+                let prev = &html[i - 4..i];
+                if prev == "min-" || prev == "max-" {
+                    cursor = i + prop.len();
+                    continue;
+                }
+            }
+            let tail = &html[i + prop.len()..];
+            let tail = tail.trim_start();
+            let num: String = tail.chars().take_while(|c| c.is_ascii_digit()).collect();
+            if let Ok(v) = num.parse::<u32>() {
+                if v >= 70 && tail[num.len()..].starts_with("vh") {
+                    n += 1;
+                }
+            }
+            cursor = i + prop.len();
+        }
+    }
+    n += html.matches("height: calc(100v").count();
+    n
+}
+
 /// Inject `max-height: <cap_px>px;` immediately after every
 /// `height: calc(100v...);` declaration. Idempotent — skips declarations
 /// that already have an adjacent `max-height`.
@@ -1025,6 +1072,12 @@ spacing:
         assert!(out.contains("min-height: 40vh"));
         assert!(out.contains("min-height: 30vh"), "values below the cap pass through");
         assert!(!out.contains("80vh"));
+    }
+
+    #[test]
+    fn count_viewport_violations_catches_high_vh_and_calc() {
+        let css = ".hero { min-height: 80vh; } .img { height: 100vh; } .x { height: calc(100vw * 1.25); } .ok { height: 30vh; }";
+        assert_eq!(count_viewport_height_violations(css), 3);
     }
 
     #[test]
