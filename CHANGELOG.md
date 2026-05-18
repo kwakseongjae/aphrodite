@@ -1,10 +1,32 @@
 # Changelog
 
-## 1.0.0-rc.1 — 2026-05-18 (v1.0 Release Candidate)
+## 1.0.0-rc.3 — 2026-05-18 (v1.0 Release Candidate)
 
 The Toss/Karrot-adoption milestone. v0.6-v0.8 closed the design-system
 handoff gap; v1.0 closes the developer-adoption gap: actual typed React
-components, npm-publishable package, and Storybook stories.
+components, npm-publishable package, Storybook stories, visual regression,
+and automated publish workflow.
+
+### Added — v1.0 RC.3 incremental
+- **30 React primitives + 30 stories** (was 12 in RC.1) — Textarea,
+  Select, Checkbox, Radio, RadioGroup, Tabs (+ TabList/Tab/TabPanel),
+  Accordion (+ AccordionItem), Toast (+ ToastProvider/useToast),
+  Tooltip, Popover, Menu (+ MenuItem), ProgressBar, Stepper, Slider,
+  Breadcrumb, Pagination, Divider, EmptyState. Full ARIA wiring on
+  every primitive.
+- **`aphrodite diff <baseline> [<current>]`** — visual regression CLI
+  verb. Pair-matches PNG screenshots, computes size-delta + byte
+  equality, shells out to ImageMagick `compare` when available for
+  per-pixel diff. Returns structured JSON for CI gates.
+- **npm publish workflow auto-emitted** — every `react/` package now
+  ships `.github/workflows/publish.yml` (tag-triggered npm publish),
+  `.npmignore` (excludes stories + ci files from tarball), and a
+  preserved CHANGELOG.md seed. `git tag v0.1.0 && git push --tags`
+  publishes.
+- **Per-run output**: 70 files in the `react/` package.
+
+### Added — v1.0 React component package (RC.1 baseline)
+- **`aphrodite react`** CLI verb: generates a publishable npm package
 
 ### Added — v1.0 React component package
 - **`aphrodite react`** CLI verb: generates a publishable npm package

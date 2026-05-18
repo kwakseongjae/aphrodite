@@ -5,7 +5,8 @@
 
 [![v1.0 RC — Toss/Karrot-adoptable](https://img.shields.io/badge/v1.0_RC-Toss%2FKarrot_grade-a78bfa)](docs/agent-eval/archive/journey.html)
 [![49 dogfood passes recorded](https://img.shields.io/badge/dogfood-49_passes-9333ea)](docs/agent-eval/archive/journey.html)
-[![12 typed React primitives](https://img.shields.io/badge/react-12_components-61dafb)](crates/aphrodite-generator/src/react_export.rs)
+[![30 typed React primitives](https://img.shields.io/badge/react-30_components-61dafb)](crates/aphrodite-generator/src/react_export.rs)
+[![visual regression `aphrodite diff`](https://img.shields.io/badge/visual_diff-aphrodite_diff-fb923c)](crates/aphrodite-generator/src/visual_diff.rs)
 [![13 design authorities](https://img.shields.io/badge/personas-13-fcd34d)](crates/aphrodite-core/seed-personas/)
 [![Apache 2.0](https://img.shields.io/badge/license-Apache_2.0-57575c)](LICENSE)
 
