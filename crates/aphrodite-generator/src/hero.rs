@@ -138,7 +138,12 @@ const HERO_TEMPLATE: &str = r##"<!DOCTYPE html>
 pub fn inject_variant_css(html: &str, _doc: &DesignDocument, variants: &[Variant]) -> String {
     let mut css = String::from("\n<style data-aphrodite-variants>\n");
     for v in variants {
-        css.push_str(&format!("[data-variant=\"{}\"] {{\n", v.kind.label()));
+        // Scope to `body[data-variant=...]` so the rule doesn't bleed onto
+        // the variant-switcher buttons (which also carry data-variant
+        // attributes for click-handlers). Pass 43 surfaced this — the
+        // "dark" button rendered with dark-theme tokens applied to itself,
+        // making its label invisible against its own dark background.
+        css.push_str(&format!("body[data-variant=\"{}\"] {{\n", v.kind.label()));
         for (k, val) in &v.tokens {
             css.push_str(&format!("  --{}: {};\n", k.replace('.', "-"), val));
         }
