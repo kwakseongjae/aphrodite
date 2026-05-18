@@ -58,6 +58,7 @@ Do NOT propose:
 - Pure taste preferences with no anchor to the intent or the user's accumulated TastePreferences below.
 - Complete redesigns.
 - "Try a different style" without naming what.
+- **Removing REQUIRED scaffolding**. The harness mandates: `<nav class="aphrodite-variant-switcher">` with light/dark/brand-a/brand-b buttons, exactly one `<h1>`, semantic `<section>` regions, a `<footer>`. These are non-negotiable production-page elements emitted by every run. Critiquing them as "intrusive" or "off-brand" is a category error — they belong, and the composer is not free to remove them. If they LOOK wrong, propose a styling refine (e.g. "move switcher to bottom-right, make it muted"); never propose removal.
 
 If the user has accumulated TastePreferences hints, weight your axis pick by those — repeated past dislikes outrank single-turn aesthetic instincts.
 

@@ -161,15 +161,27 @@ pub fn fix_broken_img_placeholders(html: &str) -> String {
         let img_tag = &html[img_start..tag_end];
         let src = pick_attr(img_tag, "src").unwrap_or_default();
         let alt = pick_attr(img_tag, "alt").unwrap_or_default();
-        let is_placeholder = src.trim().is_empty()
-            || src.starts_with('#')
-            || src.starts_with("[photo")
-            || src.starts_with("[image")
-            || src.starts_with("placeholder")
-            || src.contains("example.com")
-            || src.contains("placehold.")
-            || src.contains("via.placeholder")
-            || src.contains("picsum.photos");
+        let src_trim = src.trim();
+        // Pass 45 surfaced: composer wrote `<img src="/img/dining-table.jpg">`
+        // pointing at nonexistent paths. The narrow "fake URL" heuristic
+        // didn't catch them, so the page rendered broken-image icons.
+        // Treat any LOCAL relative path as a placeholder unless the
+        // caller verifies the asset exists (a future asset-validate phase
+        // could opt out by setting `data-aphrodite-asset-verified`).
+        let is_local_path = !src_trim.starts_with("http://")
+            && !src_trim.starts_with("https://")
+            && !src_trim.starts_with("data:")
+            && !src_trim.is_empty();
+        let is_placeholder = src_trim.is_empty()
+            || src_trim.starts_with('#')
+            || src_trim.starts_with("[photo")
+            || src_trim.starts_with("[image")
+            || src_trim.starts_with("placeholder")
+            || src_trim.contains("example.com")
+            || src_trim.contains("placehold.")
+            || src_trim.contains("via.placeholder")
+            || src_trim.contains("picsum.photos")
+            || (is_local_path && !img_tag.contains("data-aphrodite-asset-verified"));
         if is_placeholder {
             let label = if !alt.is_empty() { alt } else { "photo".to_string() };
             out.push_str(&format!(
