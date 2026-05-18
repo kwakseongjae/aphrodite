@@ -489,6 +489,60 @@ fn audit_composition(html: &str, display: Option<&str>, body: Option<&str>) -> V
     if footer_count == 0 && html.contains("class=\"footer") {
         warnings.push("footer class found but no `<footer>` element — wrap site footer in `<footer>`.".into());
     }
+    // ---- Accessibility (axe-like rules, no external dep) ------------
+    // Real a11y audits (Lighthouse, axe-core) would run in headless
+    // Chrome; ship those as a v0.8 phase. For now, the static checks
+    // below catch the most common Korean production-blocking failures.
+
+    // 1. Every <img> needs an `alt` attribute (empty alt is allowed for
+    //    decorative images, but missing is not).
+    let img_count = html.matches("<img").count();
+    let img_with_alt = html.matches("alt=").count();
+    if img_count > img_with_alt {
+        warnings.push(format!(
+            "{} `<img>` element(s) missing `alt=` attribute — every image needs an alt for screen readers (empty alt='' is allowed for decorative).",
+            img_count - img_with_alt
+        ));
+    }
+
+    // 2. <html lang="..."> must be set and non-empty. Default "en" still
+    //    counts but composer should set "ko" for Korean pages.
+    if !html.contains("<html lang=") && !html.contains("<html  lang=") {
+        warnings.push("`<html>` has no `lang` attribute — required for screen readers and SEO. Set `lang=\"ko\"` for Korean pages.".into());
+    }
+
+    // 3. <meta name="viewport"> is required for mobile rendering. Without
+    //    it Safari iOS renders at 980px and shrinks — kills mobile UX.
+    if !html.contains("name=\"viewport\"") && !html.contains("name='viewport'") {
+        warnings.push("missing `<meta name=\"viewport\">` — page will render at desktop width and shrink on mobile. Toss/Karrot bar requires this.".into());
+    }
+
+    // 4. <button> elements should have text or aria-label. Bare
+    //    `<button></button>` is a screen-reader trap.
+    let bare_button_re_count = html.matches("<button></button>").count()
+        + html.matches("<button> </button>").count();
+    if bare_button_re_count > 0 {
+        warnings.push(format!(
+            "{bare_button_re_count} empty `<button>` element(s) — buttons need text content or `aria-label`."
+        ));
+    }
+
+    // 5. Heading hierarchy: h1 → h3 without an h2 is a structural gap.
+    if html.contains("<h1") && html.contains("<h3") && !html.contains("<h2") {
+        warnings.push("heading hierarchy gap: page has `<h1>` and `<h3>` but no `<h2>`. Screen readers expect sequential levels.".into());
+    }
+
+    // 6. Color-contrast static check: explicit `color: #ccc` (and similar
+    //    near-white) on `background: #fff` patterns is a common low-
+    //    contrast tell. Lighthouse would catch this dynamically; flag
+    //    obvious cases statically.
+    for low in ["color: #ccc", "color: #ddd", "color: #eee"] {
+        if html.contains(low) && (html.contains("background: #fff") || html.contains("background-color: #fff")) {
+            warnings.push(format!("low-contrast pattern detected (`{low}` on white background) — likely fails WCAG-AA 4.5:1. Use ≥ #767676 for body text on white."));
+            break;
+        }
+    }
+
     // Mobile-first audit: every page should have at least one
     // `@media (min-width: ...)` block. A page with zero media queries
     // either targets desktop exclusively (collapses on phone) or relies

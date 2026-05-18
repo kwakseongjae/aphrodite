@@ -542,6 +542,19 @@ pub async fn run(
         );
     }
 
+    // Phase 8.6: optional external audits. If the user has installed
+    // `lighthouse` (npm i -g lighthouse) and/or `axe` (npm i -g
+    // @axe-core/cli) globally, run them against the composition and
+    // surface category scores. Both are completely optional — a missing
+    // binary is not a warning, just a no-op. Future v0.8 phase will
+    // bundle these as managed deps.
+    if let Some(comp_path) = composition_path.as_ref() {
+        let external_audits = run_external_audits(comp_path);
+        for line in &external_audits {
+            eprintln!("● phase 8.6 / external audit: {line}");
+        }
+    }
+
     // Single Accept (or Regenerate if no turns made it satisfied) taste event
     // covering the create run as a whole. Per-turn events would double-count.
     let signal = if final_satisfaction >= satisfaction_threshold && prior_deltas.is_empty() {
@@ -749,6 +762,80 @@ fn capture_screenshots(composition_path: &std::path::Path) -> Vec<std::path::Pat
         }
     }
     out
+}
+
+/// Optional external audits: lighthouse + axe. Both pulled from PATH;
+/// silent no-op if absent. Returns one-line summary strings for the
+/// audits that ran.
+fn run_external_audits(composition_path: &std::path::Path) -> Vec<String> {
+    use std::process::{Command, Stdio};
+    let file_url = format!("file://{}", composition_path.display());
+    let mut summaries = Vec::new();
+
+    // Lighthouse — only run if installed globally (npx --no-install
+    // returns immediately when the package isn't local).
+    if Command::new("lighthouse")
+        .arg("--version")
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .status()
+        .map(|s| s.success())
+        .unwrap_or(false)
+    {
+        let json_path = composition_path.with_extension("lighthouse.json");
+        let ok = Command::new("lighthouse")
+            .arg(&file_url)
+            .arg("--quiet")
+            .arg("--chrome-flags=--headless --no-sandbox")
+            .arg("--output=json")
+            .arg(format!("--output-path={}", json_path.display()))
+            .arg("--only-categories=performance,accessibility,best-practices,seo")
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .status()
+            .map(|s| s.success())
+            .unwrap_or(false);
+        if ok {
+            if let Ok(raw) = std::fs::read_to_string(&json_path) {
+                if let Ok(v) = serde_json::from_str::<serde_json::Value>(&raw) {
+                    let cats = &v["categories"];
+                    let score = |k: &str| -> u32 {
+                        (cats[k]["score"].as_f64().unwrap_or(0.0) * 100.0) as u32
+                    };
+                    summaries.push(format!(
+                        "lighthouse perf={} a11y={} bp={} seo={}",
+                        score("performance"),
+                        score("accessibility"),
+                        score("best-practices"),
+                        score("seo")
+                    ));
+                }
+            }
+        }
+    }
+
+    // axe via @axe-core/cli — same opt-in pattern.
+    if Command::new("axe")
+        .arg("--version")
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .status()
+        .map(|s| s.success())
+        .unwrap_or(false)
+    {
+        let out = Command::new("axe")
+            .arg(&file_url)
+            .arg("--no-reporter")
+            .arg("--stdout")
+            .output();
+        if let Ok(o) = out {
+            let stdout = String::from_utf8_lossy(&o.stdout);
+            let violations = stdout.lines().filter(|l| l.contains("violation")).count();
+            summaries.push(format!("axe {violations} violation(s)"));
+        }
+    }
+
+    summaries
 }
 
 /// Cheap slug-from-intent: take the first `word_cap` significant words,
