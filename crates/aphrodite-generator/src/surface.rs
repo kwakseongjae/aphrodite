@@ -119,6 +119,23 @@ STEP 2 — Build a COMPLETE, SELF-CONTAINED HTML document for that surface that:
     - Use whitespace generously — section padding ≥ 64px desktop / 32px mobile.
     - Aim for ≥ 8 000 bytes of HTML — short outputs read as placeholders.
 
+  Internationalization — REQUIRED:
+    1. Set `<html lang="...">` to match the page's primary content
+       language. Korean copy → `lang="ko"`. Japanese → `lang="ja"`.
+       English → `lang="en"`. NEVER default to `lang="en"` when the
+       intent or copy is Korean — it confuses screen readers, breaks
+       browser translation, and tanks Korean SEO.
+    2. Korean pages: prefer Pretendard (then Apple SD Gothic Neo,
+       Malgun Gothic) for the body family. Hangul should sit at
+       matching optical weight to any Latin around it.
+    3. Korean text lengths: line-height ≥ 1.55 (Korean glyphs are
+       taller than Latin), letter-spacing default is fine — don't
+       tighten it.
+    4. Mixed CJK / Latin: don't separate them with extra space;
+       Pretendard handles the kerning. Just write naturally.
+    5. Avoid English-only placeholder text in Korean form fields
+       (e.g. "Enter your phone" → "전화번호를 입력해주세요").
+
   Mobile-first — REQUIRED, every page:
     Korean production targets (Toss, Karrot, Gangnam Unni) are mobile-first.
     Your CSS must:

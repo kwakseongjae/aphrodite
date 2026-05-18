@@ -111,6 +111,11 @@ pub fn harmonize(
     } else {
         0
     };
+    // Locale auto-detect: if the composition contains Hangul code points
+    // but `<html lang="en">` (or no lang attribute), patch the tag to
+    // `lang="ko"`. The composer's hardcoded default is "en" inherited
+    // from the hero.rs template; this is a v0.7 i18n correction.
+    let composition_post_fix = patch_lang_attribute(&composition_post_fix);
     let composition_post_fix = if placeholder_present {
         let capped = cap_vh_property(&composition_post_fix, "min-height", 40);
         let capped = cap_vh_property(&capped, "height", 60);
@@ -218,6 +223,77 @@ fn pick_attr(tag: &str, attr: &str) -> Option<String> {
 /// page hero) and downgrade all others to `<h2>`. This is a safe transform
 /// because the page-level hero should be h1 and section headers should be
 /// h2. Pass 39 surfaced this — composer emitted h1 per section.
+/// v0.7 i18n: detect Korean (Hangul / Jamo / CJK common) characters in
+/// the composition body. If present, ensure `<html lang="ko">` is set.
+/// Composer's default came from the hero template's hardcoded `lang="en"`
+/// — that misclassifies a fully-Korean page to screen readers, SEO
+/// crawlers, and browser translation prompts.
+fn patch_lang_attribute(html: &str) -> String {
+    let body_start = html.find("<body").unwrap_or(0);
+    let body_text = &html[body_start..];
+    let has_hangul = body_text.chars().any(is_korean_char);
+    let has_japanese = body_text.chars().any(is_japanese_char);
+    let target_lang = if has_hangul {
+        "ko"
+    } else if has_japanese {
+        "ja"
+    } else {
+        return html.to_string();
+    };
+    // Find the existing <html lang="..."> if any and rewrite.
+    if let Some(open_start) = html.find("<html") {
+        if let Some(open_end_rel) = html[open_start..].find('>') {
+            let open_end = open_start + open_end_rel;
+            let opening = &html[open_start..open_end];
+            // Rewrite an existing lang= attribute, else inject.
+            let new_opening = if let Some(lang_pos) = opening.find("lang=\"") {
+                let lang_value_start = lang_pos + "lang=\"".len();
+                if let Some(close_rel) = opening[lang_value_start..].find('"') {
+                    let close = lang_value_start + close_rel;
+                    let current = &opening[lang_value_start..close];
+                    if current == target_lang {
+                        return html.to_string();
+                    }
+                    let mut new = String::with_capacity(opening.len());
+                    new.push_str(&opening[..lang_value_start]);
+                    new.push_str(target_lang);
+                    new.push_str(&opening[close..]);
+                    new
+                } else {
+                    opening.to_string()
+                }
+            } else {
+                // No lang attribute — inject after `<html`.
+                format!("<html lang=\"{target_lang}\"{}", &opening["<html".len()..])
+            };
+            let mut out = String::with_capacity(html.len());
+            out.push_str(&html[..open_start]);
+            out.push_str(&new_opening);
+            out.push_str(&html[open_end..]);
+            return out;
+        }
+    }
+    html.to_string()
+}
+
+fn is_korean_char(c: char) -> bool {
+    matches!(c as u32,
+        0xAC00..=0xD7A3      // Hangul syllables
+        | 0x1100..=0x11FF    // Hangul Jamo
+        | 0x3130..=0x318F    // Hangul Compatibility Jamo
+        | 0xA960..=0xA97F    // Hangul Jamo Extended-A
+        | 0xD7B0..=0xD7FF    // Hangul Jamo Extended-B
+    )
+}
+
+fn is_japanese_char(c: char) -> bool {
+    matches!(c as u32,
+        0x3040..=0x309F      // Hiragana
+        | 0x30A0..=0x30FF    // Katakana
+        | 0x31F0..=0x31FF    // Katakana Phonetic Extensions
+    )
+}
+
 /// Count violations of the prompt-level "no viewport-relative heights
 /// around placeholders" rule. Sees `height: NNvh` ≥ 70, `min-height:
 /// NNvh` ≥ 70, and any `height: calc(100v...)` rule. Run BEFORE the
@@ -1151,6 +1227,33 @@ spacing:
         assert!(out.contains("min-height: 40vh"));
         assert!(out.contains("min-height: 30vh"), "values below the cap pass through");
         assert!(!out.contains("80vh"));
+    }
+
+    #[test]
+    fn patch_lang_sets_ko_when_hangul_present() {
+        let html = r#"<!doctype html><html lang="en"><body><h1>안녕하세요</h1></body></html>"#;
+        let out = patch_lang_attribute(html);
+        assert!(out.contains(r#"<html lang="ko">"#));
+        assert!(!out.contains(r#"<html lang="en">"#));
+    }
+
+    #[test]
+    fn patch_lang_injects_when_missing() {
+        let html = "<!doctype html><html><body><h1>안녕하세요</h1></body></html>";
+        let out = patch_lang_attribute(html);
+        assert!(out.contains(r#"<html lang="ko">"#));
+    }
+
+    #[test]
+    fn patch_lang_idempotent_when_already_ko() {
+        let html = r#"<html lang="ko"><body>안녕</body></html>"#;
+        assert_eq!(patch_lang_attribute(html), html);
+    }
+
+    #[test]
+    fn patch_lang_no_change_for_english_only() {
+        let html = r#"<html lang="en"><body>Hello world</body></html>"#;
+        assert_eq!(patch_lang_attribute(html), html);
     }
 
     #[test]
