@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.0.0-rc.4 — 2026-05-18
+
+### Added — Figma Variables sync
+- **`aphrodite figma export`** — write `tokens.figma.json` in Tokens
+  Studio plugin format. Auto-emitted by phase 8.7 on every
+  `aphrodite create`. Designers import via the free Tokens Studio
+  plugin (no Figma Enterprise plan required) to get one Figma Variable
+  per Aphrodite token, scoped per variant.
+- **`aphrodite figma pull <file_key>`** — fetches the linked Figma
+  file's local variables via REST and diffs against DESIGN.md. Reports
+  matched / only-in-design / only-in-figma / value-mismatches.
+  Read-only (works on Pro/Org plans). Requires APHRODITE_FIGMA_TOKEN
+  env var.
+- Per emitted run now: 5-file design-system handoff
+  (tokens.css + tokens.json + tokens.figma.json + components.html +
+  components-{mobile,tablet,desktop}.png).
+- 3 new figma_sync tests pass (Tokens Studio shape, diff correctness,
+  color hex normalisation).
+
 ## 1.0.0-rc.3 — 2026-05-18 (v1.0 Release Candidate)
 
 The Toss/Karrot-adoption milestone. v0.6-v0.8 closed the design-system
