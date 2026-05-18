@@ -489,6 +489,19 @@ fn audit_composition(html: &str, display: Option<&str>, body: Option<&str>) -> V
     if footer_count == 0 && html.contains("class=\"footer") {
         warnings.push("footer class found but no `<footer>` element — wrap site footer in `<footer>`.".into());
     }
+    // Mobile-first audit: every page should have at least one
+    // `@media (min-width: ...)` block. A page with zero media queries
+    // either targets desktop exclusively (collapses on phone) or relies
+    // on intrinsic-only layout — both fail the Korean production bar.
+    if !html.contains("@media (min-width") && !html.contains("@media(min-width") {
+        warnings.push("no `@media (min-width: ...)` block — composition has no mobile-first responsive rules. Production targets (Toss, Karrot) are mobile-first.".into());
+    }
+    // Fixed multi-column grids without responsive override are a
+    // common collapse pattern. Catch `grid-template-columns:` with
+    // two-or-more `1fr` repeated.
+    if html.contains("grid-template-columns: 1fr 1fr") && !html.contains("@media") {
+        warnings.push("multi-column grid declared without any `@media` override — will overflow at mobile widths.".into());
+    }
     // Check that declared fonts actually appear in the @import URL.
     for fam in [display, body].iter().flatten() {
         if !is_system_family(fam) {

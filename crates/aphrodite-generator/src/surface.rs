@@ -119,6 +119,28 @@ STEP 2 — Build a COMPLETE, SELF-CONTAINED HTML document for that surface that:
     - Use whitespace generously — section padding ≥ 64px desktop / 32px mobile.
     - Aim for ≥ 8 000 bytes of HTML — short outputs read as placeholders.
 
+  Mobile-first — REQUIRED, every page:
+    Korean production targets (Toss, Karrot, Gangnam Unni) are mobile-first.
+    Your CSS must:
+      1. Default styles target mobile (~360-414px viewport). No `min-width`
+         on the base rules.
+      2. Use `@media (min-width: 768px)` for tablet adjustments and
+         `@media (min-width: 1024px)` (or 1280px) for desktop. **At least
+         one `@media (min-width: ...)` block is REQUIRED** — a page with
+         no media queries fails this bar.
+      3. Touch targets ≥ 44×44px (buttons, nav links, switcher buttons).
+      4. Type scale: body ≥ 16px on mobile (smaller = unreadable on phone).
+         Hero headlines ≥ 36px mobile, ≥ 48px desktop.
+      5. Grid layouts: 1 column on mobile, multi-column at ≥ 768px. NEVER
+         emit a fixed `grid-template-columns: 1fr 1fr 1fr` without the
+         responsive override — it breaks on phones.
+      6. Section padding scales: 32px on mobile, 64px+ on desktop.
+      7. Variant switcher: on mobile, position it inline with the nav or
+         at the bottom — `position: fixed` at top-right collides with
+         status bar / notch.
+    A page that looks great at 1440px but collapses at 360px is NOT
+    production-ready.
+
   Semantic HTML — REQUIRED, every page:
     - Exactly ONE `<h1>` per page (the hero headline). Subsequent headings
       are `<h2>` / `<h3>` (h2 for section titles, h3 for sub-divisions).

@@ -521,17 +521,25 @@ pub async fn run(
         (dp, hp, cp)
     };
 
-    // Phase 8.5: visual capture. macOS Chrome headless renders the
-    // composition to a PNG next to composition.html so every run carries
-    // visual evidence of what the harness produced. Failures are silent —
-    // a missing screenshot is not a run failure.
-    let screenshot_path = if let Some(comp_path) = composition_path.as_ref() {
-        capture_screenshot(comp_path)
+    // Phase 8.5: visual capture across three viewports (mobile / tablet /
+    // desktop). Korean production targets are mobile-first, so a single
+    // 1440px shot lies — it can hide a layout that collapses at 360px.
+    // Failures are silent; a missing screenshot is never a run failure.
+    let screenshot_paths = if let Some(comp_path) = composition_path.as_ref() {
+        capture_screenshots(comp_path)
     } else {
-        None
+        Vec::new()
     };
-    if let Some(p) = screenshot_path.as_ref() {
-        eprintln!("● phase 8.5 / visual capture: {}", p.display());
+    if !screenshot_paths.is_empty() {
+        eprintln!(
+            "● phase 8.5 / visual capture: {} viewport(s) — {}",
+            screenshot_paths.len(),
+            screenshot_paths
+                .iter()
+                .map(|p| p.file_name().map(|f| f.to_string_lossy().into_owned()).unwrap_or_default())
+                .collect::<Vec<_>>()
+                .join(", ")
+        );
     }
 
     // Single Accept (or Regenerate if no turns made it satisfied) taste event
@@ -676,43 +684,71 @@ fn short(s: &str, max: usize) -> String {
     }
 }
 
-/// Render composition.html to a PNG next to it using macOS Chrome
-/// headless. Returns the screenshot path on success, `None` on any
-/// failure (binary missing, render error, non-macOS) — visual capture
-/// is a nice-to-have, never a run blocker.
+/// Render composition.html across mobile / tablet / desktop viewports.
+/// Returns paths of successfully written screenshots — empty Vec means
+/// no Chrome binary was found or every capture failed.
 ///
 /// Honours `APHRODITE_NO_SCREENSHOT=1` for runs that don't want it
 /// (e.g. CI without a display server).
-fn capture_screenshot(composition_path: &std::path::Path) -> Option<std::path::PathBuf> {
+fn capture_screenshots(composition_path: &std::path::Path) -> Vec<std::path::PathBuf> {
     if std::env::var_os("APHRODITE_NO_SCREENSHOT").is_some() {
-        return None;
+        return Vec::new();
     }
     let chrome_candidates = [
         "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
         "/Applications/Chromium.app/Contents/MacOS/Chromium",
         "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
     ];
-    let chrome = chrome_candidates
-        .iter()
-        .find(|p| std::path::Path::new(p).exists())?;
-    let out_path = composition_path.with_extension("png");
+    let Some(chrome) = chrome_candidates.iter().find(|p| std::path::Path::new(p).exists()) else {
+        return Vec::new();
+    };
+    // (suffix, width, height). 360x800 ≈ Galaxy S23, 768x1024 = iPad,
+    // 1440x1800 = standard laptop. Heights are tall enough to capture
+    // the hero + first 2-3 sections — full page scroll is not the goal
+    // here; layout collapse detection is.
+    let viewports = [
+        ("mobile", 360u32, 800u32),
+        ("tablet", 768, 1024),
+        ("desktop", 1440, 1800),
+    ];
     let file_url = format!("file://{}", composition_path.display());
-    let status = std::process::Command::new(chrome)
-        .arg("--headless")
-        .arg("--disable-gpu")
-        .arg("--no-sandbox")
-        .arg(format!("--screenshot={}", out_path.display()))
-        .arg("--window-size=1440,1800")
-        .arg(&file_url)
-        .stdout(std::process::Stdio::null())
-        .stderr(std::process::Stdio::null())
-        .status()
-        .ok()?;
-    if status.success() && out_path.exists() {
-        Some(out_path)
-    } else {
-        None
+    let stem = composition_path.with_extension("");
+    let mut out = Vec::new();
+    for (suffix, w, h) in viewports {
+        let png_path = stem.with_file_name(format!(
+            "{}-{suffix}.png",
+            stem.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_else(|| "composition".into())
+        ));
+        let status = std::process::Command::new(chrome)
+            .arg("--headless")
+            .arg("--disable-gpu")
+            .arg("--no-sandbox")
+            .arg(format!("--screenshot={}", png_path.display()))
+            .arg(format!("--window-size={w},{h}"))
+            .arg(&file_url)
+            .stdout(std::process::Stdio::null())
+            .stderr(std::process::Stdio::null())
+            .status();
+        if let Ok(s) = status {
+            if s.success() && png_path.exists() {
+                out.push(png_path);
+            }
+        }
     }
+    // Also write a canonical composition.png aliased to the desktop
+    // capture, so downstream tooling that expects the legacy file
+    // path still works.
+    if let Some(desktop_png) = out.iter().find(|p| {
+        p.file_name()
+            .map(|n| n.to_string_lossy().contains("-desktop"))
+            .unwrap_or(false)
+    }) {
+        let canonical = composition_path.with_extension("png");
+        if std::fs::copy(desktop_png, &canonical).is_ok() {
+            out.push(canonical);
+        }
+    }
+    out
 }
 
 /// Cheap slug-from-intent: take the first `word_cap` significant words,
