@@ -9,3 +9,4 @@ fixtures/
 */test-results/
 tsconfig.tsbuildinfo
 vite-app/dist/
+remix-app/build/

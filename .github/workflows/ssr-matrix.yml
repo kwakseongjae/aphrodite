@@ -17,9 +17,28 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  next-app:
+  ssr-matrix:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        framework:
+          - name: next
+            app_dir: tests/ssr/next-app
+            build_cmd: "pnpm build"
+            start_cmd: "pnpm start"
+            port: 3000
+          - name: vite
+            app_dir: tests/ssr/vite-app
+            build_cmd: "pnpm build"
+            start_cmd: "pnpm preview"
+            port: 3001
+          - name: remix
+            app_dir: tests/ssr/remix-app
+            build_cmd: "pnpm build"
+            start_cmd: "PORT=3002 pnpm start"
+            port: 3002
     steps:
       - uses: actions/checkout@v4
 
@@ -31,7 +50,11 @@ jobs:
         with:
           node-version: "20"
           cache: pnpm
-          cache-dependency-path: "tests/ssr/**/pnpm-lock.yaml"
+          cache-dependency-path: |
+            tests/ssr/next-app/pnpm-lock.yaml
+            tests/ssr/vite-app/pnpm-lock.yaml
+            tests/ssr/remix-app/pnpm-lock.yaml
+            tests/ssr/playwright/pnpm-lock.yaml
 
       - uses: dtolnay/rust-toolchain@stable
 
@@ -52,23 +75,23 @@ jobs:
             bash tests/ssr/scripts/prepare-fixture.sh
           fi
 
-      - name: install Next.js app deps
-        working-directory: tests/ssr/next-app
+      - name: install ${{ matrix.framework.name }} app deps
+        working-directory: ${{ matrix.framework.app_dir }}
         run: pnpm install --no-frozen-lockfile
 
-      - name: next build (layer 1 — must exit 0)
-        working-directory: tests/ssr/next-app
-        run: pnpm build
+      - name: build ${{ matrix.framework.name }} (layer 1 — must exit 0)
+        working-directory: ${{ matrix.framework.app_dir }}
+        run: ${{ matrix.framework.build_cmd }}
 
-      - name: start Next.js
-        working-directory: tests/ssr/next-app
+      - name: start ${{ matrix.framework.name }}
+        working-directory: ${{ matrix.framework.app_dir }}
         run: |
-          pnpm start &
-          echo $! > .next.pid
+          ${{ matrix.framework.start_cmd }} &
+          echo $! > .ssr.pid
           # wait for ready
-          for i in $(seq 1 30); do
-            if curl -sf http://localhost:3000 > /dev/null; then
-              echo "Next.js ready"; break
+          for i in $(seq 1 60); do
+            if curl -sf http://localhost:${{ matrix.framework.port }} > /dev/null; then
+              echo "${{ matrix.framework.name }} ready on ${{ matrix.framework.port }}"; break
             fi
             sleep 1
           done
@@ -79,24 +102,25 @@ jobs:
           pnpm install --no-frozen-lockfile
           pnpm exec playwright install --with-deps chromium
 
-      - name: Playwright smoke (layers 2 + 3)
+      - name: Playwright smoke (layers 2 + 3) on ${{ matrix.framework.name }}
         working-directory: tests/ssr/playwright
         env:
           APH_SSR_SKIP_WEBSERVER: "1"
+          APH_SSR_BASE_URL: http://localhost:${{ matrix.framework.port }}
         run: pnpm test
 
-      - name: stop Next.js
+      - name: stop ${{ matrix.framework.name }}
         if: always()
-        working-directory: tests/ssr/next-app
+        working-directory: ${{ matrix.framework.app_dir }}
         run: |
-          if [[ -f .next.pid ]]; then
-            kill $(cat .next.pid) || true
+          if [[ -f .ssr.pid ]]; then
+            kill $(cat .ssr.pid) || true
           fi
 
       - name: upload Playwright report
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.framework.name }}
           path: tests/ssr/playwright/playwright-report/
           retention-days: 7

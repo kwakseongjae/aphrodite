@@ -1,0 +1,1 @@
+../../next-app/app/components-registry.tsx
