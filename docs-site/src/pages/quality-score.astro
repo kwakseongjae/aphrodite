@@ -1,0 +1,74 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+<Layout title="Aphrodite Quality Score">
+  <h1>Aphrodite Quality Score</h1>
+  <p class="lede">매 <code>aphrodite create</code> run의 emit 품질을 0-100점으로 측정. CI에서 임계값으로 gate 가능.</p>
+
+  <pre class="docs-snippet"><code>{`● Aphrodite Quality Score: ✓ 100/100  (a11y=100 mobile=100 perf=100 semantic=100)`}</code></pre>
+
+  <h2>4 axes</h2>
+  <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+    <thead>
+      <tr style="border-bottom: 1px solid var(--colors-border-primary);">
+        <th style="text-align: left; padding: 8px;">Axis</th>
+        <th style="text-align: left; padding: 8px;">의미</th>
+        <th style="text-align: left; padding: 8px;">계산</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom: 1px solid var(--colors-border-primary);">
+        <td style="padding: 8px;"><code>a11y</code></td>
+        <td style="padding: 8px;">접근성</td>
+        <td style="padding: 8px;">100에서 시작, audit warning당 -15. <code>&lt;img alt=&gt;</code>, <code>lang</code>, <code>viewport</code>, <code>aria</code>, contrast 등 체크.</td>
+      </tr>
+      <tr style="border-bottom: 1px solid var(--colors-border-primary);">
+        <td style="padding: 8px;"><code>mobile</code></td>
+        <td style="padding: 8px;">모바일 우선</td>
+        <td style="padding: 8px;">50 base + 25 (<code>@media (min-width)</code> 존재) + 25 (viewport meta).</td>
+      </tr>
+      <tr style="border-bottom: 1px solid var(--colors-border-primary);">
+        <td style="padding: 8px;"><code>performance</code></td>
+        <td style="padding: 8px;">HTML 크기</td>
+        <td style="padding: 8px;">&lt;30KB=100, &lt;80KB=90, &lt;150KB=75, else 60.</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px;"><code>semantic</code></td>
+        <td style="padding: 8px;">시맨틱 HTML</td>
+        <td style="padding: 8px;">25씩: 정확히 1개의 <code>&lt;h1&gt;</code>, <code>&lt;nav&gt;</code> 존재, <code>&lt;footer&gt;</code> 존재, <code>&lt;section&gt;</code> 또는 <code>&lt;article&gt;</code> ≥ 2.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>최종 점수 = 4 축의 평균.</p>
+
+  <h2>등급</h2>
+  <ul>
+    <li><strong>≥ 90</strong>: ✓ ship-ready</li>
+    <li><strong>75-89</strong>: • warning — minor concerns</li>
+    <li><strong>&lt; 75</strong>: ✗ failed — fix before merging</li>
+  </ul>
+
+  <h2>JSON 결과</h2>
+  <pre class="docs-snippet"><code>{`{
+  "quality_score": 100,
+  "quality_axes": { "a11y": 100, "mobile": 100, "performance": 100, "semantic": 100 },
+  "harmonize": {
+    "quality_warnings": []
+  }
+}`}</code></pre>
+
+  <h2>CI gate 예시</h2>
+  <pre class="docs-snippet"><code>{`# GitHub Actions
+- run: aphrodite create "..." --pages home,a,b,c
+- name: gate on Quality Score
+  run: |
+    score=$(jq -r '.quality_score' result.json)
+    if (( score < 90 )); then
+      echo "Quality Score $score/100 below threshold"
+      exit 1
+    fi`}</code></pre>
+
+  <h2>Cross-brand sweep</h2>
+  <p><code>aphrodite eval intents.json</code> — N개 brand 한 번에 돌리고 mean/min/max + audit warning 집계. <a href="/getting-started">getting-started</a>에서 자세히.</p>
+</Layout>

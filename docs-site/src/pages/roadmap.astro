@@ -1,0 +1,55 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+<Layout title="v1.0 Roadmap">
+  <h1>v1.0 Roadmap</h1>
+  <p class="lede">3 gate 순차 진행 → beta → 1.0 stable cut. 모든 결정은 <a href="https://github.com/kwakseongjae/aphrodite/blob/main/docs/roadmap-1.0.md" target="_blank">docs/roadmap-1.0.md</a>에 immutable로 박혀 있음.</p>
+
+  <h2>3 Gates</h2>
+
+  <h3>Gate 1 — SSR 호환성 (✓ done)</h3>
+  <ul>
+    <li>70/70 컴포넌트 <code>next build</code> + <code>vite build</code> + <code>remix build</code> exit 0 ✓</li>
+    <li>70/70 컴포넌트 hydration warning 0 ✓</li>
+    <li>70/70 컴포넌트 themed CSS-var resolves ✓</li>
+    <li>CI matrix 3 framework 병렬 — <code>.github/workflows/ssr-matrix.yml</code></li>
+  </ul>
+
+  <h3>Gate 2 — CLI 배포 (코드 ✓ done, publish pending)</h3>
+  <ul>
+    <li>npm wrapper <code>@aphrodite-design/aphrodite-agent</code> postinstall → platform binary download ✓</li>
+    <li>Cross-platform release workflow (macOS arm/x64 + Linux x64/arm64 + Windows x64) ✓</li>
+    <li><code>aphrodite publish --as @org/name</code> verb ✓</li>
+    <li>NPM_TOKEN secret + 첫 <code>agent-v0.9.0-beta.1</code> tag push 필요 (user 액션)</li>
+  </ul>
+
+  <h3>Gate 3 — Docs site (in progress)</h3>
+  <ul>
+    <li>이 사이트가 그것. <code>docs.aphrodite.dev</code></li>
+    <li>70 component 카탈로그 + 검색 + brand-token switcher ✓</li>
+    <li>DNS / Vercel deploy pending</li>
+  </ul>
+
+  <h2>Beta</h2>
+  <p>3 gate 모두 닫히면 <code>0.9.0-beta.1</code> publish. 3-5명의 KR FE engineer 모집해서:</p>
+  <ul>
+    <li>(1) install ✓ (2) <code>aphrodite create</code> ✓ (3) <code>npm install</code> ✓ (4) build ✓ (5) test ✓ (6) typecheck ✓ (7) docs eyeball ✓</li>
+    <li>≥ 1 명이 emit으로 실제 프로젝트 deploy</li>
+    <li>4주 hard cap, 주차별 mid-cycle 체크포인트</li>
+  </ul>
+
+  <h2>1.0 stable</h2>
+  <ul>
+    <li>3 gate ✓ + beta ✓ + <code>aphrodite eval</code> 5-brand sweep mean Quality ≥ 95 + 모든 P0/P1 closed</li>
+    <li><code>1.0.0</code> npm publish + announcement + roadmap v1.1</li>
+  </ul>
+
+  <h2>v1.1+ (defer 결정 완료)</h2>
+  <ul>
+    <li>컴포넌트 70 → 100+ (RichTextEditor, advanced DataGrid)</li>
+    <li>Windows x64 (1.0 못 들면)</li>
+    <li>Figma plugin 양방향 sync</li>
+    <li>RTL / 진짜 i18n 시스템</li>
+    <li>Lighthouse / axe CI enforcement</li>
+  </ul>
+</Layout>

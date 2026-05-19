@@ -1,0 +1,108 @@
+---
+import "@aphrodite-design/example-banchan/styles.css";
+import "../styles/docs.css";
+import COMPONENT_NAMES from "../content/component-list";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = "Aphrodite — Korean-first design-system generator agent." } = Astro.props;
+const path = new URL(Astro.request.url).pathname;
+const isActive = (href: string) => path === href || (href !== "/" && path.startsWith(href));
+---
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} — Aphrodite</title>
+    <meta name="description" content={description} />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Pretendard:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+  </head>
+  <body data-variant="light">
+    <div class="docs-shell">
+      <aside class="docs-sidebar" aria-label="Site nav">
+        <a href="/" class="docs-brand"><strong>Aphrodite</strong></a>
+        <div class="docs-pkg"><code>npm i -g @aphrodite-design/aphrodite-agent</code></div>
+
+        <h4>Start</h4>
+        <nav>
+          <a href="/" class:list={[isActive("/") && "active"]}>Home</a>
+          <a href="/getting-started" class:list={[isActive("/getting-started") && "active"]}>Getting started</a>
+          <a href="/quality-score" class:list={[isActive("/quality-score") && "active"]}>Quality Score</a>
+          <a href="/publish" class:list={[isActive("/publish") && "active"]}>Publish your emit</a>
+        </nav>
+
+        <h4>Themes</h4>
+        <nav>
+          <a href="/themes" class:list={[isActive("/themes") && "active"]}>Brand variants</a>
+          <a href="/examples" class:list={[isActive("/examples") && "active"]}>Examples gallery</a>
+        </nav>
+
+        <h4>Components ({COMPONENT_NAMES.length})</h4>
+        <nav class="docs-comp-list">
+          {COMPONENT_NAMES.map((name) => (
+            <a href={`/c/${name}`} class:list={[isActive(`/c/${name}`) && "active"]}>{name}</a>
+          ))}
+        </nav>
+
+        <h4>About</h4>
+        <nav>
+          <a href="/roadmap">v1.0 roadmap</a>
+          <a href="https://github.com/kwakseongjae/aphrodite" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+        </nav>
+      </aside>
+
+      <main class="docs-main">
+        <header class="docs-topbar">
+          <input
+            id="comp-search"
+            type="search"
+            placeholder="Search components — Modal, Input, 차트…"
+            aria-label="Search components"
+            class="aph-input"
+            style="max-width: 360px;"
+          />
+          <nav class="docs-vs-bar" aria-label="Theme variants">
+            <button data-variant="light" class="docs-vs-btn">light</button>
+            <button data-variant="dark" class="docs-vs-btn">dark</button>
+            <button data-variant="brand-a" class="docs-vs-btn">brand-a</button>
+            <button data-variant="brand-b" class="docs-vs-btn">brand-b</button>
+          </nav>
+        </header>
+        <slot />
+      </main>
+    </div>
+
+    <script is:inline>
+      // Variant switcher
+      (function () {
+        const btns = document.querySelectorAll(".docs-vs-btn");
+        function apply(v) {
+          document.body.setAttribute("data-variant", v);
+          btns.forEach((b) => b.setAttribute("aria-pressed", b.getAttribute("data-variant") === v ? "true" : "false"));
+          try { localStorage.setItem("aph-docs-variant", v); } catch {}
+        }
+        btns.forEach((b) => b.addEventListener("click", () => apply(b.getAttribute("data-variant"))));
+        const saved = (() => { try { return localStorage.getItem("aph-docs-variant"); } catch { return null; } })();
+        apply(saved || "light");
+      })();
+    </script>
+    <script is:inline>
+      // Sidebar search
+      (function () {
+        const input = document.getElementById("comp-search");
+        const links = Array.from(document.querySelectorAll(".docs-comp-list a"));
+        if (!input) return;
+        input.addEventListener("input", (e) => {
+          const q = e.target.value.trim().toLowerCase();
+          for (const a of links) {
+            const txt = a.textContent.toLowerCase();
+            a.style.display = !q || txt.includes(q) ? "" : "none";
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

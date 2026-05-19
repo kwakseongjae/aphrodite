@@ -1,0 +1,56 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+<Layout title="Publish your emit">
+  <h1>Publish your emit</h1>
+  <p class="lede">Aphrodite로 생성한 brand를 본인 npm scope으로 출시. <code>aphrodite publish --as @yourorg/yourbrand</code> 한 줄.</p>
+
+  <h2>사전 준비</h2>
+  <ul>
+    <li>npm 계정 + scope 소유 (개인 user scope <code>@yourname</code>은 자동, org scope <code>@yourorg</code>는 <a href="https://www.npmjs.com/org/create" target="_blank">npmjs.com/org/create</a>에서 등록)</li>
+    <li><code>npm login</code> 완료된 상태</li>
+  </ul>
+
+  <h2>Dry-run</h2>
+  <pre class="docs-snippet"><code>{`cd <brand>-design/react   # 또는 emit 디렉토리 안 react/
+aphrodite publish --as @yourorg/yourbrand --dry-run`}</code></pre>
+  <p>실행하면:</p>
+  <pre class="docs-snippet"><code>{`aphrodite publish --rename
+  source : /Users/.../react (@aphrodite-design/<brand>)
+  target : @yourorg/yourbrand
+  changes:
+    package.json (1 substitution)
+    README.md (3 substitutions)
+    CHANGELOG.md (1 substitution)
+
+--dry-run: no files written, no npm publish.`}</code></pre>
+
+  <h2>실제 publish</h2>
+  <pre class="docs-snippet"><code>{`aphrodite publish --as @yourorg/yourbrand
+# package.json + README + CHANGELOG의 이름 substitution 후 npm publish 실행`}</code></pre>
+
+  <h2>옵션</h2>
+  <ul>
+    <li><code>--dry-run</code> — 파일 변경 / npm publish 모두 skip, summary만 출력</li>
+    <li><code>--npm-tag &lt;tag&gt;</code> — <code>npm publish --tag beta</code> 같은 dist-tag 전달</li>
+    <li><code>--react-dir &lt;path&gt;</code> — <code>./react</code> 외 다른 위치 지정</li>
+  </ul>
+
+  <h2>다음 사용자가 사용하는 법</h2>
+  <pre class="docs-snippet"><code>{`# 본인 또는 다른 프로젝트에서:
+npm i @yourorg/yourbrand
+
+# import
+import { Button, Input, Card } from "@yourorg/yourbrand";
+import "@yourorg/yourbrand/styles.css";
+
+// 어디서나 사용
+<Button variant="primary">시작하기</Button>`}</code></pre>
+
+  <h2>versioning 권장</h2>
+  <ul>
+    <li>첫 publish: <code>0.1.0</code> (publish 전에 <code>react/package.json</code>의 version을 수정)</li>
+    <li>brand 변경 (palette / typography 등): <code>0.1.0 → 0.2.0</code> (minor)</li>
+    <li>컴포넌트 인터페이스 breaking change (Aphrodite agent 메이저 업그레이드): <code>0.x → 1.0</code></li>
+  </ul>
+</Layout>

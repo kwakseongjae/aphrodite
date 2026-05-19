@@ -1,0 +1,66 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const examples = [
+  {
+    name: "Banchan",
+    domain: "식품 정기 구독",
+    quality: 100,
+    intent: "한국 프리미엄 가정식 반찬 정기 구독 서비스 — 매주 신선한 제철 재료로 만든 5가지 반찬을 집까지 배송. 1주/2주/4주 정기권.",
+  },
+  {
+    name: "Hada",
+    domain: "B2B 핀테크",
+    quality: 100,
+    intent: "프리랜서와 1인 사업자 전용 핀테크 — 부가세 자동 신고, 소득 추적, 견적서/세금계산서 발행 통합.",
+  },
+  {
+    name: "Junjong",
+    domain: "인디 디자인 매거진",
+    quality: 93,
+    intent: "월간 인디 디자인 매거진. 종이 잡지 + 디지털 아카이브. 종이 1년 정기구독 88,000원.",
+  },
+  {
+    name: "Yeoreum",
+    domain: "DTC 아이스크림",
+    quality: 100,
+    intent: "한국 수제 아이스크림 DTC 브랜드. 제철 과일과 국내산 우유로 만든 5가지 시그니처 플레이버.",
+  },
+  {
+    name: "Sori",
+    domain: "인디 음악 스트리밍",
+    quality: 93,
+    intent: "한국 인디 뮤지션 전용 음악 스트리밍. 메이저 레이블 없이 활동하는 아티스트의 EP/싱글을 큐레이션.",
+  },
+];
+---
+<Layout title="Examples — 5 cross-brand alpha">
+  <h1>Examples</h1>
+  <p class="lede">5개의 가상 0-1 브랜드를 cross-brand 알파 테스트로 통과시킨 결과. 동일한 70-component 라이브러리 + 다른 디자인 토큰만으로 식품, 핀테크, 매거진, 이커머스, 스트리밍 5개 도메인을 커버.</p>
+
+  <h2>Reference brands</h2>
+  <div class="docs-grid-cards">
+    {examples.map((e) => (
+      <div class="docs-card">
+        <h3>{e.name}</h3>
+        <p><strong>{e.domain}</strong></p>
+        <p style="font-size: 13px; color: var(--colors-text-muted);">{e.intent}</p>
+        <p>
+          <span class="docs-badge">Quality Score: {e.quality}/100</span>
+        </p>
+      </div>
+    ))}
+  </div>
+
+  <h2>왜 이렇게 픽했나</h2>
+  <ul>
+    <li><strong>Banchan</strong>: 한국인 누구나 즉시 이해 (반찬 = mass-relatable). e-commerce + 정기구독 + 카드 그리드 + 회원가입 flow 한 번에 검증.</li>
+    <li><strong>Hada</strong>: SaaS form-heavy. KYC, 부가세 사업자 toggle, 사업자 등록번호 입력 등 한국 B2B 핀테크 특유 요건.</li>
+    <li><strong>Junjong</strong>: editorial — drop cap, pull-quote, 긴 본문 narrative.</li>
+    <li><strong>Yeoreum</strong>: 사진 중심 DTC, 6 product grid, 단품/박스 가격 옵션.</li>
+    <li><strong>Sori</strong>: 콘텐츠 큐레이션, 월간 차트, 라이브 세션 영상 placeholder.</li>
+  </ul>
+
+  <h2>본인 도메인도 비슷한가?</h2>
+  <p><a href="/getting-started"><code>aphrodite create</code></a>로 직접 본인 브랜드 한 줄을 시도. 5분만 투자.</p>
+</Layout>
