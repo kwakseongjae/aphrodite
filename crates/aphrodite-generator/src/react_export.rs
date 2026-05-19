@@ -64,84 +64,84 @@ pub fn build(variants: &[Variant], project_name: &str) -> ReactPackage {
     files.insert("README.md".into(), build_readme(project_name, &kebab));
     files.insert("src/tokens.ts".into(), build_tokens_ts(variants));
     files.insert("src/cn.ts".into(), build_cn_helper());
-    files.insert("src/Button.tsx".into(), BUTTON_TSX.into());
-    files.insert("src/Input.tsx".into(), INPUT_TSX.into());
-    files.insert("src/Tag.tsx".into(), TAG_TSX.into());
-    files.insert("src/Avatar.tsx".into(), AVATAR_TSX.into());
-    files.insert("src/Card.tsx".into(), CARD_TSX.into());
-    files.insert("src/Modal.tsx".into(), MODAL_TSX.into());
-    files.insert("src/Drawer.tsx".into(), DRAWER_TSX.into());
-    files.insert("src/Skeleton.tsx".into(), SKELETON_TSX.into());
-    files.insert("src/FormField.tsx".into(), FORM_FIELD_TSX.into());
-    files.insert("src/Switch.tsx".into(), SWITCH_TSX.into());
-    files.insert("src/Badge.tsx".into(), BADGE_TSX.into());
-    files.insert("src/Spinner.tsx".into(), SPINNER_TSX.into());
+    files.insert("src/Button.tsx".into(), with_use_client(BUTTON_TSX));
+    files.insert("src/Input.tsx".into(), with_use_client(INPUT_TSX));
+    files.insert("src/Tag.tsx".into(), with_use_client(TAG_TSX));
+    files.insert("src/Avatar.tsx".into(), with_use_client(AVATAR_TSX));
+    files.insert("src/Card.tsx".into(), with_use_client(CARD_TSX));
+    files.insert("src/Modal.tsx".into(), with_use_client(MODAL_TSX));
+    files.insert("src/Drawer.tsx".into(), with_use_client(DRAWER_TSX));
+    files.insert("src/Skeleton.tsx".into(), with_use_client(SKELETON_TSX));
+    files.insert("src/FormField.tsx".into(), with_use_client(FORM_FIELD_TSX));
+    files.insert("src/Switch.tsx".into(), with_use_client(SWITCH_TSX));
+    files.insert("src/Badge.tsx".into(), with_use_client(BADGE_TSX));
+    files.insert("src/Spinner.tsx".into(), with_use_client(SPINNER_TSX));
     // v1.0 RC additional primitives — 18 more to reach Toss/Karrot
     // coverage. Form controls, navigation, feedback, overlays.
-    files.insert("src/Textarea.tsx".into(), TEXTAREA_TSX.into());
-    files.insert("src/Select.tsx".into(), SELECT_TSX.into());
-    files.insert("src/Checkbox.tsx".into(), CHECKBOX_TSX.into());
-    files.insert("src/Radio.tsx".into(), RADIO_TSX.into());
-    files.insert("src/RadioGroup.tsx".into(), RADIO_GROUP_TSX.into());
-    files.insert("src/Tabs.tsx".into(), TABS_TSX.into());
-    files.insert("src/Accordion.tsx".into(), ACCORDION_TSX.into());
-    files.insert("src/Toast.tsx".into(), TOAST_TSX.into());
-    files.insert("src/Tooltip.tsx".into(), TOOLTIP_TSX.into());
-    files.insert("src/Popover.tsx".into(), POPOVER_TSX.into());
-    files.insert("src/Menu.tsx".into(), MENU_TSX.into());
-    files.insert("src/ProgressBar.tsx".into(), PROGRESS_BAR_TSX.into());
-    files.insert("src/Stepper.tsx".into(), STEPPER_TSX.into());
-    files.insert("src/Slider.tsx".into(), SLIDER_TSX.into());
-    files.insert("src/Breadcrumb.tsx".into(), BREADCRUMB_TSX.into());
-    files.insert("src/Pagination.tsx".into(), PAGINATION_TSX.into());
-    files.insert("src/Divider.tsx".into(), DIVIDER_TSX.into());
-    files.insert("src/EmptyState.tsx".into(), EMPTY_STATE_TSX.into());
+    files.insert("src/Textarea.tsx".into(), with_use_client(TEXTAREA_TSX));
+    files.insert("src/Select.tsx".into(), with_use_client(SELECT_TSX));
+    files.insert("src/Checkbox.tsx".into(), with_use_client(CHECKBOX_TSX));
+    files.insert("src/Radio.tsx".into(), with_use_client(RADIO_TSX));
+    files.insert("src/RadioGroup.tsx".into(), with_use_client(RADIO_GROUP_TSX));
+    files.insert("src/Tabs.tsx".into(), with_use_client(TABS_TSX));
+    files.insert("src/Accordion.tsx".into(), with_use_client(ACCORDION_TSX));
+    files.insert("src/Toast.tsx".into(), with_use_client(TOAST_TSX));
+    files.insert("src/Tooltip.tsx".into(), with_use_client(TOOLTIP_TSX));
+    files.insert("src/Popover.tsx".into(), with_use_client(POPOVER_TSX));
+    files.insert("src/Menu.tsx".into(), with_use_client(MENU_TSX));
+    files.insert("src/ProgressBar.tsx".into(), with_use_client(PROGRESS_BAR_TSX));
+    files.insert("src/Stepper.tsx".into(), with_use_client(STEPPER_TSX));
+    files.insert("src/Slider.tsx".into(), with_use_client(SLIDER_TSX));
+    files.insert("src/Breadcrumb.tsx".into(), with_use_client(BREADCRUMB_TSX));
+    files.insert("src/Pagination.tsx".into(), with_use_client(PAGINATION_TSX));
+    files.insert("src/Divider.tsx".into(), with_use_client(DIVIDER_TSX));
+    files.insert("src/EmptyState.tsx".into(), with_use_client(EMPTY_STATE_TSX));
     // v1.0 RC.5: 12 advanced primitives bringing total to 42. Priorities
     // chosen for Korean fintech / marketplace product surface area.
-    files.insert("src/SegmentedControl.tsx".into(), SEGMENTED_CONTROL_TSX.into());
-    files.insert("src/PinInput.tsx".into(), PIN_INPUT_TSX.into());
-    files.insert("src/NumberInput.tsx".into(), NUMBER_INPUT_TSX.into());
-    files.insert("src/SearchInput.tsx".into(), SEARCH_INPUT_TSX.into());
-    files.insert("src/FileUploader.tsx".into(), FILE_UPLOADER_TSX.into());
-    files.insert("src/DatePicker.tsx".into(), DATE_PICKER_TSX.into());
-    files.insert("src/Combobox.tsx".into(), COMBOBOX_TSX.into());
-    files.insert("src/Sheet.tsx".into(), SHEET_TSX.into());
-    files.insert("src/Alert.tsx".into(), ALERT_TSX.into());
-    files.insert("src/Stat.tsx".into(), STAT_TSX.into());
-    files.insert("src/Toolbar.tsx".into(), TOOLBAR_TSX.into());
-    files.insert("src/HoverCard.tsx".into(), HOVER_CARD_TSX.into());
+    files.insert("src/SegmentedControl.tsx".into(), with_use_client(SEGMENTED_CONTROL_TSX));
+    files.insert("src/PinInput.tsx".into(), with_use_client(PIN_INPUT_TSX));
+    files.insert("src/NumberInput.tsx".into(), with_use_client(NUMBER_INPUT_TSX));
+    files.insert("src/SearchInput.tsx".into(), with_use_client(SEARCH_INPUT_TSX));
+    files.insert("src/FileUploader.tsx".into(), with_use_client(FILE_UPLOADER_TSX));
+    files.insert("src/DatePicker.tsx".into(), with_use_client(DATE_PICKER_TSX));
+    files.insert("src/Combobox.tsx".into(), with_use_client(COMBOBOX_TSX));
+    files.insert("src/Sheet.tsx".into(), with_use_client(SHEET_TSX));
+    files.insert("src/Alert.tsx".into(), with_use_client(ALERT_TSX));
+    files.insert("src/Stat.tsx".into(), with_use_client(STAT_TSX));
+    files.insert("src/Toolbar.tsx".into(), with_use_client(TOOLBAR_TSX));
+    files.insert("src/HoverCard.tsx".into(), with_use_client(HOVER_CARD_TSX));
     // v1.0 RC.7: 12 advanced primitives — DataTable, Carousel, Calendar,
     // and supporting ones for 0-1 brand pages (Chip, Image, KBD, Code,
     // Timeline, Disclosure, ContextMenu, Command).
-    files.insert("src/DataTable.tsx".into(), DATA_TABLE_TSX.into());
-    files.insert("src/Carousel.tsx".into(), CAROUSEL_TSX.into());
-    files.insert("src/Calendar.tsx".into(), CALENDAR_TSX.into());
-    files.insert("src/Chip.tsx".into(), CHIP_TSX.into());
-    files.insert("src/Image.tsx".into(), IMAGE_TSX.into());
-    files.insert("src/Kbd.tsx".into(), KBD_TSX.into());
-    files.insert("src/Code.tsx".into(), CODE_TSX.into());
-    files.insert("src/Timeline.tsx".into(), TIMELINE_TSX.into());
-    files.insert("src/Disclosure.tsx".into(), DISCLOSURE_TSX.into());
-    files.insert("src/ContextMenu.tsx".into(), CONTEXT_MENU_TSX.into());
-    files.insert("src/Command.tsx".into(), COMMAND_TSX.into());
-    files.insert("src/Hint.tsx".into(), HINT_TSX.into());
-    files.insert("src/PhoneInputKR.tsx".into(), PHONE_INPUT_KR_TSX.into());
+    files.insert("src/DataTable.tsx".into(), with_use_client(DATA_TABLE_TSX));
+    files.insert("src/Carousel.tsx".into(), with_use_client(CAROUSEL_TSX));
+    files.insert("src/Calendar.tsx".into(), with_use_client(CALENDAR_TSX));
+    files.insert("src/Chip.tsx".into(), with_use_client(CHIP_TSX));
+    files.insert("src/Image.tsx".into(), with_use_client(IMAGE_TSX));
+    files.insert("src/Kbd.tsx".into(), with_use_client(KBD_TSX));
+    files.insert("src/Code.tsx".into(), with_use_client(CODE_TSX));
+    files.insert("src/Timeline.tsx".into(), with_use_client(TIMELINE_TSX));
+    files.insert("src/Disclosure.tsx".into(), with_use_client(DISCLOSURE_TSX));
+    files.insert("src/ContextMenu.tsx".into(), with_use_client(CONTEXT_MENU_TSX));
+    files.insert("src/Command.tsx".into(), with_use_client(COMMAND_TSX));
+    files.insert("src/Hint.tsx".into(), with_use_client(HINT_TSX));
+    files.insert("src/PhoneInputKR.tsx".into(), with_use_client(PHONE_INPUT_KR_TSX));
     // RC.8: 15 new primitives to reach 70 total.
-    files.insert("src/DateRangePicker.tsx".into(), DATE_RANGE_PICKER_TSX.into());
-    files.insert("src/MultiCombobox.tsx".into(), MULTI_COMBOBOX_TSX.into());
-    files.insert("src/AddressInputKR.tsx".into(), ADDRESS_INPUT_KR_TSX.into());
-    files.insert("src/ColorPicker.tsx".into(), COLOR_PICKER_TSX.into());
-    files.insert("src/TimePicker.tsx".into(), TIME_PICKER_TSX.into());
-    files.insert("src/ChartLine.tsx".into(), CHART_LINE_TSX.into());
-    files.insert("src/ChartBar.tsx".into(), CHART_BAR_TSX.into());
-    files.insert("src/Quote.tsx".into(), QUOTE_TSX.into());
-    files.insert("src/Banner.tsx".into(), BANNER_TSX.into());
-    files.insert("src/KeyboardShortcut.tsx".into(), KEYBOARD_SHORTCUT_TSX.into());
-    files.insert("src/CodeBlock.tsx".into(), CODE_BLOCK_TSX.into());
-    files.insert("src/Toggle.tsx".into(), TOGGLE_TSX.into());
-    files.insert("src/TreeView.tsx".into(), TREE_VIEW_TSX.into());
-    files.insert("src/DescriptionList.tsx".into(), DESCRIPTION_LIST_TSX.into());
-    files.insert("src/Resizable.tsx".into(), RESIZABLE_TSX.into());
+    files.insert("src/DateRangePicker.tsx".into(), with_use_client(DATE_RANGE_PICKER_TSX));
+    files.insert("src/MultiCombobox.tsx".into(), with_use_client(MULTI_COMBOBOX_TSX));
+    files.insert("src/AddressInputKR.tsx".into(), with_use_client(ADDRESS_INPUT_KR_TSX));
+    files.insert("src/ColorPicker.tsx".into(), with_use_client(COLOR_PICKER_TSX));
+    files.insert("src/TimePicker.tsx".into(), with_use_client(TIME_PICKER_TSX));
+    files.insert("src/ChartLine.tsx".into(), with_use_client(CHART_LINE_TSX));
+    files.insert("src/ChartBar.tsx".into(), with_use_client(CHART_BAR_TSX));
+    files.insert("src/Quote.tsx".into(), with_use_client(QUOTE_TSX));
+    files.insert("src/Banner.tsx".into(), with_use_client(BANNER_TSX));
+    files.insert("src/KeyboardShortcut.tsx".into(), with_use_client(KEYBOARD_SHORTCUT_TSX));
+    files.insert("src/CodeBlock.tsx".into(), with_use_client(CODE_BLOCK_TSX));
+    files.insert("src/Toggle.tsx".into(), with_use_client(TOGGLE_TSX));
+    files.insert("src/TreeView.tsx".into(), with_use_client(TREE_VIEW_TSX));
+    files.insert("src/DescriptionList.tsx".into(), with_use_client(DESCRIPTION_LIST_TSX));
+    files.insert("src/Resizable.tsx".into(), with_use_client(RESIZABLE_TSX));
     files.insert("src/index.ts".into(), build_index_ts());
     files.insert("src/styles.css".into(), build_styles_css(variants));
     files.insert(".npmignore".into(), build_npmignore());
@@ -224,6 +224,16 @@ pub fn build(variants: &[Variant], project_name: &str) -> ReactPackage {
         files.insert(format!("src/{name}.stories.tsx"), body.into());
     }
     ReactPackage { files }
+}
+
+/// Prepend `"use client";` to a component .tsx body. Mandatory for
+/// Next.js 14 App Router compatibility — without this directive the
+/// component is treated as a Server Component and any hook / event
+/// handler usage crashes `next build`. Applied to all 70 components
+/// uniformly (UI primitive libraries — Mantine, shadcn/ui — all do
+/// this). Stories never need it (Storybook handles client wrapping).
+fn with_use_client(body: &str) -> String {
+    format!("\"use client\";\n\n{body}")
 }
 
 fn slug(s: &str) -> String {
