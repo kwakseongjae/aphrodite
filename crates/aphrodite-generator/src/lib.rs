@@ -3,6 +3,7 @@
 pub mod critic;
 pub mod design_system;
 pub mod docs_site;
+pub mod eval_sweep;
 pub mod extractor;
 pub mod figma_sync;
 pub mod harmonize;

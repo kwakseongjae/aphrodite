@@ -146,6 +146,27 @@ STEP 2 — Build a COMPLETE, SELF-CONTAINED HTML document for that surface that:
     - Use whitespace generously — section padding ≥ 64px desktop / 32px mobile.
     - Aim for ≥ 8 000 bytes of HTML — short outputs read as placeholders.
 
+  Responsive baseline — HARD RULES (alpha cross-brand findings):
+    1. Every page MUST include AT LEAST one `@media (min-width: ...)`
+       block, even if the only thing it changes is a font-size or
+       padding. A page with zero media queries fails the production
+       audit (Pass 55 Sori had this). Default tablet breakpoint 768px,
+       desktop 1024 or 1280px.
+    2. The HERO section must have VISIBLE primary content (headline +
+       at least one paragraph or eyebrow + headline + CTA) within the
+       first 600 vertical px on mobile (360×800) and within the first
+       800 vertical px on desktop (1440×900). Do NOT pad the top with
+       a placeholder mood-area before the headline — Pass 55 Sori home
+       did this and the user saw a blank screen on first load.
+    3. Top nav + variant switcher placement: when nav has > 3 link
+       items AND the variant switcher is `position: fixed; top: 16px;
+       right: 16px`, the rightmost nav links can clip behind the
+       switcher at narrow desktop widths. Two options:
+         a. Anchor switcher inside the nav (not fixed-positioned) so
+            it shares the flex row.
+         b. Keep switcher fixed BUT add `padding-right: 280px` on the
+            nav container so links never extend past the switcher.
+
   Mobile padding + viewport edge — ENFORCED:
     Every page-level wrapper / main / section MUST have horizontal
     padding ≥ 16px at narrow viewports. Default to

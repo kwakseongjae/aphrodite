@@ -214,7 +214,11 @@ fn score_quality(html: &str, warnings: &[String]) -> (QualityAxes, u32) {
         60
     };
 
-    // Semantic: 1 h1 + nav + footer + ≥ 2 sections each worth 25.
+    // Semantic: 1 h1 + nav + footer + ≥ 2 major regions each worth 25.
+    // v1.0 RC.8: <article> counts toward the region budget too — Junjong
+    // editorial layout used <article>+<main>+<aside> instead of nested
+    // <section> tags, which is equally semantic but the old metric was
+    // section-only. Accept any of section/article as a major region.
     let mut semantic = 0u32;
     if html.matches("<h1").count() == 1 {
         semantic += 25;
@@ -225,7 +229,8 @@ fn score_quality(html: &str, warnings: &[String]) -> (QualityAxes, u32) {
     if html.contains("<footer") {
         semantic += 25;
     }
-    if html.matches("<section").count() >= 2 {
+    let regions = html.matches("<section").count() + html.matches("<article").count();
+    if regions >= 2 {
         semantic += 25;
     }
 
@@ -763,7 +768,7 @@ fn auto_fix_h1_count(html: &str) -> String {
 fn audit_composition(html: &str, display: Option<&str>, body: Option<&str>) -> Vec<String> {
     let mut warnings = Vec::new();
     let h1_count = html.matches("<h1").count();
-    let section_count = html.matches("<section").count();
+    let section_count = html.matches("<section").count() + html.matches("<article").count();
     let nav_count = html.matches("<nav").count();
     let footer_count = html.matches("<footer").count();
     if h1_count == 0 {
@@ -774,7 +779,7 @@ fn audit_composition(html: &str, display: Option<&str>, body: Option<&str>) -> V
         ));
     }
     if section_count == 0 {
-        warnings.push("zero `<section>` tags — major regions should be wrapped in <section> for semantic accessibility.".into());
+        warnings.push("zero `<section>`/`<article>` tags — major regions should be wrapped in <section> or <article> for semantic accessibility.".into());
     }
     if nav_count == 0 && (html.contains("class=\"nav") || html.contains("class=\"sidebar")) {
         warnings.push("nav/sidebar found in classes but no `<nav>` element — wrap navigation in `<nav>` for semantic accessibility.".into());
@@ -1483,6 +1488,15 @@ spacing:
         assert!(out.contains("min-height: 40vh"));
         assert!(out.contains("min-height: 30vh"), "values below the cap pass through");
         assert!(!out.contains("80vh"));
+    }
+
+    #[test]
+    fn quality_score_counts_article_as_region() {
+        // v1.0 RC.9: editorial pages use <article>+<main>+<aside>
+        // instead of <section>. Should still hit semantic=100.
+        let html = r##"<!doctype html><html lang="ko"><head><meta name="viewport" content="width=device-width, initial-scale=1"><style>@media (min-width: 768px) {}</style></head><body><nav>n</nav><h1>제목</h1><article>a1</article><article>a2</article><footer>f</footer></body></html>"##;
+        let (axes, _score) = score_quality(html, &[]);
+        assert_eq!(axes.semantic, 100, "article should count toward region budget");
     }
 
     #[test]

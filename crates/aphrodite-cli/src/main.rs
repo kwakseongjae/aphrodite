@@ -104,6 +104,25 @@ enum Command {
         repo: Option<PathBuf>,
     },
 
+    /// Run a cross-brand alpha sweep: takes a JSON file of intents,
+    /// runs each through `aphrodite create`, aggregates Quality Score +
+    /// audit warnings + telemetry, writes `eval-report.json` and prints
+    /// a summary table. Useful for CI gating and pre-release regression
+    /// testing across many brand archetypes.
+    ///
+    /// Spec file shape: array of `{ name, intent, persona?, pages? }`.
+    Eval {
+        /// Path to the spec JSON.
+        spec: PathBuf,
+        /// Root directory for per-run output subdirectories.
+        #[arg(long, default_value = "./eval-out")]
+        out: PathBuf,
+        #[arg(long, default_value_t = 2)]
+        max_turns: u32,
+        #[arg(long, default_value_t = 0.78)]
+        threshold: f32,
+    },
+
     /// Rebuild the single-file docs site (`docs/index.html`) — Material-
     /// UI style component documentation with TOC sidebar, install
     /// snippet, color tokens, type scale, and a section per component.
@@ -465,6 +484,33 @@ async fn main() -> anyhow::Result<()> {
                 "path": react_root.to_string_lossy(),
                 "components": tsx_count,
                 "files": pkg.files.len()
+            })
+        }
+        Command::Eval { spec, out, max_turns, threshold } => {
+            let specs = aphrodite_generator::eval_sweep::parse_spec_file(&spec)?;
+            std::fs::create_dir_all(&out)?;
+            println!("aphrodite eval — {} intent(s) → {}", specs.len(), out.display());
+            let mut results = Vec::with_capacity(specs.len());
+            for (i, s) in specs.iter().enumerate() {
+                println!("[{}/{}] {} ({} pages) — running…", i + 1, specs.len(), s.name, if s.pages.is_empty() { 1 } else { s.pages.len() });
+                let r = aphrodite_generator::eval_sweep::run_one(s, &out, max_turns, threshold).await;
+                println!("  {}", aphrodite_generator::eval_sweep::format_row(&r));
+                results.push(r);
+            }
+            let summary = aphrodite_generator::eval_sweep::summarise(&results);
+            let report = aphrodite_generator::eval_sweep::EvalReport { summary: summary.clone(), results };
+            let report_path = out.join("eval-report.json");
+            std::fs::write(&report_path, serde_json::to_string_pretty(&report)?)?;
+            println!();
+            println!("=== summary ===");
+            println!("total={} ok={} warning={} failed={}", summary.total, summary.ok, summary.warning, summary.failed);
+            println!("mean quality = {:.1}/100 (min {}, max {})", summary.mean_quality, summary.min_quality, summary.max_quality);
+            println!("total wall = {:.0}s  total llm calls = {}", summary.total_wall_clock_s, summary.total_llm_calls);
+            println!("wrote {}", report_path.display());
+            json!({
+                "kind": "eval",
+                "summary": serde_json::to_value(&report.summary)?,
+                "report_path": report_path.to_string_lossy(),
             })
         }
         Command::Docs { repo } => {
