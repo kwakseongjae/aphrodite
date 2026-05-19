@@ -241,7 +241,7 @@ fn slug(s: &str) -> String {
 fn build_package_json(kebab: &str) -> String {
     format!(
         r#"{{
-  "name": "@aphrodite/{kebab}",
+  "name": "@aphrodite-design/{kebab}",
   "version": "0.1.0",
   "description": "Auto-generated React component library from an Aphrodite design contract.",
   "main": "dist/index.js",
@@ -303,13 +303,13 @@ fn build_readme(name: &str, kebab: &str) -> String {
 Auto-generated from an Aphrodite DESIGN.md. **Do not edit `src/` by hand** —
 those files are regenerated on every `aphrodite create` / `aphrodite react`
 run. Tokens and component primitives live here so your product
-codebase can `npm i @aphrodite/{kebab}` and import directly.
+codebase can `npm i @aphrodite-design/{kebab}` and import directly.
 
 ## Quick start
 
 ```tsx
-import {{ Button, Input, Card }} from "@aphrodite/{kebab}";
-import "@aphrodite/{kebab}/styles.css";
+import {{ Button, Input, Card }} from "@aphrodite-design/{kebab}";
+import "@aphrodite-design/{kebab}/styles.css";
 
 export function Page() {{
   return (
@@ -415,7 +415,7 @@ jobs:
 
 fn build_changelog_seed(name: &str) -> String {
     format!(
-        r#"# Changelog — @aphrodite/{name}
+        r#"# Changelog — @aphrodite-design/{name}
 
 This file is auto-generated on first emit. Append entries by hand
 when you cut a version — `aphrodite react` will preserve subsequent
@@ -3727,7 +3727,7 @@ type Story = StoryObj<typeof CodeBlock>;
 export const TypeScript: Story = {
   args: {
     language: "tsx",
-    children: "import { Button } from \"@aphrodite/x\";\n\nexport default function Page() {\n  return <Button>시작하기</Button>;\n}",
+    children: "import { Button } from \"@aphrodite-design/x\";\n\nexport default function Page() {\n  return <Button>시작하기</Button>;\n}",
   },
 };
 "#;
@@ -4012,8 +4012,8 @@ const meta: Meta<typeof Code> = { component: Code };
 export default meta;
 type Story = StoryObj<typeof Code>;
 
-export const Inline: Story = { render: () => <span><Code>npm i @aphrodite/your-name</Code> 로 설치</span> };
-export const Block: Story = { args: { block: true, children: "import { Button } from '@aphrodite/x';\n\n<Button>Hi</Button>" } };
+export const Inline: Story = { render: () => <span><Code>npm i @aphrodite-design/your-name</Code> 로 설치</span> };
+export const Block: Story = { args: { block: true, children: "import { Button } from '@aphrodite-design/x';\n\n<Button>Hi</Button>" } };
 "#;
 
 const TIMELINE_STORIES: &str = r#"import type { Meta, StoryObj } from "@storybook/react";
@@ -4696,7 +4696,7 @@ mod tests {
         let pkgjson = pkg.files.get("package.json").unwrap();
         assert!(pkgjson.contains("\"react\": \">=18\""));
         assert!(pkgjson.contains("\"./styles.css\""));
-        assert!(pkgjson.contains("\"name\": \"@aphrodite/test\""));
+        assert!(pkgjson.contains("\"name\": \"@aphrodite-design/test\""));
     }
 
     #[test]

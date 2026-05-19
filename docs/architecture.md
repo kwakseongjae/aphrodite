@@ -18,9 +18,9 @@ Anything else (Slack/Telegram bot, web dashboard) is downstream packaging, not c
 | Core | **Rust** (`crates/aphrodite-core`) | Seed-mandated. One source of truth for DESIGN.md model, validator, taste store, policy engine. Predictable performance for the multi-mode emitter and contrast-validator inner loops. |
 | CLI | Rust (`crates/aphrodite-cli`) | Single static binary; first-run setup, `aphrodite design`, `aphrodite setup`. Renders a JSON projection through a thin pretty-print layer (agent-first contract). |
 | MCP server | Rust (`crates/aphrodite-mcp`) | Exposes the same operations as JSON tools. This is the **primary surface** under the seed's agent-first decision. |
-| TS binding | `@aphrodite/sdk` (napi-rs or wasm) | For TS-side hosts that want to embed without spawning the binary; emits the same JSON contract. |
+| TS binding | `@aphrodite-design/sdk` (napi-rs or wasm) | For TS-side hosts that want to embed without spawning the binary; emits the same JSON contract. |
 | Python binding | `aphrodite` (pyo3) | For ML / Blender / Ouroboros-adjacent hosts. |
-| Distribution | Homebrew tap + `cargo install` + `npx @aphrodite/cli` + `pipx install aphrodite` | Single Rust binary inside each. |
+| Distribution | Homebrew tap + `cargo install` + `npx @aphrodite-design/cli` + `pipx install aphrodite` | Single Rust binary inside each. |
 | Spec format | `DESIGN.md` (Google Labs alpha) + `seed.yaml` (from Ouroboros) | Unchanged. |
 
 **Why Rust over the prior TS-primary plan:** the seed loads the v0.1 with multi-mode DESIGN.md emit + WCAG validator + adaptive taste store + policy engine + MCP server + CLI. A Rust core lets all bindings share one validator and one taste-store implementation. The earlier "TS-primary because UI artifacts are JS" objection still holds for the *emitted artifacts* (HTML/CSS/React/three.js), but those are output strings, not core types — Rust emits them just as well via templating. The earlier argument did not consider that the taste store + DESIGN.md model are the *shared invariants* that benefit most from a single-language home.

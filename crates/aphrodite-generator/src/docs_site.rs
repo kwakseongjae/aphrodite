@@ -176,7 +176,7 @@ pub fn build_docs_index(variants: &[Variant], project_name: &str) -> String {
   <div class="layout">
     <aside class="sidebar">
       <h1>{project_name}</h1>
-      <div class="pkg"><code>@aphrodite/{kebab}</code></div>
+      <div class="pkg"><code>@aphrodite-design/{kebab}</code></div>
       <h4>Tokens</h4>
       <nav>
         <a href="#tokens">Color tokens</a>
@@ -202,12 +202,12 @@ pub fn build_docs_index(variants: &[Variant], project_name: &str) -> String {
 
       <section id="install">
         <h2 class="section-title">설치</h2>
-        <pre class="snippet"><code>npm i @aphrodite/{kebab}
+        <pre class="snippet"><code>npm i @aphrodite-design/{kebab}
 # or
-pnpm add @aphrodite/{kebab}</code></pre>
+pnpm add @aphrodite-design/{kebab}</code></pre>
         <pre class="snippet"><code>// app entry
-import "@aphrodite/{kebab}/styles.css";
-import {{ Button, Card, Input }} from "@aphrodite/{kebab}";</code></pre>
+import "@aphrodite-design/{kebab}/styles.css";
+import {{ Button, Card, Input }} from "@aphrodite-design/{kebab}";</code></pre>
       </section>
 
       <section id="tokens">
@@ -349,7 +349,7 @@ fn catalog() -> &'static [ComponentDocEntry] {
         ComponentDocEntry { name: "Chip", tagline: "제거 가능한 태그.", demo_html: r#"<span class="aph-tag" style="padding-right:4px;">서울 <button style="border:none;background:transparent;padding:0 4px;cursor:pointer;">×</button></span>"#, snippet: "<Chip onClose={() => remove(id)}>서울</Chip>" },
         ComponentDocEntry { name: "Image", tagline: "fallback + lazy loading.", demo_html: r#"<span style="display:inline-block;width:120px;height:120px;background:var(--colors-background-secondary);border-radius:12px;display:inline-flex;align-items:center;justify-content:center;color:var(--colors-text-muted);font-size:12px;">상품 사진</span>"#, snippet: "<Image src=\"/product.jpg\" alt=\"상품\" width={120} height={120} rounded={12} />" },
         ComponentDocEntry { name: "Kbd", tagline: "키보드 단축키 표시.", demo_html: r#"<span><kbd style="padding:2px 6px;border:1px solid var(--colors-border-primary);background:var(--colors-background-secondary);border-radius:4px;font-family:monospace;font-size:11px;">⌘</kbd> + <kbd style="padding:2px 6px;border:1px solid var(--colors-border-primary);background:var(--colors-background-secondary);border-radius:4px;font-family:monospace;font-size:11px;">K</kbd></span>"#, snippet: "<Kbd>⌘</Kbd> + <Kbd>K</Kbd>" },
-        ComponentDocEntry { name: "Code", tagline: "inline + block — block은 pre wrap.", demo_html: r#"<code style="background:var(--colors-background-secondary);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:12px;">npm i @aphrodite/x</code>"#, snippet: "<Code>npm i</Code>\n<Code block>const x = 1;</Code>" },
+        ComponentDocEntry { name: "Code", tagline: "inline + block — block은 pre wrap.", demo_html: r#"<code style="background:var(--colors-background-secondary);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:12px;">npm i @aphrodite-design/x</code>"#, snippet: "<Code>npm i</Code>\n<Code block>const x = 1;</Code>" },
         ComponentDocEntry { name: "Timeline", tagline: "주문 / 배송 / 진행 단계 표시.", demo_html: r#"<ol style="display:flex;flex-direction:column;gap:8px;padding:0;list-style:none;"><li style="display:flex;gap:12px;"><span style="width:24px;height:24px;border-radius:999px;background:var(--colors-primary-500);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;">1</span><span><strong>주문 접수</strong><div style="font-size:12px;color:var(--colors-text-muted);">5/17 14:02</div></span></li></ol>"#, snippet: "<Timeline>\n  <TimelineItem marker=\"1\" title=\"주문 접수\" time=\"5/17 14:02\" />\n</Timeline>" },
         ComponentDocEntry { name: "Disclosure", tagline: "단일 펼치기/접기 — Accordion의 단순 버전.", demo_html: r#"<div style="padding:12px 14px;border:1px solid var(--colors-border-primary);border-radius:8px;display:flex;justify-content:space-between;align-items:center;width:240px;font-weight:500;">자세히 보기 <span>+</span></div>"#, snippet: "<Disclosure title=\"자세히 보기\">...</Disclosure>" },
         ComponentDocEntry { name: "ContextMenu", tagline: "우클릭 메뉴 — role=menu.", demo_html: r#"<span style="padding:16px;border:1px dashed var(--colors-border-primary);border-radius:6px;font-size:13px;color:var(--colors-text-muted);">영역에 우클릭 → 메뉴</span>"#, snippet: "<ContextMenu trigger={<TableRow />} items={[{label:'복사',onSelect:...}]} />" },
@@ -387,7 +387,7 @@ mod tests {
     #[test]
     fn docs_index_has_install_section_and_variant_switcher() {
         let html = build_docs_index(&fixture(), "Test Project");
-        assert!(html.contains("npm i @aphrodite/test-project"));
+        assert!(html.contains("npm i @aphrodite-design/test-project"));
         assert!(html.contains(r#"<button data-variant="light""#));
         assert!(html.contains(r#"<button data-variant="dark""#));
     }

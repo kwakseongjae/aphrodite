@@ -78,7 +78,7 @@ and automated publish workflow.
   4-variant palette + spacing + typography + a `VariantName` union.
 - **Storybook stories** (CSF3) for every component — Korean copy
   baked in so designers see real intent.
-- **`package.json`** with `@aphrodite/<project>` name, peer deps
+- **`package.json`** with `@aphrodite-design/<project>` name, peer deps
   `react ≥ 18`, exports map, build script via `tsup`.
 - **`README.md`** auto-generated quick-start.
 

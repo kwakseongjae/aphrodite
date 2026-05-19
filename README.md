@@ -27,7 +27,7 @@
 ├── tokens.json              # Style Dictionary shape — value + type per leaf
 ├── components.html          # Storybook-style designer preview
 └── react/                   # 🆕 publishable npm package
-    ├── package.json         # @aphrodite/<name>, peer deps react ≥18
+    ├── package.json         # @aphrodite-design/<name>, peer deps react ≥18
     ├── tsconfig.json
     ├── README.md
     └── src/
@@ -52,7 +52,7 @@
 
 Plus a one-line **Aphrodite Quality Score** at the end of every run (`a11y / mobile / perf / semantic`, 0-100 each) so you can pin a CI gate.
 
-A Toss/Karrot frontend engineer can `cd react && npm publish` and other projects can `import { Button } from "@aphrodite/<your-project>"`.
+A Toss/Karrot frontend engineer can `cd react && npm publish` and other projects can `import { Button } from "@aphrodite-design/<your-project>"`.
 
 Aphrodite is an **open, model-agnostic UI generation harness**. It is not a Claude Code plugin. It is a standalone runtime that any human or AI agent can call to get authentic, production-grade, *beautiful* user interfaces — by orchestrating today's UI tooling under a single **DESIGN.md**-grounded design contract.
 
