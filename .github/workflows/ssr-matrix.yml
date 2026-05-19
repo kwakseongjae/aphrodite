@@ -1,0 +1,102 @@
+name: ssr-matrix
+
+# Gate 1 of v1.0 roadmap. Every PR runs the SSR test harness in
+# tests/ssr/ against the canonical @aphrodite-design/example-banchan
+# fixture. Three layers per component: next build / hydration console
+# clean / themed-render. PR cannot merge without green. 3 consecutive
+# green runs gate the 1.0 release tag.
+
+on:
+  pull_request:
+    paths:
+      - "crates/aphrodite-generator/src/react_export.rs"
+      - "tests/ssr/**"
+      - ".github/workflows/ssr-matrix.yml"
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  next-app:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: pnpm
+          cache-dependency-path: "tests/ssr/**/pnpm-lock.yaml"
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: install aphrodite CLI
+        run: cargo install --path crates/aphrodite-cli --quiet
+
+      - name: prepare fixture
+        env:
+          # Provide z.ai key via secret. If missing, fall back to a
+          # pre-baked fixture committed under tests/ssr/fixtures-baked/.
+          APHRODITE_ZAI_API_KEY: ${{ secrets.APHRODITE_ZAI_API_KEY }}
+        run: |
+          if [[ -z "${APHRODITE_ZAI_API_KEY:-}" ]]; then
+            echo "No API key — skipping create, using committed fixture instead"
+            mkdir -p tests/ssr/fixtures
+            cp -R tests/ssr/fixtures-baked/banchan-react tests/ssr/fixtures/banchan-react
+          else
+            bash tests/ssr/scripts/prepare-fixture.sh
+          fi
+
+      - name: install Next.js app deps
+        working-directory: tests/ssr/next-app
+        run: pnpm install --no-frozen-lockfile
+
+      - name: next build (layer 1 — must exit 0)
+        working-directory: tests/ssr/next-app
+        run: pnpm build
+
+      - name: start Next.js
+        working-directory: tests/ssr/next-app
+        run: |
+          pnpm start &
+          echo $! > .next.pid
+          # wait for ready
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3000 > /dev/null; then
+              echo "Next.js ready"; break
+            fi
+            sleep 1
+          done
+
+      - name: install Playwright
+        working-directory: tests/ssr/playwright
+        run: |
+          pnpm install --no-frozen-lockfile
+          pnpm exec playwright install --with-deps chromium
+
+      - name: Playwright smoke (layers 2 + 3)
+        working-directory: tests/ssr/playwright
+        env:
+          APH_SSR_SKIP_WEBSERVER: "1"
+        run: pnpm test
+
+      - name: stop Next.js
+        if: always()
+        working-directory: tests/ssr/next-app
+        run: |
+          if [[ -f .next.pid ]]; then
+            kill $(cat .next.pid) || true
+          fi
+
+      - name: upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: tests/ssr/playwright/playwright-report/
+          retention-days: 7

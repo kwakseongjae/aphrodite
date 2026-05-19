@@ -1,0 +1,9 @@
+# Generated fixture — regenerate via scripts/prepare-fixture.sh
+fixtures/
+# Per-app build artifacts
+*/node_modules/
+*/.next/
+*/dist/
+*/build/
+*/playwright-report/
+*/test-results/
