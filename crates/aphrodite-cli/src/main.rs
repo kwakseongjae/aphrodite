@@ -104,6 +104,29 @@ enum Command {
         repo: Option<PathBuf>,
     },
 
+    /// Rename the emitted `react/` package to a new npm scope/name and
+    /// (optionally) publish it. Used by adopters who want to ship their
+    /// generated brand under their own `@org/name` instead of the
+    /// canonical `@aphrodite-design/<brand>`.
+    ///
+    /// Examples:
+    ///   aphrodite publish --as @toss/design-kit --dry-run
+    ///   aphrodite publish --as @karrot/ui
+    Publish {
+        /// Target npm name, e.g. `@toss/design-kit` or `toss-design-kit`.
+        #[arg(long)]
+        r#as: String,
+        /// Don't actually call `npm publish` — just print the changes.
+        #[arg(long, default_value_t = false)]
+        dry_run: bool,
+        /// Override the source directory (defaults to ./react/).
+        #[arg(long)]
+        react_dir: Option<PathBuf>,
+        /// Pass `--tag <tag>` through to npm publish (e.g. `beta`).
+        #[arg(long)]
+        npm_tag: Option<String>,
+    },
+
     /// Run a cross-brand alpha sweep: takes a JSON file of intents,
     /// runs each through `aphrodite create`, aggregates Quality Score +
     /// audit warnings + telemetry, writes `eval-report.json` and prints
@@ -455,6 +478,84 @@ async fn main() -> anyhow::Result<()> {
             std::fs::write(target.join("components.html"), &html)?;
             println!("wrote tokens.css, tokens.json, components.html in {}", target.display());
             json!({ "kind": "components", "path": target.to_string_lossy() })
+        }
+        Command::Publish { r#as, dry_run, react_dir, npm_tag } => {
+            use std::process::Command as SysCmd;
+            let react_root = react_dir.unwrap_or_else(|| std::env::current_dir().expect("cwd").join("react"));
+            if !react_root.join("package.json").exists() {
+                anyhow::bail!("no react/package.json found at {}. Run `aphrodite react` first.", react_root.display());
+            }
+
+            // Parse the target name. Accept @scope/name or bare name.
+            let target = r#as.trim();
+            let (target_scope, target_short) = if let Some(stripped) = target.strip_prefix('@') {
+                let (scope, rest) = stripped.split_once('/').ok_or_else(|| anyhow::anyhow!("scoped name must be @scope/name"))?;
+                (format!("@{scope}"), rest.to_string())
+            } else {
+                (String::new(), target.to_string())
+            };
+            let full_target = if target_scope.is_empty() { target_short.clone() } else { format!("{target_scope}/{target_short}") };
+
+            // Read the current package.json
+            let pkg_path = react_root.join("package.json");
+            let pkg_text = std::fs::read_to_string(&pkg_path)?;
+            let mut pkg: serde_json::Value = serde_json::from_str(&pkg_text)?;
+            let current_name = pkg["name"].as_str().unwrap_or("").to_string();
+
+            // Files to rewrite. Substitute the OLD package name (whatever it is) → full_target.
+            let mut changed: Vec<(PathBuf, usize)> = Vec::new();
+
+            // 1. package.json: name field
+            pkg["name"] = serde_json::Value::String(full_target.clone());
+            if !dry_run {
+                std::fs::write(&pkg_path, serde_json::to_string_pretty(&pkg)?)?;
+            }
+            changed.push((pkg_path.clone(), 1));
+
+            // 2. README + CHANGELOG: substring substitution of the old name.
+            let extras = [react_root.join("README.md"), react_root.join("CHANGELOG.md")];
+            for f in &extras {
+                if !f.exists() { continue; }
+                let body = std::fs::read_to_string(f)?;
+                let new_body = body.replace(&current_name, &full_target);
+                let count = body.matches(&current_name).count();
+                if count > 0 {
+                    if !dry_run { std::fs::write(f, &new_body)?; }
+                    changed.push((f.clone(), count));
+                }
+            }
+
+            // Print summary
+            println!("aphrodite publish --rename");
+            println!("  source : {} ({})", react_root.display(), current_name);
+            println!("  target : {full_target}");
+            println!("  changes:");
+            for (p, n) in &changed {
+                let rel = p.strip_prefix(&react_root).unwrap_or(p);
+                println!("    {} ({n} substitution{})", rel.display(), if *n == 1 {""} else {"s"});
+            }
+
+            if dry_run {
+                println!();
+                println!("--dry-run: no files written, no npm publish.");
+                json!({"kind":"publish","dry_run":true,"target":full_target,"source":current_name,"changes":changed.len()})
+            } else {
+                println!();
+                let mut args = vec!["publish".to_string(), "--access".to_string(), "public".to_string()];
+                if let Some(tag) = &npm_tag {
+                    args.push("--tag".into());
+                    args.push(tag.clone());
+                }
+                println!("running: npm {}", args.join(" "));
+                let status = SysCmd::new("npm")
+                    .args(&args)
+                    .current_dir(&react_root)
+                    .status()?;
+                if !status.success() {
+                    anyhow::bail!("npm publish exited with status {status}");
+                }
+                json!({"kind":"publish","dry_run":false,"target":full_target,"source":current_name,"changes":changed.len()})
+            }
         }
         Command::React { repo } => {
             let target = repo.unwrap_or_else(|| std::env::current_dir().expect("cwd"));

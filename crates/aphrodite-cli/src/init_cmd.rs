@@ -35,6 +35,9 @@ pub async fn run() -> anyhow::Result<serde_json::Value> {
     // default — the API key — and offers an "advanced" branch for the rare
     // user who wants something else.
     eprintln!("{}", style("◆ Aphrodite first-run setup").bold().cyan());
+    eprintln!("  {}", style("Aphrodite generates designs via LLM. You'll need an API key.").dim());
+    eprintln!("  {}", style("  • z.ai — recommended, ~$0.10/run. Sign up: https://zai.com (~2 min)").dim());
+    eprintln!("  {}", style("  • Anthropic — also supported. Keys: https://console.anthropic.com").dim());
     eprintln!("  {}", style("Default: z.ai GLM Coding Plan · model glm-5.1").dim());
     eprintln!("  {}", style("Faster mode: glm-5-turbo (smaller, ~30% faster, slightly less rich)").dim());
 

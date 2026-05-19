@@ -1,0 +1,8 @@
+# Don't ship the binary in the npm tarball — postinstall downloads
+# from GitHub Releases on first install.
+bin/aphrodite
+bin/aphrodite.exe
+bin/*.tar.gz
+bin/*.zip
+node_modules/
+.DS_Store

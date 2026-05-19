@@ -1,0 +1,152 @@
+name: release
+
+# Gate 2 publish pipeline. Triggers on a `agent-vX.Y.Z` tag:
+#   1. Cross-platform Rust build matrix (macOS arm64+x86_64; Linux x64+arm64; Windows x64)
+#   2. Upload each binary archive to the GitHub Release for the tag
+#   3. Publish the npm wrapper @aphrodite-design/aphrodite-agent
+#
+# The npm wrapper's postinstall script then pulls the matching binary
+# from the GitHub Release at user-install time.
+
+on:
+  push:
+    tags:
+      - "agent-v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag (e.g. agent-v0.9.0-beta.1)"
+        required: true
+
+jobs:
+  build:
+    name: build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            asset: aphrodite-darwin-arm64.tar.gz
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            asset: aphrodite-darwin-x86_64.tar.gz
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            asset: aphrodite-linux-x86_64.tar.gz
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-latest
+            asset: aphrodite-linux-arm64.tar.gz
+            cross: true
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            asset: aphrodite-windows-x86_64.zip
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: install cross (linux-arm64 only)
+        if: matrix.cross
+        run: cargo install cross --locked
+
+      - name: build (cargo)
+        if: ${{ !matrix.cross }}
+        run: cargo build --release --target ${{ matrix.target }} -p aphrodite-cli
+
+      - name: build (cross)
+        if: matrix.cross
+        run: cross build --release --target ${{ matrix.target }} -p aphrodite-cli
+
+      - name: archive (unix)
+        if: matrix.os != 'windows-latest'
+        shell: bash
+        run: |
+          mkdir -p dist
+          BIN=target/${{ matrix.target }}/release/aphrodite
+          strip "$BIN" || true
+          tar -czf "dist/${{ matrix.asset }}" -C "target/${{ matrix.target }}/release" aphrodite
+
+      - name: archive (windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path dist -Force | Out-Null
+          $bin = "target/${{ matrix.target }}/release/aphrodite.exe"
+          Compress-Archive -Path $bin -DestinationPath "dist/${{ matrix.asset }}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset }}
+          path: dist/${{ matrix.asset }}
+          retention-days: 7
+
+  release:
+    name: GitHub release + npm publish
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write          # GitHub Releases
+      id-token: write          # npm provenance via OIDC
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: derive version
+        id: ver
+        shell: bash
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          if [[ -z "$TAG" || "$TAG" == "refs/heads/main" ]]; then
+            TAG="${{ inputs.tag }}"
+          fi
+          VERSION="${TAG#agent-v}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.tag }}
+          name: aphrodite-agent ${{ steps.ver.outputs.version }}
+          files: dist/*
+          fail_on_unmatched_files: false
+          draft: false
+          prerelease: ${{ contains(steps.ver.outputs.version, '-') }}
+
+      - uses: pnpm/action-setup@v3
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: write wrapper version
+        working-directory: npm-wrapper
+        shell: bash
+        run: |
+          VERSION="${{ steps.ver.outputs.version }}"
+          node -e "const p=require('./package.json'); p.version='$VERSION'; require('fs').writeFileSync('./package.json', JSON.stringify(p, null, 2));"
+          cat package.json | head -5
+
+      - name: npm publish (with provenance)
+        working-directory: npm-wrapper
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          # Pre-release versions like 0.9.0-beta.1 ship with --tag beta
+          # so `npm i @aphrodite-design/aphrodite-agent` (no version)
+          # gets stable, not pre-release.
+          if [[ "${{ steps.ver.outputs.version }}" == *-* ]]; then
+            npm publish --access public --provenance --tag beta
+          else
+            npm publish --access public --provenance
+          fi

@@ -1,0 +1,35 @@
+{
+  "name": "@aphrodite-design/aphrodite-agent",
+  "version": "0.0.0",
+  "description": "Aphrodite — production-grade Korean-first multi-page brand & React component-package generator. The CLI agent.",
+  "keywords": [
+    "design-system",
+    "react",
+    "korean",
+    "ui-generator",
+    "design-tokens",
+    "cli",
+    "aphrodite"
+  ],
+  "license": "Apache-2.0",
+  "homepage": "https://docs.aphrodite.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kwakseongjae/aphrodite"
+  },
+  "bin": {
+    "aphrodite": "bin/aphrodite.js"
+  },
+  "files": [
+    "bin/aphrodite.js",
+    "scripts/install.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "postinstall": "node scripts/install.js"
+  }
+}
