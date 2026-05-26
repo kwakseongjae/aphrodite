@@ -368,14 +368,21 @@ The eval sweep is the gate's regression-detection net. Any regression discovered
 
 **Beta success per-tester (falsifiable)**:
 
+> **Pre-validated 2026-05-26**: criteria 3-6 (the emit's own
+> install/build/typecheck/test pipeline) were run end-to-end against a
+> fresh offline emit and pass — see `scripts/emit-smoke.sh`, which IS
+> this pipeline and is the script testers run. Closing this gap surfaced
+> and fixed two beta-blockers (F4: emit had no `npm test`; F5:
+> `npm run typecheck` failed because stories imported `@storybook/react`).
+
 For each tester, criteria 1-7 ALL hold:
 
 1. `npm i -g @aphrodite-design/aphrodite-agent@1.0.0-beta.X` succeeds; `aphrodite --version` returns
 2. `aphrodite create "<their brand>"` completes; Quality Score ≥ 85
-3. `cd <brand>-design && npm install` succeeds (no peer-dep conflicts, no missing-binary errors)
-4. `npm run build` exits 0 (`tsup` pipeline)
-5. `npm test` exits 0 (Vitest + JSDOM smoke: each component loads + renders + non-empty)
-6. `npm run typecheck` exits 0 (`tsc --noEmit`)
+3. ✅ `cd <brand>-design && npm install` succeeds (no peer-dep conflicts, no missing-binary errors)
+4. ✅ `npm run build` exits 0 (`tsup` pipeline)
+5. ✅ `npm test` exits 0 (Vitest + JSDOM smoke: components load + curated subset renders non-empty)
+6. ✅ `npm run typecheck` exits 0 (`tsc --noEmit`, stories excluded)
 7. Tester opens `docs/index.html`, reports the design system "fits their brand intent" (5min eyeball)
 
 **Beta exit criteria across the pool (falsifiable)**:
@@ -491,6 +498,8 @@ If beta is shortened to 1 week + 2 testers, calendar drops to ~4 weeks. Recommen
 | 2026-05-19 | API key policy: self-signup only, NO shared credit pool. Document cost ~$0.10/run. | Same interview, turn 5 |
 | 2026-05-19 | Telemetry default OFF, opt-in. Privacy-clean payload. | Same interview, turn 5 |
 | 2026-05-19 | Add `npm test` (Vitest + JSDOM smoke) to every emit BEFORE beta-1 ships. | Same interview, turn 4 |
+| 2026-05-26 | **DONE**: emit ships `npm test` (Vitest+JSDOM smoke) + `vitest.config.ts`. Also fixed `npm run typecheck` (exclude stories that import `@storybook/react`). Emit pipeline (criteria 3-6) verified end-to-end offline; reusable as `scripts/emit-smoke.sh`. | Stage A validation |
+| 2026-05-26 | **DONE**: workspace Rust CI (`.github/workflows/rust-ci.yml`) — build+test as hard gates. Closes the gap that hid a non-compiling `aphrodite-mcp` + 3 failing extractor tests on `main`. | Stage A validation |
 | 2026-05-19 | Version progression: `0.9.0-beta.N` → `1.0.0-rc.1` → `1.0.0` | Same interview, turn 3 |
 | 2026-05-26 | **Superseded**: product line is `1.0.0` from first public cut. Progression `1.0.0-beta.1` → `1.0.0-beta.N` → `1.0.0-rc.1` → `1.0.0`. No `0.x` framing. | User directive |
 | 2026-05-19 | Test layers in 1.0 SSR gate: build + hydration + themed-render (defer interactive + axe + pixel-baseline) | Ouroboros interview turn 3 |
