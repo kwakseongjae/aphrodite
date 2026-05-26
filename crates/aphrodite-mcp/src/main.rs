@@ -94,7 +94,8 @@ fn tools_list() -> Vec<Value> {
                     "max_turns": { "type": "integer", "default": 3, "description": "Cap on internal critic→refine iterations. Each ~3 LLM calls." },
                     "satisfaction_threshold": { "type": "number", "default": 0.85, "description": "Stop when critic's satisfaction estimate reaches this value." },
                     "target_repo": { "type": "string", "description": "Absolute path. Defaults to MCP server cwd." },
-                    "write_mode": { "type": "string", "enum": ["commit", "artifact_only"], "default": "commit" }
+                    "write_mode": { "type": "string", "enum": ["commit", "artifact_only"], "default": "commit" },
+                    "pages": { "type": "array", "items": { "type": "string" }, "description": "Multi-page output: page slugs (e.g. [\"home\",\"pricing\"]). First slug runs the full create flow; the rest reuse the DESIGN.md and re-compose per page. Omit/empty → single page named `composition`." }
                 }
             }
         }),
