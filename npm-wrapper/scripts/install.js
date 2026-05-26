@@ -105,7 +105,7 @@ async function main() {
   // print a friendly message rather than crash.
   if (VERSION === "0.0.0") {
     info("This is a name-reservation publish (version 0.0.0); no binary to download.");
-    info("Wait for a real beta release: 0.9.0-beta.1 or later.");
+    info("Wait for a real beta release: 1.0.0-beta.1 or later.");
     return;
   }
 

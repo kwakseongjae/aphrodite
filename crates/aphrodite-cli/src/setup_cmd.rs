@@ -12,9 +12,9 @@ const PROVIDERS: &[(&str, &str)] = &[
     ("zai", "z.ai GLM Coding Plan (recommended; api.z.ai/api/anthropic)"),
     ("anthropic", "Anthropic direct (api.anthropic.com)"),
     ("openrouter", "OpenRouter proxy (openrouter.ai)"),
-    ("openai", "OpenAI direct (v0.2 surface)"),
-    ("moonshot", "Moonshot / Kimi (v0.2 surface)"),
-    ("gemini", "Google Gemini (v0.2 surface)"),
+    ("openai", "OpenAI direct (v1.1+ surface)"),
+    ("moonshot", "Moonshot / Kimi (v1.1+ surface)"),
+    ("gemini", "Google Gemini (v1.1+ surface)"),
 ];
 
 pub async fn run() -> anyhow::Result<serde_json::Value> {

@@ -9,7 +9,9 @@ members = [
 ]
 
 [workspace.package]
-version = "0.1.0-dev"
+# dev placeholder for the 1.0.0 product line; release.yml stamps the
+# exact tag version (e.g. 1.0.0-beta.1) into this field before building.
+version = "1.0.0-dev"
 edition = "2024"
 rust-version = "1.85"
 license = "Apache-2.0"

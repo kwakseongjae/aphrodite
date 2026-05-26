@@ -37,7 +37,7 @@ This package (`@aphrodite-design/aphrodite-agent`) is the agent. Your brand is y
 
 ## Status
 
-`0.0.0` — name-reservation. Real beta arriving as `0.9.0-beta.1`. See [roadmap](https://github.com/kwakseongjae/aphrodite/blob/main/docs/roadmap-1.0.md).
+`0.0.0` — name-reservation. Real beta arriving as `1.0.0-beta.1`. See [roadmap](https://github.com/kwakseongjae/aphrodite/blob/main/docs/roadmap-1.0.md).
 
 ## License
 

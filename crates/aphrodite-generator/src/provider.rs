@@ -267,7 +267,7 @@ pub async fn call_raw(
         _ => false,
     };
     if matches!(resolved.id, ProviderId::Gemini) {
-        return Err(ProviderError::Malformed("Gemini provider lands in v0.2".into()));
+        return Err(ProviderError::Malformed("Gemini provider is deferred to v1.1+".into()));
     }
     // Finding #29 mitigation: retry transient failures (429 / 5xx / connect
     // / timeout) with exponential back-off. Bounded at 3 attempts so a single
@@ -366,7 +366,7 @@ pub async fn call_with_taste(
     };
     let _ = anthropic_wire; // placeholder — used below
     if matches!(resolved.id, ProviderId::Gemini) {
-        return Err(ProviderError::Malformed("Gemini provider lands in v0.2".into()));
+        return Err(ProviderError::Malformed("Gemini provider is deferred to v1.1+".into()));
     }
     if anthropic_wire {
         call_anthropic_compat(base, &resolved.api_key, &resolved.model, &local_user).await

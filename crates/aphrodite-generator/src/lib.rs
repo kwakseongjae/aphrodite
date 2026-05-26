@@ -153,22 +153,22 @@ fn warnings_for(intent: &str, provider_used: &str) -> Vec<Warning> {
         (
             &["image", "illustration", "photo", "photograph", "render an", "png", "jpg", "jpeg", "webp"],
             "image_generation",
-            "Aphrodite v0.1 does not generate or fetch images. Variants ship token-driven HTML/CSS only. The intent for an image was ignored; consider adding the asset yourself or wait for the image adapter (post-v0.1).",
+            "Aphrodite does not generate or fetch images. Variants ship token-driven HTML/CSS only. The intent for an image was ignored; consider adding the asset yourself or wait for the image adapter (deferred to v1.1+).",
         ),
         (
             &["video", "mp4", "mov", "webm", "motion", "animate", "scroll-jacking", "parallax"],
             "motion_or_video",
-            "Aphrodite v0.1 emits a static hero. Motion / video lands with the HyperFrames adapter in v0.2.",
+            "Aphrodite emits a static hero. Motion / video lands with the HyperFrames adapter (deferred to v1.1+).",
         ),
         (
             &["three.js", "threejs", "webgl", "3d ", "canvas", " glb", " gltf"],
             "three_d_scene",
-            "Aphrodite v0.1 has no 3D adapter. three.js/Blender support lands in v0.3.",
+            "Aphrodite has no 3D adapter. three.js/Blender support is deferred to v1.1+.",
         ),
         (
             &["figma", "sketch.com", "framer"],
             "design_tool_roundtrip",
-            "Aphrodite v0.1 does not round-trip with design tools. Figma Tokens import/export lands in v0.2.",
+            "Aphrodite exports Figma Tokens (one-way) at 1.0; full design-tool round-trip is deferred to v1.1+.",
         ),
     ];
 
@@ -176,7 +176,7 @@ fn warnings_for(intent: &str, provider_used: &str) -> Vec<Warning> {
         if keys.iter().any(|k| lower.contains(k)) {
             out.push(Warning {
                 kind: (*kind).to_string(),
-                message: format!("intent mentions `{}`, which Aphrodite v0.1 does not produce; the request was satisfied without it.", keys[0]),
+                message: format!("intent mentions `{}`, which Aphrodite does not produce; the request was satisfied without it.", keys[0]),
                 hint: (*hint).to_string(),
             });
         }

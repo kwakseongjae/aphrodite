@@ -1,0 +1,48 @@
+name: rust-ci
+
+# The safety net that was missing before 1.0: build + test the WHOLE
+# workspace on every push/PR. Prior to this, only `-p aphrodite-cli` was
+# built (in release.yml) and no `cargo test` ran anywhere — which let a
+# broken `aphrodite-mcp` call site and 3 failing extractor unit tests sit
+# undetected on `main`. Never again.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    name: build + test (workspace)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - uses: Swatinem/rust-cache@v2
+
+      # Hard gates — these catch real breakage (compile errors, failing tests).
+      - name: build (workspace, all targets)
+        run: cargo build --workspace --all-targets
+
+      - name: test (workspace)
+        run: cargo test --workspace
+
+      # Informational for now: the repo predates a whole-tree `cargo fmt` and
+      # has benign unused-import clippy warnings in test modules. Both should
+      # be cleaned in a dedicated formatting commit, then promoted to hard
+      # gates (fmt --check, clippy -D warnings).
+      - name: fmt check
+        run: cargo fmt --all --check
+        continue-on-error: true
+
+      - name: clippy
+        run: cargo clippy --workspace --all-targets
+        continue-on-error: true

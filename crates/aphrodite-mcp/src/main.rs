@@ -292,6 +292,23 @@ async fn do_create(args: Value) -> anyhow::Result<Value> {
         args.get("write_mode").and_then(|v| v.as_str()),
         Some("artifact_only")
     );
+    // Multi-page output. Accept either a JSON array (`["home","pricing"]`)
+    // or a comma-separated string (`"home,pricing"`), mirroring the CLI's
+    // `--pages`. Empty → single page named `composition` (orchestrator default).
+    let pages: Vec<String> = match args.get("pages") {
+        Some(Value::Array(arr)) => arr
+            .iter()
+            .filter_map(|v| v.as_str())
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty())
+            .collect(),
+        Some(Value::String(s)) => s
+            .split(',')
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty())
+            .collect(),
+        _ => Vec::new(),
+    };
 
     if !repo.exists() {
         anyhow::bail!("target_repo does not exist: {}", repo.display());
@@ -313,6 +330,7 @@ async fn do_create(args: Value) -> anyhow::Result<Value> {
         persona,
         no_write,
         Some(repo),
+        pages,
     )
     .await
 }

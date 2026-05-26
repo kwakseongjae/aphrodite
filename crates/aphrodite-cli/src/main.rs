@@ -82,7 +82,7 @@ enum Command {
     /// Run all health checks (config + keychain + env + reachability).
     Doctor,
 
-    /// Print the v0.1 capability matrix — what Aphrodite can and cannot do.
+    /// Print the 1.0 capability matrix — what Aphrodite can and cannot do.
     Capabilities,
 
     /// Rebuild the design-system handoff (tokens.css, tokens.json,
@@ -1024,41 +1024,44 @@ fn capabilities() -> serde_json::Value {
         "kind": "capabilities",
         "version": env!("CARGO_PKG_VERSION"),
         "in_scope": {
+            "create.outputs": ["multi-page surface (--pages)", "React component package (react/)", "design-system handoff (tokens.css/json, components.html)", "Aphrodite Quality Score 0-100"],
             "design.modes": ["light", "dark", "brand"],
             "design.outputs": ["DESIGN.md (Google Labs alpha)", "hero.html (self-contained, no external network)"],
             "providers.api_key": ["zai", "anthropic", "openrouter"],
-            "providers.offline_fallback": true,
+            "providers.offline_fallback": "design only (create requires a real provider)",
             "validation": ["schema (Google Labs alpha)", "WCAG-AA contrast across all variants"],
             "taste_loop": "implicit (Regenerate signals bias next call)",
             "write_modes": ["commit (default)", "artifact_only"],
         },
-        "out_of_scope_v01": [
+        "deferred_v1_1": [
             "image generation / asset fetching",
-            "motion / video (HyperFrames adapter lands in v0.2)",
-            "3D scenes / three.js / Blender (v0.3)",
-            "Figma / Sketch round-trip (v0.2)",
-            "explicit aesthetic jury (implicit signals only in v0.1)",
-            "OAuth flows for any provider (v0.2; API-key only at v0.1)",
+            "motion / video (HyperFrames adapter)",
+            "3D scenes / three.js / Blender",
+            "Figma / Sketch round-trip (export only at 1.0)",
+            "explicit aesthetic jury (implicit signals only)",
+            "OAuth flows for any provider (API-key only at 1.0)",
         ],
     });
 
-    println!("{}", style("Aphrodite — v0.1 capabilities").bold().magenta());
+    println!("{}", style("Aphrodite — 1.0 capabilities").bold().magenta());
     println!();
     println!("  {}", style("In scope:").bold());
+    println!("    • create: multi-page brand emit + React component package + design-system handoff");
+    println!("    • Aphrodite Quality Score (0-100) on every create run");
     println!("    • design / redesign / validate / auth_status MCP tools");
     println!("    • 4 variants per DESIGN.md (light, dark, brand-a, brand-b)");
     println!("    • WCAG-AA contrast gate, schema gate");
     println!("    • Providers: z.ai GLM (API key), Anthropic (API key), OpenRouter (API key)");
-    println!("    • Offline deterministic fallback (no network, no cost)");
+    println!("    • Offline deterministic fallback for `design` (no network, no cost)");
     println!("    • Implicit taste loop — `redesign` shifts subsequent palettes");
     println!("    • Direct-commit by default; `--no-write` for artifact-only mode");
     println!();
-    println!("  {}", style("Out of v0.1 scope (will surface as warnings if asked):").dim());
+    println!("  {}", style("Deferred to v1.1+ (will surface as warnings if asked):").dim());
     println!("    • image generation, asset fetching");
-    println!("    • motion / video (HyperFrames adapter, v0.2)");
-    println!("    • 3D / three.js / Blender (v0.3)");
-    println!("    • Figma round-trip (v0.2)");
-    println!("    • OAuth (v0.2)");
+    println!("    • motion / video (HyperFrames adapter)");
+    println!("    • 3D / three.js / Blender");
+    println!("    • Figma round-trip (export only at 1.0)");
+    println!("    • OAuth (API-key only at 1.0)");
     println!();
     cap
 }

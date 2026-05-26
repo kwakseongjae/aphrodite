@@ -50,7 +50,11 @@ pub async fn run(
     };
     let target = target.canonicalize().unwrap_or(target);
     let resolved = crate::resolve_default_provider().ok_or_else(|| {
-        anyhow::anyhow!("no provider credential reachable. Run `aphrodite doctor`.")
+        anyhow::anyhow!(
+            "no LLM provider configured — `aphrodite create` needs one (offline mode covers `design` only).\n  \
+             Fastest path: `aphrodite init` (2-min guided setup), or set APHRODITE_ZAI_API_KEY in your shell.\n  \
+             Diagnose anytime with `aphrodite doctor`. Docs: https://docs.aphrodite.dev/getting-started"
+        )
     })?;
     // Per-call model overrides (e.g. ~/.aphrodite/config.toml's
     // [providers.zai] composer_model = "glm-4.5-air"). Falls back to the

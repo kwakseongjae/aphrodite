@@ -242,7 +242,7 @@ tests/ssr/
    - Lightweight (~5KB) Node.js package, not the binary itself.
    - `package.json`: `bin: { aphrodite: "./bin/aphrodite-wrapper.js" }`, peer `node >= 18`.
    - `postinstall` script: detects `process.platform + process.arch`, downloads matching binary from GitHub Releases into `node_modules/@aphrodite-design/aphrodite-agent/bin/`.
-   - **Explicit UX**: "Downloading aphrodite v0.9.0-beta.1 for darwin-arm64 (18MB)..." with progress bar — silent install hides network failures from new users.
+   - **Explicit UX**: "Downloading aphrodite v1.0.0-beta.1 for darwin-arm64 (18MB)..." with progress bar — silent install hides network failures from new users.
    - Wrapper shim execs the downloaded binary, passes args + stdio through.
    - Estimate: 1 day.
 
@@ -267,8 +267,8 @@ tests/ssr/
    - Estimate: 0.5 day.
 
 **Exit criteria (falsifiable)**:
-- [ ] macOS arm64 + x86_64 binaries on GitHub Releases for tag `agent-v0.9.0-beta.1`
-- [ ] `npm i -g @aphrodite-design/aphrodite-agent@0.9.0-beta.1` from a fresh shell succeeds (no aphrodite repo cloned)
+- [ ] macOS arm64 + x86_64 binaries on GitHub Releases for tag `agent-v1.0.0-beta.1`
+- [ ] `npm i -g @aphrodite-design/aphrodite-agent@1.0.0-beta.1` from a fresh shell succeeds (no aphrodite repo cloned)
 - [ ] postinstall downloads the correct platform binary, prints progress, leaves usable `aphrodite` binary in PATH
 - [ ] `aphrodite --version` returns the matching version
 - [ ] `aphrodite create "test brand"` end-to-end on a stranger ubuntu/macos CI VM produces a valid emit (Quality Score ≥ 85)
@@ -357,7 +357,7 @@ The eval sweep is the gate's regression-detection net. Any regression discovered
 
 **Entry condition**: all 3 gates show ✓ on the checklist above + at least 1 internal full cross-brand sweep with mean Quality ≥ 95 + beta-1 binary tested locally by maintainer on a fresh macOS account.
 
-**Version progression**: `0.9.0-beta.1` → `0.9.0-beta.N` (bug-driven iterations) → `1.0.0-rc.1` → `1.0.0`. Standard semver, matches React/Next/Vite convention.
+**Version progression**: `1.0.0-beta.1` → `1.0.0-beta.N` (bug-driven iterations) → `1.0.0-rc.1` → `1.0.0`. Standard semver prerelease ordering (`1.0.0-beta.1` < `1.0.0`), matches React/Next/Vite convention. Decision (2026-05-26): the product line is `1.0.0` from the first public cut — no `0.x` framing; betas are prereleases of `1.0.0`.
 
 **Beta tester recruitment**:
 - Target: **3-5 external alpha testers** (real Korean designer + FE pairs).
@@ -370,7 +370,7 @@ The eval sweep is the gate's regression-detection net. Any regression discovered
 
 For each tester, criteria 1-7 ALL hold:
 
-1. `npm i -g @aphrodite-design/aphrodite-agent@0.9.0-beta.X` succeeds; `aphrodite --version` returns
+1. `npm i -g @aphrodite-design/aphrodite-agent@1.0.0-beta.X` succeeds; `aphrodite --version` returns
 2. `aphrodite create "<their brand>"` completes; Quality Score ≥ 85
 3. `cd <brand>-design && npm install` succeeds (no peer-dep conflicts, no missing-binary errors)
 4. `npm run build` exits 0 (`tsup` pipeline)
@@ -383,7 +383,7 @@ For each tester, criteria 1-7 ALL hold:
 - [ ] **≥ 3 testers complete criteria 1-7**
 - [ ] **≥ 1 of those testers completes criteria 8 (adoption)**: integrates ≥ 1 generated React component into a real project. "Real project" = personal landing deployed to Vercel/Netlify/CF Pages, OR open-source side project in GitHub, OR internal tool used by their team (private, vouched). NOT CodeSandbox / StackBlitz / isolated demo.
 - [ ] **All P0 / P1 bugs filed during beta are closed**; P2 / P3 may roll to v1.1
-- [ ] **No new critical SSR regression** introduced after `0.9.0-beta.1`
+- [ ] **No new critical SSR regression** introduced after `1.0.0-beta.1`
 - [ ] **Beta cycle duration**: target 2-4 calendar weeks; **hard cap 4 weeks**
 
 **Mid-cycle progress signals** (don't wait for the 4-week deadline):
@@ -406,7 +406,7 @@ For each tester, criteria 1-7 ALL hold:
 - 1 mandatory 30-min interview per tester (recorded notes)
 
 **Rollback policy**:
-- P0 reported (broken install / data loss / silent corruption): publish `0.9.0-beta.N+1` with fix or revert within **24 hours**.
+- P0 reported (broken install / data loss / silent corruption): publish `1.0.0-beta.N+1` with fix or revert within **24 hours**.
 - If P0 unfixable in 24h: `npm deprecate` the broken beta version and announce in tester channel.
 
 ### 1.0 launch criteria (final, falsifiable)
@@ -492,6 +492,7 @@ If beta is shortened to 1 week + 2 testers, calendar drops to ~4 weeks. Recommen
 | 2026-05-19 | Telemetry default OFF, opt-in. Privacy-clean payload. | Same interview, turn 5 |
 | 2026-05-19 | Add `npm test` (Vitest + JSDOM smoke) to every emit BEFORE beta-1 ships. | Same interview, turn 4 |
 | 2026-05-19 | Version progression: `0.9.0-beta.N` → `1.0.0-rc.1` → `1.0.0` | Same interview, turn 3 |
+| 2026-05-26 | **Superseded**: product line is `1.0.0` from first public cut. Progression `1.0.0-beta.1` → `1.0.0-beta.N` → `1.0.0-rc.1` → `1.0.0`. No `0.x` framing. | User directive |
 | 2026-05-19 | Test layers in 1.0 SSR gate: build + hydration + themed-render (defer interactive + axe + pixel-baseline) | Ouroboros interview turn 3 |
 | 2026-05-19 | Component ejection rule: failed component is removed, not patched | Ouroboros interview turn 3 |
 | 2026-05-19 | Beta requires ≥ 3 external testers + ≥ 1 real deploy | This document, derived from user's stated discipline |
