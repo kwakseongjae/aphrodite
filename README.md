@@ -3,15 +3,14 @@
 > *Hand a UI brief to the goddess of beauty herself.*
 > *Get back a typed React package, multi-page site, design system, and Quality Score — in one command.*
 
-[![v1.0 RC — Toss/Karrot-adoptable](https://img.shields.io/badge/v1.0_RC-Toss%2FKarrot_grade-a78bfa)](docs/agent-eval/archive/journey.html)
-[![49 dogfood passes recorded](https://img.shields.io/badge/dogfood-49_passes-9333ea)](docs/agent-eval/archive/journey.html)
-[![42 typed React primitives](https://img.shields.io/badge/react-42_components-61dafb)](crates/aphrodite-generator/src/react_export.rs)
+[![v1.0 — Toss/Karrot-adoptable](https://img.shields.io/badge/v1.0-Toss%2FKarrot_grade-a78bfa)](https://docs.aphrodite.dev)
+[![docs.aphrodite.dev](https://img.shields.io/badge/docs-aphrodite.dev-22c55e)](https://docs.aphrodite.dev)
+[![70 typed React primitives](https://img.shields.io/badge/react-70_components-61dafb)](crates/aphrodite-generator/src/react_export.rs)
 [![Figma Tokens Studio sync](https://img.shields.io/badge/figma-tokens_studio_sync-f24e1e)](crates/aphrodite-generator/src/figma_sync.rs)
-[![docs site auto-emit](https://img.shields.io/badge/docs-auto_generated-22c55e)](crates/aphrodite-generator/src/docs_site.rs)
 [![13 design authorities](https://img.shields.io/badge/personas-13-fcd34d)](crates/aphrodite-core/seed-personas/)
 [![Apache 2.0](https://img.shields.io/badge/license-Apache_2.0-57575c)](LICENSE)
 
-## What you get from one `aphrodite create` (v1.0 RC)
+## What you get from one `aphrodite create` (v1.0)
 
 ```
 <your-project>/
@@ -47,8 +46,14 @@
         ├── Switch.tsx       # role=switch, aria-checked
         ├── Badge.tsx        # count overflow + dot
         ├── Spinner.tsx      # role=status, three sizes
-        └── *.stories.tsx    # Storybook CSF3 stories for every component
+        ├── …                # 70 components total (forms, overlays, data,
+        │                    #   charts, Korean-specific PhoneInputKR/AddressInputKR …)
+        ├── *.stories.tsx    # Storybook CSF3 story for every component
+        ├── __tests__/smoke.test.tsx   # Vitest + JSDOM smoke (npm test)
+        └── vitest.config.ts
 ```
+
+Every emit also ships `npm run build` (tsup → ESM/CJS/DTS), `npm run typecheck` (tsc), and `npm test` (Vitest + JSDOM) green out of the box.
 
 Plus a one-line **Aphrodite Quality Score** at the end of every run (`a11y / mobile / perf / semantic`, 0-100 each) so you can pin a CI gate.
 
@@ -72,7 +77,7 @@ The headline difference: Aphrodite **compiles** designs, it doesn't just *advise
 
 The same property that makes Hermes loved (skills + memory + curator) is what makes Aphrodite trustworthy: **nothing the LLM learns is lost between runs**.
 
-## What works today (v0.3)
+## What works today
 
 A single command runs the autonomous creation harness — research → taste → skill scaffolds → persona authority → design → self-critic refine → harmonize → asset management → optional skillify proposal — and writes the finished artifacts to your repo:
 
@@ -98,7 +103,7 @@ Output: `DESIGN.md` (Google Labs alpha schema with 4 variants — light / dark /
 | CLI | `aphrodite` | Human-driven; also sub-shell-callable |
 | MCP | `aphrodite-mcp` | JSON-RPC 2.0 over stdio — for Claude Code / Codex / Hermes / OpenCode hosts |
 
-The MCP server exposes 5 tools: `create` (autonomous), `design` (one-shot), `redesign` (with regenerate signal), `validate`, `auth_status`. Register it in your host's `.mcp.json` and the host's model gets the same execution path the CLI uses.
+The MCP server exposes 9 tools — the action set `create` (autonomous; takes `pages` for multi-page), `design` (one-shot), `redesign` (with regenerate signal), `validate`, `auth_status`, plus read tools `personas_list`, `wiki_list`, `wiki_show`, `assets_list`. Register it in your host's `.mcp.json` and the host's model gets the same execution path the CLI uses.
 
 ## Verbs
 
@@ -109,8 +114,8 @@ The MCP server exposes 5 tools: `create` (autonomous), `design` (one-shot), `red
 - `aphrodite redesign "<intent>"` — `design` with implicit Regenerate signal
 
 ### Curation
-- `aphrodite personas` — list 10 bundled design authorities (Rams, Vignelli, Ando, Kawakubo, Sottsass, Hara, Galileo, Paul Rand, Charlotte Perriand, Naoto Fukasawa)
-- `aphrodite wiki list / show <slug> / add <url> [--auto-fetch]` — design-reference wiki (Karpathy LLM-Wiki pattern, 11 seeded entries)
+- `aphrodite personas` — list 13 bundled design authorities (Rams, Vignelli, Ando, Kawakubo, Sottsass, Hara, Galileo, Paul Rand, Charlotte Perriand, Naoto Fukasawa, Aldo Bakker, Christoph Niemann, Stefan Sagmeister)
+- `aphrodite wiki list / show <slug> / add <url> [--auto-fetch]` — design-reference wiki (Karpathy LLM-Wiki pattern, 13 seeded entries)
 - `aphrodite assets list / clean` — inspect / clean `<project>/.aphrodite/assets/`
 - `aphrodite love` / `aphrodite hate` — record explicit taste signal on the most recent run
 - `aphrodite prefs` — show accumulated taste preferences
@@ -159,7 +164,7 @@ The next `aphrodite create` that matches the wiki entry's tags lifts pattern fra
 
 ## Architecture
 
-ADR 0004 (`docs/adr/0004-autonomous-creation-harness.md`) reframes Aphrodite as an autonomous creation harness with 9 numbered phases, all functional in v0.3:
+ADR 0004 (`docs/adr/0004-autonomous-creation-harness.md`) reframes Aphrodite as an autonomous creation harness with 9 numbered phases, all functional:
 
 ```
 aphrodite create
@@ -179,13 +184,25 @@ aphrodite create
 
 Each phase has a separate testimony in `docs/agent-eval/`. The 19-pass journey is at `docs/agent-eval/archive/journey.html` (every pass with embedded composition preview). See `docs/evolution.md` for the methodology + how feedback shaped each decision.
 
-## Install (from source)
+## Install
+
+The shipping artifact is the CLI agent on npm (postinstall pulls the
+matching native binary from GitHub Releases):
 
 ```bash
-git clone <repo> && cd aphrodite
+npm i -g @aphrodite-design/aphrodite-agent   # arrives with the first 1.0.0-beta tag
+aphrodite init                                # guided first-run setup
+```
+
+> Until `1.0.0-beta.1` is published, install from source:
+
+```bash
+git clone https://github.com/kwakseongjae/aphrodite && cd aphrodite
 cargo install --path crates/aphrodite-cli   # gives you `aphrodite`
 cargo install --path crates/aphrodite-mcp   # gives you `aphrodite-mcp`
 ```
+
+Full docs: **[docs.aphrodite.dev](https://docs.aphrodite.dev)**.
 
 ## Pick your provider (priority: z.ai → Anthropic → OpenRouter → offline)
 
@@ -216,7 +233,7 @@ Register `aphrodite-mcp` in your MCP-capable host's `.mcp.json`:
 }
 ```
 
-The host's model now sees 5 tools. The headline one — `create` — takes `{ intent, persona?, max_turns?, satisfaction_threshold?, target_repo?, write_mode? }` and returns the same structured JSON the CLI emits.
+The host's model now sees the tool set. The headline one — `create` — takes `{ intent, persona?, max_turns?, satisfaction_threshold?, target_repo?, write_mode?, pages? }` and returns the same structured JSON the CLI emits.
 
 Errors come back as structured `isError:true` envelopes with `kind` (auth_failed / rate_limited / provider_outage / target_repo_invalid / …) and `hint` fields so the agent can recover without escalating.
 
@@ -244,9 +261,9 @@ aphrodite/
 ├── crates/
 │   ├── aphrodite-core/                # DESIGN.md model, validator, taste,
 │   │                                    skills, personas, wiki, assets
-│   │   ├── seed-personas/             # 10 bundled PERSONA.md authorities
+│   │   ├── seed-personas/             # 13 bundled PERSONA.md authorities
 │   │   ├── seed-skills/               # bundled SKILL.md scaffolds
-│   │   ├── seed-wiki/                 # 11 bundled design-reference entries
+│   │   ├── seed-wiki/                 # 13 bundled design-reference entries
 │   │   └── src/
 │   ├── aphrodite-cli/                 # `aphrodite` binary
 │   ├── aphrodite-mcp/                 # `aphrodite-mcp` JSON-RPC stdio server
