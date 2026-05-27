@@ -22,6 +22,12 @@ jobs:
   build:
     name: build ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
+    # macOS targets are required for the beta (per roadmap: beta = macOS
+    # arm64/x86_64 only). Linux/Windows are best-effort here — `optional`
+    # entries can fail without blocking the release+publish job, so an
+    # untested cross-build never holds back the macOS beta. Promote them
+    # to required at the 1.0 gate.
+    continue-on-error: ${{ matrix.optional || false }}
     strategy:
       fail-fast: false
       matrix:
@@ -35,13 +41,16 @@ jobs:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
             asset: aphrodite-linux-x86_64.tar.gz
+            optional: true
           - target: aarch64-unknown-linux-gnu
             os: ubuntu-latest
             asset: aphrodite-linux-arm64.tar.gz
             cross: true
+            optional: true
           - target: x86_64-pc-windows-msvc
             os: windows-latest
             asset: aphrodite-windows-x86_64.zip
+            optional: true
 
     steps:
       - uses: actions/checkout@v4
