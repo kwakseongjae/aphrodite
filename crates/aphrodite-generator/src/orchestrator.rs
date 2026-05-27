@@ -289,6 +289,32 @@ pub async fn run(
         output.model_used
     );
 
+    // Guard (Finding #3 → #1): the initial surface compose can occasionally
+    // return an empty/stub composition — more likely on a cheaper composer
+    // model. If we enter the critic loop with a missing surface, the critic
+    // burns its whole first turn just asking for the file to exist (~13 min
+    // of wasted wall-clock at observed z.ai latencies in the 1.0.0-beta.1
+    // zero-to-one run). Detect a too-small composition and re-compose once
+    // with the composer model before the loop, so turn 1 critiques a real
+    // surface instead of recovering from a blank one.
+    if composition_html.trim().len() < 1000 {
+        eprintln!(
+            "  ⚠ initial composition too small ({} bytes) — re-composing before critic loop",
+            composition_html.trim().len()
+        );
+        let variants0 = resolve_variants(&output.design_doc);
+        match surface::compose(&composer_resolved, &intent, &design_md, &output.design_doc).await {
+            Ok(out) if out.html.trim().len() >= 1000 => {
+                composition_html =
+                    crate::hero::inject_variant_css(&out.html, &output.design_doc, &variants0);
+                llm_calls += 1;
+                eprintln!("  ✓ recovered composition ({} bytes)", composition_html.len());
+            }
+            Ok(_) => eprintln!("  ⚠ re-compose still too small — proceeding; critic will guide"),
+            Err(e) => eprintln!("  ⚠ re-compose failed: {e} — proceeding"),
+        }
+    }
+
     // ---- Phase 4: self-critic refinement loop -------------------------------
     eprintln!("● phase 4 / self-critic refinement (max_turns={max_turns}, threshold={satisfaction_threshold:.2})");
     let prefs = preferences::load(&target);

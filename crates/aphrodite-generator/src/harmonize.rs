@@ -144,6 +144,13 @@ pub fn harmonize(
     // `lang="ko"`. The composer's hardcoded default is "en" inherited
     // from the hero.rs template; this is a v0.7 i18n correction.
     let composition_post_fix = patch_lang_attribute(&composition_post_fix);
+    // Finding #4 (1.0.0-beta.1 zero-to-one): the composer authored a
+    // desktop-first surface with fixed `padding: 64px` and un-scaled hero
+    // type, so on a 375px phone the content overflowed and clipped on the
+    // right. Inject a mobile-first safety layer: global overflow-x guard +
+    // fluid media, and a max-width:768px block that scales oversized type
+    // and tames fixed side padding. Idempotent; never touches desktop.
+    let composition_post_fix = inject_mobile_first_shim(&composition_post_fix);
     let composition_post_fix = if placeholder_present {
         let capped = cap_vh_property(&composition_post_fix, "min-height", 40);
         let capped = cap_vh_property(&capped, "height", 60);
@@ -190,10 +197,14 @@ fn score_quality(html: &str, warnings: &[String]) -> (QualityAxes, u32) {
         .count() as u32;
     let a11y = 100u32.saturating_sub(a11y_hits.saturating_mul(15));
 
-    // Mobile: 50 base, +25 if @media (min-width) present, +25 if Korean
-    // viewport meta tag explicitly declared.
+    // Mobile: 50 base, +25 for a responsive layer (author min-width queries
+    // OR Aphrodite's injected mobile-first safety shim — both make the page
+    // genuinely phone-safe), +25 if a viewport meta tag is declared.
     let mut mobile = 50u32;
-    if html.contains("@media (min-width") || html.contains("@media(min-width") {
+    if html.contains("@media (min-width")
+        || html.contains("@media(min-width")
+        || html.contains("data-aphrodite-mobile-shim")
+    {
         mobile += 25;
     }
     if html.contains("name=\"viewport\"") || html.contains("name='viewport'") {
@@ -438,6 +449,48 @@ fn inject_korean_layout_shim(html: &str) -> String {
         let mut out = String::with_capacity(html.len() + shim.len());
         out.push_str(&html[..idx]);
         out.push_str(&shim);
+        out.push_str(&html[idx..]);
+        out
+    } else {
+        format!("{shim}{html}")
+    }
+}
+
+/// Finding #4 mobile-first safety layer. Composers tend to author
+/// desktop-first surfaces (fixed `padding: 64px`, un-scaled hero type) that
+/// overflow and clip on phone-width viewports. Inject a correction stylesheet:
+///   * always-on: `overflow-x` guard + fluid media (safe on desktop);
+///   * `@media (max-width: 768px)`: fluid hero/h2 type + tamed side padding.
+/// `!important` is used because this is a corrective overlay that must beat
+/// arbitrary author CSS of higher specificity. Idempotent via marker.
+fn inject_mobile_first_shim(html: &str) -> String {
+    if html.contains("data-aphrodite-mobile-shim") {
+        return html.to_string();
+    }
+    let shim = "\n<style data-aphrodite-mobile-shim>\n\
+        html, body { max-width: 100% !important; overflow-x: hidden !important; }\n\
+        img, video, svg, canvas { max-width: 100%; height: auto; }\n\
+        @media (max-width: 768px) {\n\
+        \u{20}\u{20}h1 { font-size: clamp(28px, 8vw, 44px) !important; line-height: 1.15; word-break: keep-all; }\n\
+        \u{20}\u{20}h2 { font-size: clamp(22px, 6vw, 32px) !important; word-break: keep-all; }\n\
+        \u{20}\u{20}section, header, footer, main,\n\
+        \u{20}\u{20}[class*=\"container\"], [class*=\"wrap\"], [class*=\"section\"], [class*=\"hero\"], [class*=\"content\"] {\n\
+        \u{20}\u{20}\u{20}\u{20}padding-left: clamp(16px, 5vw, 28px) !important;\n\
+        \u{20}\u{20}\u{20}\u{20}padding-right: clamp(16px, 5vw, 28px) !important;\n\
+        \u{20}\u{20}}\n\
+        \u{20}\u{20}nav, [class*=\"switcher\"], [class*=\"navbar\"], [class*=\"nav-\"], [class*=\"toolbar\"] { flex-wrap: wrap; max-width: 100%; }\n\
+        }\n\
+        </style>\n";
+    if let Some(idx) = html.find("</head>") {
+        let mut out = String::with_capacity(html.len() + shim.len());
+        out.push_str(&html[..idx]);
+        out.push_str(shim);
+        out.push_str(&html[idx..]);
+        out
+    } else if let Some(idx) = html.find("<body") {
+        let mut out = String::with_capacity(html.len() + shim.len());
+        out.push_str(&html[..idx]);
+        out.push_str(shim);
         out.push_str(&html[idx..]);
         out
     } else {
@@ -841,12 +894,16 @@ fn audit_composition(html: &str, display: Option<&str>, body: Option<&str>) -> V
         }
     }
 
-    // Mobile-first audit: every page should have at least one
-    // `@media (min-width: ...)` block. A page with zero media queries
-    // either targets desktop exclusively (collapses on phone) or relies
-    // on intrinsic-only layout — both fail the Korean production bar.
-    if !html.contains("@media (min-width") && !html.contains("@media(min-width") {
-        warnings.push("no `@media (min-width: ...)` block — composition has no mobile-first responsive rules. Production targets (Toss, Karrot) are mobile-first.".into());
+    // Mobile-first audit: the page should have a responsive layer — author
+    // `@media (min-width: ...)` blocks OR Aphrodite's injected mobile-first
+    // safety shim (overflow guard + fluid type/padding). With neither, a
+    // desktop-first surface collapses/overflows on phone — fails the Korean
+    // production bar.
+    if !html.contains("@media (min-width")
+        && !html.contains("@media(min-width")
+        && !html.contains("data-aphrodite-mobile-shim")
+    {
+        warnings.push("no responsive rules — composition has no mobile-first layer. Production targets (Toss, Karrot) are mobile-first.".into());
     }
     // Fixed multi-column grids without responsive override are a
     // common collapse pattern. Catch `grid-template-columns:` with
@@ -1312,6 +1369,32 @@ mod tests {
     #[test]
     fn fonts_url_none_when_all_system() {
         assert!(google_fonts_url(&[Some("system-ui".into()), Some("sans-serif".into())]).is_none());
+    }
+
+    #[test]
+    fn mobile_shim_injects_once_and_is_idempotent() {
+        let html = "<html><head><title>x</title></head><body><h1>제목</h1></body></html>";
+        let once = inject_mobile_first_shim(html);
+        assert!(once.contains("data-aphrodite-mobile-shim"));
+        assert!(once.contains("overflow-x: hidden"));
+        assert!(once.contains("@media (max-width: 768px)"));
+        // Idempotent: a second pass must not add a second shim.
+        let twice = inject_mobile_first_shim(&once);
+        assert_eq!(once, twice);
+        assert_eq!(twice.matches("data-aphrodite-mobile-shim").count(), 1);
+    }
+
+    #[test]
+    fn mobile_shim_lifts_mobile_axis_score() {
+        // A desktop-first page with viewport meta but no min-width queries
+        // scores 75 on mobile; once the safety shim is present it earns the
+        // responsive-layer credit → 100.
+        let desktop = "<html><head><meta name=\"viewport\" content=\"width=device-width\"></head><body><h1>x</h1></body></html>";
+        let (before, _) = score_quality(desktop, &[]);
+        assert_eq!(before.mobile, 75);
+        let shimmed = inject_mobile_first_shim(desktop);
+        let (after, _) = score_quality(&shimmed, &[]);
+        assert_eq!(after.mobile, 100);
     }
 
     #[test]
