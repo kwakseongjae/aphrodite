@@ -59,3 +59,6 @@ experiments/
 models/
 *.glb.cache
 *.blend1
+.aphrodite/intent.txt
+.aphrodite/refs/
+.aphrodite/assets/
