@@ -22,6 +22,9 @@ pub enum ProviderId {
     Openai,      // v0.2
     Moonshot,    // v0.2
     Gemini,      // v0.2
+    /// Any user-defined endpoint from `[providers.<name>]` config. base_url,
+    /// model and wire format all come from config — nothing is hardcoded.
+    Custom,
 }
 
 impl ProviderId {
@@ -33,6 +36,7 @@ impl ProviderId {
             Self::Openai => "openai",
             Self::Moonshot => "moonshot",
             Self::Gemini => "gemini",
+            Self::Custom => "custom",
         }
     }
 
@@ -58,6 +62,8 @@ impl ProviderId {
             Self::Openai => "gpt-4o",
             Self::Moonshot => "moonshot-v1-128k",
             Self::Gemini => "gemini-2.0-flash",
+            // Custom providers MUST set `model` in config; there is no default.
+            Self::Custom => "",
         }
     }
 
@@ -122,6 +128,7 @@ impl ProviderId {
             Self::Openai => "OpenAI",
             Self::Moonshot => "Moonshot / Kimi",
             Self::Gemini => "Google Gemini",
+            Self::Custom => "Custom provider",
         }
     }
 
@@ -221,6 +228,11 @@ pub struct ResolvedProvider {
     pub api_key: String,
     pub model: String,
     pub base_url: Option<String>,
+    /// True → Anthropic wire (`/v1/messages`, `x-api-key`). False → OpenAI
+    /// wire (`/chat/completions`, `Bearer`). Resolved once at construction
+    /// (from config `wire` or a base-URL heuristic) so the call path never
+    /// re-derives it per-provider.
+    pub anthropic_wire: bool,
 }
 
 impl ResolvedProvider {
@@ -232,6 +244,7 @@ impl ResolvedProvider {
             api_key: self.api_key.clone(),
             model: model.into(),
             base_url: self.base_url.clone(),
+            anthropic_wire: self.anthropic_wire,
         }
     }
 
@@ -241,6 +254,7 @@ impl ResolvedProvider {
             api_key,
             model: id.default_model().to_string(),
             base_url: None,
+            anthropic_wire: matches!(id, ProviderId::Anthropic | ProviderId::Zai),
         }
     }
 }
@@ -261,29 +275,28 @@ pub async fn call_raw(
 ) -> Result<String, ProviderError> {
     let default_base = resolved.id.base_url_for_plan("coding_plan");
     let base = resolved.base_url.as_deref().unwrap_or(default_base);
-    let anthropic_wire = match resolved.id {
-        ProviderId::Anthropic => true,
-        ProviderId::Zai => base.contains("/api/anthropic"),
-        _ => false,
-    };
     if matches!(resolved.id, ProviderId::Gemini) {
         return Err(ProviderError::Malformed("Gemini provider is deferred to v1.1+".into()));
     }
-    // Finding #29 mitigation: retry transient failures (429 / 5xx / connect
-    // / timeout) with exponential back-off. Bounded at 3 attempts so a single
-    // call costs ≤ 1 + 2 + 4 = 7 s of extra wall clock in the worst case.
+    // Retry transient failures (429 / 5xx / connect / timeout / network) with
+    // exponential back-off. Finding #2 (1.0.0-beta.1): a single ~7 s window
+    // (3 attempts) let a brief z.ai blip drop a critic-refine turn on the
+    // surface-compose path. Widened to 5 attempts with the delay capped at 8 s
+    // → worst case ≈ 1+2+4+8+8 = 23 s, enough to ride out short provider
+    // hiccups on the critical compose path without runaway cost.
+    const MAX_ATTEMPTS: u32 = 5;
     let mut attempt: u32 = 0;
     loop {
-        let result = if anthropic_wire {
+        let result = if resolved.anthropic_wire {
             call_anthropic_compat_custom(base, &resolved.api_key, &resolved.model, system, user, max_tokens).await
         } else {
             call_openai_compat_custom(base, &resolved.api_key, &resolved.model, system, user, max_tokens).await
         };
         match result {
             Ok(s) => return Ok(s),
-            Err(e) if is_transient(&e) && attempt < 3 => {
-                let delay_ms = 1000u64 << attempt;
-                tracing::warn!("provider transient failure (attempt {}/3): {} — retrying in {}ms", attempt + 1, e, delay_ms);
+            Err(e) if is_transient(&e) && attempt + 1 < MAX_ATTEMPTS => {
+                let delay_ms = (1000u64 << attempt).min(8000);
+                tracing::warn!("provider transient failure (attempt {}/{}): {} — retrying in {}ms", attempt + 1, MAX_ATTEMPTS, e, delay_ms);
                 tokio::time::sleep(std::time::Duration::from_millis(delay_ms)).await;
                 attempt += 1;
             }
@@ -359,16 +372,10 @@ pub async fn call_with_taste(
     let default_base = resolved.id.base_url_for_plan("coding_plan");
     let base = resolved.base_url.as_deref().unwrap_or(default_base);
 
-    let anthropic_wire = match resolved.id {
-        ProviderId::Anthropic => true,
-        ProviderId::Zai => base.contains("/api/anthropic"),
-        _ => false,
-    };
-    let _ = anthropic_wire; // placeholder — used below
     if matches!(resolved.id, ProviderId::Gemini) {
         return Err(ProviderError::Malformed("Gemini provider is deferred to v1.1+".into()));
     }
-    if anthropic_wire {
+    if resolved.anthropic_wire {
         call_anthropic_compat(base, &resolved.api_key, &resolved.model, &local_user).await
     } else {
         call_openai_compat(base, &resolved.api_key, &resolved.model, &local_user).await

@@ -13,6 +13,13 @@
 //! [providers.anthropic]
 //! plan = "standard_api"
 //! model = "claude-sonnet-4-6"
+//!
+//! # Any OpenAI/Anthropic-compatible endpoint (opencode-style). The provider
+//! # name is arbitrary; store its key with `aphrodite auth set <name>`.
+//! [providers.my-llm]
+//! base_url = "https://my-gateway.example.com/v1"
+//! model = "llama-3.3-70b"
+//! wire = "openai"               # "openai" | "anthropic"
 //! ```
 
 use serde::{Deserialize, Serialize};
@@ -37,6 +44,13 @@ pub struct ProviderConfig {
     pub model: Option<String>,
     #[serde(default)]
     pub base_url: Option<String>,
+    /// Wire format for this provider's HTTP API: `"anthropic"` (POST
+    /// `/v1/messages`, `x-api-key` header) or `"openai"` (POST
+    /// `/chat/completions`, `Authorization: Bearer`). Lets you point at ANY
+    /// compatible endpoint (opencode-style). When unset, the format is
+    /// inferred: Anthropic + z.ai-coding-plan base URLs → anthropic, else openai.
+    #[serde(default)]
+    pub wire: Option<String>,
     /// Optional per-call model overrides. When set, the orchestrator uses
     /// these instead of `model` for the respective phase. Use a *faster*
     /// model (e.g. z.ai `glm-4.5-air`) for the composer and critic calls

@@ -742,6 +742,13 @@ async fn main() -> anyhow::Result<()> {
 
 const ALL_PROVIDERS: &[&str] = &["zai", "anthropic", "openrouter", "openai", "moonshot", "gemini"];
 
+/// A custom provider is any name the user has declared in
+/// `~/.aphrodite/config.toml` under `[providers.<name>]`. We accept storing a
+/// key for it even though it isn't a built-in.
+fn is_configured_custom_provider(name: &str) -> bool {
+    aphrodite_core::config::load().providers.contains_key(name)
+}
+
 fn version_summary(_json: bool) -> anyhow::Result<serde_json::Value> {
     banner::print(env!("CARGO_PKG_VERSION"));
     let cfg = aphrodite_core::config::load();
@@ -796,8 +803,14 @@ fn auth_set(
     from_file: Option<&std::path::Path>,
     keep_file: bool,
 ) -> anyhow::Result<serde_json::Value> {
-    if !ALL_PROVIDERS.contains(&provider) {
-        anyhow::bail!("unknown provider `{provider}`; supported: {}", ALL_PROVIDERS.join(", "));
+    if !ALL_PROVIDERS.contains(&provider) && !is_configured_custom_provider(provider) {
+        anyhow::bail!(
+            "unknown provider `{provider}`; built-in: {}.\n  \
+             For a custom provider, first declare it in ~/.aphrodite/config.toml:\n    \
+             [providers.{provider}]\n    base_url = \"https://…\"\n    model = \"…\"\n    wire = \"openai\"   # or \"anthropic\"\n  \
+             then re-run `aphrodite auth set {provider}`.",
+            ALL_PROVIDERS.join(", ")
+        );
     }
     let raw = if let Some(name) = from_env {
         std::env::var(name).map_err(|_| anyhow::anyhow!("env var {name} unset"))?
@@ -860,7 +873,7 @@ fn sanitize_secret(raw: &str) -> String {
 
 fn auth_verify(provider: &str) -> serde_json::Value {
     use console::style;
-    if !ALL_PROVIDERS.contains(&provider) {
+    if !ALL_PROVIDERS.contains(&provider) && !is_configured_custom_provider(provider) {
         return json!({ "kind": "auth_verify", "provider": provider, "ok": false, "reason": "unknown provider" });
     }
     match aphrodite_keyring::fetch(provider) {
@@ -965,13 +978,27 @@ fn doctor() -> serde_json::Value {
     // Check 4: env-var fallback for the default provider.
     let mut env_ok = false;
     if let Some(p) = default.as_deref() {
-        let env_keys: &[&str] = match p {
+        let builtin: &[&str] = match p {
             "zai" => &["APHRODITE_ZAI_API_KEY", "ZAI_API_KEY", "GLM_API_KEY"],
             "anthropic" => &["APHRODITE_ANTHROPIC_API_KEY", "ANTHROPIC_API_KEY"],
             "openrouter" => &["APHRODITE_OPENROUTER_API_KEY", "OPENROUTER_API_KEY"],
+            "openai" => &["APHRODITE_OPENAI_API_KEY", "OPENAI_API_KEY"],
+            "moonshot" => &["APHRODITE_MOONSHOT_API_KEY", "MOONSHOT_API_KEY"],
+            "gemini" => &["APHRODITE_GEMINI_API_KEY", "GEMINI_API_KEY"],
             _ => &[],
         };
-        for name in env_keys {
+        // Custom providers resolve their key from APHRODITE_<NAME>_API_KEY
+        // (matches fetch_key_by_name in the generator). Include it so doctor
+        // reflects the same resolution the call path uses.
+        let mut env_keys: Vec<String> = builtin.iter().map(|s| s.to_string()).collect();
+        if !ALL_PROVIDERS.contains(&p) {
+            env_keys.push(format!(
+                "APHRODITE_{}_API_KEY",
+                p.to_ascii_uppercase()
+                    .replace(|c: char| !c.is_ascii_alphanumeric(), "_")
+            ));
+        }
+        for name in &env_keys {
             if std::env::var(name).map(|v| !v.trim().is_empty()).unwrap_or(false) {
                 eprintln!("  {} env fallback present: {}", style("✓").green(), name);
                 env_ok = true;
@@ -1027,7 +1054,7 @@ fn capabilities() -> serde_json::Value {
             "create.outputs": ["multi-page surface (--pages)", "React component package (react/)", "design-system handoff (tokens.css/json, components.html)", "Aphrodite Quality Score 0-100"],
             "design.modes": ["light", "dark", "brand"],
             "design.outputs": ["DESIGN.md (Google Labs alpha)", "hero.html (self-contained, no external network)"],
-            "providers.api_key": ["zai", "anthropic", "openrouter"],
+            "providers.api_key": ["zai", "anthropic", "openrouter", "openai", "moonshot", "custom (any OpenAI/Anthropic-compatible endpoint via config)"],
             "providers.offline_fallback": "design only (create requires a real provider)",
             "validation": ["schema (Google Labs alpha)", "WCAG-AA contrast across all variants"],
             "taste_loop": "implicit (Regenerate signals bias next call)",
@@ -1051,7 +1078,7 @@ fn capabilities() -> serde_json::Value {
     println!("    • design / redesign / validate / auth_status MCP tools");
     println!("    • 4 variants per DESIGN.md (light, dark, brand-a, brand-b)");
     println!("    • WCAG-AA contrast gate, schema gate");
-    println!("    • Providers: z.ai GLM (API key), Anthropic (API key), OpenRouter (API key)");
+    println!("    • Providers: z.ai GLM, Anthropic, OpenRouter — or ANY OpenAI/Anthropic-compatible endpoint via [providers.<name>] config (base_url + model + wire)");
     println!("    • Offline deterministic fallback for `design` (no network, no cost)");
     println!("    • Implicit taste loop — `redesign` shifts subsequent palettes");
     println!("    • Direct-commit by default; `--no-write` for artifact-only mode");

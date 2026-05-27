@@ -219,6 +219,29 @@ aphrodite auth set anthropic
 aphrodite auth set openrouter
 ```
 
+### Any provider (OpenAI- or Anthropic-compatible)
+
+Point Aphrodite at **any** compatible endpoint — a self-hosted gateway, a
+local model server, an alternate cloud — by declaring it in
+`~/.aphrodite/config.toml`. The provider name is arbitrary:
+
+```toml
+default_provider = "my-llm"
+
+[providers.my-llm]
+base_url = "https://my-gateway.example.com/v1"
+model    = "llama-3.3-70b"
+wire     = "openai"          # "openai" (/chat/completions) or "anthropic" (/v1/messages)
+```
+
+```bash
+aphrodite auth set my-llm          # key → OS keychain under that name
+# or headless:  APHRODITE_MY_LLM_API_KEY=... aphrodite create "…"
+```
+
+Transient failures (429 / 5xx / network) on the design + compose calls are
+retried automatically (5 attempts, capped exponential back-off).
+
 No key? `aphrodite design` still works — falls back to a deterministic offline generator that emits a valid 4-variant DESIGN.md. Useful for CI.
 
 ## Hand it to your agent

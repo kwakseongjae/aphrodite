@@ -225,9 +225,25 @@ pub fn resolve_default_provider() -> Option<ResolvedProvider> {
 
     // 1) If user pinned default_provider in config, try that first.
     if let Some(name) = cfg.default_provider.as_deref() {
-        if let Some(id) = ProviderId::from_label(name) {
-            if let Some(key) = fetch_key(id) {
-                return Some(resolve(id, key, cfg.providers.get(name).cloned()));
+        let pcfg = cfg.providers.get(name).cloned();
+        match ProviderId::from_label(name) {
+            // Known provider (zai / anthropic / openrouter / …).
+            Some(id) => {
+                if let Some(key) = fetch_key(id) {
+                    return Some(resolve(id, key, pcfg));
+                }
+            }
+            // Unknown name → a user-defined custom provider. It MUST carry a
+            // base_url in `[providers.<name>]`; the key is stored under that
+            // same name (keyring or APHRODITE_<NAME>_API_KEY env).
+            None => {
+                if let Some(pc) = pcfg {
+                    if pc.base_url.is_some() {
+                        if let Some(key) = fetch_key_by_name(name) {
+                            return Some(resolve(ProviderId::Custom, key, Some(pc)));
+                        }
+                    }
+                }
             }
         }
     }
@@ -302,7 +318,27 @@ fn resolve(
         .as_ref()
         .and_then(|c| c.base_url.clone())
         .or_else(|| pcfg.as_ref().and_then(|c| c.plan.as_deref()).map(|plan| id.base_url_for_plan(plan).to_string()));
-    ResolvedProvider { id, api_key, model, base_url }
+    let anthropic_wire = resolve_wire(id, pcfg.as_ref(), base_url.as_deref());
+    ResolvedProvider { id, api_key, model, base_url, anthropic_wire }
+}
+
+/// Decide the wire format. Explicit config `wire` wins; otherwise infer:
+/// Anthropic and z.ai-`/api/anthropic` base URLs speak the Anthropic wire,
+/// everything else (incl. custom providers with no `wire` set) is OpenAI.
+fn resolve_wire(
+    id: ProviderId,
+    pcfg: Option<&aphrodite_core::config::ProviderConfig>,
+    base_url: Option<&str>,
+) -> bool {
+    if let Some(w) = pcfg.and_then(|c| c.wire.as_deref()) {
+        return w.eq_ignore_ascii_case("anthropic");
+    }
+    let base = base_url.unwrap_or_else(|| id.base_url_for_plan("coding_plan"));
+    match id {
+        ProviderId::Anthropic => true,
+        ProviderId::Zai => base.contains("/api/anthropic"),
+        _ => false,
+    }
 }
 
 fn fetch_key(id: ProviderId) -> Option<String> {
@@ -318,6 +354,7 @@ fn fetch_key(id: ProviderId) -> Option<String> {
         ProviderId::Openai => &["APHRODITE_OPENAI_API_KEY", "OPENAI_API_KEY"],
         ProviderId::Moonshot => &["APHRODITE_MOONSHOT_API_KEY", "MOONSHOT_API_KEY"],
         ProviderId::Gemini => &["APHRODITE_GEMINI_API_KEY", "GEMINI_API_KEY"],
+        ProviderId::Custom => &[],
     };
     for n in env_names {
         if let Ok(k) = std::env::var(n) {
@@ -327,4 +364,80 @@ fn fetch_key(id: ProviderId) -> Option<String> {
         }
     }
     None
+}
+
+/// Fetch a key for an arbitrary provider name (custom providers): keyring
+/// under the exact name, else `APHRODITE_<NAME>_API_KEY` (name upper-cased,
+/// non-alphanumerics → `_`).
+fn fetch_key_by_name(name: &str) -> Option<String> {
+    if let Ok(k) = aphrodite_keyring::fetch(name) {
+        if !k.trim().is_empty() {
+            return Some(k);
+        }
+    }
+    let env_name = format!(
+        "APHRODITE_{}_API_KEY",
+        name.to_ascii_uppercase()
+            .replace(|c: char| !c.is_ascii_alphanumeric(), "_")
+    );
+    if let Ok(k) = std::env::var(&env_name) {
+        if !k.trim().is_empty() {
+            return Some(k);
+        }
+    }
+    None
+}
+
+#[cfg(test)]
+mod provider_resolution_tests {
+    use super::*;
+    use aphrodite_core::config::ProviderConfig;
+
+    fn pc(base_url: Option<&str>, wire: Option<&str>) -> ProviderConfig {
+        ProviderConfig {
+            base_url: base_url.map(String::from),
+            wire: wire.map(String::from),
+            ..Default::default()
+        }
+    }
+
+    #[test]
+    fn wire_inferred_from_known_providers() {
+        // Anthropic always anthropic-wire; OpenRouter always openai-wire.
+        assert!(resolve_wire(ProviderId::Anthropic, None, None));
+        assert!(!resolve_wire(ProviderId::Openrouter, None, None));
+        // z.ai default base is the coding-plan /api/anthropic endpoint.
+        assert!(resolve_wire(ProviderId::Zai, None, None));
+        // z.ai pointed at its OpenAI-format endpoint → openai wire.
+        assert!(!resolve_wire(
+            ProviderId::Zai,
+            None,
+            Some("https://api.z.ai/api/coding/paas/v4")
+        ));
+    }
+
+    #[test]
+    fn explicit_wire_config_overrides_heuristic() {
+        let cfg = pc(Some("https://api.anthropic.com"), Some("openai"));
+        assert!(!resolve_wire(ProviderId::Anthropic, Some(&cfg), Some("https://api.anthropic.com")));
+        let cfg2 = pc(Some("https://gw.example.com/v1"), Some("anthropic"));
+        assert!(resolve_wire(ProviderId::Custom, Some(&cfg2), Some("https://gw.example.com/v1")));
+    }
+
+    #[test]
+    fn custom_provider_resolves_with_config() {
+        let cfg = pc(Some("https://gw.example.com/v1"), Some("openai"));
+        let r = resolve(ProviderId::Custom, "sk-test".into(), Some(cfg));
+        assert_eq!(r.base_url.as_deref(), Some("https://gw.example.com/v1"));
+        assert!(!r.anthropic_wire);
+        assert_eq!(r.id, ProviderId::Custom);
+        assert_eq!(r.api_key, "sk-test");
+    }
+
+    #[test]
+    fn custom_provider_defaults_to_openai_wire_when_unset() {
+        let cfg = pc(Some("https://gw.example.com/v1"), None);
+        let r = resolve(ProviderId::Custom, "k".into(), Some(cfg));
+        assert!(!r.anthropic_wire, "custom provider with no wire should default to openai");
+    }
 }
